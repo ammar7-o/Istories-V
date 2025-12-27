@@ -688,6 +688,7 @@ function applyTheme() {
 
 
 
+
 // ============ TOGGLE NAVIGATION ============
 const toggleNav = document.getElementById("toggle-nav");
 const more = document.getElementById("more");
@@ -713,10 +714,19 @@ more.addEventListener("click", function (e) {
     e.stopPropagation();
 });
 
-// Escape key to close
+// Close menu on Escape key
 document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && isMenuOpen) {
         more.classList.remove("open");
         isMenuOpen = false;
     }
+});
+
+// Close menu when clicking on any <a> inside the menu
+const links = more.querySelectorAll("a");
+links.forEach(link => {
+    link.addEventListener("click", function () {
+        more.classList.remove("open");
+        isMenuOpen = false;
+    });
 });
