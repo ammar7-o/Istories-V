@@ -35,6 +35,7 @@ body {
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
+    width: 100vw;
     overflow-x: hidden;
 }
 
