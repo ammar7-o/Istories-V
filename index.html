@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Istories</title>
+  <link rel="stylesheet" href="font-awesome/css/all.min.css">
+  <link rel="icon" type="image/png" href="icon.png">
+  <meta property="og:title" content="Istories">
+  <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+  <meta property="og:image" content="icon.png">
+  <meta property="og:type" content="website">
+
+</head>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --secondary: #10b981;
+    --text: #1f2937;
+    --text-light: #6b7280;
+    --bg: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border: #e5e7eb;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius: 8px;
+  }
+
+  .dark-mode {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #10b981;
+    --text: #f9fafb;
+    --text-light: #d1d5db;
+    --bg: #111827;
+    --bg-secondary: #1f2937;
+    --border: #374151;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header Styles */
+  header {
+    background-color: var(--bg);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .logo i {
+    font-size: 1.8rem;
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+  }
+
+  nav a:hover,
+  nav a.active {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--bg-secondary);
+  }
+
+  .user-actions button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .user-actions button:hover {
+    background-color: var(--primary-dark);
+  }
+
+  /* Main Content Styles */
+  .main-content {
+    min-height: calc(100vh - 140px);
+    padding: 30px 0;
+  }
+
+  .page {
+    display: none;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  /* Homepage Styles */
+  .hero {
+    text-align: center;
+    padding: 40px 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+    
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 25px;
+  }
+
+  .cta-button {
+    background-color: white;
+    color: var(--primary);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--bg-secondary);
+    padding: 30px 0;
+    margin-top: 50px;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: var(--text-light);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    color: var(--primary);
+  }
+</style>
+
+<body>
+  <header id="top">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-book-open"></i>
+          <span>IStories</span>
+        </div>
+        <nav>
+
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+          </button>
+          <div class="user-actions">
+            <!-- <button id="loginBtn">Login</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Home Page -->
+      <div id="home" class="page active">
+        <section class="hero">
+          <h1>Learn Languages Through Interactive Stories</h1>
+          <p>Improve your language skills by reading engaging stories with instant translations, definitions,
+            and audio support.</p>
+          <button onclick="window.location.href='English/index.html'" class="cta-button">English</button>
+          <button onclick="window.location.href='french/index.html'" class="cta-button">French</button>
+        </section>
+
+
+        <div class="stories-grid" id="storiesGrid">
+          <!-- Stories will be populated by JavaScript -->
+        </div>
+      </div>
+
+    </div>
+
+
+    </div>
+  </main>
+
+
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="logo">
+          <i class="fas fa-book-open"></i>
+          <span>IStories</span>
+        </div>
+        <div class="footer-links">
+          <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
+          <h5>By : Ammar chacal</h5>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let theme = localStorage.getItem('theme') || 'light';
+    const themeToggle = document.getElementById('themeToggle');
+    applyTheme();
+    themeToggle.addEventListener('click', toggleTheme);
+    // Toggle theme
+    function toggleTheme() {
+      theme = theme === 'light' ? 'dark' : 'light';
+      applyTheme();
+      localStorage.setItem('theme', theme);
+    }
+    // Apply current theme
+    function applyTheme() {
+      if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      } else {
+        document.body.classList.remove('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      }
+    }
+  </script>
+</body>
+
+</html>

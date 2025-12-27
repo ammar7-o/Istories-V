@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IStories Reader</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="read-style.css">
+    <link rel="icon" type="image/png" href="../../icon.png">
+    <meta property="og:title" content="IStories">
+    <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+    <meta property="og:image" content="../../icon.png">
+    <meta property="og:type" content="website">
+</head>
+
+
+<body>
+    <div class="reading-progress">
+        <div class="reading-progress-bar" id="readingProgressBar"></div>
+    </div>
+
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="../../index.html" class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>IStories</span>
+                </a>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="main-content">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-page="story">Read Story</button>
+                <button class="nav-tab" data-page="vocabulary">Vocabulary</button>
+            </div>
+
+
+            <div id="storyPage" class="page active">
+                <div class="story-header">
+                    <button class="back-button" id="backToHome">
+                        <i class="fas fa-arrow-left"></i> Back to Stories
+                    </button>
+                    <h2 id="storyTitle">Loading Story...</h2><span id="lvl">hello</span>
+                </div>
+
+
+                <div class="reading-controls">
+                    <button class="control-btn" id="fontSmaller" title="Decrease font size">
+                        <i class="fas fa-minus"></i> <span>A-</span>
+                    </button>
+                    <button class="control-btn active" id="fontNormal" title="Reset font size">
+                        <i class="fas fa-text-height"></i> <span>A</span>
+                    </button>
+                    <button class="control-btn" id="fontLarger" title="Increase font size">
+                        <i class="fas fa-plus"></i> <span>A+</span>
+                    </button>
+                    <button class="control-btn" id="lineSpacing" title="Toggle line spacing">
+                        <i class="fas fa-arrows-alt-v"></i> <span>Spacing</span>
+                    </button>
+                     <button id="copy" class="control-btn" title="copy story">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <audio controls id="sound" src="" controls></audio>
+                </div>
+
+
+                <div class="story-text-container">
+                    <div class="story-text" id="storyText">
+                        Loading story content...
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="vocabularyPage" class="page">
+                <div class="vocabulary-header">
+                    <h2>My Vocabulary</h2>
+                    <div style="display: flex; gap: 5px;">
+
+                        <button class="btn btn-primary" id="exportVocabulary">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+
+
+                        <button id="removebtn" class="btn btn-primary">
+                            <i class="fas fa-remove"></i> Remove all
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="vocabulary-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalWords">0</div>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="masteredWords">0</div>
+                        <div class="stat-label">Mastered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="practiceDue">0</div>
+                        <div class="stat-label">Due for Practice</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="readingStreak">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                </div>
+
+
+                <div class="vocabulary-list" id="vocabularyList">
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <div class="dictionary-popup" id="dictionaryPopup">
+        <div class="dictionary-header">
+            <div class="dictionary-word" style="margin-right: 10px;" id="popupWord">Word</div>
+
+
+
+
+
+            <button class="close-popup" id="closePopup">
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+        <div class="dictionary-pos" style="display: none;" id="popupPos">noun</div>
+        <div class="dictionary-definition" style="display: none;" id="popupDefinition">Definition will appear here</div>
+        <div class="dictionary-example" style="display: none;" id="popupExample">Example sentence will appear here</div>
+        <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">Translation will appear here
+        </div>
+        <div class="dictionary-actions">
+            <button class="save-word" id="saveWordBtn">
+                <i class="fas fa-bookmark"></i> Save Word
+            </button>
+            <div class="dictionary-actions-buttom">
+                <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
+                    <i class="fas fa-language"></i>
+                </button>
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <script>
+        var idStory = 1;
+    </script>
+    <script type="module" src="read-script.js"></script>
+</body>
+
+
+</html>
