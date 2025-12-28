@@ -283,7 +283,7 @@ header {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
-    padding: 20px;
+    padding: 15px;
     background: var(--bg-secondary);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
@@ -294,21 +294,7 @@ header {
     backdrop-filter: blur(10px);
 }
 
-.control-btn {
-    background: var(--bg);
-    border: 2px solid var(--border);
-    padding: 10px 15px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-    color: var(--text);
-    transition: all 0.3s ease;
-    min-width: 50px;
-    justify-content: center;
-}
+
 
 .control-btn:hover {
     border-color: var(--primary);

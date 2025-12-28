@@ -1,0 +1,319 @@
+
+.settings-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-btn:hover {
+    background-color: #2c2c2c;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* صفحة الإعدادات */
+.settings-page {
+    position: absolute;
+        position: fixed; /* keep it above content */
+    top: 0;
+    right: -400px;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: right 0.4s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-page.open {
+    right: 0;
+}
+
+.settings-page.active {
+    right: 0;
+}
+
+.settings-header {
+    padding: 20px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-settings {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.close-settings:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.settings-content {
+    padding: 20px;
+    flex: 1;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+}
+
+.settings-section h3 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.setting-desc {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* عناصر التحكم */
+.toggle-switch {
+    width: 50px;
+    height: 26px;
+    background: #ccc;
+    border-radius: 13px;
+    position: relative;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.toggle-switch.active {
+    background: var(--primary);
+}
+
+.toggle-slider {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+}
+
+.toggle-switch.active .toggle-slider {
+    transform: translateX(24px);
+}
+
+.font-size-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.font-btn {
+    padding: 6px 12px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.font-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.toggle-btn,
+.action-btn,
+.danger-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.toggle-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 50px;
+    justify-content: center;
+}
+
+.action-btn {
+    background: var(--success);
+    color: white;
+}
+
+.danger-btn {
+    background: var(--danger);
+    color: white;
+}
+
+.toggle-btn:hover,
+.action-btn:hover,
+.danger-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* طبقة التعتيم خلف الإعدادات */
+.settings-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.808);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.settings-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Dark Mode للاعدادات */
+.dark-mode .settings-page {
+    background: #1f2937;
+}
+
+.dark-mode .settings-section h3 {
+    color: #60a5fa;
+    border-bottom-color: #374151;
+}
+
+.dark-mode .setting-item {
+    border-bottom-color: #374151;
+}
+
+.dark-mode .font-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+.tts-open{
+    display: none;
+    visibility: hidden;
+    position: absolute
+}
+
+.control-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 50px;
+    justify-content: center;
+}
+
+.tts-btn{
+     background: var(--primary);
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 50px;
+    justify-content: center;
+}
+.tts-active{
+        background: var(--bg);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .settings-page {
+        width: 100%;
+        height: 100vh;
+        right: -100%;
+    }
+
+    .settings-header {
+        padding: 15px;
+    }
+
+    .settings-content {
+        padding: 15px;
+    }
+}

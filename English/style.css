@@ -61,6 +61,9 @@ header {
     top: 0;
     z-index: 100;
     user-select: none;
+    position: fixed;
+    width: 100vw;
+
 }
 
 .header-content {
@@ -68,6 +71,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
+
 }
 
 .logo {
@@ -328,7 +332,8 @@ nav a.active {
 /* صفحة الإعدادات */
 .settings-page {
     position: absolute;
-        position: fixed; /* keep it above content */
+    position: fixed;
+    /* keep it above content */
     top: 0;
     right: -400px;
     width: 350px;
