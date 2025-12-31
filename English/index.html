@@ -129,7 +129,7 @@
 
             </div>
 
-         
+
             <!-- قسم البيانات -->
             <div class="settings-section">
                 <h3><i class="fas fa-database"></i> Data Management</h3>
@@ -430,7 +430,7 @@
 
                                     <div class="form-group">
                                         <label for="storyCover">
-                                            <i class="fas fa-image"></i> Cover Emoji/Icon
+                                            <i class="fas fa-image"></i> Cover Emoji/Icon/image
                                         </label>
                                         <input type="text" id="storyCover" placeholder="e.g., 📚 or fas fa-book"
                                             value="📚">
@@ -444,6 +444,8 @@
                                         <select id="storyCoverType">
                                             <option value="emoji">Emoji</option>
                                             <option value="icon">Icon</option>
+                                            <option value="icon">image</option>
+
                                         </select>
                                     </div>
 
@@ -643,6 +645,93 @@
                         </div>
                     </div>
                 </div>
+                <!-- Edit Story Modal -->
+                <div class="preview-modal" id="editStoryModal">
+                    <div class="preview-content">
+                        <div class="preview-header">
+                            <h2><i class="fas fa-edit"></i> Edit Story</h2>
+                            <button class="close-preview" id="closeEditModalBtn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="preview-body">
+                            <form id="editStoryForm">
+                                <div class="form-group">
+                                    <label for="editStoryTitle">
+                                        <i class="fas fa-heading"></i> Story Title *
+                                    </label>
+                                    <input type="text" id="editStoryTitle" placeholder="Enter story title" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editStoryLevel">
+                                        <i class="fas fa-chart-line"></i> Difficulty Level *
+                                    </label>
+                                    <select id="editStoryLevel" required>
+                                        <option value="">Select level</option>
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editStoryAuthor">
+                                        <i class="fas fa-user"></i> Author Name (Optional)
+                                    </label>
+                                    <input type="text" id="editStoryAuthor" placeholder="Your name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editStoryCoverType">
+                                        <i class="fas fa-palette"></i> Cover Type
+                                    </label>
+                                    <select id="editStoryCoverType">
+                                        <option value="emoji">Emoji</option>
+                                        <option value="icon">Icon</option>
+                                        <option value="image">Image</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editStoryCover">
+                                        <span id="editCoverLabel">Emoji</span> *
+                                    </label>
+                                    <input type="text" id="editStoryCover" placeholder="e.g., 📚 or fas fa-book"
+                                        required>
+                                    <small>Enter an emoji, FontAwesome class, or image URL</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editStoryContent">
+                                        <i class="fas fa-align-left"></i> Story Content *
+                                    </label>
+                                    <textarea id="editStoryContent" rows="8"
+                                        placeholder="Type your story here. Each paragraph should be on a new line."
+                                        required></textarea>
+                                    <small>Each line will be treated as a separate paragraph</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editStoryTranslations">
+                                        <i class="fas fa-language"></i> Custom Translations (Optional)
+                                    </label>
+                                    <textarea id="editStoryTranslations" rows="6"
+                                        placeholder="Add custom word translations in JSON format (optional)"></textarea>
+                                    <small>Add your own translations for words in the story</small>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="preview-footer">
+                            <button class="btn-secondary" id="closeEditModalBtn2">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" form="editStoryForm" class="btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         </div>
@@ -668,7 +757,7 @@
     <script src="database/more.js"></script>
 
     <!-- <script src="Dictionarys/main.js"></script> -->
-    <!-- <script src="other.js"></script> -->
+    <script src="other.js"></script>
     <script src="main.js"></script>
     <script src="addstories.js"></script>
 

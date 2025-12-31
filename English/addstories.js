@@ -1,6 +1,7 @@
 // Add Stories Page functionality
 let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
 let userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+let currentEditIndex = -1; // Track which story is being edited
 
 // Initialize Add Stories page
 function initAddStories() {
@@ -9,12 +10,7 @@ function initAddStories() {
 
     // Load existing user stories
     loadUserStories();
-
-    // Add Add Stories link to navigation
-    addAddStoriesNavLink();
 }
-
-
 
 // Setup event listeners for Add Stories page
 function setupAddStoriesListeners() {
@@ -36,6 +32,13 @@ function setupAddStoriesListeners() {
     const closePreviewBtn = document.getElementById('closePreviewBtn');
     const closePreview = document.getElementById('closePreview');
     const saveFromPreviewBtn = document.getElementById('saveFromPreviewBtn');
+
+    // Edit modal elements
+    const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+    const closeEditModalBtn2 = document.getElementById('closeEditModalBtn2');
+    const editStoryForm = document.getElementById('editStoryForm');
+    const editStoryCoverType = document.getElementById('editStoryCoverType');
+    const editStoryModal = document.getElementById('editStoryModal');
 
     // File upload functionality
     if (browseBtn && storyFileInput) {
@@ -96,7 +99,24 @@ function setupAddStoriesListeners() {
         saveFromPreviewBtn.addEventListener('click', saveStoryFromPreview);
     }
 
-    // Close modal when clicking outside
+    // Edit modal functionality
+    if (closeEditModalBtn) {
+        closeEditModalBtn.addEventListener('click', closeEditModal);
+    }
+
+    if (closeEditModalBtn2) {
+        closeEditModalBtn2.addEventListener('click', closeEditModal);
+    }
+
+    if (editStoryForm) {
+        editStoryForm.addEventListener('submit', handleEditStorySubmit);
+    }
+
+    if (editStoryCoverType) {
+        editStoryCoverType.addEventListener('change', updateEditCoverLabel);
+    }
+
+    // Close modals when clicking outside
     const previewModal = document.getElementById('previewModal');
     if (previewModal) {
         previewModal.addEventListener('click', (e) => {
@@ -105,136 +125,342 @@ function setupAddStoriesListeners() {
             }
         });
     }
-}
 
-// Load example translations
-function loadExampleTranslations() {
-    const exampleTranslations = {
-        "hello": { "translation": "مرحبا" },
-        "world": { "translation": "عالم" },
-        "book": { "translation": "كتاب" }
-    };
-
-    document.getElementById('storyTranslations').value = JSON.stringify(exampleTranslations, null, 2);
-    showNotification('Example translations loaded!', 'success');
-}
-
-// Handle file selection
-function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file && file.type === 'application/json') {
-        displaySelectedFile(file);
-    } else {
-        showNotification('Please select a valid JSON file.', 'error');
+    if (editStoryModal) {
+        editStoryModal.addEventListener('click', (e) => {
+            if (e.target === editStoryModal) {
+                closeEditModal();
+            }
+        });
     }
 }
 
-// Handle drag over
-function handleDragOver(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const uploadArea = document.getElementById('uploadArea');
-    if (uploadArea) {
-        uploadArea.style.borderColor = 'var(--primary-dark)';
-        uploadArea.style.background = 'rgba(255, 255, 255, 0.3)';
-    }
-}
+// Load user stories from localStorage
+// Load user stories from localStorage
+function loadUserStories() {
+    const userStoriesList = document.getElementById('userStoriesList');
+    if (!userStoriesList) return;
 
-// Handle drag leave
-function handleDragLeave(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const uploadArea = document.getElementById('uploadArea');
-    if (uploadArea) {
-        uploadArea.style.borderColor = 'var(--primary)';
-        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
-    }
-}
+    userStoriesList.innerHTML = '';
 
-// Handle file drop
-function handleFileDrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const uploadArea = document.getElementById('uploadArea');
-    if (uploadArea) {
-        uploadArea.style.borderColor = 'var(--primary)';
-        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
+    if (userStories.length === 0) {
+        userStoriesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-book-open"></i>
+                <p>No stories uploaded yet</p>
+            </div>
+        `;
+        return;
     }
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        const file = files[0];
-        if (file.type === 'application/json') {
-            displaySelectedFile(file);
+    userStories.forEach((story, index) => {
+        const storyItem = document.createElement('div');
+        storyItem.className = 'story-item';
+
+        const translationBadge = story.hasTranslations
+            ? '<span class="translation-badge" title="Has custom translations"><i class="fas fa-language"></i></span>'
+            : '';
+
+        // Determine if it's an image cover
+        const isImageCover = story.coverType === 'image' || 
+                            (story.cover && (story.cover.startsWith('http://') || story.cover.startsWith('https://')));
+
+        // Create icon/emoji/image display
+        let coverDisplay = '';
+        if (isImageCover) {
+            // For image covers, show a small thumbnail
+            coverDisplay = `<div class="story-image-small" style="background-image: url('${story.cover}')"></div>`;
+        } else if (story.coverType === 'icon') {
+            coverDisplay = `<i class="${story.cover || 'fas fa-book'}"></i>`;
         } else {
-            showNotification('Please drop a valid JSON file.', 'error');
+            // Default to emoji
+            coverDisplay = `<div class="story-emoji-small">${story.cover || '📚'}</div>`;
+        }
+
+        storyItem.innerHTML = `
+            <div class="story-icon">
+                ${coverDisplay}
+                ${translationBadge}
+            </div>
+            <div class="story-item-info">
+                <span class="story-item-title">${story.title}</span>
+                <span class="story-item-meta">
+                    ${story.level} • ${story.wordCount || 'Unknown'} words • 
+                    ${new Date(story.uploadDate).toLocaleDateString()}
+                </span>
+            </div>
+            <div class="story-item-actions">
+                <button class="story-action-btn read-story-btn" title="Read Story" data-index="${index}">
+                    <i class="fas fa-book-reader"></i>
+                </button>
+                <button class="story-action-btn share-story-btn" title="Share as JSON" data-index="${index}">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="story-action-btn edit-story-btn" title="Edit Story" data-index="${index}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="story-action-btn delete-story-btn" title="Delete Story" data-index="${index}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+
+        userStoriesList.appendChild(storyItem);
+    });
+
+    // Add event listeners to buttons
+    document.querySelectorAll('.read-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            openUserStoryInReader(userStories[index].id);
+        });
+    });
+
+    document.querySelectorAll('.share-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            shareStoryAsJson(index);
+        });
+    });
+
+    document.querySelectorAll('.edit-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            openEditStoryModal(index);
+        });
+    });
+
+    document.querySelectorAll('.delete-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            deleteUserStory(index);
+        });
+    });
+}
+
+// Share story as JSON file - Add this new function
+function shareStoryAsJson(index) {
+    if (index < 0 || index >= userStories.length) {
+        showNotification('Story not found.', 'error');
+        return;
+    }
+
+    const story = userStories[index];
+    const storyId = story.id;
+    
+    // Get translations for this story
+    const translations = userDictionaries[storyId] || {};
+    
+    // Prepare the complete story object for export
+    const exportStory = {
+        title: story.title,
+        level: story.level,
+        cover: story.cover,
+        coverType: story.coverType,
+        content: story.content,
+        author: story.author || '',
+        uploadDate: story.uploadDate,
+        wordCount: story.wordCount,
+        // Include translations if they exist
+        ...(Object.keys(translations).length > 0 && { translations: translations })
+    };
+
+    // Convert to JSON string with nice formatting
+    const jsonString = JSON.stringify(exportStory, null, 2);
+    
+    // Create a Blob with the JSON data
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    
+    // Create download URL
+    const url = URL.createObjectURL(blob);
+    
+    // Create download link
+    const a = document.createElement('a');
+    a.href = url;
+    
+    // Create filename from story title (sanitize for filename)
+    const sanitizedTitle = story.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .substring(0, 50); // Limit length
+    
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    a.download = `${sanitizedTitle}-${date}.json`;
+    
+    // Trigger download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Clean up
+    URL.revokeObjectURL(url);
+    
+    // Show notification
+    showNotification(`"${story.title}" exported as JSON file!`, 'success');
+}
+
+// Function to open edit modal
+function openEditStoryModal(index) {
+    currentEditIndex = index;
+    const story = userStories[index];
+    
+    // Fill form with story data
+    document.getElementById('editStoryTitle').value = story.title || '';
+    document.getElementById('editStoryLevel').value = story.level || 'intermediate';
+    document.getElementById('editStoryAuthor').value = story.author || '';
+    document.getElementById('editStoryCoverType').value = story.coverType || 'emoji';
+    
+    // Set cover input based on type
+    const editStoryCover = document.getElementById('editStoryCover');
+    if (editStoryCover) {
+        editStoryCover.value = story.cover || '📚';
+        updateEditCoverLabel();
+    }
+    
+    // Fill content
+    const editStoryContent = document.getElementById('editStoryContent');
+    if (editStoryContent) {
+        editStoryContent.value = Array.isArray(story.content) ? story.content.join('\n') : story.content || '';
+    }
+    
+    // Fill translations
+    const editStoryTranslations = document.getElementById('editStoryTranslations');
+    if (editStoryTranslations) {
+        const storyId = story.id;
+        if (userDictionaries[storyId]) {
+            editStoryTranslations.value = JSON.stringify(userDictionaries[storyId], null, 2);
+        } else {
+            editStoryTranslations.value = '';
+        }
+    }
+    
+    // Show modal
+    const editStoryModal = document.getElementById('editStoryModal');
+    if (editStoryModal) {
+        editStoryModal.classList.add('show');
+    }
+}
+
+// Update cover label for edit modal
+function updateEditCoverLabel() {
+    const editStoryCoverType = document.getElementById('editStoryCoverType');
+    const editCoverLabel = document.getElementById('editCoverLabel');
+    const editStoryCover = document.getElementById('editStoryCover');
+    
+    if (editStoryCoverType && editCoverLabel && editStoryCover) {
+        const coverType = editStoryCoverType.value;
+        
+        if (coverType === 'emoji') {
+            editCoverLabel.textContent = 'Emoji';
+            editStoryCover.placeholder = '📚';
+        } else if (coverType === 'icon') {
+            editCoverLabel.textContent = 'Font Awesome Icon';
+            editStoryCover.placeholder = 'fas fa-book';
+        } else if (coverType === 'image') {
+            editCoverLabel.textContent = 'Image URL';
+            editStoryCover.placeholder = 'https://example.com/image.jpg';
         }
     }
 }
 
-// Display selected file info
-function displaySelectedFile(file) {
-    const selectedFileInfo = document.getElementById('selectedFileInfo');
-    const fileName = document.getElementById('fileName');
-    const fileSize = document.getElementById('fileSize');
-    const uploadBtn = document.getElementById('uploadBtn');
-
-    if (selectedFileInfo && fileName && fileSize && uploadBtn) {
-        fileName.textContent = file.name;
-        fileSize.textContent = formatFileSize(file.size);
-        selectedFileInfo.style.display = 'block';
-        uploadBtn.disabled = false;
+// Handle edit story form submission
+function handleEditStorySubmit(e) {
+    e.preventDefault();
+    
+    if (currentEditIndex === -1) {
+        showNotification('No story selected for editing.', 'error');
+        return;
     }
-}
-
-// Format file size
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-// Clear selected file
-function clearSelectedFile() {
-    const storyFileInput = document.getElementById('storyFileInput');
-    const selectedFileInfo = document.getElementById('selectedFileInfo');
-    const uploadBtn = document.getElementById('uploadBtn');
-
-    if (storyFileInput && selectedFileInfo && uploadBtn) {
-        storyFileInput.value = '';
-        selectedFileInfo.style.display = 'none';
-        uploadBtn.disabled = true;
+    
+    const story = userStories[currentEditIndex];
+    const storyId = story.id;
+    
+    // Get form values
+    const title = document.getElementById('editStoryTitle').value.trim();
+    const level = document.getElementById('editStoryLevel').value;
+    const author = document.getElementById('editStoryAuthor').value.trim();
+    const coverType = document.getElementById('editStoryCoverType').value;
+    const cover = document.getElementById('editStoryCover').value.trim();
+    const contentText = document.getElementById('editStoryContent').value.trim();
+    const translationsText = document.getElementById('editStoryTranslations').value.trim();
+    
+    // Validation
+    if (!title || !level || !contentText) {
+        showNotification('Please fill in all required fields.', 'error');
+        return;
     }
-}
-
-// Upload story file
-function uploadStoryFile() {
-    const storyFileInput = document.getElementById('storyFileInput');
-    if (!storyFileInput || !storyFileInput.files[0]) return;
-
-    const file = storyFileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
+    
+    // Process content
+    const content = contentText.split('\n').filter(line => line.trim() !== '');
+    const wordCount = calculateWordCount(content);
+    
+    // Update story in userStories array
+    userStories[currentEditIndex] = {
+        ...story,
+        title,
+        level,
+        author: author || '',
+        coverType,
+        cover: cover || (coverType === 'emoji' ? '📚' : 'fas fa-book'),
+        content,
+        wordCount,
+        hasTranslations: translationsText.trim() !== '',
+        uploadDate: new Date().toISOString() // Update upload date
+    };
+    
+    // Update in main stories array
+    const storyIndex = stories.findIndex(s => s.id === storyId);
+    if (storyIndex !== -1) {
+        stories[storyIndex] = { ...userStories[currentEditIndex] };
+    }
+    
+    // Update translations if provided
+    if (translationsText) {
         try {
-            const storyData = JSON.parse(e.target.result);
-            processStoryData(storyData, file.name);
+            const translations = JSON.parse(translationsText);
+            userDictionaries[storyId] = translations;
+            showNotification(`${Object.keys(translations).length} translations saved.`, 'success');
         } catch (error) {
-            showNotification('Error parsing JSON file: ' + error.message, 'error');
+            showNotification('Invalid translations format. Translations not updated.', 'error');
         }
-    };
-
-    reader.onerror = function () {
-        showNotification('Error reading file.', 'error');
-    };
-
-    reader.readAsText(file);
+    } else {
+        // Remove translations if cleared
+        delete userDictionaries[storyId];
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('userStories', JSON.stringify(userStories));
+    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+    
+    // Update UI
+    loadUserStories();
+    if (currentPage === 'home' || currentPage === 'addStories') {
+        renderStories();
+    }
+    
+    // Close modal
+    closeEditModal();
+    
+    // Show success message
+    showNotification('Story updated successfully!', 'success');
 }
 
-// Process story data
+// Close edit modal
+function closeEditModal() {
+    const editStoryModal = document.getElementById('editStoryModal');
+    if (editStoryModal) {
+        editStoryModal.classList.remove('show');
+    }
+    currentEditIndex = -1;
+    
+    // Reset form
+    const editStoryForm = document.getElementById('editStoryForm');
+    if (editStoryForm) {
+        editStoryForm.reset();
+    }
+}
+
 // Process story data
 function processStoryData(storyData, fileName) {
     // Validate story structure
@@ -306,106 +532,8 @@ function processStoryData(storyData, fileName) {
     // Open the story in reader
     openUserStoryInReader(storyId);
 }
-// Validate story structure
-function validateStory(story) {
-    const requiredFields = ['title', 'level', 'content'];
 
-    // Check required fields
-    for (const field of requiredFields) {
-        if (!story[field]) {
-            return false;
-        }
-    }
-
-    // Check content is array
-    if (!Array.isArray(story.content) || story.content.length === 0) {
-        return false;
-    }
-
-    // Check level is valid
-    const validLevels = ['beginner', 'intermediate', 'advanced'];
-    if (!validLevels.includes(story.level)) {
-        return false;
-    }
-
-    return true;
-}
-
-// Calculate word count
-function calculateWordCount(content) {
-    return content.join(' ').split(/\s+/).length;
-}
-
-// Load user stories from localStorage
-function loadUserStories() {
-    const userStoriesList = document.getElementById('userStoriesList');
-    if (!userStoriesList) return;
-
-    userStoriesList.innerHTML = '';
-
-    if (userStories.length === 0) {
-        userStoriesList.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-book-open"></i>
-                <p>No stories uploaded yet</p>
-            </div>
-        `;
-        return;
-    }
-
-    userStories.forEach((story, index) => {
-        const storyItem = document.createElement('div');
-        storyItem.className = 'story-item';
-
-        const translationBadge = story.hasTranslations
-            ? '<span class="translation-badge" title="Has custom translations"><i class="fas fa-language"></i></span>'
-            : '';
-
-        storyItem.innerHTML = `
-            <div class="story-icon">
-                ${story.coverType === 'icon' ?
-                `<i class="${story.cover}"></i>` :
-                `<div class="story-emoji-small">${story.cover || '📚'}</div>`
-            }
-                ${translationBadge}
-            </div>
-            <div class="story-item-info">
-                <span class="story-item-title">${story.title}</span>
-                <span class="story-item-meta">
-                    ${story.level} • ${story.wordCount || 'Unknown'} words • 
-                    ${new Date(story.uploadDate).toLocaleDateString()}
-                </span>
-            </div>
-            <div class="story-item-actions">
-                <button class="story-action-btn read-story-btn" title="Read Story" data-index="${index}">
-                    <i class="fas fa-book-reader"></i>
-                </button>
-                <button class="story-action-btn delete-story-btn" title="Delete Story" data-index="${index}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-
-        userStoriesList.appendChild(storyItem);
-    });
-
-    // Add event listeners to buttons
-    document.querySelectorAll('.read-story-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            openUserStoryInReader(userStories[index].id);
-        });
-    });
-
-    document.querySelectorAll('.delete-story-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            deleteUserStory(index);
-        });
-    });
-}
-
-// Open user story in reader
+// Open user story in reader - Updated to include translations
 function openUserStoryInReader(storyId) {
     // Find the story
     const story = userStories.find(s => s.id === storyId) ||
@@ -416,6 +544,9 @@ function openUserStoryInReader(storyId) {
         return;
     }
 
+    // Get translations for this story
+    const translations = userDictionaries[storyId] || {};
+
     // Store story data in localStorage for the reader
     localStorage.setItem('currentReadingStory', JSON.stringify({
         id: story.id,
@@ -424,7 +555,9 @@ function openUserStoryInReader(storyId) {
         content: story.content,
         isUserStory: true,
         cover: story.cover,
-        coverType: story.coverType
+        coverType: story.coverType,
+        author: story.author || '',
+        translations: translations
     }));
 
     // Redirect to reader page
@@ -455,7 +588,7 @@ function deleteUserStory(index) {
 
         // Update UI
         loadUserStories();
-        if (currentPage === 'home') {
+        if (currentPage === 'home' || currentPage === 'addStories') {
             renderStories();
         }
 
@@ -463,7 +596,153 @@ function deleteUserStory(index) {
     }
 }
 
-// Handle form submission
+// Helper functions (keep all your existing ones):
+function loadExampleTranslations() {
+    const exampleTranslations = {
+        "hello": { "translation": "مرحبا" },
+        "world": { "translation": "عالم" },
+        "book": { "translation": "كتاب" }
+    };
+
+    document.getElementById('storyTranslations').value = JSON.stringify(exampleTranslations, null, 2);
+    showNotification('Example translations loaded!', 'success');
+}
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/json') {
+        displaySelectedFile(file);
+    } else {
+        showNotification('Please select a valid JSON file.', 'error');
+    }
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.style.borderColor = 'var(--primary-dark)';
+        uploadArea.style.background = 'rgba(255, 255, 255, 0.3)';
+    }
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
+    }
+}
+
+function handleFileDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
+    }
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        const file = files[0];
+        if (file.type === 'application/json') {
+            displaySelectedFile(file);
+        } else {
+            showNotification('Please drop a valid JSON file.', 'error');
+        }
+    }
+}
+
+function displaySelectedFile(file) {
+    const selectedFileInfo = document.getElementById('selectedFileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    if (selectedFileInfo && fileName && fileSize && uploadBtn) {
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        selectedFileInfo.style.display = 'block';
+        uploadBtn.disabled = false;
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function clearSelectedFile() {
+    const storyFileInput = document.getElementById('storyFileInput');
+    const selectedFileInfo = document.getElementById('selectedFileInfo');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    if (storyFileInput && selectedFileInfo && uploadBtn) {
+        storyFileInput.value = '';
+        selectedFileInfo.style.display = 'none';
+        uploadBtn.disabled = true;
+    }
+}
+
+function uploadStoryFile() {
+    const storyFileInput = document.getElementById('storyFileInput');
+    if (!storyFileInput || !storyFileInput.files[0]) return;
+
+    const file = storyFileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        try {
+            const storyData = JSON.parse(e.target.result);
+            processStoryData(storyData, file.name);
+        } catch (error) {
+            showNotification('Error parsing JSON file: ' + error.message, 'error');
+        }
+    };
+
+    reader.onerror = function () {
+        showNotification('Error reading file.', 'error');
+    };
+
+    reader.readAsText(file);
+}
+
+function validateStory(story) {
+    const requiredFields = ['title', 'level', 'content'];
+
+    // Check required fields
+    for (const field of requiredFields) {
+        if (!story[field]) {
+            return false;
+        }
+    }
+
+    // Check content is array
+    if (!Array.isArray(story.content) || story.content.length === 0) {
+        return false;
+    }
+
+    // Check level is valid
+    const validLevels = ['beginner', 'intermediate', 'advanced'];
+    if (!validLevels.includes(story.level)) {
+        return false;
+    }
+
+    return true;
+}
+
+function calculateWordCount(content) {
+    return content.join(' ').split(/\s+/).length;
+}
+
 function handleFormSubmit(e) {
     e.preventDefault();
 
@@ -513,7 +792,6 @@ function handleFormSubmit(e) {
     document.getElementById('storyCover').value = '📚';
 }
 
-// Show story preview
 function showStoryPreview() {
     const title = document.getElementById('storyTitle').value.trim();
     const level = document.getElementById('storyLevel').value;
@@ -590,18 +868,15 @@ function showStoryPreview() {
     document.getElementById('previewModal').classList.add('show');
 }
 
-// Close preview modal
 function closePreviewModal() {
     document.getElementById('previewModal').classList.remove('show');
 }
 
-// Save story from preview
 function saveStoryFromPreview() {
     handleFormSubmit(new Event('submit'));
     closePreviewModal();
 }
 
-// Download story template
 function downloadStoryTemplate() {
     const template = {
         "title": "My Custom Story",
@@ -643,7 +918,6 @@ function downloadStoryTemplate() {
     showNotification('Template downloaded successfully!', 'success');
 }
 
-// Copy JSON example
 function copyJsonExample() {
     const jsonExample = document.getElementById('jsonExample').textContent;
     navigator.clipboard.writeText(jsonExample)
@@ -668,8 +942,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initAddStories();
 });
 
-// Also need to update the switchPage function to handle the new page
-// Add this to your existing switchPage function:
+// Update the switchPage function to handle the new page
 function switchPage(page) {
     currentPage = page;
     pages.forEach(p => p.classList.remove('active'));

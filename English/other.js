@@ -200,52 +200,48 @@ function updateFlashcardStats() {
 }
 
 // Set up flashcard event listeners
-// Set up flashcard event listeners
+let flashcardListenersAdded = false;
+
 function setupFlashcardListeners() {
+    if (flashcardListenersAdded) return;
+    flashcardListenersAdded = true;
+
     console.log('Setting up flashcard listeners...');
-    
-    // Flip card on click
+
+    // Flip card (only if click is NOT on a button)
     if (flashcard) {
-        console.log('Adding click listener to flashcard...');
-        flashcard.addEventListener('click', function(e) {
-            e.stopPropagation();
-            console.log('Flashcard clicked!');
-            
-            if (sessionCards.length > 0) {
-                this.classList.toggle('flipped');
-                console.log('Flashcard flipped state:', this.classList.contains('flipped') ? 'Flipped' : 'Not flipped');
-            } else {
-                console.log('No cards in session');
-            }
+        flashcard.addEventListener('click', function (e) {
+            if (e.target.closest('button')) return;
+            if (sessionCards.length === 0) return;
+
+            flashcard.classList.toggle('flipped');
         });
-    } else {
-        console.error('Flashcard element not found!');
     }
 
-    // Card review buttons - add stopPropagation to prevent flipping when clicking buttons
+    // Review buttons
     if (cardAgain) {
-        cardAgain.addEventListener('click', function(e) {
+        cardAgain.addEventListener('click', (e) => {
             e.stopPropagation();
             reviewCard(1);
         });
     }
-    
+
     if (cardHard) {
-        cardHard.addEventListener('click', function(e) {
+        cardHard.addEventListener('click', (e) => {
             e.stopPropagation();
             reviewCard(3);
         });
     }
-    
+
     if (cardGood) {
-        cardGood.addEventListener('click', function(e) {
+        cardGood.addEventListener('click', (e) => {
             e.stopPropagation();
             reviewCard(7);
         });
     }
-    
+
     if (cardEasy) {
-        cardEasy.addEventListener('click', function(e) {
+        cardEasy.addEventListener('click', (e) => {
             e.stopPropagation();
             reviewCard(14);
         });
@@ -253,21 +249,22 @@ function setupFlashcardListeners() {
 
     // Control buttons
     if (shuffleCards) {
-        shuffleCards.addEventListener('click', function(e) {
+        shuffleCards.addEventListener('click', (e) => {
             e.stopPropagation();
             shuffleFlashcards();
         });
     }
-    
+
     if (resetProgress) {
-        resetProgress.addEventListener('click', function(e) {
+        resetProgress.addEventListener('click', (e) => {
             e.stopPropagation();
             resetCardProgress();
         });
     }
-    
-    console.log('Flashcard listeners set up');
+
+    console.log('Flashcard listeners set up ✅');
 }
+
 
 // Review a card with spaced repetition
 function reviewCard(daysToAdd) {
@@ -626,35 +623,41 @@ function displayFilteredStories(filteredStories, query) {
         return;
     }
 
-    filteredStories.forEach(story => {
-        const storyCard = document.createElement('div');
-        storyCard.className = 'story-card';
-        storyCard.dataset.storyId = story.id;
+   filteredStories.forEach(story => {
+    const storyCard = document.createElement('div');
+    storyCard.className = 'story-card';
+    storyCard.dataset.storyId = story.id;
 
-        // Use the corrected function
-        const highlightedTitle = highlightSearchMatch(story.title, query);
+    // Use the corrected function
+    const highlightedTitle = highlightSearchMatch(story.title, query);
 
-        storyCard.innerHTML = `
-            <div class="story-image">
-                ${renderStoryCover(story)}
+    // Only show author if it exists and is not empty
+    const authorHTML = story.author && story.author.trim() !== "" 
+        ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
+        : '';
+
+    storyCard.innerHTML = `
+        <div class="story-image">
+            ${authorHTML}
+            ${renderStoryCover(story)}
+        </div>
+        <div class="story-content">
+            <span class="story-level ${story.level}">${story.level}</span>
+            <h3 class="story-title">${highlightedTitle}</h3>
+            <p>${story.content[0].substring(0, 100)}...</p>
+            <div class="story-meta">
+                <span><i class="fas fa-font"></i> ${story.wordCount} words</span>
+                <span><i class="fas fa-clock"></i> ${Math.ceil(story.wordCount / 200)} min read</span>
             </div>
-            <div class="story-content">
-                <span class="story-level ${story.level}">${story.level}</span>
-                <h3 class="story-title">${highlightedTitle}</h3>
-                <p>${story.content[0].substring(0, 100)}...</p>
-                <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil(story.wordCount / 200)} min read</span>
-                </div>
-            </div>
-        `;
+        </div>
+    `;
 
-        storyCard.addEventListener('click', () => {
-            openStoryInNewPage(story.id);
-        });
-
-        storiesGrid.appendChild(storyCard);
+    storyCard.addEventListener('click', () => {
+        openStoryInNewPage(story.id);
     });
+
+    storiesGrid.appendChild(storyCard);
+});
 }
 
 // Correction here! Add function to escape special characters
@@ -788,13 +791,13 @@ let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
 function initColorSelector() {
     const colorOptions = document.querySelectorAll('.color-option:not(.custom-color)');
     const customColorPicker = document.getElementById('customColorPicker');
-    
+
     console.log('Initializing color selector...'); // Debug log
     console.log('Found color options:', colorOptions.length); // Debug log
-    
+
     // Remove active class from all options first
     colorOptions.forEach(opt => opt.classList.remove('active'));
-    
+
     // Set active color based on saved preference
     if (colorOptions.length > 0) {
         colorOptions.forEach(option => {
@@ -803,76 +806,76 @@ function initColorSelector() {
                 option.classList.add('active');
                 console.log('Setting active color option:', selectedColor); // Debug
             }
-            
+
             option.addEventListener('click', () => {
                 console.log('Color option clicked:', option.dataset.color); // Debug log
-                
+
                 // Remove active class from all options
                 colorOptions.forEach(opt => opt.classList.remove('active'));
-                
+
                 // Add active class to clicked option
                 option.classList.add('active');
-                
+
                 // Get selected color
                 const color = option.dataset.color;
-                
+
                 // Apply ONLY the primary color
                 applyPrimaryColor(color);
-                
+
                 // Save to localStorage
                 localStorage.setItem('selectedColor', color);
                 selectedColor = color;
-                
+
                 // Update custom color picker
                 if (customColorPicker) {
                     customColorPicker.value = color;
                 }
-                
+
                 showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
             });
         });
     }
-    
+
     // Custom color picker
     if (customColorPicker) {
         console.log('Custom color picker found'); // Debug log
-        
+
         // Set initial value from saved color
         customColorPicker.value = selectedColor;
-        
+
         customColorPicker.addEventListener('input', (e) => {
             const color = e.target.value;
             console.log('Custom color input:', color); // Debug log
-            
+
             // Remove active class from preset colors
             colorOptions.forEach(opt => opt.classList.remove('active'));
-            
+
             // Apply ONLY the primary color
             applyPrimaryColor(color);
-            
+
             // Save to localStorage
             localStorage.setItem('selectedColor', color);
             selectedColor = color;
-            
+
             showNotification('Custom primary color applied', 'success');
         });
-        
+
         customColorPicker.addEventListener('change', (e) => {
             const color = e.target.value;
-            
+
             // Remove active class from preset colors
             colorOptions.forEach(opt => opt.classList.remove('active'));
-            
+
             // Apply ONLY the primary color
             applyPrimaryColor(color);
-            
+
             // Save to localStorage
             localStorage.setItem('selectedColor', color);
             selectedColor = color;
-            
+
             showNotification('Custom primary color saved', 'success');
         });
-        
+
         // Also trigger change on custom color picker click
         customColorPicker.parentElement.addEventListener('click', (e) => {
             if (e.target !== customColorPicker) {
@@ -880,12 +883,12 @@ function initColorSelector() {
             }
         });
     }
-    
+
     // Force apply the color one more time to ensure it's set
     setTimeout(() => {
         applyPrimaryColor(selectedColor);
         console.log('Final color applied:', selectedColor);
-        
+
         // Verify CSS variables are set
         const root = document.documentElement;
         console.log('CSS Variables:', {
@@ -898,12 +901,12 @@ function initColorSelector() {
 function applyPrimaryColor(color) {
     // Calculate darker shade for --primary-dark
     const darkerColor = adjustColor(color, -20);
-    
+
     // Update ONLY the primary color variables in CSS
     const root = document.documentElement;
     root.style.setProperty('--primary', color);
     root.style.setProperty('--primary-dark', darkerColor);
-    
+
     // DO NOT update other elements - let CSS handle it
 }
 
@@ -914,7 +917,7 @@ function adjustColor(color, percent) {
     const R = (num >> 16) + amt;
     const G = (num >> 8 & 0x00FF) + amt;
     const B = (num & 0x0000FF) + amt;
-    
+
     return '#' + (
         0x1000000 +
         (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
@@ -931,10 +934,10 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.textContent = message;
-    
+
     // Set background color based on notification type
     let bgColor = '';
-    
+
     if (type === 'success') {
         bgColor = 'var(--primary)'; // Use the CSS variable
     } else if (type === 'error') {
@@ -944,7 +947,7 @@ function showNotification(message, type = 'info') {
     } else if (type === 'info') {
         bgColor = '#2196F3';
     }
-    
+
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -973,9 +976,9 @@ function showNotification(message, type = 'info') {
 }
 
 // Add to your existing init function
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     init();
-    
+
     // Initialize color selector
     if (typeof initColorSelector === 'function') {
         initColorSelector();
@@ -993,13 +996,13 @@ let theme = localStorage.getItem('theme') || 'light';
 function toggleTheme() {
     const currentTheme = localStorage.getItem('theme') || 'light';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
+
     // Save new theme
     localStorage.setItem('theme', newTheme);
-    
+
     // Apply the new theme
     applyTheme();
-    
+
     // Show notification
     showNotification(`Switched to ${newTheme} mode`, 'success');
 }
@@ -1008,14 +1011,14 @@ function toggleTheme() {
 // Apply current theme
 function applyTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
-    
+
     // Apply theme to body class
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
     } else {
         document.body.classList.remove('dark-mode');
     }
-    
+
     // Update theme toggle icon
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -1024,7 +1027,7 @@ function applyTheme() {
             themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
     }
-    
+
     // Re-apply primary color to ensure it works with new theme
     if (selectedColor) {
         applyPrimaryColor(selectedColor);
@@ -1041,18 +1044,3 @@ function applyTheme() {
 
 
 
-
-
-
-// Initialize flashcards
-function initFlashcards() {
-    console.log('Initializing flashcards...');
-    console.log('Flashcard element:', flashcard ? 'Found' : 'Not found');
-    console.log('Flashcard word element:', flashcardWord ? 'Found' : 'Not found');
-    console.log('Flashcard translation element:', flashcardTranslation ? 'Found' : 'Not found');
-    console.log('Flashcard story element:', flashcardStory ? 'Found' : 'Not found');
-    
-    updateFlashcardStats();
-    setupFlashcardListeners();
-    // Don't load cards immediately, wait until page is shown
-}
