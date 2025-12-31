@@ -684,3 +684,361 @@
     padding: 20px 30px;
     border-top: 1px solid var(--border-color);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Floating Action Button */
+.fab-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.fab-btn:hover {
+    transform: scale(1.1);
+    background: var(--primary-dark);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(0, 0, 0);
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-color);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Upload Methods */
+.method-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.method-tab {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.method-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.method-content {
+    display: none;
+}
+
+.method-content.active {
+    display: block;
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.upload-area i {
+    font-size: 48px;
+    color: var(--text-light);
+    margin-bottom: 15px;
+}
+
+.upload-area p {
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+.upload-or {
+    color: var(--text-light) !important;
+    font-size: 14px;
+}
+
+.upload-hint {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 20px !important;
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.input-group textarea {
+    min-height: 150px;
+    font-family: monospace;
+}
+
+/* Preview Section */
+.story-preview-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+#previewCount {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: normal;
+}
+
+#storyPreviewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.preview-story-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 15px;
+    transition: all 0.3s;
+}
+
+.preview-story-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.preview-story-card h5 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-story-card .preview-level {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--secondary-light);
+    color: var(--secondary);
+}
+
+.preview-story-card .preview-content {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.preview-story-card .preview-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+/* Add to your existing button styles */
+#cancelBtn {
+    margin-right: auto;
+}
+
+/* File Upload Success State */
+.upload-area.success {
+    border-color: var(--success);
+    background: rgba(var(--success-rgb), 0.05);
+}
+
+.upload-area.success i {
+    color: var(--success);
+}
+
+.upload-area.error {
+    border-color: var(--error);
+    background: rgba(var(--error-rgb), 0.05);
+}
+
+.upload-area.error i {
+    color: var(--error);
+}
+
+/* Preview Grid in Modal */
+#storyPreviewGrid .story-card {
+    transform: scale(0.95);
+    margin: 0;
+}
+
+#storyPreviewGrid .story-card:hover {
+    transform: scale(0.97);
+}

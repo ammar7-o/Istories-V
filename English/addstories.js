@@ -235,6 +235,7 @@ function uploadStoryFile() {
 }
 
 // Process story data
+// Process story data
 function processStoryData(storyData, fileName) {
     // Validate story structure
     if (!validateStory(storyData)) {
@@ -284,9 +285,9 @@ function processStoryData(storyData, fileName) {
 
     // Update stories array and render
     stories.push(userStory);
-    if (currentPage === 'home') {
-        renderStories();
-    }
+    
+    // ALWAYS render stories regardless of current page
+    renderStories();
 
     // Show success message
     const translationCount = Object.keys(translations).length;
@@ -305,7 +306,6 @@ function processStoryData(storyData, fileName) {
     // Open the story in reader
     openUserStoryInReader(storyId);
 }
-
 // Validate story structure
 function validateStory(story) {
     const requiredFields = ['title', 'level', 'content'];
@@ -490,7 +490,7 @@ function handleFormSubmit(e) {
         cover: cover,
         coverType: coverType,
         content: content,
-        author: author || 'Your Name',
+        author: author || '',
         tags: ['custom']
     };
 

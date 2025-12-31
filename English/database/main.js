@@ -33,7 +33,7 @@ window.storiesData = {
             "cover": "🎵",
             "author": "Istories",
             "coverType": "emoji",
-            "sound": "../sounds/story4.mp3",
+            "sound": "../sounds/story2.mp3",
             "dictionaries": ["../Dictionarys/story2.json"],  // Note: capital D
             "content": [
                 "In a small village surrounded by beautiful mountains, there lived a young girl named Lily. She loved music more than anything in the world. Every day, she would sit by the river and listen to the sounds of nature.",

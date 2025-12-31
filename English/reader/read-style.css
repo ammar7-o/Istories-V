@@ -42,6 +42,7 @@ body {
     line-height: 1.6;
     min-height: 100vh;
 }
+
 /* Translation Styles */
 .help-icon {
     margin-left: 8px;
@@ -59,6 +60,10 @@ body {
     background: var(--background-light);
     border-radius: var(--radius);
     border-left: 3px solid var(--primary);
+}
+
+.logo img {
+    width: 2.5rem;
 }
 
 .example-code {
@@ -151,6 +156,7 @@ body.dark-mode .translation-example {
 body.dark-mode .translation-item {
     background: rgba(255, 255, 255, 0.03);
 }
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -340,13 +346,13 @@ header {
 .paragraph .mark {
     background: #ff7b0023;
     border-bottom: 2px dashed #ff7b00;
-  cursor: pointer;
-  
-  border-radius: 4px;
-  margin: 0 1px;
-  position: relative;
-  transition: all 0.2s ease;
-  display: inline-block;
+    cursor: pointer;
+
+    border-radius: 4px;
+    margin: 0 1px;
+    position: relative;
+    transition: all 0.2s ease;
+    display: inline-block;
 }
 
 .word {
@@ -471,9 +477,10 @@ header {
     gap: 10px;
     justify-content: center;
 }
-.dictionary-actions-buttom .btns{
+
+.dictionary-actions-buttom .btns {
     width: 48%;
-     background: var(--primary);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -488,8 +495,9 @@ header {
     transition: all 0.2s ease;
     cursor: pointer;
 }
-.dictionary-actions-buttom .btns:hover{
-        background: var(--primary-dark);
+
+.dictionary-actions-buttom .btns:hover {
+    background: var(--primary-dark);
 
 }
 
@@ -797,7 +805,8 @@ header {
 }
 
 #sound {
-    width: 50%;}
+    width: 50%;
+}
 
 /* تصميم متجاوب */
 @media (max-width: 768px) {
