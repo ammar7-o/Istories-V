@@ -776,7 +776,7 @@ const defaultColors = [
     { name: 'indigo', value: '#4f46e5' },
     { name: 'blue', value: '#4a6cf7' },
     { name: 'purple', value: '#7c4dff' },
-    { name: 'green', value: '#10b981' },
+    { name: 'green', value: '#008638' },
     { name: 'orange', value: '#ff5722' },
     { name: 'pink', value: '#e91e63' },
     { name: 'teal', value: '#009688' }
@@ -831,7 +831,7 @@ function initColorSelector() {
                     customColorPicker.value = color;
                 }
 
-                showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
+                // showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
             });
         });
     }
@@ -1004,7 +1004,7 @@ function toggleTheme() {
     applyTheme();
 
     // Show notification
-    showNotification(`Switched to ${newTheme} mode`, 'success');
+    // showNotification(`Switched to ${newTheme} mode`, 'success');
 }
 
 

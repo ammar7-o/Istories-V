@@ -5,8 +5,8 @@ let fontSize = 1.2; // rem
 let lineHeight = 1.8;
 let isAudioPlaying = false;
 let currentStory = null;
-let currentWordData = null; 
-let dictionary = {}; 
+let currentWordData = null;
+let dictionary = {};
 
 // DOM elements
 const storyTitle = document.getElementById('storyTitle');
@@ -32,7 +32,7 @@ const exportVocabularyBtn = document.getElementById('exportVocabulary');
 const vocabularyList = document.getElementById('vocabularyList');
 const navTabs = document.querySelectorAll('.nav-tab');
 const pages = document.querySelectorAll('.page');
-const googleSearchBtn = document.getElementById('googleSearchBtn'); 
+const googleSearchBtn = document.getElementById('googleSearchBtn');
 const listenWordBtn = document.getElementById('listenWordBtn');
 const removebtn = document.getElementById("removebtn");
 const sound = document.getElementById("sound");
@@ -48,7 +48,7 @@ function getStoryIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     const isUserStory = urlParams.get('userStory') === 'true';
-    
+
     return {
         id: id || '1',
         isUserStory: isUserStory
@@ -60,7 +60,7 @@ function getStoryIdFromUrl() {
  */
 function normalizeApostrophe(word) {
     // ترك الفاصلة العلوية كما هي (مثل ' و ’)
-    return word; 
+    return word;
 }
 
 // دالة لإزالة علامات التشكيل
@@ -96,8 +96,8 @@ function getNormalizedKey(word) {
  */
 function getAggressiveKey(word) {
     let key = word.toLowerCase();
-    key = removeAccents(key);       
-    key = key.replace(/-/g, '');    
+    key = removeAccents(key);
+    key = key.replace(/-/g, '');
     // ترك الفاصلة العلوية
     return key.trim();
 }
@@ -121,9 +121,9 @@ async function loadDictionary(dictionaryPaths) {
     if (!Array.isArray(dictionaryPaths)) {
         dictionaryPaths = dictionaryPaths ? [dictionaryPaths] : [];
     }
-    
-    dictionary = {}; 
-    
+
+    dictionary = {};
+
     if (dictionaryPaths.length === 0) {
         console.log('No dictionary paths provided.');
         return;
@@ -131,7 +131,7 @@ async function loadDictionary(dictionaryPaths) {
 
     try {
         const loadPromises = dictionaryPaths.map(async (path) => {
-            if (!path) return {}; 
+            if (!path) return {};
 
             try {
                 const response = await fetch(path);
@@ -139,7 +139,7 @@ async function loadDictionary(dictionaryPaths) {
                     throw new Error(`Failed to load dictionary: ${response.status} from ${path}`);
                 }
                 const dictContent = await response.json();
-                
+
                 console.log(`Loaded ${Object.keys(dictContent).length} words from: ${path}`);
                 return dictContent;
 
@@ -157,7 +157,7 @@ async function loadDictionary(dictionaryPaths) {
             for (const key in currentDict) {
                 if (currentDict.hasOwnProperty(key)) {
                     // إزالة الفراغات من المفتاح أثناء التحميل
-                    const trimmedKey = key.trim(); 
+                    const trimmedKey = key.trim();
                     trimmedDict[trimmedKey] = currentDict[key];
                 }
             }
@@ -169,7 +169,7 @@ async function loadDictionary(dictionaryPaths) {
     } catch (error) {
         console.error('Error during dictionary loading process:', error);
     }
-    
+
     if (Object.keys(dictionary).length === 0) {
         console.warn('No dictionaries loaded, using empty dictionary');
         dictionary = {};
@@ -182,20 +182,20 @@ function loadUserTranslations(storyId) {
     try {
         // Get user dictionaries from localStorage
         const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
-        
+
         // Check if this story has custom translations
         const customDictionary = userDictionaries[storyId];
-        
+
         if (customDictionary) {
             console.log(`Loading ${Object.keys(customDictionary).length} custom translations for story ${storyId}`);
-            
+
             let loadedCount = 0;
-            
+
             // Merge custom translations into main dictionary
             for (const [word, data] of Object.entries(customDictionary)) {
                 const standardKey = getStandardKey(word);
                 const normalizedKey = getNormalizedKey(word);
-                
+
                 if (typeof data === 'string') {
                     // If data is just a string translation
                     dictionary[standardKey] = {
@@ -218,7 +218,7 @@ function loadUserTranslations(storyId) {
                     loadedCount++;
                 }
             }
-            
+
             console.log(`Successfully loaded ${loadedCount} custom translations for story ${storyId}`);
             return loadedCount > 0;
         }
@@ -254,9 +254,9 @@ function addTranslationBadge() {
         gap: 8px;
         animation: slideIn 0.3s ease;
     `;
-    
+
     document.body.appendChild(badge);
-    
+
     // Remove after 5 seconds
     setTimeout(() => {
         if (badge.parentNode) {
@@ -275,7 +275,7 @@ async function loadStory() {
     try {
         storyTitle.textContent = 'Loading...';
         storyText.innerHTML = '<div class="loading" style="text-align: center; padding: 40px; color: var(--text-light);">Loading story...</div>';
-        
+
         const storyInfo = getStoryIdFromUrl();
         const storyId = storyInfo.id;
         const isUserStory = storyInfo.isUserStory;
@@ -288,19 +288,19 @@ async function loadStory() {
         if (isUserStory) {
             const userStories = getUserStories();
             currentStory = userStories.find(s => s.id === storyId);
-            
+
             if (currentStory) {
                 // First load custom translations if they exist
                 const hasCustomTranslations = loadUserTranslations(storyId);
-                
+
                 // Then load default dictionary
                 await loadDictionary(currentStory.dictionaries || ["../dictionarys/main.json"]);
-                
+
                 // Show translation badge if custom translations exist
                 if (hasCustomTranslations) {
                     setTimeout(addTranslationBadge, 1000);
                 }
-                
+
                 displayStory(currentStory);
                 return;
             }
@@ -330,7 +330,7 @@ async function loadStory() {
                     } catch (e) {
                         eval(mainMatch[0]);
                     }
-                    
+
                     const allStories = window.storiesData.stories || window.storiesData;
                     currentStory = allStories.find(s => s.id == storyId);
                     if (currentStory) {
@@ -357,7 +357,7 @@ async function loadStory() {
                     } catch (e) {
                         eval(moreMatch[0]);
                     }
-                    
+
                     const allStories = window.storiesData.stories || window.storiesData;
                     currentStory = allStories.find(s => s.id == storyId);
                     if (currentStory) {
@@ -405,10 +405,10 @@ function restoreReadingPosition() {
     const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
     const storyInfo = getStoryIdFromUrl();
 
-    if (savedPosition && 
-        savedPosition.id == storyInfo.id && 
+    if (savedPosition &&
+        savedPosition.id == storyInfo.id &&
         savedPosition.isUserStory === storyInfo.isUserStory) {
-        
+
         const checkContentLoaded = () => {
             if (document.readyState === 'complete' && storyText.innerHTML && !storyText.innerHTML.includes('loading')) {
                 window.scrollTo(0, savedPosition.scrollPosition);
@@ -432,7 +432,7 @@ function getFallbackStory(storyId) {
             title: "The Mysterious Island",
             level: "beginner",
             wordCount: 350,
-            dictionaries: ["../dictionarys/main.json"], 
+            dictionaries: ["../dictionarys/main.json"],
             content: [
                 "In the middle of the ocean, there was a small island. No one knew about this island because it was always hidden by fog. One day, a brave explorer named Leo discovered the island during his long journey.",
                 "The island had beautiful white beaches and tall palm trees. In the center of the island, there was an ancient temple. The temple walls were covered with mysterious symbols that told the story of the people who lived there long ago.",
@@ -464,7 +464,7 @@ function getFallbackStory(storyId) {
 
 function displayStory(story) {
     storyTitle.textContent = story.title;
-     if (!story.author == "") {
+    if (!story.author == "") {
         const badge = document.createElement('span');
         badge.className = 'user-story-badge';
         badge.innerHTML = `<i class="fas fa-user"></i> ${story.author}`;
@@ -497,7 +497,7 @@ function displayStory(story) {
     //     `;
     //     storyTitle.appendChild(badge);
     // }
-    
+
     storyText.innerHTML = '';
 
     // التحكم في الصوت حسب وجود src أو لا
@@ -543,80 +543,80 @@ function makeWordsClickable(htmlString, options = {}) {
 
     const skipTags = new Set(['SCRIPT', 'STYLE', 'CODE', 'PRE', 'TEXTAREA']);
 
-    
+
     /**
      * دالة للتحقق مما إذا كانت الكلمة لديها ترجمة في القاموس.
      */
-  // Update the hasTranslation function inside makeWordsClickable
-function hasTranslation(word) {
-    
-    // 1. المفتاح القياسي (يحافظ على الفاصلة الأصلية والتشكيل)
-    const standardKey = getStandardKey(word);
-    
-    // 2. المفتاح الموحد (يحافظ على الفاصلة الأصلية ويزيل التشكيل)
-    const normalizedKey = getNormalizedKey(word);
+    // Update the hasTranslation function inside makeWordsClickable
+    function hasTranslation(word) {
 
-    if (debug) console.log(`--- Checking: ${word} (Standard Key: ${standardKey}, Normalized Key: ${normalizedKey}) ---`);
+        // 1. المفتاح القياسي (يحافظ على الفاصلة الأصلية والتشكيل)
+        const standardKey = getStandardKey(word);
 
-    // --- أ. البحث بالمفتاح القياسي (الأولوية الأولى: l'océan) ---
-    if (dictionary[standardKey]) {
-        if (debug) console.log(`SUCCESS: Found match with STANDARD KEY: ${standardKey}`);
-        return true;
-    }
+        // 2. المفتاح الموحد (يحافظ على الفاصلة الأصلية ويزيل التشكيل)
+        const normalizedKey = getNormalizedKey(word);
 
-    // --- ب. البحث بالمفتاح الموحد (الأولوية الثانية: l'ocean) ---
-    if (standardKey !== normalizedKey && dictionary[normalizedKey]) {
-        if (debug) console.log(`SUCCESS: Found match with NORMALIZED KEY: ${normalizedKey}`);
-        return true;
-    }
+        if (debug) console.log(`--- Checking: ${word} (Standard Key: ${standardKey}, Normalized Key: ${normalizedKey}) ---`);
 
-    // --- ج. البحث في القواميس المخصصة ---
-    const storyInfo = getStoryIdFromUrl();
-    const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
-    const customDictionary = userDictionaries[storyInfo.id];
-    
-    if (customDictionary) {
-        // البحث في القاموس المخصص بالمفتاح القياسي
-        for (const [customWord, customData] of Object.entries(customDictionary)) {
-            if (getStandardKey(customWord) === standardKey) {
-                if (debug) console.log(`SUCCESS: Found match in CUSTOM DICTIONARY with STANDARD KEY: ${standardKey}`);
+        // --- أ. البحث بالمفتاح القياسي (الأولوية الأولى: l'océan) ---
+        if (dictionary[standardKey]) {
+            if (debug) console.log(`SUCCESS: Found match with STANDARD KEY: ${standardKey}`);
+            return true;
+        }
+
+        // --- ب. البحث بالمفتاح الموحد (الأولوية الثانية: l'ocean) ---
+        if (standardKey !== normalizedKey && dictionary[normalizedKey]) {
+            if (debug) console.log(`SUCCESS: Found match with NORMALIZED KEY: ${normalizedKey}`);
+            return true;
+        }
+
+        // --- ج. البحث في القواميس المخصصة ---
+        const storyInfo = getStoryIdFromUrl();
+        const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+        const customDictionary = userDictionaries[storyInfo.id];
+
+        if (customDictionary) {
+            // البحث في القاموس المخصص بالمفتاح القياسي
+            for (const [customWord, customData] of Object.entries(customDictionary)) {
+                if (getStandardKey(customWord) === standardKey) {
+                    if (debug) console.log(`SUCCESS: Found match in CUSTOM DICTIONARY with STANDARD KEY: ${standardKey}`);
+                    return true;
+                }
+            }
+
+            // البحث في القاموس المخصص بالمفتاح الموحد
+            for (const [customWord, customData] of Object.entries(customDictionary)) {
+                if (getNormalizedKey(customWord) === normalizedKey) {
+                    if (debug) console.log(`SUCCESS: Found match in CUSTOM DICTIONARY with NORMALIZED KEY: ${normalizedKey}`);
+                    return true;
+                }
+            }
+        }
+
+        // --- ت. معالجة صيغة الجمع/المفرد ---
+
+        const aggressiveKey = getAggressiveKey(word);
+
+        // الكلمة بدون 'es'
+        if (aggressiveKey.endsWith('es') && aggressiveKey.length > 2) {
+            const singularAggressive = aggressiveKey.slice(0, -2);
+            if (dictionary[singularAggressive]) {
+                if (debug) console.log(`SUCCESS: Found singular match (aggressive - es): ${singularAggressive}`);
                 return true;
             }
         }
-        
-        // البحث في القاموس المخصص بالمفتاح الموحد
-        for (const [customWord, customData] of Object.entries(customDictionary)) {
-            if (getNormalizedKey(customWord) === normalizedKey) {
-                if (debug) console.log(`SUCCESS: Found match in CUSTOM DICTIONARY with NORMALIZED KEY: ${normalizedKey}`);
+        // الكلمة بدون 's'
+        if (aggressiveKey.endsWith('s') && aggressiveKey.length > 1) {
+            const singularAggressive = aggressiveKey.slice(0, -1);
+            if (dictionary[singularAggressive]) {
+                if (debug) console.log(`SUCCESS: Found singular match (aggressive - s): ${singularAggressive}`);
                 return true;
             }
         }
+
+        if (debug) console.log(`FAILURE: No translation found for ${word}`);
+        return false;
     }
-
-    // --- ت. معالجة صيغة الجمع/المفرد ---
-    
-    const aggressiveKey = getAggressiveKey(word);
-
-    // الكلمة بدون 'es'
-    if (aggressiveKey.endsWith('es') && aggressiveKey.length > 2) {
-        const singularAggressive = aggressiveKey.slice(0, -2);
-        if (dictionary[singularAggressive]) {
-            if (debug) console.log(`SUCCESS: Found singular match (aggressive - es): ${singularAggressive}`);
-            return true;
-        }
-    } 
-    // الكلمة بدون 's'
-    if (aggressiveKey.endsWith('s') && aggressiveKey.length > 1) {
-         const singularAggressive = aggressiveKey.slice(0, -1);
-        if (dictionary[singularAggressive]) {
-            if (debug) console.log(`SUCCESS: Found singular match (aggressive - s): ${singularAggressive}`);
-            return true;
-        }
-    }
-
-    if (debug) console.log(`FAILURE: No translation found for ${word}`);
-    return false;
-}
 
     // دالة المعالجة الرئيسية (تستخدم Pre-order Traversal)
     function traverseAndWrap(node) {
@@ -628,24 +628,24 @@ function hasTranslation(word) {
             const text = node.nodeValue;
 
             const wrappedText = text.replace(wordPattern, (match) => {
-                
+
                 // جرد الكلمة المجلوبة من القصة مباشرة
-                const trimmedMatch = match.trim(); 
-                
+                const trimmedMatch = match.trim();
+
                 // نستخدم الكلمة المجرّدة (trimmedMatch) في البحث
                 const translationFound = hasTranslation(trimmedMatch);
-                
+
                 const className = translationFound ? 'word clickable-word' : 'word no-translation';
-                
+
                 // تخزين المفتاح القياسي للكلمة المجرّدة (يحافظ على الفاصلة الأصلية)
                 const keyToSave = getStandardKey(trimmedMatch);
-                
+
                 const safeMatch = keyToSave
-                                     .replace(/&/g, '&amp;')
-                                     .replace(/</g, '&lt;')
-                                     .replace(/>/g, '&gt;')
-                                     .replace(/"/g, '&quot;');
-                
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+
                 // نستخدم match الأصلية (غير المجرّدة) في النص للعرض
                 return `<span class="${className}" data-word="${safeMatch}">${match}</span>`;
             });
@@ -654,11 +654,11 @@ function hasTranslation(word) {
                 const fragment = document.createDocumentFragment();
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = wrappedText;
-                
+
                 while (tempDiv.firstChild) {
                     fragment.appendChild(tempDiv.firstChild);
                 }
-                
+
                 node.parentNode.replaceChild(fragment, node);
             }
         } else {
@@ -681,13 +681,13 @@ function hasTranslation(word) {
 function setupWordInteractions() {
     document.querySelectorAll('.word').forEach(word => {
         const dataWord = word.dataset.word;
-        
+
         // Check if this word is already saved and apply the saved class
         if (savedWords.some(w => w.word === dataWord)) {
             word.classList.add('saved');
             word.classList.remove('no-translation');
         }
-        
+
         word.addEventListener('click', (e) => {
             e.stopPropagation();
             showDictionary(dataWord, word);
@@ -705,19 +705,19 @@ function validateWordData(wordData) {
 // Update the showDictionary function to properly merge custom translations
 function showDictionary(word, element) {
     if (!word) return;
-    
+
     // First, check if we have user translations for this story
     const storyInfo = getStoryIdFromUrl();
     const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
     const customDictionary = userDictionaries[storyInfo.id];
-    
+
     let wordData = null;
-    
+
     // Check custom dictionary first (if it exists)
     if (customDictionary) {
         // Try to find the word in custom dictionary
         const customKeys = Object.keys(customDictionary);
-        
+
         // Try exact match first
         for (const key of customKeys) {
             if (getStandardKey(key) === getStandardKey(word)) {
@@ -732,7 +732,7 @@ function showDictionary(word, element) {
                 break;
             }
         }
-        
+
         // If not found in custom dictionary, try normalized key
         if (!wordData) {
             const normalizedWord = getNormalizedKey(word);
@@ -751,13 +751,13 @@ function showDictionary(word, element) {
             }
         }
     }
-    
+
     // If not found in custom dictionary, check main dictionary
     if (!wordData) {
         wordData = dictionary[word] || dictionary[getNormalizedKey(word)];
     }
 
-    popupWord.textContent = element.innerText; 
+    popupWord.textContent = element.innerText;
 
     if (listenWordBtn) {
         listenWordBtn.style.display = 'speechSynthesis' in window ? 'inline-block' : 'none';
@@ -768,7 +768,7 @@ function showDictionary(word, element) {
         popupPos.style.display = 'none';
         popupDefinition.style.display = 'none';
         popupExample.style.display = 'none';
-        
+
         // Add source indicator if it's a custom translation
         if (wordData.source === 'user_story') {
             popupTranslation.innerHTML += ' <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;"><i class="fas fa-user-edit"></i> Custom</span>';
@@ -830,14 +830,14 @@ function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
-    
+
     const colors = {
         success: 'rgb(13, 167, 116)',
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6'
     };
-    
+
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -883,11 +883,11 @@ function saveCurrentWord() {
     const isUserStory = currentStory ? currentStory.isUserStory : false;
 
     const newWord = {
-        word: word, 
-        originalWord: element.innerText, 
+        word: word,
+        originalWord: element.innerText,
         status: 'saved',
         added: new Date().toISOString(),
-        nextReview: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), 
+        nextReview: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         story: storyTitle,
         hasTranslation: hasTranslation,
         fromUserStory: isUserStory || false,
@@ -971,8 +971,8 @@ function renderVocabulary() {
     savedWords.forEach((word, index) => {
         const item = document.createElement('div');
         item.className = 'vocabulary-item';
-        
-        const displayWord = word.originalWord || word.word; 
+
+        const displayWord = word.originalWord || word.word;
 
         const translationBadge = !word.hasTranslation
             ? `<span class="no-translation-badge" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">No Translation</span>`
@@ -1027,11 +1027,11 @@ function renderVocabulary() {
 
 function markAsMastered(index) {
     if (index < 0 || index >= savedWords.length) return;
-    
+
     savedWords[index].status = 'mastered';
     savedWords[index].masteredDate = new Date().toISOString();
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    
+
     updateVocabularyStats();
     showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered!`, 'success');
     renderVocabulary();
@@ -1039,9 +1039,9 @@ function markAsMastered(index) {
 
 function deleteWord(index) {
     if (index < 0 || index >= savedWords.length) return;
-    
+
     const word = savedWords[index].originalWord || savedWords[index].word;
-    
+
     // Remove the word immediately without confirmation
     savedWords.splice(index, 1);
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
@@ -1053,94 +1053,94 @@ function deleteWord(index) {
 // copy button
 const copyBtn = document.getElementById("copy");
 if (copyBtn) {
-  copyBtn.addEventListener("click", copyStoryFast);
+    copyBtn.addEventListener("click", copyStoryFast);
 }
 
 function copyStoryFast() {
-  try {
-    // 1) نحاول جمع النص المعروض فعلاً داخل العنصر storyText
-    // هذا يأخذ فقط النص المرئي (بدون الوسوم HTML)
-    let text = "";
+    try {
+        // 1) نحاول جمع النص المعروض فعلاً داخل العنصر storyText
+        // هذا يأخذ فقط النص المرئي (بدون الوسوم HTML)
+        let text = "";
 
-    if (storyText) {
-      // أفضل: نأخذ كل فقرة مرئية (.paragraph) إن وُجدت لأنها تحافظ على الفقرات
-      const paras = storyText.querySelectorAll ? storyText.querySelectorAll('.paragraph') : null;
+        if (storyText) {
+            // أفضل: نأخذ كل فقرة مرئية (.paragraph) إن وُجدت لأنها تحافظ على الفقرات
+            const paras = storyText.querySelectorAll ? storyText.querySelectorAll('.paragraph') : null;
 
-      if (paras && paras.length) {
-        text = Array.from(paras).map(p => p.innerText.trim()).filter(Boolean).join('\n\n');
-      } else {
-        // fallback: نستخدم innerText الكامل من storyText
-        text = (storyText.innerText || storyText.textContent || "").trim();
-      }
+            if (paras && paras.length) {
+                text = Array.from(paras).map(p => p.innerText.trim()).filter(Boolean).join('\n\n');
+            } else {
+                // fallback: نستخدم innerText الكامل من storyText
+                text = (storyText.innerText || storyText.textContent || "").trim();
+            }
+        }
+
+        // 2) إذا النص فارغ، ننبّه المستخدم
+        if (!text) {
+            showNotification('No story to copy', 'error');
+            return;
+        }
+
+        // 3) نسخ باستخدام navigator.clipboard (أفضل)، مع fallback للمتصفحات القديمة
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                flashCopyUI();
+                showNotification('Story copied!', 'success');
+            }).catch(err => {
+                // إذا فشل، نجرّب fallback
+                fallbackCopyText(text);
+            });
+        } else {
+            fallbackCopyText(text);
+        }
+
+    } catch (err) {
+        console.error('copyStoryFast error:', err);
+        showNotification('Copy failed', 'error');
     }
-
-    // 2) إذا النص فارغ، ننبّه المستخدم
-    if (!text) {
-      showNotification('No story to copy', 'error');
-      return;
-    }
-
-    // 3) نسخ باستخدام navigator.clipboard (أفضل)، مع fallback للمتصفحات القديمة
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => {
-        flashCopyUI();
-        showNotification('Story copied!', 'success');
-      }).catch(err => {
-        // إذا فشل، نجرّب fallback
-        fallbackCopyText(text);
-      });
-    } else {
-      fallbackCopyText(text);
-    }
-
-  } catch (err) {
-    console.error('copyStoryFast error:', err);
-    showNotification('Copy failed', 'error');
-  }
 }
 
 function fallbackCopyText(text) {
-  try {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    // ensure offscreen and not focusable
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    textarea.style.top = '0';
-    textarea.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        // ensure offscreen and not focusable
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
 
-    const ok = document.execCommand('copy');
-    document.body.removeChild(textarea);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
 
-    if (ok) {
-      flashCopyUI();
-      showNotification('Story copied!', 'success');
-    } else {
-      throw new Error('execCommand returned false');
+        if (ok) {
+            flashCopyUI();
+            showNotification('Story copied!', 'success');
+        } else {
+            throw new Error('execCommand returned false');
+        }
+    } catch (e) {
+        console.error('fallbackCopyText failed', e);
+        showNotification('Copy failed', 'error');
     }
-  } catch (e) {
-    console.error('fallbackCopyText failed', e);
-    showNotification('Copy failed', 'error');
-  }
 }
 
 // تلميح بصري للزر بعد النسخ
 function flashCopyUI() {
-  const btn = document.getElementById('copy');
-  if (!btn) return;
-  const originalHTML = btn.innerHTML;
-  const originalTitle = btn.title;
-  btn.innerHTML = '<i class="fas fa-check"></i>';
-  btn.title = 'Copied!';
-  btn.style.color = 'rgb(13, 167, 116)';
-  setTimeout(() => {
-    btn.innerHTML = originalHTML;
-    btn.title = originalTitle;
-    btn.style.color = '';
-  }, 1400);
+    const btn = document.getElementById('copy');
+    if (!btn) return;
+    const originalHTML = btn.innerHTML;
+    const originalTitle = btn.title;
+    btn.innerHTML = '<i class="fas fa-check"></i>';
+    btn.title = 'Copied!';
+    btn.style.color = 'rgb(13, 167, 116)';
+    setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.title = originalTitle;
+        btn.style.color = '';
+    }, 1400);
 }
 
 function removeAll() {
@@ -1148,10 +1148,10 @@ function removeAll() {
         showNotification('No words to remove!', 'info');
         return;
     }
-    
+
     const confirmed = window.confirm(`Are you sure you want to remove all ${savedWords.length} saved words? This action cannot be undone.`);
 
-    if (!confirmed) return; 
+    if (!confirmed) return;
 
     localStorage.setItem('savedWords', JSON.stringify([]));
     savedWords = [];
@@ -1171,12 +1171,12 @@ function exportVocabulary() {
     const headers = ['Word', 'Original Word (if different)', 'Translation', 'Status', 'Story', 'Date Added', 'From User Story'];
 
     const csvRows = [
-        headers.join(','), 
+        headers.join(','),
         ...savedWords.map(word => {
             return [
                 `"${word.word || ''}"`,
                 `"${(word.originalWord || '').replace(/"/g, '""')}"`,
-                `"${(word.translation || '').replace(/"/g, '""')}"`, 
+                `"${(word.translation || '').replace(/"/g, '""')}"`,
                 `"${word.status || ''}"`,
                 `"${(word.story || '').replace(/"/g, '""')}"`,
                 `"${word.added ? new Date(word.added).toLocaleDateString('en-US') : ''}"`,
@@ -1301,16 +1301,16 @@ function stopAudio() {
 
 function listenToWord() {
     if (!currentWordData || !currentWordData.element) return;
-    
+
     if ('speechSynthesis' in window) {
         speechSynthesis.cancel();
     }
-    
+
     const wordToSpeak = currentWordData.element.innerText.trim();
     const utterance = new SpeechSynthesisUtterance(wordToSpeak);
-    
-    utterance.rate = 0.8; 
-    
+
+    utterance.rate = 0.8;
+
     speechSynthesis.speak(utterance);
 }
 
@@ -1323,7 +1323,7 @@ function searchOnGoogle() {
 
     const wordToSearch = currentWordData.element.innerText.trim();
     const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(wordToSearch)}+meaning`;
-    
+
     window.open(googleSearchUrl, '_blank');
     hideDictionary();
 }
@@ -1368,11 +1368,11 @@ function switchPage(page) {
 function cleanup() {
     window.removeEventListener('scroll', saveReadingPosition);
     window.removeEventListener('beforeunload', saveReadingPosition);
-    
+
     if ('speechSynthesis' in window) {
         speechSynthesis.cancel();
     }
-    
+
     document.removeEventListener('click', hideDictionary);
 }
 
@@ -1392,8 +1392,8 @@ function setupEventListeners() {
     if (modalOverlay) modalOverlay.addEventListener('click', hideDictionary);
     if (backToHome) backToHome.addEventListener('click', () => window.location.href = '../index.html');
     if (exportVocabularyBtn) exportVocabularyBtn.addEventListener('click', exportVocabulary);
-    
-    if (googleSearchBtn) googleSearchBtn.addEventListener('click', searchOnGoogle); 
+
+    if (googleSearchBtn) googleSearchBtn.addEventListener('click', searchOnGoogle);
     if (listenWordBtn) listenWordBtn.addEventListener('click', listenToWord);
     if (removebtn) removebtn.addEventListener("click", removeAll);
     if (googleTranslateBtn) googleTranslateBtn.addEventListener('click', translateOnGoogle);
@@ -1421,7 +1421,7 @@ function setupEventListeners() {
             speechSynthesis.cancel();
         }
     });
-    
+
     window.addEventListener('beforeunload', cleanup);
 }
 
@@ -1516,26 +1516,41 @@ document.head.appendChild(style);
 
 async function init() {
     try {
-        // Apply theme first
+        // STEP 1: Apply saved theme FIRST (this sets dark/light mode)
+        console.log('Step 1: Applying theme...');
         applyTheme();
-        
+
+        // STEP 2: Apply saved primary color immediately
+        console.log('Step 2: Applying saved color:', selectedColor);
+        if (selectedColor) {
+            // Apply immediately without delay
+            applyPrimaryColor(selectedColor);
+        }
+
+        // STEP 3: Initialize color selector (this sets up click handlers)
+        console.log('Step 3: Initializing color selector...');
+        // Add a small delay to ensure DOM is fully loaded
+        setTimeout(() => {
+            initColorSelector();
+        }, 50);
+
         // Setup event listeners after DOM is ready
         setTimeout(() => {
             setupEventListeners();
         }, 100);
-        
+
         // Load story
         await loadStory();
-        
+
         // Update stats and render vocabulary
         updateVocabularyStats();
         renderVocabulary();
-        
+
         // Restore reading position after a short delay
         setTimeout(() => {
             restoreReadingPosition();
         }, 200);
-        
+
     } catch (error) {
         console.error('Error during initialization:', error);
         showNotification('Failed to initialize application', 'error');

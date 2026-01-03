@@ -15,7 +15,7 @@
 }
 
 .dark-mode {
-    --primary: #6366f1;
+
     --primary-dark: #4f46e5;
     --secondary: #10b981;
     --accent: #f59e0b;
@@ -186,14 +186,30 @@ header {
     gap: 10px;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary);
+    color: black;
     text-decoration: none;
+}
+
+.dark-mode .logo {
+    color: white;
 }
 
 .logo i {
     font-size: 1.8rem;
 }
 
+
+/* With custom colors */
+.title {
+    -webkit-text-stroke: 0.3px #333;
+    color: white;
+}
+
+/* Dark mode specific */
+.dark-mode .title {
+    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.5);
+    color: white;
+}
 .header-actions {
     display: flex;
     align-items: center;

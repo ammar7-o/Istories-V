@@ -338,7 +338,132 @@ nav a.active {
     align-items: center;
     justify-content: center;
 }
+/* Story Action Buttons */
+.story-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
 
+.story-action-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.story-action-btn.open-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.story-action-btn.open-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.story-action-btn.download-btn {
+    background: var(--secondary);
+    color: white;
+}
+
+.story-action-btn.download-btn:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--secondary-rgb), 0.3);
+}
+
+/* Story Excerpt */
+.story-excerpt {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 10px 0 15px;
+    min-height: 60px;
+}
+
+/* User Story Badge */
+.user-story-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--success-light);
+    color: var(--success);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    margin-left: 8px;
+    cursor: help;
+}
+
+/* Loading state for download button */
+.download-btn.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.download-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive design for buttons */
+@media (max-width: 768px) {
+    .story-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .story-action-btn {
+        width: 100%;
+        padding: 12px 15px;
+    }
+    
+    .story-excerpt {
+        min-height: 50px;
+    }
+}
+
+/* Search highlight */
+.search-highlight {
+    background-color: rgba(var(--primary-rgb), 0.2);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* No results */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
 .settings-btn:hover {
     background-color: #2c2c2c;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
