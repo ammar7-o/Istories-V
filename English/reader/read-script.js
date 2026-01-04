@@ -926,7 +926,7 @@ function saveCurrentWord() {
         ? `"${element.innerText}" saved to vocabulary from "${storyTitle}" (${translationSource})!`
         : `"${element.innerText}" saved to vocabulary from "${storyTitle}" (translation will be added later)`;
 
-    showNotification(message, hasTranslation ? 'success' : 'warning');
+    // showNotification(message, hasTranslation ? 'success' : 'warning');
 }
 
 function translateOnGoogle() {

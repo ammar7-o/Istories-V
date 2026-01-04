@@ -2,7 +2,6 @@
 
 let currentPage = 'home';
 let currentStory = null;
-let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
 let stories = []; // Will be loaded from external file
 let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
 
@@ -11,39 +10,20 @@ let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
 let userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
 let currentEditIndex = -1; // For editing stories
 
-// Store current word for saving
-let currentWordData = null;
-
-// Dictionary fallback
-let dictionary = window.dictionary || {};
-
 // ========= DOM Elements ==========
 const pages = document.querySelectorAll('.page');
 const navLinks = document.querySelectorAll('.nav-link');
 const levelBtns = document.querySelectorAll('.level-btn');
 const storiesGrid = document.getElementById('storiesGrid');
-const storyText = document.getElementById('storyText');
-const dictionaryPopup = document.getElementById('dictionaryPopup');
-const vocabularyList = document.getElementById('vocabularyList');
-const backToStories = document.getElementById('backToStories');
-const fontSmaller = document.getElementById('fontSmaller');
-const fontNormal = document.getElementById('fontNormal');
-const fontLarger = document.getElementById('fontLarger');
-const lineSpacingBtn = document.getElementById('lineSpacing');
-const listenBtn = document.getElementById('listenBtn');
-const saveWordBtn = document.getElementById('saveWordBtn');
-const closePopup = document.getElementById('closePopup');
-const searchForm = document.getElementById('search-form');
-const searchInput = searchForm ? searchForm.querySelector('.search-input') : null;
-const searchBtn = document.getElementById('search-btn');
 const toggleNav = document.getElementById("toggle-nav");
 const more = document.getElementById("more");
-let isMenuOpen = false;
 const themeToggle = document.getElementById('themeToggle');
 const settingsButton = document.getElementById("settings-button");
 const settingsPage = document.getElementById("settings-page");
 const closeSettings = document.getElementById("close-settings");
 const settingsOverlay = document.getElementById("settings-overlay");
+const searchForm = document.getElementById('search-form');
+const searchInput = searchForm ? searchForm.querySelector('.search-input') : null;
 
 // Color variables
 const defaultColors = [
@@ -94,17 +74,11 @@ function init() {
     try {
         const storedStories = localStorage.getItem('userStories');
         const storedDictionaries = localStorage.getItem('userDictionaries');
-        
+
         if (storedStories) {
             userStories = JSON.parse(storedStories);
-            // Add user stories to main stories array
-            userStories.forEach(story => {
-                if (!stories.some(s => s.id === story.id)) {
-                    stories.push(story);
-                }
-            });
         }
-        
+
         if (storedDictionaries) {
             userDictionaries = JSON.parse(storedDictionaries);
         }
@@ -134,14 +108,6 @@ function init() {
     console.log('Step 4: Rendering UI...');
     renderStories();
     setupSearch();
-    
-    if (typeof renderVocabulary === 'function') {
-        renderVocabulary();
-    }
-    
-    if (typeof updateStats === 'function') {
-        updateStats();
-    }
 
     // STEP 5: Initialize Add Stories if on that page
     if (document.getElementById('addStories')) {
@@ -149,20 +115,16 @@ function init() {
         initAddStories();
     }
 
-    // STEP 6: Initialize flashcards
-    console.log('Step 6: Initializing flashcards...');
-    if (typeof initFlashcards === 'function') {
-        initFlashcards();
-    }
-
-    // STEP 7: Set up event listeners
-    console.log('Step 7: Setting up event listeners...');
+    // STEP 6: Set up navigation and event listeners
+    console.log('Step 6: Setting up navigation and event listeners...');
+ 
+        setupNavToggle();
+    
     setupEventListeners();
-    setupNavToggle();
     setupSettings();
 
-    // STEP 8: Verify everything is set up correctly
-    console.log('Step 8: Final verification...');
+    // STEP 7: Verify everything is set up correctly
+    console.log('Step 7: Final verification...');
     setTimeout(() => {
         verifyColorSetup();
     }, 200);
@@ -337,12 +299,16 @@ function applyTheme() {
 
 // ========= Story Display Functions ==========
 function renderStories(level = 'all') {
+    if (!storiesGrid) return;
+
     storiesGrid.innerHTML = '';
 
     let filteredStories;
 
     if (level === 'all') {
         filteredStories = stories;
+    } else if (level === 'user') {
+        filteredStories = userStories; // Show only user stories
     } else {
         // Filter by level (beginner, intermediate, advanced)
         filteredStories = stories.filter(story => story.level === level);
@@ -361,11 +327,10 @@ function renderStories(level = 'all') {
     filteredStories.forEach(story => {
         const storyCard = document.createElement('div');
         storyCard.className = 'story-card';
-        // Use title as identifier since there's no ID
         storyCard.dataset.storyTitle = story.title;
 
-        // Check if story is already saved
-        const isSaved = userStories.some(savedStory => 
+        // Check if story is already saved (only for non-user stories)
+        const isSaved = !story.isUserStory && userStories.some(savedStory =>
             savedStory.title.toLowerCase() === story.title.toLowerCase()
         );
 
@@ -373,6 +338,9 @@ function renderStories(level = 'all') {
         const authorHTML = story.author && story.author.trim() !== ""
             ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
             : '';
+
+        // Check if it's a user story
+        const isUserStory = story.isUserStory;
 
         storyCard.innerHTML = `
             <div class="story-image">
@@ -382,7 +350,7 @@ function renderStories(level = 'all') {
             <div class="story-content">
                 <div class="story-header">
                     <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                    
+                    ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
                 </div>
                 <h3 class="story-title">${story.title}</h3>
                 <div class="story-meta">
@@ -392,9 +360,11 @@ function renderStories(level = 'all') {
                 
                 <!-- Action Buttons - Save button and Download button -->
                 <div class="story-actions">
-                    <button class="story-action-btn save-story-btn" data-story-title="${story.title}" ${isSaved ? 'disabled' : ''}>
-                        <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save Story'}
-                    </button>
+                    ${!isUserStory ? `
+                        <button class="story-action-btn save-story-btn" data-story-title="${story.title}" ${isSaved ? 'disabled' : ''}>
+                            <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save Story'}
+                        </button>
+                    ` : ''}
                     <button class="story-action-btn download-btn" data-story-title="${story.title}">
                         <i class="fas fa-download"></i> Download
                     </button>
@@ -418,8 +388,7 @@ function renderStories(level = 'all') {
             downloadBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                console.log('Download button clicked for story:', story.title);
-                downloadStory(story.title);
+                downloadStory(story.title, isUserStory);
             });
         }
 
@@ -430,15 +399,15 @@ function renderStories(level = 'all') {
 // Function to save story to user stories
 function saveStoryToUserStories(story) {
     // Check if story already exists in user stories
-    const alreadyExists = userStories.some(savedStory => 
+    const alreadyExists = userStories.some(savedStory =>
         savedStory.title.toLowerCase() === story.title.toLowerCase()
     );
-    
+
     if (alreadyExists) {
         showNotification('This story is already saved!', 'warning');
         return;
     }
-    
+
     // Create a copy of the story for user stories
     const storyToSave = {
         ...story,
@@ -447,28 +416,31 @@ function saveStoryToUserStories(story) {
         savedDate: new Date().toISOString(),
         originalSource: story.isUserStory ? 'user' : 'external'
     };
-    
+
     // Add to user stories
     userStories.push(storyToSave);
-    
+
+    // If the story has translations, save them to userDictionaries
+    if (story.translations && Object.keys(story.translations).length > 0) {
+        userDictionaries[storyToSave.id] = story.translations;
+        // Save userDictionaries to localStorage
+        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+        console.log(`Saved ${Object.keys(story.translations).length} translations for story: ${story.title}`);
+    }
+
     // Save to localStorage
     localStorage.setItem('userStories', JSON.stringify(userStories));
-    
+
     // Update UI
     renderStories();
-    
-    // Show success notification
-    showNotification(`"${story.title}" saved to your stories!`, 'success');
-}
 
-function getStoryExcerpt(story) {
-    if (Array.isArray(story.content) && story.content.length > 0) {
-        const firstPara = story.content[0];
-        // Remove HTML tags if any
-        const cleanText = firstPara.replace(/<[^>]*>/g, '');
-        return cleanText.substring(0, 150) + (cleanText.length > 150 ? '...' : '');
+    // Show success notification
+    const translationCount = story.translations ? Object.keys(story.translations).length : 0;
+    if (translationCount > 0) {
+        showNotification(`"${story.title}" saved to your stories with ${translationCount} translation${translationCount !== 1 ? 's' : ''}!`, 'success');
+    } else {
+        showNotification(`"${story.title}" saved to your stories!`, 'success');
     }
-    return story.description || 'Read this interesting story...';
 }
 
 function renderStoryCover(story) {
@@ -490,37 +462,31 @@ function renderStoryCover(story) {
 }
 
 // ========= Download Functions ==========
-function downloadStory(storyTitle) {
+function downloadStory(storyTitle, isUserStory = false) {
     console.log('Downloading story with title:', storyTitle);
-    
-    // First try to find the story in userStories by title
-    let story = userStories.find(s => {
-        console.log('Checking user story:', s.title, 'vs', storyTitle);
-        return s.title.toLowerCase() === storyTitle.toLowerCase();
-    });
-    
-    // If not found in userStories, try the main stories array
-    if (!story) {
-        story = stories.find(s => {
-            console.log('Checking main story:', s.title, 'vs', storyTitle);
-            return s.title.toLowerCase() === storyTitle.toLowerCase();
-        });
+
+    let story;
+
+    if (isUserStory) {
+        // Find in userStories
+        story = userStories.find(s => s.title.toLowerCase() === storyTitle.toLowerCase());
+    } else {
+        // Find in main stories array
+        story = stories.find(s => s.title.toLowerCase() === storyTitle.toLowerCase());
     }
-    
+
     if (!story) {
         console.error('Story not found! Title:', storyTitle);
-        console.log('Available user stories:', userStories.map(s => s.title));
-        console.log('Available main stories:', stories.map(s => s.title));
         showNotification('Story not found!', 'error');
         return;
     }
-    
+
     console.log('Found story:', story.title);
 
     // Find the download button
     const downloadBtn = document.querySelector(`.download-btn[data-story-title="${story.title}"]`);
     const originalText = downloadBtn ? downloadBtn.innerHTML : '';
-    
+
     // Add loading state
     if (downloadBtn) {
         downloadBtn.classList.add('loading');
@@ -529,6 +495,14 @@ function downloadStory(storyTitle) {
     }
 
     try {
+        // Get translations for this story
+        let translations = {};
+        if (isUserStory && userDictionaries[story.id]) {
+            translations = userDictionaries[story.id];
+        } else if (story.translations) {
+            translations = story.translations;
+        }
+
         // Prepare the story object for download
         const storyForDownload = {
             // Generate a unique ID if none exists
@@ -540,8 +514,8 @@ function downloadStory(storyTitle) {
             content: story.content,
             author: story.author || '',
             wordCount: story.wordCount || calculateWordCount(story.content),
-            // Include translations for user stories
-            ...(story.isUserStory && userDictionaries[story.title] && { translations: userDictionaries[story.title] }),
+            // Include translations if they exist
+            ...(Object.keys(translations).length > 0 && { translations: translations }),
             // Metadata
             exportedDate: new Date().toISOString(),
             exportedFrom: "IStories",
@@ -550,43 +524,48 @@ function downloadStory(storyTitle) {
 
         // Convert to JSON string
         const jsonString = JSON.stringify(storyForDownload, null, 2);
-        
+
         // Create a Blob with the JSON data
         const blob = new Blob([jsonString], { type: 'application/json' });
-        
+
         // Create download URL
         const url = URL.createObjectURL(blob);
-        
+
         // Create download link
         const a = document.createElement('a');
         a.href = url;
-        
+
         // Create filename from story title
         const sanitizedTitle = story.title
             .toLowerCase()
             .replace(/[^a-z0-9\s\-_]/g, '')
             .replace(/\s+/g, '-')
             .trim();
-        
+
         const date = new Date().toISOString().split('T')[0];
         a.download = `istories-${sanitizedTitle}-${date}.json`;
-        
+
         // Trigger download
         document.body.appendChild(a);
         a.click();
-        
+
         // Clean up
         setTimeout(() => {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }, 100);
-        
+
         // Show success notification
-        showNotification(`"${story.title}" downloaded successfully!`, 'success');
-        
+        const translationCount = Object.keys(translations).length;
+        if (translationCount > 0) {
+            showNotification(`"${story.title}" downloaded with ${translationCount} translation${translationCount !== 1 ? 's' : ''}!`, 'success');
+        } else {
+            showNotification(`"${story.title}" downloaded successfully!`, 'success');
+        }
+
         // Track download
         trackDownload(story.title);
-        
+
     } catch (error) {
         console.error('Error downloading story:', error);
         showNotification('Failed to download story. Please try again.', 'error');
@@ -601,6 +580,7 @@ function downloadStory(storyTitle) {
         }
     }
 }
+
 function calculateWordCount(content) {
     if (!content || !Array.isArray(content)) return 0;
     return content.join(' ').split(/\s+/).length;
@@ -612,18 +592,18 @@ function trackDownload(storyId) {
             totalDownloads: 0,
             downloads: {}
         };
-        
+
         downloadStats.totalDownloads = (downloadStats.totalDownloads || 0) + 1;
-        
+
         // Track per story
         if (!downloadStats.downloads[storyId]) {
             downloadStats.downloads[storyId] = 0;
         }
         downloadStats.downloads[storyId]++;
-        
+
         // Save last download date
         downloadStats.lastDownload = new Date().toISOString();
-        
+
         localStorage.setItem('downloadStats', JSON.stringify(downloadStats));
     } catch (error) {
         console.error('Error tracking download:', error);
@@ -652,8 +632,9 @@ function filterStoriesBySearch(query) {
     });
 }
 
-
 function displayFilteredStories(filteredStories, query) {
+    if (!storiesGrid) return;
+
     storiesGrid.innerHTML = '';
 
     if (filteredStories.length === 0) {
@@ -672,16 +653,18 @@ function displayFilteredStories(filteredStories, query) {
         storyCard.className = 'story-card';
         storyCard.dataset.storyTitle = story.title;
 
-        // Check if story is already saved
-        const isSaved = userStories.some(savedStory => 
+        // Check if story is already saved (only for non-user stories)
+        const isSaved = !story.isUserStory && userStories.some(savedStory =>
             savedStory.title.toLowerCase() === story.title.toLowerCase()
         );
 
         const highlightedTitle = highlightSearchMatch(story.title, query);
 
-        const authorHTML = story.author && story.author.trim() !== "" 
+        const authorHTML = story.author && story.author.trim() !== ""
             ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
             : '';
+
+        const isUserStory = story.isUserStory;
 
         storyCard.innerHTML = `
             <div class="story-image">
@@ -690,6 +673,7 @@ function displayFilteredStories(filteredStories, query) {
             </div>
             <div class="story-content">
                 <span class="story-level ${story.level}">${story.level}</span>
+                ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
                 <h3 class="story-title">${highlightedTitle}</h3>
                 <div class="story-meta">
                     <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
@@ -698,9 +682,11 @@ function displayFilteredStories(filteredStories, query) {
                 
                 <!-- Action Buttons for search results -->
                 <div class="story-actions">
-                    <button class="story-action-btn save-story-btn" data-story-title="${story.title}" ${isSaved ? 'disabled' : ''}>
-                        <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save Story'}
-                    </button>
+                    ${!isUserStory ? `
+                        <button class="story-action-btn save-story-btn" data-story-title="${story.title}" ${isSaved ? 'disabled' : ''}>
+                            <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save Story'}
+                        </button>
+                    ` : ''}
                     <button class="story-action-btn download-btn" data-story-title="${story.title}">
                         <i class="fas fa-download"></i> Download
                     </button>
@@ -724,7 +710,7 @@ function displayFilteredStories(filteredStories, query) {
             downloadBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                downloadStory(story.title);
+                downloadStory(story.title, isUserStory);
             });
         }
 
@@ -789,7 +775,7 @@ function performSearch() {
 function switchPage(page) {
     currentPage = page;
     pages.forEach(p => p.classList.remove('active'));
-    
+
     // Show the requested page
     const pageElement = document.getElementById(page);
     if (pageElement) {
@@ -804,66 +790,44 @@ function switchPage(page) {
         }
     });
 
-    // Refresh flashcards when switching to flashcards page
-    if (page === 'flashcards') {
-        if (typeof loadFlashcards === 'function') {
-            loadFlashcards();
-        }
-    }
-
     // Load user stories when switching to addStories page
     if (page === 'addStories') {
-        if (typeof loadUserStories === 'function') {
-            loadUserStories();
-        }
+        loadUserStories();
     }
 }
 
 // ========= Navigation Toggle ==========
-// ========= Navigation Toggle ==========
 function setupNavToggle() {
     console.log('Setting up navigation toggle...');
-    
-    // Check if elements exist
-    if (!toggleNav || !more) {
-        console.error('Navigation elements not found!');
-        console.log('toggleNav exists:', !!toggleNav);
-        console.log('more exists:', !!more);
-        return;
-    }
 
-    console.log('Navigation elements found, setting up listeners...');
+   
+    
+    console.log('Navigation elements found');
 
     // Toggle menu
     toggleNav.addEventListener("click", function (e) {
-        e.stopPropagation();
+        e.stopPropagation(); // Prevent event bubbling
         e.preventDefault();
-        isMenuOpen = !isMenuOpen;
-        more.classList.toggle("open");
-        console.log('Menu toggled, isOpen:', isMenuOpen);
+
+        console.log('Toggle clicked, current class:', more.classList.contains('open'));
+        
+        // Simply toggle the "open" class
+        more.classList.add("open");
+        
+        console.log('After toggle, class:', more.classList.contains('open'));
     });
 
     // Close menu when clicking anywhere
     document.addEventListener("click", function (e) {
-        if (isMenuOpen && !more.contains(e.target) && e.target !== toggleNav) {
+        // Only close if the click is NOT on the toggle button or inside the menu
+        if (!more.contains(e.target) && e.target !== toggleNav) {
             more.classList.remove("open");
-            isMenuOpen = false;
-            console.log('Menu closed by click outside');
         }
     });
 
-    // Prevent closing when clicking inside the menu
+    // Prevent menu from closing when clicking inside it
     more.addEventListener("click", function (e) {
         e.stopPropagation();
-    });
-
-    // Close menu on Escape key
-    document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && isMenuOpen) {
-            more.classList.remove("open");
-            isMenuOpen = false;
-            console.log('Menu closed by Escape key');
-        }
     });
 
     // Close menu when clicking on any <a> inside the menu
@@ -871,8 +835,6 @@ function setupNavToggle() {
     links.forEach(link => {
         link.addEventListener("click", function () {
             more.classList.remove("open");
-            isMenuOpen = false;
-            console.log('Menu closed by link click');
         });
     });
 }
@@ -880,14 +842,10 @@ function setupNavToggle() {
 // ========= Settings Functions ==========
 function setupSettings() {
     console.log('Setting up settings...');
-    
+
     // Check if elements exist
     if (!settingsButton || !settingsPage || !closeSettings || !settingsOverlay) {
         console.error('Settings elements not found!');
-        console.log('settingsButton exists:', !!settingsButton);
-        console.log('settingsPage exists:', !!settingsPage);
-        console.log('closeSettings exists:', !!closeSettings);
-        console.log('settingsOverlay exists:', !!settingsOverlay);
         return;
     }
 
@@ -896,9 +854,8 @@ function setupSettings() {
     settingsButton.addEventListener("click", function (e) {
         e.stopPropagation();
         e.preventDefault();
-        settingsPage.classList.toggle("open");
+        settingsPage.classList.add("open");
         settingsOverlay.classList.add("active");
-        console.log('Settings toggled');
     });
 
     closeSettings.addEventListener("click", function (e) {
@@ -906,7 +863,6 @@ function setupSettings() {
         e.preventDefault();
         settingsPage.classList.remove("open");
         settingsOverlay.classList.remove("active");
-        console.log('Settings closed');
     });
 
     // Close settings when clicking on overlay
@@ -915,7 +871,6 @@ function setupSettings() {
         e.preventDefault();
         settingsPage.classList.remove("open");
         settingsOverlay.classList.remove("active");
-        console.log('Settings closed by overlay click');
     });
 
     // Close settings with Escape key
@@ -923,23 +878,7 @@ function setupSettings() {
         if (e.key === "Escape" && settingsPage.classList.contains("open")) {
             settingsPage.classList.remove("open");
             settingsOverlay.classList.remove("active");
-            console.log('Settings closed by Escape key');
         }
-    });
-}
-
-// ========= Settings Functions ==========
-function setupSettings() {
-    if (!settingsButton || !settingsPage || !closeSettings || !settingsOverlay) return;
-
-    settingsButton.addEventListener("click", function () {
-        settingsPage.classList.toggle("open");
-        settingsOverlay.classList.add("active");
-    });
-
-    closeSettings.addEventListener("click", function () {
-        settingsPage.classList.remove("open");
-        settingsOverlay.classList.remove("active");
     });
 }
 
@@ -1166,7 +1105,10 @@ function loadUserStories() {
         const storyItem = document.createElement('div');
         storyItem.className = 'story-item';
 
-        const translationBadge = story.hasTranslations
+        // Check if this story has translations in userDictionaries
+        const hasTranslations = userDictionaries[story.id] && Object.keys(userDictionaries[story.id]).length > 0;
+
+        const translationBadge = hasTranslations
             ? '<span class="translation-badge" title="Has custom translations"><i class="fas fa-language"></i></span>'
             : '';
 
@@ -1253,15 +1195,14 @@ function loadUserStories() {
 // ========= Helper Functions for Add Stories ==========
 function openUserStoryInReader(storyId) {
     // Find the story
-    const story = userStories.find(s => s.id === storyId) ||
-        stories.find(s => s.id === storyId);
+    const story = userStories.find(s => s.id === storyId);
 
     if (!story) {
         showNotification('Story not found.', 'error');
         return;
     }
 
-    // Get translations for this story
+    // Get translations for this story from userDictionaries
     const translations = userDictionaries[storyId] || {};
 
     // Store story data in localStorage for the reader
@@ -1291,7 +1232,7 @@ function shareStoryAsJson(index) {
     const story = userStories[index];
     const storyId = story.id;
 
-    // Get translations for this story
+    // Get translations for this story from userDictionaries
     const translations = userDictionaries[storyId] || {};
 
     // Prepare the complete story object for export
@@ -1340,7 +1281,12 @@ function shareStoryAsJson(index) {
     URL.revokeObjectURL(url);
 
     // Show notification
-    showNotification(`"${story.title}" exported as JSON file!`, 'success');
+    const translationCount = Object.keys(translations).length;
+    if (translationCount > 0) {
+        showNotification(`"${story.title}" exported with ${translationCount} translation${translationCount !== 1 ? 's' : ''}!`, 'success');
+    } else {
+        showNotification(`"${story.title}" exported as JSON file!`, 'success');
+    }
 }
 
 function openEditStoryModal(index) {
@@ -1366,7 +1312,7 @@ function openEditStoryModal(index) {
         editStoryContent.value = Array.isArray(story.content) ? story.content.join('\n') : story.content || '';
     }
 
-    // Fill translations
+    // Fill translations from userDictionaries
     const editStoryTranslations = document.getElementById('editStoryTranslations');
     if (editStoryTranslations) {
         const storyId = story.id;
@@ -1445,21 +1391,16 @@ function handleEditStorySubmit(e) {
         cover: cover || (coverType === 'emoji' ? '📚' : 'fas fa-book'),
         content,
         wordCount,
-        hasTranslations: translationsText.trim() !== '',
         uploadDate: new Date().toISOString()
     };
 
-    // Update in main stories array
-    const storyIndex = stories.findIndex(s => s.id === storyId);
-    if (storyIndex !== -1) {
-        stories[storyIndex] = { ...userStories[currentEditIndex] };
-    }
-
-    // Update translations if provided
+    // Update translations in userDictionaries if provided
     if (translationsText) {
         try {
             const translations = JSON.parse(translationsText);
             userDictionaries[storyId] = translations;
+            // Save userDictionaries to localStorage
+            localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
             showNotification(`${Object.keys(translations).length} translations saved.`, 'success');
         } catch (error) {
             showNotification('Invalid translations format. Translations not updated.', 'error');
@@ -1467,11 +1408,11 @@ function handleEditStorySubmit(e) {
     } else {
         // Remove translations if cleared
         delete userDictionaries[storyId];
+        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
     }
 
-    // Save to localStorage
+    // Save userStories to localStorage
     localStorage.setItem('userStories', JSON.stringify(userStories));
-    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
 
     // Update UI
     loadUserStories();
@@ -1528,8 +1469,7 @@ function processStoryData(storyData, fileName) {
         isUserStory: true,
         fileName: fileName,
         uploadDate: new Date().toISOString(),
-        wordCount: calculateWordCount(storyData.content),
-        hasTranslations: Object.keys(translations).length > 0
+        wordCount: calculateWordCount(storyData.content)
     };
 
     // Remove translations from story object to keep it clean
@@ -1538,14 +1478,14 @@ function processStoryData(storyData, fileName) {
     // Add to user stories
     userStories.push(userStory);
 
-    // Save to localStorage
-    localStorage.setItem('userStories', JSON.stringify(userStories));
-
     // Save translations separately if they exist
     if (Object.keys(translations).length > 0) {
         userDictionaries[storyId] = translations;
-        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
     }
+
+    // Save to localStorage
+    localStorage.setItem('userStories', JSON.stringify(userStories));
+    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
 
     // Update stories array and render
     stories.push(userStory);
@@ -1584,7 +1524,7 @@ function deleteUserStory(index) {
             stories.splice(storyIndex, 1);
         }
 
-        // Remove translations
+        // Remove translations from userDictionaries
         delete userDictionaries[storyId];
 
         // Update localStorage
@@ -1992,6 +1932,15 @@ style.textContent = `
     
     .story-action-btn i {
         font-size: 0.9rem;
+    }
+    
+    .user-story-badge {
+        background: #ff9800;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-left: 8px;
     }
 `;
 document.head.appendChild(style);
