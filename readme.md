@@ -71,3 +71,18 @@ Thank you for choosing **IStories** for your language learning journey. We hope 
 
 ---
 *© 2026 IStories. All stories and content are created for educational purposes.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

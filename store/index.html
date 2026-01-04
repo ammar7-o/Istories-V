@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Istories</title>
+    <title>Istories Download stories</title>
     <link rel="stylesheet" href="../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="addStories.css">
 
-    <link rel="icon" type="image/png" href="../icon.png">
+    <link rel="icon" type="image/png" href="../icon.png?v=2">
     <meta property="og:title" content="Istories">
     <meta property="og:description" content="Learn Languages Through Interactive Stories.">
     <meta property="og:image" content="../icon.png">
@@ -27,11 +26,10 @@
                     </a>
                     <nav>
                         <ul>
-                            <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                            <li><a href="#" class="nav-link active" data-page="home">Download Stories</a></li>
                             <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
-                                <li><a href="#" class="nav-link nav-btn" data-page="addStories"> <i
-                                            class="fas fa-plus-circle"></i>Add Stories</a></li>
+                                <li><a href="../index.html" class="nav-btn">Home</a></li>
 
                             </div>
 
@@ -57,6 +55,7 @@
                 </div>
             </div>
     </header>
+
     <div class="settings-page" id="settings-page">
         <div class="settings-header">
             <h2><i class="fas fa-cog"></i> Settings</h2>
@@ -121,32 +120,9 @@
                     </div>
                 </div>
 
-            </div>
 
 
-            <!-- قسم البيانات -->
-            <div class="settings-section">
-                <h3><i class="fas fa-database"></i> Data Management</h3>
 
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">Export Vocabulary</span>
-                        <span class="setting-desc">Download saved words as CSV</span>
-                    </div>
-                    <button class="action-btn" id="export-vocab">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">Clear All Data</span>
-                        <span class="setting-desc">Remove all saved words</span>
-                    </div>
-                    <button class="danger-btn" id="clear-data">
-                        <i class="fas fa-trash"></i> Clear
-                    </button>
-                </div>
             </div>
 
             <!-- قسم التطبيق -->
@@ -171,9 +147,7 @@
                         <span class="setting-label">Refresh App</span>
                         <span class="setting-desc">Reload all data</span>
                     </div>
-                    <button class="action-btn" id="refresh-app">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
+
                 </div>
             </div>
         </div>
@@ -185,38 +159,16 @@
         <div class="container">
             <!-- Home Page -->
             <div id="home" class="page active">
-                <div class="add-stories-container">
-                    <div class="level-filter">
-                        <button class="level-btn active" data-level="all">All Levels</button>
-                        <button class="level-btn" data-level="beginner">Beginner</button>
-                        <button class="level-btn" data-level="intermediate">Intermediate</button>
-                        <button class="level-btn" data-level="advanced">Advanced</button>
-                        <button class="level-btn" data-level="user">User</button>
-                    </div>
-                    <div class="user-stories-list" id="userStoriesList">
-                        <!-- Dynamic content will be inserted here -->
-                        <div class="empty-state">
-                            <i class="fas fa-book-open"></i>
-                            <p>No stories uploaded yet</p>
-                        </div>
-                    </div>
-
-
-                    <div class="stories-grid" id="storiesGrid">
-                        <!-- Stories will be populated by JavaScript -->
-                    </div>
-
+                <div class="level-filter">
+                    <button class="level-btn active" data-level="all">All Levels</button>
+                    <button class="level-btn" data-level="beginner">Beginner</button>
+                    <button class="level-btn" data-level="intermediate">Intermediate</button>
+                    <button class="level-btn" data-level="advanced">Advanced</button>
                 </div>
 
-
-
-            </div>
-
-
-            <!-- Add Stories Page -->
-            <div id="addStories" class="page">
-
-
+                <div class="stories-grid" id="storiesGrid">
+                    <!-- Stories will be populated by JavaScript -->
+                </div>
             </div>
         </div>
         </div>
@@ -237,13 +189,83 @@
             </div>
         </div>
     </footer>
-    <!-- stories -->
-    <script src="stories.js"></script>
 
-    <script src="other.js"></script>
+
+    <!-- stories -->
+    <!-- <script>
+        // add stories
+
+        var storiesFile = "stories.js";
+        // var storiesFile = prompt("Enter the file:");
+        var s = document.createElement("script");
+        s.src = storiesFile;
+
+        s.onload = function () {
+            console.log(window.storiesData);
+        };
+
+        s.onerror = function () {
+            console.error("Failed to load stories.js");
+        };
+
+        document.head.appendChild(s);
+    </script> -->
+    <script>
+        // Global variable to track if stories are loaded
+        window.storiesLoaded = false;
+        window.storiesData = [];
+
+        // Function to initialize app after stories are loaded
+        function initAppAfterStoriesLoad() {
+            if (window.storiesLoaded) {
+                init();
+            } else {
+                console.log('Waiting for stories to load...');
+                setTimeout(initAppAfterStoriesLoad, 100);
+            }
+        }
+
+        // Load stories
+        var storiesFile = "stories.js";
+        var s = document.createElement("script");
+        s.src = storiesFile;
+
+        s.onload = function () {
+            console.log('Stories loaded successfully');
+            console.log('Stories data:', window.storiesData);
+            window.storiesLoaded = true;
+
+            // Initialize app
+            initAppAfterStoriesLoad();
+        };
+
+        s.onerror = function () {
+            console.error("Failed to load stories.js");
+            // Use fallback stories
+            window.storiesData = {
+                stories: [
+                    {
+                        id: 1,
+                        title: "The Mysterious Island",
+                        level: "beginner",
+                        cover: "🏝️",
+                        coverType: "emoji",
+                        wordCount: 350,
+                        content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+                    }
+                ]
+            };
+            window.storiesLoaded = true;
+
+            // Initialize app with fallback
+            initAppAfterStoriesLoad();
+        };
+
+        document.head.appendChild(s);
+    </script>
+    <!-- <script src="stories.js"></script> -->
 
     <script src="main.js"></script>
-    <script src="addstories.js"></script>
 
 
 </body>
