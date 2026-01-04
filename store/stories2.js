@@ -4,7 +4,7 @@ window.storiesData = {
     "stories": [
         {
             
-            "title": "The Beginning of ammar",
+            "title": "The Ber",
             "level": "beginner",
             "cover": "https://cdn.pixabay.com/photo/2016/10/20/18/35/earth-1756274_960_720.jpg",
             "coverType": "image",
@@ -28,7 +28,7 @@ window.storiesData = {
 
         {
            
-            "title": "The Symphony of ammar",
+            "title": "The  of ammar",
             "level": "beginner",
             "cover": "🎵",
             "author": "Istories",
@@ -52,7 +52,7 @@ window.storiesData = {
 
         {
            
-            "title": "The Star ammar",
+            "title": "The  ammar",
             "level": "beginner",
             "cover": "https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
             "coverType": "image",
@@ -79,7 +79,7 @@ window.storiesData = {
         },
         {
           
-            "title": "Le Début de ammar",
+            "title": "Le Début de ",
             "level": "beginner",
             "cover": "🌅",
             "coverType": "emoji",

@@ -1,9 +1,16 @@
-// ========= App State Variables ==========
+
+
+
+
+
+// App state
 let currentPage = 'home';
 let currentStory = null;
 let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+
+let fontSize = 1.2; // rem
+let lineHeight = 1.8;
 let stories = []; // Will be loaded from external file
-let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
 
 // Store current word for saving
 let currentWordData = null;
@@ -11,7 +18,7 @@ let currentWordData = null;
 // Dictionary fallback
 let dictionary = window.dictionary || {};
 
-// ========= DOM Elements ==========
+// DOM elements
 const pages = document.querySelectorAll('.page');
 const navLinks = document.querySelectorAll('.nav-link');
 const levelBtns = document.querySelectorAll('.level-btn');
@@ -27,30 +34,6 @@ const lineSpacingBtn = document.getElementById('lineSpacing');
 const listenBtn = document.getElementById('listenBtn');
 const saveWordBtn = document.getElementById('saveWordBtn');
 const closePopup = document.getElementById('closePopup');
-const searchForm = document.getElementById('search-form');
-const searchInput = searchForm ? searchForm.querySelector('.search-input') : null;
-const searchBtn = document.getElementById('search-btn');
-const toggleNav = document.getElementById("toggle-nav");
-const more = document.getElementById("more");
-let isMenuOpen = false;
-const themeToggle = document.getElementById('themeToggle');
-const settingsButton = document.getElementById("settings-button");
-const settingsPage = document.getElementById("settings-page");
-const closeSettings = document.getElementById("close-settings");
-const settingsOverlay = document.getElementById("settings-overlay");
-
-// Color variables
-const defaultColors = [
-    { name: 'indigo', value: '#4f46e5' },
-    { name: 'blue', value: '#4a6cf7' },
-    { name: 'purple', value: '#7c4dff' },
-    { name: 'green', value: '#008638' },
-    { name: 'orange', value: '#ff5722' },
-    { name: 'pink', value: '#e91e63' },
-    { name: 'teal', value: '#009688' }
-];
-
-// ========= Core Functions ==========
 
 // Function to scroll to top of page
 function scrollToTop() {
@@ -64,7 +47,7 @@ function scrollToTop() {
 function init() {
     console.log('App initialization started...');
 
-    // Load stories from external file
+    // Wait for stories to be loaded from external file
     if (typeof window.storiesData !== 'undefined') {
         stories = window.storiesData.stories || window.storiesData;
         console.log('Loaded stories from external file:', stories.length);
@@ -84,19 +67,37 @@ function init() {
         console.log('Using fallback stories');
     }
 
+    // Load user stories from localStorage
+    try {
+        const storedUserStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        userStories = storedUserStories;
 
-    // STEP 1: Apply saved theme FIRST
+        // Add user stories to main stories array
+        userStories.forEach(userStory => {
+            if (!stories.some(s => s.id === userStory.id)) {
+                stories.push(userStory);
+            }
+        });
+        console.log('Loaded user stories:', userStories.length);
+    } catch (error) {
+        console.error('Error loading user stories:', error);
+        userStories = [];
+    }
+
+    // STEP 1: Apply saved theme FIRST (this sets dark/light mode)
     console.log('Step 1: Applying theme...');
     applyTheme();
 
     // STEP 2: Apply saved primary color immediately
     console.log('Step 2: Applying saved color:', selectedColor);
     if (selectedColor) {
+        // Apply immediately without delay
         applyPrimaryColor(selectedColor);
     }
 
-    // STEP 3: Initialize color selector
+    // STEP 3: Initialize color selector (this sets up click handlers)
     console.log('Step 3: Initializing color selector...');
+    // Add a small delay to ensure DOM is fully loaded
     setTimeout(() => {
         initColorSelector();
     }, 50);
@@ -105,14 +106,8 @@ function init() {
     console.log('Step 4: Rendering UI...');
     renderStories();
     setupSearch();
-    
-    if (typeof renderVocabulary === 'function') {
-        renderVocabulary();
-    }
-    
-    if (typeof updateStats === 'function') {
-        updateStats();
-    }
+    renderVocabulary();
+    updateStats();
 
     // STEP 5: Initialize flashcards
     console.log('Step 5: Initializing flashcards...');
@@ -123,10 +118,14 @@ function init() {
     // STEP 6: Set up event listeners
     console.log('Step 6: Setting up event listeners...');
     setupEventListeners();
-    setupNavToggle();
-    setupSettings();
 
-    // STEP 7: Verify everything is set up correctly
+    // STEP 7: Set up navigation toggle if elements exist
+    console.log('Step 7: Setting up navigation...');
+    if (document.getElementById("toggle-nav") && document.getElementById("more")) {
+        setupNavToggle();
+    }
+
+    // STEP 8: Verify everything is set up correctly
     console.log('Step 8: Final verification...');
     setTimeout(() => {
         verifyColorSetup();
@@ -135,126 +134,18 @@ function init() {
     console.log('App initialization complete!');
 }
 
-// ========= Color Selector Functions ==========
-function initColorSelector() {
-    const colorOptions = document.querySelectorAll('.color-option:not(.custom-color)');
-    const customColorPicker = document.getElementById('customColorPicker');
-
-    // Remove active class from all options first
-    colorOptions.forEach(opt => opt.classList.remove('active'));
-
-    // Set active color based on saved preference
-    if (colorOptions.length > 0) {
-        colorOptions.forEach(option => {
-            if (option.dataset.color === selectedColor) {
-                option.classList.add('active');
-            }
-
-            option.addEventListener('click', () => {
-                // Remove active class from all options
-                colorOptions.forEach(opt => opt.classList.remove('active'));
-
-                // Add active class to clicked option
-                option.classList.add('active');
-
-                // Get selected color
-                const color = option.dataset.color;
-
-                // Apply ONLY the primary color
-                applyPrimaryColor(color);
-
-                // Save to localStorage
-                localStorage.setItem('selectedColor', color);
-                selectedColor = color;
-
-                // Update custom color picker
-                if (customColorPicker) {
-                    customColorPicker.value = color;
-                }
-            });
-        });
-    }
-
-    // Custom color picker
-    if (customColorPicker) {
-        // Set initial value from saved color
-        customColorPicker.value = selectedColor;
-
-        customColorPicker.addEventListener('input', (e) => {
-            const color = e.target.value;
-
-            // Remove active class from preset colors
-            colorOptions.forEach(opt => opt.classList.remove('active'));
-
-            // Apply ONLY the primary color
-            applyPrimaryColor(color);
-
-            // Save to localStorage
-            localStorage.setItem('selectedColor', color);
-            selectedColor = color;
-
-            showNotification('Custom primary color applied', 'success');
-        });
-
-        customColorPicker.addEventListener('change', (e) => {
-            const color = e.target.value;
-
-            // Remove active class from preset colors
-            colorOptions.forEach(opt => opt.classList.remove('active'));
-
-            // Apply ONLY the primary color
-            applyPrimaryColor(color);
-
-            // Save to localStorage
-            localStorage.setItem('selectedColor', color);
-            selectedColor = color;
-
-            showNotification('Custom primary color saved', 'success');
-        });
-
-        // Also trigger change on custom color picker click
-        customColorPicker.parentElement.addEventListener('click', (e) => {
-            if (e.target !== customColorPicker) {
-                customColorPicker.click();
-            }
-        });
-    }
-
-    // Force apply the color one more time to ensure it's set
-    setTimeout(() => {
-        applyPrimaryColor(selectedColor);
-    }, 100);
-}
-
-function applyPrimaryColor(color) {
-    // Calculate darker shade for --primary-dark
-    const darkerColor = adjustColor(color, -20);
-
-    // Update ONLY the primary color variables in CSS
-    const root = document.documentElement;
-    root.style.setProperty('--primary', color);
-    root.style.setProperty('--primary-dark', darkerColor);
-}
-
-function adjustColor(color, percent) {
-    const num = parseInt(color.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) + amt;
-    const G = (num >> 8 & 0x00FF) + amt;
-    const B = (num & 0x0000FF) + amt;
-
-    return '#' + (
-        0x1000000 +
-        (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-        (B < 255 ? B < 1 ? 0 : B : 255)
-    ).toString(16).slice(1);
-}
-
+// Add this verification function
 function verifyColorSetup() {
     const root = document.documentElement;
     const currentPrimary = getComputedStyle(root).getPropertyValue('--primary').trim();
     const currentPrimaryDark = getComputedStyle(root).getPropertyValue('--primary-dark').trim();
+
+    console.log('=== COLOR VERIFICATION ===');
+    console.log('Selected color in localStorage:', localStorage.getItem('selectedColor'));
+    console.log('Selected color variable:', selectedColor);
+    console.log('CSS --primary:', currentPrimary);
+    console.log('CSS --primary-dark:', currentPrimaryDark);
+    console.log('Theme:', localStorage.getItem('theme'));
 
     // Check if colors match
     if (selectedColor && selectedColor.toLowerCase() === currentPrimary.toLowerCase()) {
@@ -262,144 +153,125 @@ function verifyColorSetup() {
     } else {
         console.log('⚠️ Colors might not match:', { selectedColor, currentPrimary });
     }
+
+    // Add visual indicator for debugging (remove in production)
+    const debugIndicator = document.createElement('div');
+    debugIndicator.id = 'color-debug-indicator';
+    debugIndicator.style.cssText = `
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: var(--primary);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        z-index: 9999;
+        opacity: 0.8;
+        display: none; /* Change to 'block' to see it */
+    `;
+    debugIndicator.innerHTML = `Primary: ${currentPrimary}`;
+    document.body.appendChild(debugIndicator);
 }
 
-// ========= Theme Functions ==========
-function toggleTheme() {
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+// Also update your initColorSelector function to prevent multiple calls:
+let colorSelectorInitialized = false;
 
-    // Save new theme
-    localStorage.setItem('theme', newTheme);
 
-    // Apply the new theme
-    applyTheme();
-}
 
-function applyTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-
-    // Apply theme to body class
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-    } else {
-        document.body.classList.remove('dark-mode');
-    }
-
-    // Update theme toggle icon
-    if (themeToggle) {
-        const themeIcon = themeToggle.querySelector('i');
-        if (themeIcon) {
-            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-    }
-
-    // Re-apply primary color to ensure it works with new theme
-    if (selectedColor) {
-        applyPrimaryColor(selectedColor);
-    }
-}
-
-// ========= Story Display Functions ==========
-function renderStories(level = 'all') {
-    storiesGrid.innerHTML = '';
-
-    let filteredStories;
-
-    if (level === 'all') {
-        filteredStories = stories;
-    } else {
-        // Filter by level (beginner, intermediate, advanced)
-        filteredStories = stories.filter(story => story.level === level);
-    }
-
-    if (filteredStories.length === 0) {
-        storiesGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p>No stories found for this ${level === 'user' ? 'category' : 'level'}.</p>
-                ${level === 'user' ? '<p><a href="add-stories.html" style="color: var(--primary); text-decoration: underline;">Add your first story</a></p>' : ''}
-            </div>
-        `;
-        return;
-    }
-
-    filteredStories.forEach(story => {
-        const storyCard = document.createElement('div');
-        storyCard.className = 'story-card';
-        storyCard.dataset.storyId = story.id;
-
-       
-
-        // Create author HTML conditionally
-        const authorHTML = story.author && story.author.trim() !== ""
-            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
-            : '';
-
-        storyCard.innerHTML = `
-            <div class="story-image">
-                ${authorHTML}
-                ${renderStoryCover(story)}
-            </div>
-            <div class="story-content">
-                <div class="story-header">
-                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                    
-                </div>
-                <h3 class="story-title">${story.title}</h3>
-                <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="story-actions">
-                    <button class="story-action-btn open-btn" data-story-id="${story.id}">
-                        <i class="fas fa-book-open"></i> Open
-                    </button>
-                    <button class="story-action-btn download-btn" data-story-id="${story.id}">
-                        <i class="fas fa-download"></i> Download
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // Add event listeners for buttons
-        const openBtn = storyCard.querySelector('.open-btn');
-        const downloadBtn = storyCard.querySelector('.download-btn');
-
-        if (openBtn) {
-            openBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openStoryInNewPage(story.id);
-            });
-        }
-
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                downloadStory(story.id);
-            });
-        }
-
-        // Keep card clickable for opening story
-        storyCard.addEventListener('click', () => {
-            openStoryInNewPage(story.id);
+// Set up all event listeners
+function setupEventListeners() {
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchPage(link.dataset.page);
+            // Scroll to top when switching pages
+            scrollToTop();
         });
+    });
 
-        storiesGrid.appendChild(storyCard);
+    levelBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            levelBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderStories(btn.dataset.level);
+        });
+    });
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // CTA button
+    document.querySelector('.cta-button').addEventListener('click', () => {
+        if (stories.length > 0) {
+            openStoryInNewPage(stories[0].id);
+        }
     });
 }
 
-function getStoryExcerpt(story) {
-    if (Array.isArray(story.content) && story.content.length > 0) {
-        const firstPara = story.content[0];
-        // Remove HTML tags if any
-        const cleanText = firstPara.replace(/<[^>]*>/g, '');
-        return cleanText.substring(0, 150) + (cleanText.length > 150 ? '...' : '');
+// Touch handling for mobile
+let touchTimer;
+let touchTarget;
+
+function handleTouchStart(e) {
+    if (e.target.classList.contains('word')) {
+        touchTarget = e.target;
+        touchTimer = setTimeout(() => {
+            showSentenceTranslation(e.target);
+        }, 500);
     }
-    return story.description || 'Read this interesting story...';
 }
 
+function handleTouchEnd() {
+    clearTimeout(touchTimer);
+}
+
+// Page navigation
+function switchPage(page) {
+    currentPage = page;
+    pages.forEach(p => p.classList.remove('active'));
+    document.getElementById(page).classList.add('active');
+
+    navLinks.forEach(link => {
+        if (link.dataset.page === page) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+    // Refresh flashcards when switching to flashcards page
+    if (page === 'flashcards') {
+        loadFlashcards();
+    }
+}
+
+// Open story in a new page WITH story title
+// Open story in a new page WITH story title
+function openStoryInNewPage(storyId) {
+    // Find the story in the stories array
+    const story = stories.find(s => s.id == storyId);
+
+    if (story) {
+        // Store the story data in localStorage before redirecting
+        localStorage.setItem('currentReadingStory', JSON.stringify({
+            id: story.id,
+            title: story.title,
+            level: story.level,
+            content: story.content,
+            isUserStory: story.isUserStory || false,
+            cover: story.cover,
+            coverType: story.coverType,
+            // Include translations for user stories
+            translations: story.isUserStory ? (userDictionaries[story.id] || {}) : null
+        }));
+
+        // Create a new page URL with the story ID
+        const storyPage = 'reader/index.html?id=' + storyId + (story.isUserStory ? '&userStory=true' : '');
+        window.location.href = storyPage;
+    }
+}
+
+// Function to render cover images
 function renderStoryCover(story) {
     if (!story.cover) {
         // Default book icon if no cover specified
@@ -418,415 +290,139 @@ function renderStoryCover(story) {
     }
 }
 
-// ========= Download Functions ==========
-function downloadStory(storyId) {
-    // Find the story
-    const story = stories.find(s => s.id == storyId);
-    
-    if (!story) {
-        showNotification('Story not found!', 'error');
-        return;
-    }
-
-    // Find the download button
-    const downloadBtn = document.querySelector(`.download-btn[data-story-id="${storyId}"]`);
-    const originalText = downloadBtn ? downloadBtn.innerHTML : '';
-    
-    // Add loading state
-    if (downloadBtn) {
-        downloadBtn.classList.add('loading');
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-        downloadBtn.disabled = true;
-    }
-
-    try {
-        // Prepare the story object for download
-        const storyForDownload = {
-            id: story.id,
-            title: story.title,
-            level: story.level,
-            cover: story.cover,
-            coverType: story.coverType,
-            content: story.content,
-            author: story.author || '',
-            wordCount: story.wordCount || calculateWordCount(story.content),
-            // Include dictionaries if available
-            ...(story.dictionaries && { dictionaries: story.dictionaries }),
-            // Include sound file if available
-            ...(story.sound && { sound: story.sound }),
-            // Include tags if available
-            ...(story.tags && { tags: story.tags }),
-            // Metadata
-            exportedDate: new Date().toISOString(),
-            exportedFrom: "IStories",
-            version: "1.0"
-        };
-
-        // Convert to JSON string
-        const jsonString = JSON.stringify(storyForDownload, null, 2);
-        
-        // Create a Blob with the JSON data
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        
-        // Create download URL
-        const url = URL.createObjectURL(blob);
-        
-        // Create download link
-        const a = document.createElement('a');
-        a.href = url;
-        
-        // Create filename from story title
-        const sanitizedTitle = story.title
-            .toLowerCase()
-            .replace(/[^a-z0-9\s\-_]/g, '')
-            .replace(/\s+/g, '-')
-            .trim();
-        
-        const date = new Date().toISOString().split('T')[0];
-        a.download = `istories-${sanitizedTitle}-${date}.json`;
-        
-        // Trigger download
-        document.body.appendChild(a);
-        a.click();
-        
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
-        
-        // Show success notification
-        showNotification(`"${story.title}" downloaded successfully!`, 'success');
-        
-        // Track download
-        trackDownload(storyId);
-        
-    } catch (error) {
-        console.error('Error downloading story:', error);
-        showNotification('Failed to download story. Please try again.', 'error');
-    } finally {
-        // Reset button state
-        if (downloadBtn) {
-            setTimeout(() => {
-                downloadBtn.classList.remove('loading');
-                downloadBtn.innerHTML = originalText;
-                downloadBtn.disabled = false;
-            }, 500);
-        }
-    }
-}
-
-function calculateWordCount(content) {
-    if (!content || !Array.isArray(content)) return 0;
-    return content.join(' ').split(/\s+/).length;
-}
-
-function trackDownload(storyId) {
-    try {
-        const downloadStats = JSON.parse(localStorage.getItem('downloadStats')) || {
-            totalDownloads: 0,
-            downloads: {}
-        };
-        
-        downloadStats.totalDownloads = (downloadStats.totalDownloads || 0) + 1;
-        
-        // Track per story
-        if (!downloadStats.downloads[storyId]) {
-            downloadStats.downloads[storyId] = 0;
-        }
-        downloadStats.downloads[storyId]++;
-        
-        // Save last download date
-        downloadStats.lastDownload = new Date().toISOString();
-        
-        localStorage.setItem('downloadStats', JSON.stringify(downloadStats));
-    } catch (error) {
-        console.error('Error tracking download:', error);
-    }
-}
-
-// ========= Search Functions ==========
-function filterStoriesBySearch(query) {
-    if (!query || query.trim() === '') {
-        return stories;
-    }
-
-    query = query.toLowerCase().trim();
-
-    return stories.filter(story => {
-        const titleMatch = story.title.toLowerCase().includes(query);
-        const contentMatch = story.content.some(paragraph =>
-            paragraph.toLowerCase().includes(query)
-        );
-        const levelMatch = story.level.toLowerCase().includes(query);
-        const tagsMatch = story.tags?.some(tag =>
-            tag.toLowerCase().includes(query)
-        ) || false;
-
-        return titleMatch || contentMatch || levelMatch || tagsMatch;
-    });
-}
-
-function displayFilteredStories(filteredStories, query) {
+// Render stories grid with clickable cards
+// Render stories grid with clickable cards
+function renderStories(level = 'all') {
     storiesGrid.innerHTML = '';
+
+    let filteredStories;
+
+    if (level === 'all') {
+        filteredStories = stories;
+    } else if (level === 'user') {
+        // Filter for user stories only
+        filteredStories = stories.filter(story => story.isUserStory);
+    } else {
+        // Filter by level (beginner, intermediate, advanced)
+        filteredStories = stories.filter(story => story.level === level);
+    }
 
     if (filteredStories.length === 0) {
         storiesGrid.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-search fa-2x"></i>
-                <h3>No stories found for "${query}"</h3>
-                <p>Try different keywords or browse all stories</p>
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <p>No stories found for this ${level === 'user' ? 'category' : 'level'}.</p>
+                ${level === 'user' ? '<p><a href="add-stories.html" style="color: var(--primary); text-decoration: underline;">Add your first story</a></p>' : ''}
             </div>
         `;
         return;
     }
 
-   filteredStories.forEach(story => {
-    const storyCard = document.createElement('div');
-    storyCard.className = 'story-card';
-    storyCard.dataset.storyId = story.id;
+    filteredStories.forEach(story => {
+        const storyCard = document.createElement('div');
+        storyCard.className = 'story-card';
+        storyCard.dataset.storyId = story.id; // Add story ID as data attribute
 
-    const highlightedTitle = highlightSearchMatch(story.title, query);
+        // Add user story indicator
+        const userStoryBadge = story.isUserStory
+            ? '<span class="user-story-badge" title="User-added story"><i class="fas fa-user-plus"></i></span>'
+            : '';
 
-    const authorHTML = story.author && story.author.trim() !== "" 
-        ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
-        : '';
+        // Create author HTML conditionally
+        const authorHTML = story.author && story.author.trim() !== ""
+            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
+            : '';
 
-    storyCard.innerHTML = `
-        <div class="story-image">
-            ${authorHTML}
-            ${renderStoryCover(story)}
-        </div>
-        <div class="story-content">
-            <span class="story-level ${story.level}">${story.level}</span>
-            <h3 class="story-title">${highlightedTitle}</h3>
-            <p class="story-excerpt">${getStoryExcerpt(story)}</p>
-            <div class="story-meta">
-                <span><i class="fas fa-font"></i> ${story.wordCount} words</span>
-                <span><i class="fas fa-clock"></i> ${Math.ceil(story.wordCount / 200)} min read</span>
+        storyCard.innerHTML = `
+            <div class="story-image">
+                ${authorHTML}
+                ${renderStoryCover(story)}
             </div>
-            
-            <!-- Action Buttons for search results -->
-            <div class="story-actions">
-                <button class="story-action-btn open-btn" data-story-id="${story.id}">
-                    <i class="fas fa-book-open"></i> Open
-                </button>
-                <button class="story-action-btn download-btn" data-story-id="${story.id}">
-                    <i class="fas fa-download"></i> Download
-                </button>
+            <div class="story-content">
+                <div class="story-header">
+                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
+                    ${userStoryBadge}
+                </div>
+                <h3 class="story-title">${story.title}</h3>
+                <p>${story.content[0].substring(0, 100)}...</p>
+                <div class="story-meta">
+                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
+                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
-    // Add event listeners for buttons in search results
-    const openBtn = storyCard.querySelector('.open-btn');
-    const downloadBtn = storyCard.querySelector('.download-btn');
-
-    if (openBtn) {
-        openBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
+        storyCard.addEventListener('click', () => {
             openStoryInNewPage(story.id);
         });
-    }
 
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            downloadStory(story.id);
-        });
-    }
-
-    storyCard.addEventListener('click', () => {
-        openStoryInNewPage(story.id);
+        storiesGrid.appendChild(storyCard);
     });
+}
+// settings
+const settingsButton = document.getElementById("settings-button");
+const settingsPage = document.getElementById("settings-page");
+const closeSettings = document.getElementById("close-settings");
+const settingsOverlay = document.getElementById("settings-overlay");
 
-    storiesGrid.appendChild(storyCard);
+settingsButton.addEventListener("click", function () {
+    settingsPage.classList.toggle("open");
+    settingsOverlay.classList.add("active");
 });
-}
 
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+closeSettings.addEventListener("click", function () {
+    settingsPage.classList.remove("open");
+    settingsOverlay.classList.remove("active");
+});
 
-function highlightSearchMatch(text, query) {
-    if (!query) return text;
+// This function is for backward compatibility (not used with new page approach)
+function openStory(story) {
+    currentStory = story;
+    document.getElementById('storyTitle').textContent = story.title;
 
-    try {
-        const escapedQuery = escapeRegExp(query);
-        const regex = new RegExp(`(${escapedQuery})`, 'gi');
-        return text.replace(regex, '<span class="search-highlight">$1</span>');
-    } catch (error) {
-        console.error('Error in highlightSearchMatch:', error);
-        return text;
-    }
-}
+    // Render story content with interactive words
+    storyText.innerHTML = '';
+    story.content.forEach(paragraph => {
+        const p = document.createElement('div');
+        p.className = 'paragraph';
 
-function setupSearch() {
-    if (!searchForm || !searchInput) return;
+        // Process text to make ALL words clickable
+        const words = paragraph.split(' ');
+        const processedWords = words.map(word => {
+            const cleanWord = word.replace(/[.,!?;:"]/g, '').toLowerCase();
+            const isSaved = savedWords.some(w => w.word === cleanWord);
 
-    // Search when form is submitted
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        performSearch();
-    });
+            let className = 'word';
+            if (isSaved) className += ' saved';
+            if (!dictionary[cleanWord]) className += ' no-translation';
 
-    // Search while typing
-    searchInput.addEventListener('input', (e) => {
-        performSearch();
-    });
-
-    // Clear on Escape
-    searchInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Escape') {
-            searchInput.value = '';
-            performSearch();
-        }
-    });
-}
-
-function performSearch() {
-    const query = searchInput.value.trim();
-    const filteredStories = filterStoriesBySearch(query);
-    displayFilteredStories(filteredStories, query);
-
-    if (query) {
-        levelBtns.forEach(btn => btn.classList.remove('active'));
-        if (levelBtns.length > 0) {
-            levelBtns[0].classList.add('active');
-        }
-    }
-}
-
-// ========= Navigation Functions ==========
-function switchPage(page) {
-    currentPage = page;
-    pages.forEach(p => p.classList.remove('active'));
-    
-    // Show the requested page
-    const pageElement = document.getElementById(page);
-    if (pageElement) {
-        pageElement.classList.add('active');
-    }
-
-    navLinks.forEach(link => {
-        if (link.dataset.page === page) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
-    // Refresh flashcards when switching to flashcards page
-    if (page === 'flashcards') {
-        if (typeof loadFlashcards === 'function') {
-            loadFlashcards();
-        }
-    }
-}
-
-function openStoryInNewPage(storyId) {
-    const story = stories.find(s => s.id == storyId);
-
-    if (story) {
-        // Store the story data in localStorage before redirecting
-        localStorage.setItem('currentReadingStory', JSON.stringify({
-            id: story.id,
-            title: story.title,
-            level: story.level,
-            content: story.content,
-            isUserStory: story.isUserStory || false,
-            cover: story.cover,
-            coverType: story.coverType,
-            translations: story.isUserStory ? (userDictionaries[story.id] || {}) : null
-        }));
-
-        // Create a new page URL with the story ID
-        const storyPage = '../English/reader/index.html?id=' + storyId + (story.isUserStory ? '&userStory=true' : '');
-        window.location.href = storyPage;
-    }
-}
-
-// ========= Navigation Toggle ==========
-function setupNavToggle() {
-    if (!toggleNav || !more) return;
-
-    // Toggle menu
-    toggleNav.addEventListener("click", function (e) {
-        e.stopPropagation();
-        isMenuOpen = !isMenuOpen;
-        more.classList.toggle("open");
-    });
-
-    // Close menu when clicking anywhere
-    document.addEventListener("click", function () {
-        if (isMenuOpen) {
-            more.classList.remove("open");
-            isMenuOpen = false;
-        }
-    });
-
-    // Prevent closing when clicking inside the menu
-    more.addEventListener("click", function (e) {
-        e.stopPropagation();
-    });
-
-    // Close menu on Escape key
-    document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && isMenuOpen) {
-            more.classList.remove("open");
-            isMenuOpen = false;
-        }
-    });
-
-    // Close menu when clicking on any <a> inside the menu
-    const links = more.querySelectorAll("a");
-    links.forEach(link => {
-        link.addEventListener("click", function () {
-            more.classList.remove("open");
-            isMenuOpen = false;
+            return `<span class="${className}" data-word="${cleanWord}">${word}</span>`;
         });
+
+        p.innerHTML += processedWords.join(' ');
+        storyText.appendChild(p);
     });
+
+    // Add word click listeners
+    setupWordInteractions();
+
+    switchPage('stories');
+
+    // Scroll to top after page transition
+    setTimeout(() => {
+        scrollToTop();
+    }, 100);
 }
 
-// ========= Settings Functions ==========
-function setupSettings() {
-    if (!settingsButton || !settingsPage || !closeSettings || !settingsOverlay) return;
-
-    settingsButton.addEventListener("click", function () {
-        settingsPage.classList.toggle("open");
-        settingsOverlay.classList.add("active");
-    });
-
-    closeSettings.addEventListener("click", function () {
-        settingsPage.classList.remove("open");
-        settingsOverlay.classList.remove("active");
-    });
-}
-
-// ========= Notification Function ==========
-function showNotification(message, type = 'info') {
+// Show temporary notification
+function showNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.textContent = message;
-
-    // Set background color based on notification type
-    let bgColor = '';
-
-    if (type === 'success') {
-        bgColor = 'var(--primary)';
-    } else if (type === 'error') {
-        bgColor = '#ff4444';
-    } else if (type === 'warning') {
-        bgColor = '#ff9900';
-    } else if (type === 'info') {
-        bgColor = '#2196F3';
-    }
-
     notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: ${bgColor};
+        background: var(--secondary);
         color: white;
         padding: 12px 20px;
         border-radius: var(--radius);
@@ -849,52 +445,7 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// ========= Event Listeners Setup ==========
-function setupEventListeners() {
-    // Navigation links
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            switchPage(link.dataset.page);
-            scrollToTop();
-        });
-    });
-
-    // Level filter buttons
-    levelBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            levelBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderStories(btn.dataset.level);
-        });
-    });
-
-    // Theme toggle
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-
-    // Touch handling for mobile
-    let touchTimer;
-    let touchTarget;
-
-    document.addEventListener('touchstart', function(e) {
-        if (e.target.classList.contains('word')) {
-            touchTarget = e.target;
-            touchTimer = setTimeout(() => {
-                if (typeof showSentenceTranslation === 'function') {
-                    showSentenceTranslation(e.target);
-                }
-            }, 500);
-        }
-    });
-
-    document.addEventListener('touchend', function() {
-        clearTimeout(touchTimer);
-    });
-}
-
-// ========= Add CSS Animations ==========
+// Add CSS animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -905,13 +456,8 @@ style.textContent = `
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
     }
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
 `;
 document.head.appendChild(style);
 
-// ========= Initialize App ==========
-document.addEventListener('DOMContentLoaded', function () {
-    init();
-});
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', init);

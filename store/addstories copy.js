@@ -191,6 +191,7 @@ function loadUserStories() {
                 </span>
             </div>
         </div>
+        
            
             <div class="story-item-actions">
                 <button class="story-action-btn read-story-btn" title="Read Story" data-index="${index}">
@@ -345,124 +346,9 @@ function openEditStoryModal(index) {
     }
 }
 
-// Update cover label for edit modal
-function updateEditCoverLabel() {
-    const editStoryCoverType = document.getElementById('editStoryCoverType');
-    const editCoverLabel = document.getElementById('editCoverLabel');
-    const editStoryCover = document.getElementById('editStoryCover');
 
-    if (editStoryCoverType && editCoverLabel && editStoryCover) {
-        const coverType = editStoryCoverType.value;
 
-        if (coverType === 'emoji') {
-            editCoverLabel.textContent = 'Emoji';
-            editStoryCover.placeholder = '📚';
-        } else if (coverType === 'icon') {
-            editCoverLabel.textContent = 'Font Awesome Icon';
-            editStoryCover.placeholder = 'fas fa-book';
-        } else if (coverType === 'image') {
-            editCoverLabel.textContent = 'Image URL';
-            editStoryCover.placeholder = 'https://example.com/image.jpg';
-        }
-    }
-}
 
-// Handle edit story form submission
-function handleEditStorySubmit(e) {
-    e.preventDefault();
-
-    if (currentEditIndex === -1) {
-        showNotification('No story selected for editing.', 'error');
-        return;
-    }
-
-    const story = userStories[currentEditIndex];
-    const storyId = story.id;
-
-    // Get form values
-    const title = document.getElementById('editStoryTitle').value.trim();
-    const level = document.getElementById('editStoryLevel').value;
-    const author = document.getElementById('editStoryAuthor').value.trim();
-    const coverType = document.getElementById('editStoryCoverType').value;
-    const cover = document.getElementById('editStoryCover').value.trim();
-    const contentText = document.getElementById('editStoryContent').value.trim();
-    const translationsText = document.getElementById('editStoryTranslations').value.trim();
-
-    // Validation
-    if (!title || !level || !contentText) {
-        showNotification('Please fill in all required fields.', 'error');
-        return;
-    }
-
-    // Process content
-    const content = contentText.split('\n').filter(line => line.trim() !== '');
-    const wordCount = calculateWordCount(content);
-
-    // Update story in userStories array
-    userStories[currentEditIndex] = {
-        ...story,
-        title,
-        level,
-        author: author || '',
-        coverType,
-        cover: cover || (coverType === 'emoji' ? '📚' : 'fas fa-book'),
-        content,
-        wordCount,
-        hasTranslations: translationsText.trim() !== '',
-        uploadDate: new Date().toISOString() // Update upload date
-    };
-
-    // Update in main stories array
-    const storyIndex = stories.findIndex(s => s.id === storyId);
-    if (storyIndex !== -1) {
-        stories[storyIndex] = { ...userStories[currentEditIndex] };
-    }
-
-    // Update translations if provided
-    if (translationsText) {
-        try {
-            const translations = JSON.parse(translationsText);
-            userDictionaries[storyId] = translations;
-            showNotification(`${Object.keys(translations).length} translations saved.`, 'success');
-        } catch (error) {
-            showNotification('Invalid translations format. Translations not updated.', 'error');
-        }
-    } else {
-        // Remove translations if cleared
-        delete userDictionaries[storyId];
-    }
-
-    // Save to localStorage
-    localStorage.setItem('userStories', JSON.stringify(userStories));
-    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
-
-    // Update UI
-    loadUserStories();
-    if (currentPage === 'home' || currentPage === 'addStories') {
-        renderStories();
-    }
-
-    // Close modal
-    closeEditModal();
-
-    // Show success message
-    showNotification('Story updated successfully!', 'success');
-}
-
-// Close edit modal
-function closeEditModal() {
-    const editStoryModal = document.getElementById('editStoryModal');
-    if (editStoryModal) {
-        editStoryModal.classList.remove('show');
-    }
-    currentEditIndex = -1;
-
-    // Reset form
-    const editStoryForm = document.getElementById('editStoryForm');
-    if (editStoryForm) {
-        editStoryForm.reset();
-    }
-}
 
 // Process story data
 function processStoryData(storyData, fileName) {
@@ -564,7 +450,7 @@ function openUserStoryInReader(storyId) {
     }));
 
     // Redirect to reader page
-    const storyPage = 'reader/index.html?id=' + storyId + '&userStory=true';
+    const storyPage = '../English/reader/index.html?id=' + storyId + '&userStory=true';
     window.location.href = storyPage;
 }
 
@@ -640,83 +526,7 @@ function handleDragLeave(e) {
     }
 }
 
-function handleFileDrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
 
-    const uploadArea = document.getElementById('uploadArea');
-    if (uploadArea) {
-        uploadArea.style.borderColor = 'var(--primary)';
-        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
-    }
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        const file = files[0];
-        if (file.type === 'application/json') {
-            displaySelectedFile(file);
-        } else {
-            showNotification('Please drop a valid JSON file.', 'error');
-        }
-    }
-}
-
-function displaySelectedFile(file) {
-    const selectedFileInfo = document.getElementById('selectedFileInfo');
-    const fileName = document.getElementById('fileName');
-    const fileSize = document.getElementById('fileSize');
-    const uploadBtn = document.getElementById('uploadBtn');
-
-    if (selectedFileInfo && fileName && fileSize && uploadBtn) {
-        fileName.textContent = file.name;
-        fileSize.textContent = formatFileSize(file.size);
-        selectedFileInfo.style.display = 'block';
-        uploadBtn.disabled = false;
-    }
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-function clearSelectedFile() {
-    const storyFileInput = document.getElementById('storyFileInput');
-    const selectedFileInfo = document.getElementById('selectedFileInfo');
-    const uploadBtn = document.getElementById('uploadBtn');
-
-    if (storyFileInput && selectedFileInfo && uploadBtn) {
-        storyFileInput.value = '';
-        selectedFileInfo.style.display = 'none';
-        uploadBtn.disabled = true;
-    }
-}
-
-function uploadStoryFile() {
-    const storyFileInput = document.getElementById('storyFileInput');
-    if (!storyFileInput || !storyFileInput.files[0]) return;
-
-    const file = storyFileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-        try {
-            const storyData = JSON.parse(e.target.result);
-            processStoryData(storyData, file.name);
-        } catch (error) {
-            showNotification('Error parsing JSON file: ' + error.message, 'error');
-        }
-    };
-
-    reader.onerror = function () {
-        showNotification('Error reading file.', 'error');
-    };
-
-    reader.readAsText(file);
-}
 
 function validateStory(story) {
     const requiredFields = ['title', 'level', 'content'];
@@ -871,62 +681,7 @@ function showStoryPreview() {
     document.getElementById('previewModal').classList.add('show');
 }
 
-function closePreviewModal() {
-    document.getElementById('previewModal').classList.remove('show');
-}
 
-function saveStoryFromPreview() {
-    handleFormSubmit(new Event('submit'));
-    closePreviewModal();
-}
-
-function downloadStoryTemplate() {
-    const template = {
-        "title": "My Custom Story",
-        "level": "intermediate",
-        "cover": "📚",
-        "coverType": "emoji",
-        "content": [
-            "Hello and welcome to <span class='mark'>IStories!</span> This website was created by Ammar Chacal to help people learn languages in a fun and engaging way <img src='../../imges/cover.jpg' alt='Example' >  Through these interactive stories, you can improve your vocabulary and comprehension skills naturally.",
-            "Each story is designed for different learning levels - beginner, intermediate, and advanced. The beginner stories use simple words and short sentences, perfect for those just starting their language learning journey.",
-            "As you read, you can click on any word to see its translation and definition. This feature helps you learn new vocabulary in context, which is much more effective than memorizing word lists.",
-            "The stories cover various topics and genres, from everyday situations to exciting adventures. This variety ensures that you encounter different types of vocabulary and sentence structures.",
-            "Reading regularly is one of the best ways to improve your language skills. With IStories, you can practice reading comprehension while enjoying interesting narratives.",
-            "Remember that learning a language takes time and patience. Don't worry if you don't understand every word at first. Use the click-to-translate feature and try to understand the general meaning of each paragraph.",
-            "We recommend reading one story each day and reviewing the vocabulary you learn. Consistent practice is the key to making progress in any language.",
-            "Thank you for choosing IStories for your language learning journey. We hope you enjoy these stories and find them helpful in achieving your language goals."
-        ],
-        "author": "Istories",
-        "translations": {
-            "hello": { "translation": "مرحبا" },
-            "world": { "translation": "عالم" },
-            "book": { "translation": "كتاب" }
-        },
-        "description": "A short description of your story",
-        "tags": ["custom", "learning"]
-    };
-
-    const templateStr = JSON.stringify(template, null, 2);
-    const blob = new Blob([templateStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'story-template.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    showNotification('Template downloaded successfully!', 'success');
-}
-
-function copyJsonExample() {
-    const jsonExample = document.getElementById('jsonExample').textContent;
-    navigator.clipboard.writeText(jsonExample)
-        .then(() => showNotification('JSON example copied to clipboard!', 'success'))
-        .catch(err => showNotification('Failed to copy: ' + err, 'error'));
-}
 
 // Initialize Add Stories page when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {

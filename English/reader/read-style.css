@@ -201,14 +201,12 @@ header {
 
 /* With custom colors */
 .title {
-    -webkit-text-stroke: 0.3px #333;
-    color: white;
+   
 }
 
 /* Dark mode specific */
 .dark-mode .title {
-    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.5);
-    color: white;
+  
 }
 .header-actions {
     display: flex;

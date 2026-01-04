@@ -30,11 +30,11 @@
                             <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
                             <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
-                                <li><a href="#" class="nav-link" data-page="vocabulary">Vocabulary</a></li>
-                                <li><a href="#" class="nav-link" data-page="flashcards">Flashcards</a></li>
-                                <li><a href="#" class="nav-link" data-page="addStories"> <i
+                                <li><a href="#" class="nav-link nav-btn" data-page="vocabulary">Vocabulary</a></li>
+                                <li><a href="#" class="nav-link nav-btn" data-page="flashcards">Flashcards</a></li>
+                                <li><a href="#" class="nav-link nav-btn" data-page="addStories"> <i
                                             class="fas fa-plus-circle"></i>Add Stories</a></li>
-                                <li><a target="_blank" href="../store/index.html" >Download Stories</a></li>
+                                <li><a target="_blank" class="nav-btn" href="../store/index.html" >Download Stories</a></li>
 
                             </div>
 
@@ -214,11 +214,11 @@
             <div id="vocabulary" class="page">
                 <div class="vocabulary-header">
                     <h2>My Vocabulary</h2>
-                    <div>
-                        <button onclick="exportVocabulary()" class="btn btn-primary" id="exportBtn">
+                    <div class="Vocabulary-actions">
+                        <button onclick="exportVocabulary()" class="btn btn-primary v-btn" id="exportBtn">
                             <i class="fas fa-download"></i> Export CSV
                         </button>
-                        <button onclick="removeAll()" class="btn btn-primary">
+                        <button onclick="removeAll()" class="btn btn-primary v-btn">
                             <i class="fas fa-remove"></i> Remove all
                         </button>
                     </div>

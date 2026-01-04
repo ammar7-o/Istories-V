@@ -427,6 +427,7 @@
 .story-item {
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     gap: 12px;
     padding: 12px;
     background: var(--background);
@@ -473,6 +474,7 @@
 
 .story-item-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     flex-shrink: 0;
 }
@@ -1113,13 +1115,24 @@
 #storyPreviewGrid .story-card:hover {
     transform: translateY(-2px);
 }
-
+.imtitle{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 /* Enhanced Mobile Responsiveness */
 @media (max-width: 480px) {
     .add-stories-container {
-        padding: 12px;
+        padding: 4px;
     }
-    
+    .story-item {
+        flex-direction: column;
+        padding: 5px;
+        border: #695c5ca9 2px solid;
+    }
+.imtitle{
+    gap: 5px;
+}
     .upload-section {
         padding: 16px 12px;
         border-radius: 14px;
