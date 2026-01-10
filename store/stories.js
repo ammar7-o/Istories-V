@@ -388,7 +388,7 @@ window.storiesData = {
       "coverType": "image",
       "sound": "../sounds/story2.mp3",
       "author": "Istories",
-      "dictionaries": ["../Dictionarys/story2.json"],
+      "dictionaries": ["../Dictionarys/main.json"],
       "content": [
         "One rainy afternoon, Tom decided to visit a new <span class='mark'>cafe</span> near his house. The cafe had a strange name: 'The Whispering Door'. It looked very old and <span class='mark'>mysterious</span> from the outside.",
         "When Tom entered, he noticed something unusual. The cafe was completely silent, but the <span class='mark'>customers</span> were moving their lips as if talking. A friendly waiter approached him with a warm smile.",

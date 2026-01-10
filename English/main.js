@@ -7,7 +7,6 @@
 let currentPage = 'home';
 let currentStory = null;
 let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
-
 let fontSize = 1.2; // rem
 let lineHeight = 1.8;
 let stories = []; // Will be loaded from external file
@@ -84,48 +83,53 @@ function init() {
         userStories = [];
     }
 
-    // STEP 1: Apply saved theme FIRST (this sets dark/light mode)
+    // STEP 1: Apply saved theme FIRST
     console.log('Step 1: Applying theme...');
     applyTheme();
 
     // STEP 2: Apply saved primary color immediately
-    console.log('Step 2: Applying saved color:', selectedColor);
+    console.log('Step 2: Applying saved primary color:', selectedColor);
     if (selectedColor) {
-        // Apply immediately without delay
         applyPrimaryColor(selectedColor);
     }
 
-    // STEP 3: Initialize color selector (this sets up click handlers)
-    console.log('Step 3: Initializing color selector...');
-    // Add a small delay to ensure DOM is fully loaded
+    // STEP 3: Apply saved secondary color immediately
+    console.log('Step 2.5: Applying saved secondary color:', selectedSecondaryColor);
+    if (selectedSecondaryColor) {
+        applySecondaryColor(selectedSecondaryColor);
+    }
+
+    // STEP 4: Initialize color selectors
+    console.log('Step 3: Initializing color selectors...');
     setTimeout(() => {
         initColorSelector();
+        initSecondaryColorSelector(); // Add this line
     }, 50);
 
-    // STEP 4: Render stories and other UI elements
+    // STEP 5: Render stories and other UI elements
     console.log('Step 4: Rendering UI...');
     renderStories();
     setupSearch();
     renderVocabulary();
     updateStats();
 
-    // STEP 5: Initialize flashcards
+    // STEP 6: Initialize flashcards
     console.log('Step 5: Initializing flashcards...');
     if (typeof initFlashcards === 'function') {
         initFlashcards();
     }
 
-    // STEP 6: Set up event listeners
+    // STEP 7: Set up event listeners
     console.log('Step 6: Setting up event listeners...');
     setupEventListeners();
 
-    // STEP 7: Set up navigation toggle if elements exist
+    // STEP 8: Set up navigation toggle if elements exist
     console.log('Step 7: Setting up navigation...');
     if (document.getElementById("toggle-nav") && document.getElementById("more")) {
         setupNavToggle();
     }
 
-    // STEP 8: Verify everything is set up correctly
+    // STEP 9: Verify everything is set up correctly
     console.log('Step 8: Final verification...');
     setTimeout(() => {
         verifyColorSetup();
@@ -200,10 +204,16 @@ function setupEventListeners() {
 
     themeToggle.addEventListener('click', toggleTheme);
 
-    // CTA button
     document.querySelector('.cta-button').addEventListener('click', () => {
         if (stories.length > 0) {
-            openStoryInNewPage(stories[0].id);
+            // Generate a random index from 0 to stories.length - 1
+            var randomIndex = Math.floor(Math.random() * stories.length);
+
+            // Get the random story using the random index
+            var randomStory = stories[randomIndex];
+
+            // Open the random story
+            openStoryInNewPage(randomStory.id);
         }
     });
 }
@@ -245,7 +255,6 @@ function switchPage(page) {
     }
 }
 
-// Open story in a new page WITH story title
 // Open story in a new page WITH story title
 function openStoryInNewPage(storyId) {
     // Find the story in the stories array
@@ -290,7 +299,7 @@ function renderStoryCover(story) {
     }
 }
 
-// Render stories grid with clickable cards
+
 // Render stories grid with clickable cards
 function renderStories(level = 'all') {
     storiesGrid.innerHTML = '';
@@ -310,8 +319,8 @@ function renderStories(level = 'all') {
     if (filteredStories.length === 0) {
         storiesGrid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p>No stories found for this ${level === 'user' ? 'category' : 'level'}.</p>
-                ${level === 'user' ? '<p><a href="add-stories.html" style="color: var(--primary); text-decoration: underline;">Add your first story</a></p>' : ''}
+                <p>No stories found for this ${level === 'user' ? 'category' : 'level'} go to Add stories page.</p>
+               
             </div>
         `;
         return;
@@ -320,7 +329,7 @@ function renderStories(level = 'all') {
     filteredStories.forEach(story => {
         const storyCard = document.createElement('div');
         storyCard.className = 'story-card';
-        storyCard.dataset.storyId = story.id; // Add story ID as data attribute
+        storyCard.dataset.storyId = story.id;
 
         // Add user story indicator
         const userStoryBadge = story.isUserStory
@@ -332,6 +341,9 @@ function renderStories(level = 'all') {
             ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
             : '';
 
+        // Get CEFR level with fallback
+        const cefrLevel = story.levelcefr || '';
+
         storyCard.innerHTML = `
             <div class="story-image">
                 ${authorHTML}
@@ -339,9 +351,15 @@ function renderStories(level = 'all') {
             </div>
             <div class="story-content">
                 <div class="story-header">
+                <div>
                     <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                    ${userStoryBadge}
+                    <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
                 </div>
+        
+                ${userStoryBadge}
+
+                </div>
+
                 <h3 class="story-title">${story.title}</h3>
                 <p>${story.content[0].substring(0, 100)}...</p>
                 <div class="story-meta">
@@ -374,6 +392,10 @@ closeSettings.addEventListener("click", function () {
     settingsOverlay.classList.remove("active");
 });
 
+settingsOverlay.addEventListener("click", function () {
+    settingsPage.classList.remove("open");
+    settingsOverlay.classList.remove("active");
+});
 // This function is for backward compatibility (not used with new page approach)
 function openStory(story) {
     currentStory = story;

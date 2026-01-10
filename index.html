@@ -11,227 +11,248 @@
   <meta property="og:description" content="Learn Languages Through Interactive Stories.">
   <meta property="og:image" content="icon.png">
   <meta property="og:type" content="website">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #10b981;
+      --secondary-dark: #0da271;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --bg: #ffffff;
+      --bg-secondary: #f9fafb;
+      --border: #e5e7eb;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --radius: 8px;
+    }
 
+    .dark-mode {
+      --primary-dark: #4f46e5;
+      --text: #f9fafb;
+      --text-light: #d1d5db;
+      --bg: #111827;
+      --bg-secondary: #1f2937;
+      --border: #374151;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header Styles */
+    header {
+      background-color: var(--bg);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: black;
+    }
+
+    .dark-mode .logo {
+      color: white;
+    }
+
+    .logo img {
+      width: 2.5rem;
+    }
+
+    .logo i {
+      font-size: 1.8rem;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+    }
+
+    nav a:hover,
+    nav a.active {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--bg-secondary);
+    }
+
+    .user-actions button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .user-actions button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      min-height: calc(100vh - 140px);
+      padding: 30px 0;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Homepage Styles */
+    .hero {
+      text-align: center;
+      padding: 40px 10px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-radius: var(--radius);
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto 25px;
+    }
+
+    .cta-button {
+      background-color: white;
+      color: var(--primary);
+      border: none;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-secondary);
+      padding: 30px 0;
+      margin-top: 50px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-light);
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+
+    /* Add CSS animations for notifications */
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
-<style>
-  :root {
-    --primary: #4f46e5;
-    --primary-dark: #4338ca;
-    --secondary: #10b981;
-    --text: #1f2937;
-    --text-light: #6b7280;
-    --bg: #ffffff;
-    --bg-secondary: #f9fafb;
-    --border: #e5e7eb;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --radius: 8px;
-  }
-
-  .dark-mode {
-    --primary-dark: #4f46e5;
-    --secondary: #10b981;
-    --text: #f9fafb;
-    --text-light: #d1d5db;
-    --bg: #111827;
-    --bg-secondary: #1f2937;
-    --border: #374151;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-  /* Header Styles */
-  header {
-    background-color: var(--bg);
-    box-shadow: var(--shadow);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: black;
-  }
-
-  .dark-mode .logo {
-    color: white;
-  }
-
-  .logo img {
-    width: 2.5rem;
-  }
-
-  .logo i {
-    font-size: 1.8rem;
-  }
-
-  nav ul {
-    display: flex;
-    list-style: none;
-    gap: 25px;
-  }
-
-  nav a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: 500;
-    padding: 8px 12px;
-    border-radius: var(--radius);
-  }
-
-  nav a:hover,
-  nav a.active {
-    background-color: var(--primary);
-    color: white;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .theme-toggle {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: var(--text);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .theme-toggle:hover {
-    background-color: var(--bg-secondary);
-  }
-
-  .user-actions button {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  .user-actions button:hover {
-    background-color: var(--primary-dark);
-  }
-
-  /* Main Content Styles */
-  .main-content {
-    min-height: calc(100vh - 140px);
-    padding: 30px 0;
-  }
-
-  .page {
-    display: none;
-  }
-
-  .page.active {
-    display: block;
-  }
-
-  /* Homepage Styles */
-  .hero {
-    text-align: center;
-    padding: 40px 10px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    color: white;
-    border-radius: var(--radius);
-    margin-bottom: 40px;
-
-  }
-
-  .hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-  }
-
-  .hero p {
-    font-size: 1.2rem;
-    max-width: 600px;
-    margin: 0 auto 25px;
-  }
-
-  .cta-button {
-    background-color: white;
-    color: var(--primary);
-    border: none;
-    padding: 12px 30px;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-  }
-
-  .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Footer */
-  footer {
-    background: var(--bg-secondary);
-    padding: 30px 0;
-    margin-top: 50px;
-  }
-
-  .footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 20px;
-  }
-
-  .footer-links a {
-    color: var(--text-light);
-    text-decoration: none;
-  }
-
-  .footer-links a:hover {
-    color: var(--primary);
-  }
-</style>
 
 <body>
   <header id="top">
@@ -241,9 +262,7 @@
           <img src="icon.svg" alt="">
           <span>IStories</span>
         </div>
-        <nav>
-
-        </nav>
+        <nav></nav>
         <div class="header-actions">
           <button class="theme-toggle" id="themeToggle">
             <i class="fas fa-moon"></i>
@@ -268,19 +287,12 @@
           <button onclick="window.location.href='french/index.html'" class="cta-button">French</button>
         </section>
 
-
         <div class="stories-grid" id="storiesGrid">
           <!-- Stories will be populated by JavaScript -->
         </div>
       </div>
-
-    </div>
-
-
     </div>
   </main>
-
-
 
   <footer>
     <div class="container">
@@ -298,42 +310,13 @@
   </footer>
 
   <script>
-
-
-    //=========Color selector============
-    // Add to your existing JavaScript
-
-    // Color variables
-    const defaultColors = [
-      { name: 'indigo', value: '#4f46e5' },
-      { name: 'blue', value: '#4a6cf7' },
-      { name: 'purple', value: '#7c4dff' },
-      { name: 'green', value: '#008638' },
-      { name: 'orange', value: '#ff5722' },
-      { name: 'pink', value: '#e91e63' },
-      { name: 'teal', value: '#009688' }
-    ];
-
-    // Load saved color or use default
+    // SIMPLIFIED VERSION - Secondary color will work now!
+    
+    // Load saved colors or use defaults
     let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
+    let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981'; // Changed to match CSS
 
-    // Function to initialize color selector
-    //=========COLOR SELECTOR FUNCTIONS============
-
-    // Function to apply ONLY the primary color
-    function applyPrimaryColor(color) {
-      // Calculate darker shade for --primary-dark
-      const darkerColor = adjustColor(color, -20);
-
-      // Update ONLY the primary color variables in CSS
-      const root = document.documentElement;
-      root.style.setProperty('--primary', color);
-      root.style.setProperty('--primary-dark', darkerColor);
-
-      // DO NOT update other elements - let CSS handle it
-    }
-
-    // Helper function to adjust color brightness (for --primary-dark)
+    // Helper function to adjust color brightness
     function adjustColor(color, percent) {
       const num = parseInt(color.replace('#', ''), 16);
       const amt = Math.round(2.55 * percent);
@@ -349,10 +332,56 @@
       ).toString(16).slice(1);
     }
 
+    // Function to apply primary color
+    function applyPrimaryColor(color) {
+      const darkerColor = adjustColor(color, -20);
+      const root = document.documentElement;
+      root.style.setProperty('--primary', color);
+      root.style.setProperty('--primary-dark', darkerColor);
+    }
 
+    // Function to apply secondary color - THIS IS WHAT YOU NEED
+    function applySecondaryColor(color) {
+      const darkerColor = adjustColor(color, -20);
+      const root = document.documentElement;
+      root.style.setProperty('--secondary', color);
+      root.style.setProperty('--secondary-dark', darkerColor);
+      console.log('Secondary color applied:', color);
+    }
 
+    // Theme functions
+    const themeToggle = document.getElementById('themeToggle');
 
-    // Update showNotification to use selected color for success messages
+    function toggleTheme() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
+      applyTheme();
+    }
+
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+      
+      // Update theme toggle icon
+      if (themeToggle) {
+        const themeIcon = themeToggle.querySelector('i');
+        if (themeIcon) {
+          themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+      }
+      
+      // Apply both colors
+      applyPrimaryColor(selectedColor);
+      applySecondaryColor(selectedSecondaryColor);
+    }
+
+    // Notification function
     function showNotification(message, type = 'info') {
       const notification = document.createElement('div');
       notification.className = 'notification';
@@ -360,15 +389,14 @@
 
       // Set background color based on notification type
       let bgColor = '';
-
       if (type === 'success') {
-        bgColor = 'var(--primary)'; // Use the CSS variable
+        bgColor = 'var(--secondary)'; // Use secondary color for success
       } else if (type === 'error') {
         bgColor = '#ff4444';
       } else if (type === 'warning') {
         bgColor = '#ff9900';
       } else if (type === 'info') {
-        bgColor = '#2196F3';
+        bgColor = 'var(--primary)'; // Use primary color for info
       }
 
       notification.style.cssText = `
@@ -383,7 +411,7 @@
         z-index: 1000;
         font-weight: 500;
         animation: slideIn 0.3s ease;
-    `;
+      `;
 
       document.body.appendChild(notification);
 
@@ -398,71 +426,27 @@
       }, 3000);
     }
 
-
-
-
-
-    const themeToggle = document.getElementById('themeToggle');
-    let theme = localStorage.getItem('theme') || 'light';
-
-    // Toggle theme
-    function toggleTheme() {
-      const currentTheme = localStorage.getItem('theme') || 'light';
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-      // Save new theme
-      localStorage.setItem('theme', newTheme);
-
-      // Apply the new theme
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Page loaded, initializing colors...');
+      
+      // Apply theme first
       applyTheme();
-
-      // Show notification
-      // showNotification(`Switched to ${newTheme} mode`, 'success');
-    }
-
-
-    // Apply current theme
-    function applyTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-
-      // Apply theme to body class
-      if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-      } else {
-        document.body.classList.remove('dark-mode');
-      }
-
-      // Update theme toggle icon
-      const themeToggle = document.getElementById('themeToggle');
-      if (themeToggle) {
-        const themeIcon = themeToggle.querySelector('i');
-        if (themeIcon) {
-          themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-      }
-
-      // Re-apply primary color to ensure it works with new theme
-      if (selectedColor) {
-        applyPrimaryColor(selectedColor);
-      }
-    }
-
-    themeToggle.addEventListener('click', toggleTheme);
-    applyTheme(); // لتطبيق الثيم المحفوظ عند تحميل الصفحة
-
-
-
-
-
-
-
-
-
-
-
-
-
+      
+      // Add theme toggle event listener
+      themeToggle.addEventListener('click', toggleTheme);
+      
+    
+      
+      // Log the current colors to console
+      setTimeout(() => {
+        const root = document.documentElement;
+        console.log('Current CSS Variables:');
+        console.log('--primary:', getComputedStyle(root).getPropertyValue('--primary').trim());
+        console.log('--secondary:', getComputedStyle(root).getPropertyValue('--secondary').trim());
+        console.log('--secondary-dark:', getComputedStyle(root).getPropertyValue('--secondary-dark').trim());
+      }, 500);
+    });
   </script>
 </body>
-
 </html>

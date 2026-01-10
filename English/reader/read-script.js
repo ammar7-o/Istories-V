@@ -37,6 +37,8 @@ const listenWordBtn = document.getElementById('listenWordBtn');
 const removebtn = document.getElementById("removebtn");
 const sound = document.getElementById("sound");
 const lvl = document.getElementById("lvl");
+const lvlcefr = document.getElementById("lvlcefr");
+
 const googleTranslateBtn = document.getElementById('googleTranslateBtn');
 
 // ----------------------------------------------------
@@ -461,10 +463,10 @@ function getFallbackStory(storyId) {
     // Handle both string and number IDs
     return fallbackStories[storyId] || fallbackStories[parseInt(storyId)] || fallbackStories[1];
 }
-
 function displayStory(story) {
     storyTitle.textContent = story.title;
-    if (!story.author == "") {
+    
+    if (story.author && story.author.trim() !== "") {
         const badge = document.createElement('span');
         badge.className = 'user-story-badge';
         badge.innerHTML = `<i class="fas fa-user"></i> ${story.author}`;
@@ -480,25 +482,6 @@ function displayStory(story) {
         `;
         storyTitle.appendChild(badge);
     }
-    // // Add user story badge if it's a user story
-    // if (story.isUserStory) {
-    //     const badge = document.createElement('span');
-    //     badge.className = 'user-story-badge';
-    //     badge.innerHTML = '<i class="fas fa-user"></i> Your Story';
-    //     badge.style.cssText = `
-    //         display: inline-block;
-    //         margin-left: 10px;
-    //         background: var(--primary);
-    //         color: white;
-    //         padding: 4px 10px;
-    //         border-radius: 12px;
-    //         font-size: 0.8rem;
-    //         font-weight: 600;
-    //     `;
-    //     storyTitle.appendChild(badge);
-    // }
-
-    storyText.innerHTML = '';
 
     // التحكم في الصوت حسب وجود src أو لا
     if (sound) {
@@ -511,7 +494,43 @@ function displayStory(story) {
         }
     }
 
-    if (lvl && story.level) lvl.innerHTML = story.level;
+    // Display difficulty level
+    if (lvl && story.level) {
+        const level = story.level.toLowerCase(); // normalize value
+
+        // Capitalize first letter for display
+        lvl.textContent = level.charAt(0).toUpperCase() + level.slice(1);
+
+        // Remove old level classes (important)
+        lvl.classList.remove('beginner', 'intermediate', 'advanced');
+
+        // Add class based on level
+        if (level === 'beginner') {
+            lvl.classList.add('beginner');
+        } else if (level === 'intermediate') {
+            lvl.classList.add('intermediate');
+        } else if (level === 'advanced') {
+            lvl.classList.add('advanced');
+        }
+    }
+    
+    // Display CEFR level - FIXED
+    if (lvlcefr && story.levelcefr && story.levelcefr.trim() !== "") {
+        // Remove any old CEFR classes
+        lvlcefr.classList.remove('A1', 'A2', 'B1', 'B2', 'C1', 'C2');
+        
+        // Set text content
+        lvlcefr.textContent = story.levelcefr.toUpperCase();
+        
+        // Add appropriate CEFR class for styling
+        const cefrLevel = story.levelcefr.toUpperCase();
+        lvlcefr.classList.add(cefrLevel);
+    } else if (lvlcefr) {
+        // If no CEFR level, hide the element
+        lvlcefr.style.display = 'none';
+    }
+
+    storyText.innerHTML = '';
 
     story.content.forEach(paragraph => {
         const p = document.createElement('div');
@@ -523,7 +542,6 @@ function displayStory(story) {
     setupWordInteractions();
     updateReadingProgress();
 }
-
 /**
  * Function makeWordsClickable(htmlString, options = {})
  * تستخدم المفتاح الأساسي للبحث (الذي يحافظ على الفاصلة العلوية الأصلية والتشكيل)
@@ -954,6 +972,7 @@ function updateVocabularyStats() {
     if (readingStreak) readingStreak.textContent = streak;
 }
 
+// Render vocabulary list - compatible with both formats
 function renderVocabulary() {
     if (!vocabularyList) return;
 
@@ -972,17 +991,32 @@ function renderVocabulary() {
         const item = document.createElement('div');
         item.className = 'vocabulary-item';
 
-        const displayWord = word.originalWord || word.word;
+        // Handle different field names from different sources
+        const displayWord = word.originalWord || word.word || '';
+        const translation = word.translation || '';
+        const story = word.story || '';
+        
+        // Handle date field - imported data uses 'addedDate', existing uses 'added' or 'date'
+        const addedDate = word.addedDate || word.added || word.date || new Date().toISOString();
+        
+        // Check if translation exists (imported data always has translation)
+        const hasTranslation = translation && translation !== displayWord;
+        
+        // Check status
+        const status = word.status || 'saved';
+        
+        // Check if from user story
+        const fromUserStory = word.fromUserStory || false;
 
-        const translationBadge = !word.hasTranslation
+        const translationBadge = !hasTranslation
             ? `<span class="no-translation-badge" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">No Translation</span>`
             : '';
 
-        const masteredBadge = word.status === 'mastered'
+        const masteredBadge = status === 'mastered'
             ? `<span class="mastered-badge" style="background: rgb(13, 167, 116); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Mastered</span>`
             : '';
 
-        const userStoryBadge = word.fromUserStory
+        const userStoryBadge = fromUserStory
             ? `<span class="user-story-badge-small" style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Your Story</span>`
             : '';
 
@@ -990,14 +1024,14 @@ function renderVocabulary() {
             <div class="word-info">
                 <div class="word-main">
                     <span class="word-text">${displayWord}</span>
-                    <span class="word-translation">${word.translation}</span>
+                    <span class="word-translation">${translation || 'No translation available'}</span>
                     ${translationBadge}
                     ${masteredBadge}
                     ${userStoryBadge}
                 </div>
-                ${word.story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${word.story}</div>` : ''}
+                ${story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${story}</div>` : ''}
                 <div class="word-date" style="font-size: 0.7rem; color: var(--text-lighter); margin-top: 3px;">
-                    Added: ${new Date(word.added || word.date).toLocaleDateString()}
+                    Added: ${formatVocabularyDate(addedDate)}
                 </div>
             </div>
             <div class="word-actions">
@@ -1025,6 +1059,61 @@ function renderVocabulary() {
     });
 }
 
+// Helper function to format date properly
+function formatVocabularyDate(dateValue) {
+    if (!dateValue) return 'Unknown date';
+    
+    try {
+        const date = new Date(dateValue);
+        if (isNaN(date.getTime())) {
+            return 'Invalid date';
+        }
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (error) {
+        return 'Invalid date';
+    }
+}
+
+// Also update your saveWord function to handle both formats
+function saveWord(word, translation, story = '', hasTranslation = true) {
+    // Check if word already exists
+    const existingIndex = savedWords.findIndex(w => 
+        w.word.toLowerCase() === word.toLowerCase() || 
+        w.originalWord?.toLowerCase() === word.toLowerCase()
+    );
+    
+    if (existingIndex === -1) {
+        // Add new word with both field names for compatibility
+        savedWords.push({
+            word: word,
+            originalWord: word,
+            translation: translation,
+            story: story,
+            hasTranslation: hasTranslation,
+            added: new Date().toISOString(),
+            addedDate: new Date().toISOString(),
+            status: 'saved'
+        });
+    } else {
+        // Update existing word
+        savedWords[existingIndex] = {
+            ...savedWords[existingIndex],
+            translation: translation || savedWords[existingIndex].translation,
+            story: story || savedWords[existingIndex].story,
+            hasTranslation: hasTranslation
+        };
+    }
+    
+    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    renderVocabulary();
+    updateStats();
+    
+    showNotification('Word saved to vocabulary!', 'success');
+}
 function markAsMastered(index) {
     if (index < 0 || index >= savedWords.length) return;
 

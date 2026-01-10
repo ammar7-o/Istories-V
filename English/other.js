@@ -70,7 +70,7 @@ function loadCard(index) {
 
     const card = sessionCards[index];
 
-    // Format dates
+    // Format dates - FIXED: Handle both 'added' and 'addedDate'
     const formatDate = (dateString, short = false) => {
         if (!dateString) return 'Not set';
         const date = new Date(dateString);
@@ -87,7 +87,9 @@ function loadCard(index) {
         });
     };
 
-    const addedDate = formatDate(card.added);
+    // FIXED: Get date from correct field
+    const dateValue = card.addedDate || card.added || card.date || new Date().toISOString();
+    const addedDate = formatDate(dateValue);
 
     // Front side (word) with date
     flashcardWord.textContent = card.word;
@@ -103,13 +105,35 @@ function loadCard(index) {
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-                    ${card.added ? `
+                    ${dateValue ? `
                         <div class="date-item">
                             <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 2px;">
                                 <i class="far fa-calendar-plus"></i> Added
                             </div>
                             <div style="font-size: 0.85rem; font-weight: 500;">
                                 ${addedDate}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${card.lastViewed ? `
+                        <div class="date-item">
+                            <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 2px;">
+                                <i class="far fa-eye"></i> Last Viewed
+                            </div>
+                            <div style="font-size: 0.85rem; font-weight: 500;">
+                                ${formatDate(card.lastViewed, true)}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${card.timesViewed ? `
+                        <div class="date-item">
+                            <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 2px;">
+                                <i class="fas fa-history"></i> Views
+                            </div>
+                            <div style="font-size: 0.85rem; font-weight: 500;">
+                                ${card.timesViewed} times
                             </div>
                         </div>
                     ` : ''}
@@ -136,7 +160,6 @@ function loadCard(index) {
     // Update progress
     updateProgress();
 }
-
 // Check if review is due
 function isReviewDue(dateString) {
     if (!dateString) return false;
@@ -360,7 +383,7 @@ function resetCardProgress() {
 
 // ============== Start vocabulary functions =================
 
-// Render vocabulary list
+// Render vocabulary list - compatible with both formats
 function renderVocabulary() {
     if (!vocabularyList) return;
 
@@ -379,17 +402,32 @@ function renderVocabulary() {
         const item = document.createElement('div');
         item.className = 'vocabulary-item';
 
-        const displayWord = word.originalWord || word.word;
+        // Handle different field names from different sources
+        const displayWord = word.originalWord || word.word || '';
+        const translation = word.translation || '';
+        const story = word.story || '';
 
-        const translationBadge = !word.hasTranslation
+        // FIXED: Get the date with better fallback
+        const addedDate = getVocabularyDate(word);
+        
+        // Check if translation exists (imported data always has translation)
+        const hasTranslation = translation && translation !== displayWord;
+
+        // Check status
+        const status = word.status || 'saved';
+
+        // Check if from user story
+        const fromUserStory = word.fromUserStory || false;
+
+        const translationBadge = !hasTranslation
             ? `<span class="no-translation-badge" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">No Translation</span>`
             : '';
 
-        const masteredBadge = word.status === 'mastered'
+        const masteredBadge = status === 'mastered'
             ? `<span class="mastered-badge" style="background: rgb(13, 167, 116); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Mastered</span>`
             : '';
 
-        const userStoryBadge = word.fromUserStory
+        const userStoryBadge = fromUserStory
             ? `<span class="user-story-badge-small" style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Your Story</span>`
             : '';
 
@@ -397,14 +435,14 @@ function renderVocabulary() {
             <div class="word-info">
                 <div class="word-main">
                     <span class="word-text">${displayWord}</span>
-                    <span class="word-translation">${word.translation}</span>
+                    <span class="word-translation">${translation || 'No translation available'}</span>
                     ${translationBadge}
                     ${masteredBadge}
                     ${userStoryBadge}
                 </div>
-                ${word.story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${word.story}</div>` : ''}
+                ${story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${story}</div>` : ''}
                 <div class="word-date" style="font-size: 0.7rem; color: var(--text-lighter); margin-top: 3px;">
-                    Added: ${new Date(word.added || word.date).toLocaleDateString()}
+                    Added: ${formatDateForDisplay(addedDate)}
                 </div>
             </div>
             <div class="word-actions">
@@ -430,6 +468,119 @@ function renderVocabulary() {
             }
         });
     });
+}
+
+// Helper function to extract date from word object
+function getVocabularyDate(word) {
+    // Try all possible date field names in order of priority
+    if (word.addedDate) return word.addedDate;
+    if (word.dateAdded) return word.dateAdded;
+    if (word.added) return word.added;
+    if (word.date) return word.date;
+    
+    // If no date field exists, create one
+    const newDate = new Date().toISOString();
+    
+    // Update the word object with the new date
+    word.addedDate = newDate;
+    
+    // Save back to localStorage if needed
+    setTimeout(() => {
+        localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    }, 100);
+    
+    return newDate;
+}
+
+// Format date for display - SIMPLER VERSION
+// Simple date formatter that always works
+function formatDateForDisplay(dateString) {
+    if (!dateString) return 'Unknown date';
+    
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            // Try to extract just the date part from ISO string
+            const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
+            if (dateMatch) {
+                const simpleDate = new Date(dateMatch[1]);
+                if (!isNaN(simpleDate.getTime())) {
+                    return simpleDate.toLocaleDateString();
+                }
+            }
+            return 'Invalid date';
+        }
+        return date.toLocaleDateString();
+    } catch (error) {
+        return 'Date error';
+    }
+}
+// Alternative: Very simple date formatter
+function simpleFormatDate(dateString) {
+    if (!dateString) return '';
+    
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString(); // "1/10/2026" format
+    } catch (e) {
+        return dateString; // Return raw string if can't parse
+    }
+}
+
+// Helper function to format date properly
+function formatVocabularyDate(dateValue) {
+    if (!dateValue) return 'Unknown date';
+
+    try {
+        const date = new Date(dateValue);
+        if (isNaN(date.getTime())) {
+            return 'Invalid date';
+        }
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (error) {
+        return 'Invalid date';
+    }
+}
+
+// Also update your saveWord function to handle both formats
+function saveWord(word, translation, story = '', hasTranslation = true) {
+    // Check if word already exists
+    const existingIndex = savedWords.findIndex(w =>
+        w.word.toLowerCase() === word.toLowerCase() ||
+        w.originalWord?.toLowerCase() === word.toLowerCase()
+    );
+
+    if (existingIndex === -1) {
+        // Add new word with both field names for compatibility
+        savedWords.push({
+            word: word,
+            originalWord: word,
+            translation: translation,
+            story: story,
+            hasTranslation: hasTranslation,
+            added: new Date().toISOString(),
+            addedDate: new Date().toISOString(),
+            status: 'saved'
+        });
+    } else {
+        // Update existing word
+        savedWords[existingIndex] = {
+            ...savedWords[existingIndex],
+            translation: translation || savedWords[existingIndex].translation,
+            story: story || savedWords[existingIndex].story,
+            hasTranslation: hasTranslation
+        };
+    }
+
+    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    renderVocabulary();
+    updateStats();
+
+    showNotification('Word saved to vocabulary!', 'success');
 }
 
 function updateVocabularyStats() {
@@ -567,7 +718,225 @@ function exportVocabulary() {
     // Show success message
     showNotification(`Vocabulary exported successfully! (${savedWords.length} words)`);
 }
+function importVocabulary() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.csv,.json';
+    fileInput.style.display = 'none';
 
+    fileInput.onchange = function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            try {
+                const content = event.target.result;
+
+                // Parse the file based on extension
+                let importedWords = [];
+
+                if (file.name.toLowerCase().endsWith('.json')) {
+                    // Handle JSON - exactly like your localStorage format
+                    const parsed = JSON.parse(content);
+
+                    if (Array.isArray(parsed)) {
+                        importedWords = parsed;
+                    } else if (parsed.savedWords && Array.isArray(parsed.savedWords)) {
+                        importedWords = parsed.savedWords;
+                    } else {
+                        // Try to extract any array from the object
+                        const keys = Object.keys(parsed);
+                        for (let key of keys) {
+                            if (Array.isArray(parsed[key])) {
+                                importedWords = parsed[key];
+                                break;
+                            }
+                        }
+                    }
+                } else if (file.name.toLowerCase().endsWith('.csv')) {
+                    // Handle CSV - convert to your exact format
+                    importedWords = parseCSVToExactFormat(content);
+                }
+
+                if (!Array.isArray(importedWords) || importedWords.length === 0) {
+                    throw new Error('No valid vocabulary data found in file');
+                }
+
+                // Get current words
+                const currentWords = JSON.parse(localStorage.getItem('savedWords') || '[]');
+
+                // Merge without modifying dates
+                const mergedWords = [...currentWords];
+                let addedCount = 0;
+
+                importedWords.forEach(newWord => {
+                    // Check if word already exists (case-insensitive)
+                    const exists = mergedWords.some(existingWord =>
+                        existingWord.word.toLowerCase() === newWord.word.toLowerCase()
+                    );
+
+                    if (!exists) {
+                        // Preserve the exact structure including dates
+                        mergedWords.push({
+                            word: newWord.word || '',
+                            translation: newWord.translation || newWord.word || '',
+                            status: newWord.status || 'saved',
+                            story: newWord.story || '',
+                            addedDate: newWord.addedDate || new Date().toISOString()
+                            // Don't add any extra fields
+                        });
+                        addedCount++;
+                    }
+                });
+
+                // Save back to localStorage EXACTLY as before
+                localStorage.setItem('savedWords', JSON.stringify(mergedWords));
+
+                // Update UI if functions exist
+                if (typeof renderVocabulary === 'function') {
+                    renderVocabulary();
+                }
+
+                // Show success message
+                const message = `Imported ${addedCount} new vocabulary words. Total: ${mergedWords.length}`;
+
+                if (typeof showNotification === 'function') {
+                    showNotification(message, 'success');
+                } else {
+                    alert(message);
+                }
+
+                console.log('Import successful. New total:', mergedWords.length);
+
+            } catch (error) {
+                console.error('Import error:', error);
+                const errorMsg = `Import failed: ${error.message}`;
+
+                if (typeof showNotification === 'function') {
+                    showNotification(errorMsg, 'error');
+                } else {
+                    alert(errorMsg);
+                }
+            }
+        };
+
+        reader.readAsText(file, 'UTF-8');
+    };
+
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    setTimeout(() => {
+        if (fileInput.parentNode) {
+            document.body.removeChild(fileInput);
+        }
+    }, 1000);
+}
+
+// CSV parser that creates EXACT same format as your localStorage
+function parseCSVToExactFormat(csvText) {
+    const words = [];
+    const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
+
+    if (lines.length < 2) return words;
+
+    // Get headers from first line
+    const headers = lines[0].split(',').map(h =>
+        h.trim().replace(/"/g, '').toLowerCase()
+    );
+
+    // Process each data row
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.trim()) continue;
+
+        // Parse CSV row with quotes
+        const row = parseCSVRow(line);
+
+        // Create object from headers and row values
+        const rowObj = {};
+        headers.forEach((header, index) => {
+            if (index < row.length) {
+                rowObj[header] = row[index].replace(/"/g, '').trim();
+            }
+        });
+
+        // Convert to your exact format
+        const word = {
+            word: rowObj.word || rowObj.english || '',
+            translation: rowObj.translation || rowObj.arabic || rowObj.meaning || '',
+            status: rowObj.status || 'saved',
+            story: rowObj.story || rowObj.title || '',
+            addedDate: new Date().toISOString() // Use current date for imports
+        };
+
+        if (word.word) {
+            words.push(word);
+        }
+    }
+
+    return words;
+}
+
+// Helper to parse CSV row with quotes
+function parseCSVRow(line) {
+    const result = [];
+    let inQuotes = false;
+    let currentField = '';
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = i < line.length - 1 ? line[i + 1] : '';
+
+        if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+                // Escaped quote
+                currentField += '"';
+                i++; // Skip next quote
+            } else {
+                // Toggle quotes
+                inQuotes = !inQuotes;
+            }
+        } else if (char === ',' && !inQuotes) {
+            // End of field
+            result.push(currentField);
+            currentField = '';
+        } else {
+            // Normal character
+            currentField += char;
+        }
+    }
+
+    // Add last field
+    result.push(currentField);
+    return result;
+}
+
+// Alternative simple CSV parser for your exact format
+function parseCSVSimple(csvText) {
+    const words = [];
+    const lines = csvText.split(/\r?\n/);
+
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Match: "word","translation","status","story","date"
+        const match = line.match(/"([^"]+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)"/);
+
+        if (match) {
+            words.push({
+                word: match[1],
+                translation: match[2],
+                status: match[3],
+                story: match[4],
+                addedDate: new Date().toISOString()
+            });
+        }
+    }
+
+    return words;
+}
 // Helper function to format date
 function formatDateForExport(dateString) {
     if (!dateString) return '';
@@ -623,43 +992,59 @@ function displayFilteredStories(filteredStories, query) {
         return;
     }
 
-   filteredStories.forEach(story => {
-    const storyCard = document.createElement('div');
-    storyCard.className = 'story-card';
-    storyCard.dataset.storyId = story.id;
+    filteredStories.forEach(story => {
+        const storyCard = document.createElement('div');
+        storyCard.className = 'story-card';
+        storyCard.dataset.storyId = story.id;
 
-    // Use the corrected function
-    const highlightedTitle = highlightSearchMatch(story.title, query);
+        // Use the corrected function
+        const highlightedTitle = highlightSearchMatch(story.title, query);
 
-    // Only show author if it exists and is not empty
-    const authorHTML = story.author && story.author.trim() !== "" 
-        ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
-        : '';
+        // Only show author if it exists and is not empty
+        const authorHTML = story.author && story.author.trim() !== ""
+            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
+            : '';
 
-    storyCard.innerHTML = `
-        <div class="story-image">
-            ${authorHTML}
-            ${renderStoryCover(story)}
-        </div>
-        <div class="story-content">
-            <span class="story-level ${story.level}">${story.level}</span>
-            <h3 class="story-title">${highlightedTitle}</h3>
-            <p>${story.content[0].substring(0, 100)}...</p>
-            <div class="story-meta">
-                <span><i class="fas fa-font"></i> ${story.wordCount} words</span>
-                <span><i class="fas fa-clock"></i> ${Math.ceil(story.wordCount / 200)} min read</span>
+        // Add user story indicator
+        const userStoryBadge = story.isUserStory
+            ? '<span class="user-story-badge" title="User-added story"><i class="fas fa-user-plus"></i></span>'
+            : '';
+
+        // Get CEFR level with fallback
+        const cefrLevel = story.levelcefr || '';
+
+        storyCard.innerHTML = `
+            <div class="story-image">
+                ${authorHTML}
+                ${renderStoryCover(story)}
             </div>
-        </div>
-    `;
+            <div class="story-content">
+                 <div class="story-header">
+                <div>
+                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
+                    <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
+                </div>
 
-    storyCard.addEventListener('click', () => {
-        openStoryInNewPage(story.id);
+                ${userStoryBadge}
+
+                </div>
+
+                <h3 class="story-title">${highlightedTitle}</h3>
+                <p>${story.content[0].substring(0, 100)}...</p>
+                <div class="story-meta">
+                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
+                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                </div>
+            </div>
+        `;
+
+        storyCard.addEventListener('click', () => {
+            openStoryInNewPage(story.id);
+        });
+
+        storiesGrid.appendChild(storyCard);
     });
-
-    storiesGrid.appendChild(storyCard);
-});
 }
-
 // Correction here! Add function to escape special characters
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -975,16 +1360,6 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Add to your existing init function
-document.addEventListener('DOMContentLoaded', function () {
-    init();
-
-    // Initialize color selector
-    if (typeof initColorSelector === 'function') {
-        initColorSelector();
-    }
-});
-
 
 
 
@@ -1008,7 +1383,144 @@ function toggleTheme() {
 }
 
 
-// Apply current theme
+
+
+// Secondary color variables
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#f59e0b';
+
+// Function to initialize secondary color selector
+function initSecondaryColorSelector() {
+    const secondaryColorOptions = document.querySelectorAll('.secondary-color:not(.custom-color)');
+    const customSecondaryColorPicker = document.getElementById('customSecondaryColorPicker');
+
+    console.log('Initializing secondary color selector...');
+    console.log('Found secondary color options:', secondaryColorOptions.length);
+
+    // Remove active class from all secondary options first
+    secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+    // Set active secondary color based on saved preference
+    if (secondaryColorOptions.length > 0) {
+        secondaryColorOptions.forEach(option => {
+            // Check if this option matches the saved secondary color
+            if (option.dataset.color === selectedSecondaryColor) {
+                option.classList.add('active');
+                console.log('Setting active secondary color option:', selectedSecondaryColor);
+            }
+
+            option.addEventListener('click', () => {
+                console.log('Secondary color option clicked:', option.dataset.color);
+
+                // Remove active class from all secondary options
+                secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+                // Add active class to clicked option
+                option.classList.add('active');
+
+                // Get selected secondary color
+                const color = option.dataset.color;
+
+                // Apply ONLY the secondary color
+                applySecondaryColor(color);
+
+                // Save to localStorage
+                localStorage.setItem('selectedSecondaryColor', color);
+                selectedSecondaryColor = color;
+
+                // Update custom secondary color picker
+                if (customSecondaryColorPicker) {
+                    customSecondaryColorPicker.value = color;
+                }
+
+                showNotification(`Secondary color changed to ${option.title || 'custom'}`, 'success');
+            });
+        });
+    }
+
+    // Custom secondary color picker
+    if (customSecondaryColorPicker) {
+        console.log('Custom secondary color picker found');
+
+        // Set initial value from saved secondary color
+        customSecondaryColorPicker.value = selectedSecondaryColor;
+
+        customSecondaryColorPicker.addEventListener('input', (e) => {
+            const color = e.target.value;
+            console.log('Custom secondary color input:', color);
+
+            // Remove active class from preset secondary colors
+            secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the secondary color
+            applySecondaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedSecondaryColor', color);
+            selectedSecondaryColor = color;
+
+            showNotification('Custom secondary color applied', 'success');
+        });
+
+        customSecondaryColorPicker.addEventListener('change', (e) => {
+            const color = e.target.value;
+
+            // Remove active class from preset secondary colors
+            secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the secondary color
+            applySecondaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedSecondaryColor', color);
+            selectedSecondaryColor = color;
+
+            showNotification('Custom secondary color saved', 'success');
+        });
+
+        // Also trigger change on custom color picker click
+        customSecondaryColorPicker.parentElement.addEventListener('click', (e) => {
+            if (e.target !== customSecondaryColorPicker) {
+                customSecondaryColorPicker.click();
+            }
+        });
+    }
+
+    // Force apply the secondary color one more time to ensure it's set
+    setTimeout(() => {
+        applySecondaryColor(selectedSecondaryColor);
+        console.log('Final secondary color applied:', selectedSecondaryColor);
+    }, 100);
+}
+
+// Function to apply ONLY the secondary color
+function applySecondaryColor(color) {
+    // Calculate darker and lighter shades for --secondary-dark and --secondary-light
+    const darkerColor = adjustColor(color, -20);
+    const lighterColor = adjustColor(color, 20);
+
+    // Update ONLY the secondary color variables in CSS
+    const root = document.documentElement;
+    root.style.setProperty('--secondary', color);
+    root.style.setProperty('--secondary-dark', darkerColor);
+    root.style.setProperty('--secondary-light', lighterColor);
+}
+
+// Update your DOMContentLoaded event listener:
+document.addEventListener('DOMContentLoaded', function () {
+    init();
+
+    // Initialize primary color selector
+    if (typeof initColorSelector === 'function') {
+        initColorSelector();
+    }
+
+    // Initialize secondary color selector
+    if (typeof initSecondaryColorSelector === 'function') {
+        initSecondaryColorSelector();
+    }
+});
+
+// Update your applyTheme function to also apply secondary color:
 function applyTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
 
@@ -1028,14 +1540,27 @@ function applyTheme() {
         }
     }
 
-    // Re-apply primary color to ensure it works with new theme
+    // Re-apply both colors to ensure they work with new theme
     if (selectedColor) {
         applyPrimaryColor(selectedColor);
     }
+    if (selectedSecondaryColor) {
+        applySecondaryColor(selectedSecondaryColor);
+    }
 }
 
+// Helper function to update active color (rename your existing one if needed)
+function updateActiveColor(color, isSecondary = false) {
+    const selector = isSecondary ? '.secondary-color:not(.custom-color)' : '.color-option:not(.custom-color):not(.secondary-color)';
+    const options = document.querySelectorAll(selector);
 
-
+    options.forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.color === color) {
+            option.classList.add('active');
+        }
+    });
+}
 
 
 
