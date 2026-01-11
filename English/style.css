@@ -9,6 +9,7 @@
     --border: #e5e7eb;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --radius: 8px;
+    --radius-sm: 8px;
 }
 
 .dark-mode {
@@ -153,21 +154,26 @@ nav a.active {
 
 .theme-toggle {
     background: none;
-    border: none;
-    font-size: 1.2rem;
+    border: 2px solid var(--border);
     color: var(--text);
-    cursor: pointer;
     padding: 8px;
-    border-radius: 50%;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
-    background-color: var(--bg-secondary);
+     background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
+    color: white;
+    border-color: var(--primary);
 }
-
 .user-actions button {
     background-color: var(--primary);
     color: white;
@@ -523,16 +529,21 @@ nav a.active {
 .toggle-btn,
 .action-btn,
 .danger-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.2s;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 50px;
+    justify-content: center;
 }
+
 
 .toggle-btn {
     background: var(--secondary);
@@ -540,7 +551,6 @@ nav a.active {
 }
 
 .action-btn {
-    background: var(--success);
     color: white;
 }
 
@@ -554,6 +564,7 @@ nav a.active {
 .danger-btn:hover {
     opacity: 0.9;
     transform: translateY(-2px);
+    background-color: var(--primary);
 }
 
 /* طبقة التعتيم خلف الإعدادات */

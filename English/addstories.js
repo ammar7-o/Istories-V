@@ -40,6 +40,9 @@ function setupAddStoriesListeners() {
     const editStoryCoverType = document.getElementById('editStoryCoverType');
     const editStoryModal = document.getElementById('editStoryModal');
 
+    // Export button
+    const exportStoriesBtn = document.getElementById('exportStoriesBtn');
+
     // File upload functionality
     if (browseBtn && storyFileInput) {
         browseBtn.addEventListener('click', () => storyFileInput.click());
@@ -116,6 +119,11 @@ function setupAddStoriesListeners() {
         editStoryCoverType.addEventListener('change', updateEditCoverLabel);
     }
 
+    // Export button functionality
+    if (exportStoriesBtn) {
+        exportStoriesBtn.addEventListener('click', exportUserStories);
+    }
+
     // Close modals when clicking outside
     const previewModal = document.getElementById('previewModal');
     if (previewModal) {
@@ -135,7 +143,6 @@ function setupAddStoriesListeners() {
     }
 }
 
-// Load user stories from localStorage
 // Load user stories from localStorage
 function loadUserStories() {
     const userStoriesList = document.getElementById('userStoriesList');
@@ -265,7 +272,12 @@ function shareStoryAsJson(index) {
         uploadDate: story.uploadDate,
         wordCount: story.wordCount,
         // Include translations if they exist
-        ...(Object.keys(translations).length > 0 && { translations: translations })
+        ...(Object.keys(translations).length > 0 && { translations: translations }),
+        // Include optional fields
+        ...(story.levelcefr && { levelcefr: story.levelcefr }),
+        ...(story.sound && { sound: story.sound }),
+        ...(story.dictionaries && { dictionaries: story.dictionaries }),
+        ...(story.audio && { audio: story.audio })
     };
 
     // Convert to JSON string with nice formatting
@@ -311,8 +323,11 @@ function openEditStoryModal(index) {
     // Fill form with story data
     document.getElementById('editStoryTitle').value = story.title || '';
     document.getElementById('editStoryLevel').value = story.level || 'intermediate';
+    document.getElementById('editStoryLevelCefr').value = story.levelcefr || '';
     document.getElementById('editStoryAuthor').value = story.author || '';
     document.getElementById('editStoryCoverType').value = story.coverType || 'emoji';
+    document.getElementById('editStorySound').value = story.sound || '';
+    document.getElementById('editStoryDictionaries').value = story.dictionaries ? story.dictionaries.join('\n') : '';
 
     // Set cover input based on type
     const editStoryCover = document.getElementById('editStoryCover');
@@ -382,9 +397,12 @@ function handleEditStorySubmit(e) {
     // Get form values
     const title = document.getElementById('editStoryTitle').value.trim();
     const level = document.getElementById('editStoryLevel').value;
+    const levelcefr = document.getElementById('editStoryLevelCefr').value;
     const author = document.getElementById('editStoryAuthor').value.trim();
     const coverType = document.getElementById('editStoryCoverType').value;
     const cover = document.getElementById('editStoryCover').value.trim();
+    const sound = document.getElementById('editStorySound').value.trim();
+    const dictionariesText = document.getElementById('editStoryDictionaries').value.trim();
     const contentText = document.getElementById('editStoryContent').value.trim();
     const translationsText = document.getElementById('editStoryTranslations').value.trim();
 
@@ -398,14 +416,25 @@ function handleEditStorySubmit(e) {
     const content = contentText.split('\n').filter(line => line.trim() !== '');
     const wordCount = calculateWordCount(content);
 
+    // Process dictionaries
+    let dictionaries = undefined;
+    if (dictionariesText) {
+        dictionaries = dictionariesText.split('\n')
+            .map(line => line.trim())
+            .filter(line => line !== '');
+    }
+
     // Update story in userStories array
     userStories[currentEditIndex] = {
         ...story,
         title,
         level,
+        levelcefr: levelcefr || undefined,
         author: author || '',
         coverType,
         cover: cover || (coverType === 'emoji' ? '📚' : 'fas fa-book'),
+        sound: sound || undefined,
+        dictionaries: dictionaries,
         content,
         wordCount,
         hasTranslations: translationsText.trim() !== '',
@@ -464,12 +493,103 @@ function closeEditModal() {
     }
 }
 
-// Process story data
+// Process story data - UPDATED to handle multiple stories
 function processStoryData(storyData, fileName) {
+    let processedStories = [];
+    let totalImported = 0;
+    let skippedDuplicates = 0;
+    
+    // Check if it's a single story or array of stories
+    if (Array.isArray(storyData)) {
+        // Multiple stories in an array
+        for (const story of storyData) {
+            const result = processSingleStory(story, fileName);
+            if (result.success) {
+                processedStories.push(result.story);
+                totalImported++;
+            } else {
+                skippedDuplicates++;
+            }
+        }
+    } else if (storyData.stories && Array.isArray(storyData.stories)) {
+        // Stories inside a "stories" property (like window.storiesData format)
+        for (const story of storyData.stories) {
+            const result = processSingleStory(story, fileName);
+            if (result.success) {
+                processedStories.push(result.story);
+                totalImported++;
+            } else {
+                skippedDuplicates++;
+            }
+        }
+    } else {
+        // Single story object
+        const result = processSingleStory(storyData, fileName);
+        if (result.success) {
+            processedStories.push(result.story);
+            totalImported++;
+        } else {
+            showNotification('Story already exists or invalid format.', 'error');
+            return;
+        }
+    }
+
+    // Save all imported stories to localStorage
+    if (processedStories.length > 0) {
+        // Add all new stories to userStories array
+        userStories.push(...processedStories);
+        localStorage.setItem('userStories', JSON.stringify(userStories));
+        
+        // Add all new stories to main stories array
+        processedStories.forEach(story => {
+            if (!stories.some(s => s.id === story.id)) {
+                stories.push(story);
+            }
+        });
+    }
+
+    // Update UI
+    loadUserStories();
+    if (currentPage === 'home' || currentPage === 'addStories') {
+        renderStories();
+    }
+
+    // Show success message
+    let message = '';
+    if (totalImported > 0) {
+        message = `${totalImported} story${totalImported !== 1 ? 's' : ''} imported successfully!`;
+        if (skippedDuplicates > 0) {
+            message += ` ${skippedDuplicates} duplicate${skippedDuplicates !== 1 ? 's' : ''} skipped.`;
+        }
+        showNotification(message, 'success');
+    } else {
+        showNotification('No stories were imported. They may already exist or have invalid format.', 'warning');
+    }
+
+    // Clear file selection
+    clearSelectedFile();
+
+    // Open the first imported story in reader if only one was imported
+    if (totalImported === 1 && processedStories.length > 0) {
+        openUserStoryInReader(processedStories[0].id);
+    }
+}
+
+// Helper function to process a single story
+function processSingleStory(storyData, fileName) {
     // Validate story structure
     if (!validateStory(storyData)) {
-        showNotification('Invalid story format. Please check the template.', 'error');
-        return;
+        return { success: false, reason: 'Invalid format' };
+    }
+
+    // Check if story already exists (by title and content)
+    const existingStory = userStories.find(story => 
+        story.title === storyData.title && 
+        JSON.stringify(story.content) === JSON.stringify(storyData.content)
+    );
+
+    if (existingStory) {
+        return { success: false, reason: 'Duplicate' };
     }
 
     // Process translations if they exist
@@ -484,7 +604,7 @@ function processStoryData(storyData, fileName) {
     }
 
     // Generate unique ID
-    const storyId = 'user_' + Date.now();
+    const storyId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
     // Prepare story object
     const userStory = {
@@ -500,40 +620,13 @@ function processStoryData(storyData, fileName) {
     // Remove translations from story object to keep it clean
     delete userStory.translations;
 
-    // Add to user stories
-    userStories.push(userStory);
-
-    // Save to localStorage
-    localStorage.setItem('userStories', JSON.stringify(userStories));
-
     // Save translations separately if they exist
     if (Object.keys(translations).length > 0) {
         userDictionaries[storyId] = translations;
         localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
     }
 
-    // Update stories array and render
-    stories.push(userStory);
-
-    // ALWAYS render stories regardless of current page
-    renderStories();
-
-    // Show success message
-    const translationCount = Object.keys(translations).length;
-    const message = translationCount > 0
-        ? `Story uploaded successfully with ${translationCount} custom translation${translationCount !== 1 ? 's' : ''}!`
-        : 'Story uploaded successfully!';
-
-    showNotification(message, 'success');
-
-    // Clear file selection
-    clearSelectedFile();
-
-    // Update user stories list
-    loadUserStories();
-
-    // Open the story in reader
-    openUserStoryInReader(storyId);
+    return { success: true, story: userStory };
 }
 
 // Open user story in reader - Updated to include translations
@@ -560,7 +653,12 @@ function openUserStoryInReader(storyId) {
         cover: story.cover,
         coverType: story.coverType,
         author: story.author || '',
-        translations: translations
+        translations: translations,
+        // Include optional fields
+        ...(story.levelcefr && { levelcefr: story.levelcefr }),
+        ...(story.sound && { sound: story.sound }),
+        ...(story.dictionaries && { dictionaries: story.dictionaries }),
+        ...(story.audio && { audio: story.audio })
     }));
 
     // Redirect to reader page
@@ -718,6 +816,7 @@ function uploadStoryFile() {
     reader.readAsText(file);
 }
 
+// UPDATED validateStory to handle optional fields
 function validateStory(story) {
     const requiredFields = ['title', 'level', 'content'];
 
@@ -739,6 +838,15 @@ function validateStory(story) {
         return false;
     }
 
+    // Check optional fields if they exist
+    if (story.coverType && !['emoji', 'icon', 'image'].includes(story.coverType)) {
+        return false;
+    }
+
+    if (story.levelcefr && !['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(story.levelcefr)) {
+        return false;
+    }
+
     return true;
 }
 
@@ -751,8 +859,11 @@ function handleFormSubmit(e) {
 
     const title = document.getElementById('storyTitle').value.trim();
     const level = document.getElementById('storyLevel').value;
+    const levelcefr = document.getElementById('storyLevelCefr').value;
     const cover = document.getElementById('storyCover').value.trim() || '📚';
     const coverType = document.getElementById('storyCoverType').value;
+    const sound = document.getElementById('storySound').value.trim();
+    const dictionariesText = document.getElementById('storyDictionaries').value.trim();
     const contentText = document.getElementById('storyContent').value.trim();
     const author = document.getElementById('storyAuthor').value.trim();
     const translationsText = document.getElementById('storyTranslations').value.trim();
@@ -765,6 +876,14 @@ function handleFormSubmit(e) {
     // Split content into paragraphs
     const content = contentText.split('\n').filter(line => line.trim() !== '');
 
+    // Process dictionaries
+    let dictionaries = undefined;
+    if (dictionariesText) {
+        dictionaries = dictionariesText.split('\n')
+            .map(line => line.trim())
+            .filter(line => line !== '');
+    }
+
     // Create story object
     const storyData = {
         title: title,
@@ -775,6 +894,11 @@ function handleFormSubmit(e) {
         author: author || '',
         tags: ['custom']
     };
+
+    // Add optional fields if they exist
+    if (levelcefr) storyData.levelcefr = levelcefr;
+    if (sound) storyData.sound = sound;
+    if (dictionaries && dictionaries.length > 0) storyData.dictionaries = dictionaries;
 
     // Add translations if provided
     if (translationsText) {
@@ -793,13 +917,19 @@ function handleFormSubmit(e) {
     // Reset form
     e.target.reset();
     document.getElementById('storyCover').value = '📚';
+    document.getElementById('storyLevelCefr').value = '';
+    document.getElementById('storySound').value = '';
+    document.getElementById('storyDictionaries').value = '';
 }
 
 function showStoryPreview() {
     const title = document.getElementById('storyTitle').value.trim();
     const level = document.getElementById('storyLevel').value;
+    const levelcefr = document.getElementById('storyLevelCefr').value;
     const cover = document.getElementById('storyCover').value.trim() || '📚';
     const coverType = document.getElementById('storyCoverType').value;
+    const sound = document.getElementById('storySound').value.trim();
+    const dictionariesText = document.getElementById('storyDictionaries').value.trim();
     const contentText = document.getElementById('storyContent').value.trim();
     const author = document.getElementById('storyAuthor').value.trim();
     const translationsText = document.getElementById('storyTranslations').value.trim();
@@ -813,12 +943,54 @@ function showStoryPreview() {
     document.getElementById('previewTitle').textContent = title;
     document.getElementById('previewLevel').textContent = level;
     document.getElementById('previewLevel').className = `preview-level ${level}`;
+    
+    // Update CEFR level if provided
+    const previewCefr = document.getElementById('previewCefr');
+    if (previewCefr) {
+        if (levelcefr) {
+            previewCefr.textContent = levelcefr;
+            previewCefr.style.display = 'inline-block';
+        } else {
+            previewCefr.style.display = 'none';
+        }
+    }
 
+    // Update cover display
     if (coverType === 'emoji') {
         document.getElementById('previewCoverDisplay').textContent = cover;
         document.getElementById('previewCoverDisplay').innerHTML = cover;
-    } else {
+    } else if (coverType === 'icon') {
         document.getElementById('previewCoverDisplay').innerHTML = `<i class="${cover}"></i>`;
+    } else {
+        document.getElementById('previewCoverDisplay').innerHTML = `<div class="story-image-small" style="background-image: url('${cover}')"></div>`;
+    }
+
+    // Update audio badge if sound is provided
+    const previewAudioBadge = document.getElementById('previewAudioBadge');
+    if (previewAudioBadge) {
+        if (sound) {
+            previewAudioBadge.style.display = 'inline-block';
+        } else {
+            previewAudioBadge.style.display = 'none';
+        }
+    }
+
+    // Show dictionaries badge if provided
+    const previewDictionariesBadge = document.createElement('span');
+    previewDictionariesBadge.id = 'previewDictionariesBadge';
+    if (dictionariesText) {
+        const dictionariesCount = dictionariesText.split('\n').filter(line => line.trim() !== '').length;
+        previewDictionariesBadge.innerHTML = `<i class="fas fa-book"></i> ${dictionariesCount} dictionary${dictionariesCount !== 1 ? 's' : ''}`;
+        previewDictionariesBadge.style.display = 'inline-block';
+        previewDictionariesBadge.style.marginLeft = '10px';
+    } else {
+        previewDictionariesBadge.style.display = 'none';
+    }
+
+    // Add dictionaries badge to preview meta if not already there
+    const previewMeta = document.querySelector('.preview-meta');
+    if (previewMeta && !document.getElementById('previewDictionariesBadge')) {
+        previewMeta.appendChild(previewDictionariesBadge);
     }
 
     // Calculate word count
@@ -882,28 +1054,53 @@ function saveStoryFromPreview() {
 
 function downloadStoryTemplate() {
     const template = {
-        "title": "My Custom Story",
-        "level": "intermediate",
-        "cover": "📚",
-        "coverType": "emoji",
-        "content": [
-            "Hello and welcome to <span class='mark'>IStories!</span> This website was created by Ammar Chacal to help people learn languages in a fun and engaging way <img src='../../imges/cover.jpg' alt='Example' >  Through these interactive stories, you can improve your vocabulary and comprehension skills naturally.",
-            "Each story is designed for different learning levels - beginner, intermediate, and advanced. The beginner stories use simple words and short sentences, perfect for those just starting their language learning journey.",
-            "As you read, you can click on any word to see its translation and definition. This feature helps you learn new vocabulary in context, which is much more effective than memorizing word lists.",
-            "The stories cover various topics and genres, from everyday situations to exciting adventures. This variety ensures that you encounter different types of vocabulary and sentence structures.",
-            "Reading regularly is one of the best ways to improve your language skills. With IStories, you can practice reading comprehension while enjoying interesting narratives.",
-            "Remember that learning a language takes time and patience. Don't worry if you don't understand every word at first. Use the click-to-translate feature and try to understand the general meaning of each paragraph.",
-            "We recommend reading one story each day and reviewing the vocabulary you learn. Consistent practice is the key to making progress in any language.",
-            "Thank you for choosing IStories for your language learning journey. We hope you enjoy these stories and find them helpful in achieving your language goals."
-        ],
-        "author": "Istories",
-        "translations": {
-            "hello": { "translation": "مرحبا" },
-            "world": { "translation": "عالم" },
-            "book": { "translation": "كتاب" }
-        },
-        "description": "A short description of your story",
-        "tags": ["custom", "learning"]
+        "stories": [
+            {
+                "title": "The Adventure Begins",
+                "level": "intermediate",
+                "levelcefr": "A2",
+                "cover": "🏝️",
+                "coverType": "emoji",
+                "sound": "../sounds/story1.mp3",
+                "dictionaries": [
+                    "../Dictionarys/story4.json",
+                    "../Dictionarys/main.json"
+                ],
+                "content": [
+                    "Once upon a time, in a small village nestled between mountains...",
+                    "The young hero set out on a journey filled with challenges and discoveries.",
+                    "Each step brought new lessons and unforgettable experiences."
+                ],
+                "author": "Your Name",
+                "translations": {
+                    "village": { "translation": "قرية" },
+                    "journey": { "translation": "رحلة" },
+                    "mountains": { "translation": "جبال" },
+                    "hero": { "translation": "بطل" },
+                    "challenges": { "translation": "تحديات" },
+                    "discoveries": { "translation": "اكتشافات" },
+                    "lessons": { "translation": "دروس" },
+                    "experiences": { "translation": "تجارب" }
+                }
+            },
+            {
+                "title": "My Custom Story",
+                "level": "beginner",
+                "levelcefr": "A1",
+                "cover": "📚",
+                "coverType": "emoji",
+                "content": [
+                    "Hello and welcome to <span class='mark'>IStories!</span> This website was created to help people learn languages in a fun way.",
+                    "Each story is designed for different learning levels - beginner, intermediate, and advanced."
+                ],
+                "author": "Another Author",
+                "translations": {
+                    "hello": { "translation": "مرحبا" },
+                    "world": { "translation": "عالم" },
+                    "book": { "translation": "كتاب" }
+                }
+            }
+        ]
     };
 
     const templateStr = JSON.stringify(template, null, 2);
@@ -912,7 +1109,7 @@ function downloadStoryTemplate() {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'story-template.json';
+    a.download = 'stories-template.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -968,4 +1165,235 @@ function switchPage(page) {
     if (page === 'addStories') {
         loadUserStories();
     }
+}
+
+
+
+
+
+
+
+
+
+// Function to export all user stories from localStorage
+function exportUserStories() {
+    try {
+        // 1. Get user stories from localStorage
+        const storedUserStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        
+        // 2. Check if there are any stories to export
+        if (storedUserStories.length === 0) {
+            alert('⚠️ No user stories found to export!');
+            return;
+        }
+
+        // 3. Format each story to match the exact structure
+        const formattedStories = storedUserStories.map(story => {
+            // Get translations for this story
+            const storyTranslations = userDictionaries[story.id] || {};
+            
+            // Create base story object with all required fields
+            const formattedStory = {
+                "title": story.title || "Untitled Story",
+                "level": story.level || "beginner",
+                "cover": story.cover || "",
+                "coverType": story.coverType || "emoji",
+                "content": story.content || [""],
+                "author": story.author || "Anonymous",
+                "uploadDate": story.uploadDate || new Date().toISOString(),
+                "wordCount": story.wordCount || 0
+            };
+            
+            // Add translations if they exist
+            if (Object.keys(storyTranslations).length > 0) {
+                formattedStory.translations = storyTranslations;
+            }
+            
+            // Add optional fields ONLY if they exist in the original story
+            if (story.levelcefr) formattedStory.levelcefr = story.levelcefr;
+            if (story.sound) formattedStory.sound = story.sound;
+            if (story.dictionaries) formattedStory.dictionaries = story.dictionaries;
+            if (story.audio !== undefined) formattedStory.audio = story.audio;
+            // Add any other optional fields that might exist
+            if (story.id !== undefined) formattedStory.id = story.id;
+            
+            return formattedStory;
+        });
+
+        // 4. Create the final export structure
+        const exportData = {
+            "stories": formattedStories
+        };
+
+        // 5. Convert to JSON string with proper formatting (4 spaces indentation)
+        const jsonString = JSON.stringify(exportData, null, 4);
+        
+        // 6. Create a blob (file-like object)
+        const blob = new Blob([jsonString], { 
+            type: 'application/json' 
+        });
+        
+        // 7. Create a temporary URL for the blob
+        const url = URL.createObjectURL(blob);
+        
+        // 8. Create an invisible download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        
+        // 9. Set the filename
+        const date = new Date();
+        const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        const timeString = date.getHours().toString().padStart(2, '0') + 
+                          date.getMinutes().toString().padStart(2, '0');
+        downloadLink.download = `stories-export-${dateString}-${timeString}.json`;
+        
+        // 10. Add link to page, click it, then remove it
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // 11. Clean up the temporary URL
+        URL.revokeObjectURL(url);
+        
+        // 12. Show success message
+        console.log(`✅ Successfully exported ${storedUserStories.length} user stories`);
+        
+        // Show notification
+        showExportSuccess(storedUserStories.length, downloadLink.download);
+        
+    } catch (error) {
+        // 13. Handle any errors
+        console.error('❌ Error exporting user stories:', error);
+        alert('❌ Failed to export user stories. Error: ' + error.message);
+    }
+}
+// Function to delete all user stories
+function deleteAllUserStories() {
+    if (userStories.length === 0) {
+        alert('⚠️ No user stories found to delete!');
+        return;
+    }
+
+    // Show confirmation dialog
+    const confirmed = confirm(`⚠️ WARNING: Are you sure you want to delete ALL ${userStories.length} user stories?\n\nThis will delete all uploaded stories and custom translations. This action cannot be undone!`);
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        // 1. Remove user stories from main stories array
+        userStories.forEach(userStory => {
+            const index = stories.findIndex(s => s.id === userStory.id);
+            if (index !== -1) {
+                stories.splice(index, 1);
+            }
+        });
+
+        // 2. Clear user stories array
+        userStories = [];
+
+        // 3. Clear user dictionaries
+        userDictionaries = {};
+
+        // 4. Update localStorage
+        localStorage.removeItem('userStories');
+        localStorage.removeItem('userDictionaries');
+
+        // 5. Update UI
+        if (currentPage === 'home' || currentPage === 'addStories') {
+            renderStories();
+        }
+
+        // 6. Update user stories list
+        loadUserStories();
+
+        // 7. Show success message
+        showNotification(`✅ All ${userStories.length} user stories deleted successfully!`, 'success');
+
+        console.log('🗑️ All user stories deleted successfully');
+        
+    } catch (error) {
+        console.error('❌ Error deleting all user stories:', error);
+        showNotification('❌ Failed to delete user stories. Please try again.', 'error');
+    }
+}
+// Optional: Show a nice success notification
+function showExportSuccess(count, filename) {
+    // Check if we already have a notification
+    const existingNotification = document.getElementById('export-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.id = 'export-notification';
+    notification.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            max-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        ">
+            <div style="font-weight: bold; margin-bottom: 5px;">
+                ✅ Export Successful!
+            </div>
+            <div style="font-size: 14px;">
+                Exported ${count} story${count !== 1 ? 's' : ''}
+            </div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
+                File: ${filename}
+            </div>
+        </div>
+    `;
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(notification);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+            if (style.parentNode) {
+                style.remove();
+            }
+        }, 300);
+    }, 3000);
 }

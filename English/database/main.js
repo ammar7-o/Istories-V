@@ -84,26 +84,22 @@ window.storiesData = {
         {
             "id": 4,
             "title": "Le Début de Tout",
-            "level": "intermediate",
-            "levelcefr": "B1",
+            "level": "beginner",
             "cover": "🌅",
             "coverType": "emoji",
-            "sound": "",
-            "author": "Istories",
+            "sound": "../sounds/story1.mp3",
             "dictionaries": ["../Dictionarys/story4.json", "../Dictionarys/main.json."],
             "content": [
-                "Bonjour et bienvenue sur <span class='mark'>IStories</span> ! Ce site web a été créé par Ammar Chacal pour aider les gens à apprendre les langues de manière <span class='mark'>amusante</span> et <span class='mark'>interactive</span>. <img src='../../imges/cover.jpg' alt='Example'> Grâce à ces histoires <span class='mark'>interactives</span>, vous pouvez améliorer naturellement votre <span class='mark'>vocabulaire</span> et votre <span class='mark'>compréhension</span> linguistique.",
-                "Chaque histoire est <span class='mark'>conçue</span> pour différents niveaux d'apprentissage – <span class='mark'>débutant</span>, <span class='mark'>intermédiaire</span> et <span class='mark'>avancé</span>. Les histoires pour débutants utilisent des mots <span class='mark'>simples</span> et des phrases <span class='mark'>courtes</span>, parfaites pour ceux qui commencent leur <span class='mark'>parcours</span> d'apprentissage linguistique.",
-                "En lisant, vous pouvez <span class='mark'>cliquer</span> sur n'importe quel mot pour voir sa <span class='mark'>traduction</span> et sa <span class='mark'>définition</span> détaillée. Cette fonctionnalité <span class='mark'>innovante</span> vous aide à apprendre du vocabulaire en <span class='mark'>contexte</span>, ce qui est beaucoup plus efficace que la <span class='mark'>mémorisation</span> mécanique de listes de mots.",
-                "Les histoires couvrent divers <span class='mark'>sujets</span> et <span class='mark'>genres</span>, allant des situations <span class='mark'>quotidiennes</span> aux aventures <span class='mark'>passionnantes</span> et mystérieuses. Cette <span class='mark'>variété</span> vous assure de rencontrer différents types de vocabulaire et <span class='mark'>structures</span> de phrases.",
-                "Lire <span class='mark'>régulièrement</span> est l'un des meilleurs moyens d'améliorer vos <span class='mark'>compétences</span> linguistiques. Avec IStories, vous pouvez pratiquer la <span class='mark'>compréhension</span> écrite tout en profitant de <span class='mark'>récits</span> captivants et intéressants.",
-                "N'oubliez pas que l'apprentissage d'une langue demande du <span class='mark'>temps</span> et de la <span class='mark'>patience</span>. Ne vous inquiétez pas si vous ne comprenez pas chaque mot au début. Utilisez la fonction de traduction et essayez de comprendre le <span class='mark'>sens</span> général de chaque paragraphe.",
-                "Nous <span class='mark'>recommandons</span> de lire une histoire par jour et de <span class='mark'>revoir</span> le vocabulaire appris. Une <span class='mark'>pratique</span> régulière et <span class='mark'>constante</span> est la clé pour <span class='mark'>progresser</span> dans n'importe quelle langue.",
-                "Merci d'avoir <span class='mark'>choisi</span> IStories pour votre voyage d'apprentissage linguistique. Nous espérons que ces histoires vous <span class='mark'>plairont</span> et vous aideront à <span class='mark'>atteindre</span> vos <span class='mark'>objectifs</span> linguistiques. Bonne lecture et bon apprentissage !",
-                "Chaque mot <span class='mark'>marqué</span> représente une opportunité d'apprentissage. En passant votre <span class='mark'>souris</span> ou en <span class='mark'>tapotant</span> sur ces mots, vous découvrirez leur <span class='mark'>signification</span> et leur <span class='mark'>prononciation</span>. Cette méthode d'<span class='mark'>immersion</span> contextuelle a fait ses preuves pour l'acquisition naturelle du langage.",
-                "Notre <span class='mark'>équipe</span> travaille constamment à ajouter de nouvelles histoires et à améliorer l'<span class='mark'>expérience</span> utilisateur. Vos <span class='mark'>suggestions</span> et <span class='mark'>commentaires</span> sont les bienvenus pour rendre IStories encore plus utile pour la communauté des apprenants en langues."
+                "Bonjour et bienvenue sur <span class='mark'>IStories</span> ! Ce site web a été créé par Ammar Chacal pour aider les gens à apprendre les langues de manière amusante et interactive. <img src='../../imges/cover.jpg' alt='Example'> Grâce à ces histoires interactives, vous pouvez améliorer naturellement votre <span class='mark'>vocabulaire</span> et votre <span class='mark'>compréhension</span>.",
+                "Chaque histoire est conçue pour différents niveaux d’apprentissage – débutant, intermédiaire et avancé. Les histoires pour débutants utilisent des mots simples et des phrases courtes, parfaites pour ceux qui commencent leur parcours <span class='mark'>linguistique</span>.",
+                "En lisant, vous pouvez cliquer sur n’importe quel mot pour voir sa traduction et sa <span class='mark'>définition</span>. Cette fonctionnalité vous aide à apprendre du vocabulaire en contexte.",
+                "Les histoires couvrent divers sujets et genres, allant des situations quotidiennes aux aventures <span class='mark'>passionnantes</span>. Cette variété vous assure de rencontrer différents types de vocabulaire.",
+                "Lire régulièrement est l’un des meilleurs moyens d’améliorer vos compétences linguistiques. Avec IStories, vous pouvez pratiquer la compréhension écrite tout en profitant de <span class='mark'>récits</span> intéressants.",
+                "N’oubliez pas que l’apprentissage d’une langue demande du temps et de la <span class='mark'>patience</span>. Ne vous inquiétez pas si vous ne comprenez pas chaque mot au début.",
+                "Nous recommandons de lire une histoire par jour et de revoir le vocabulaire appris. Une pratique régulière est la clé pour <span class='mark'>progresser</span> dans n’importe quelle langue.",
+                "Merci d’avoir choisi IStories. Nous espérons que ces histoires vous plairont et vous aideront à atteindre vos <span class='mark'>objectifs</span>."
             ],
-            "wordCount": 512
+            "wordCount": 230,
         },
         {
             "id": 6,
