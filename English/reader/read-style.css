@@ -17,7 +17,6 @@
 .dark-mode {
 
     --primary-dark: #4f46e5;
-    --secondary: #10b981;
     --accent: #f59e0b;
     --text: #f9fafb;
     --text-light: #d1d5db;
@@ -51,7 +50,10 @@ body {
 }
 
 .help-icon:hover {
-    color: var(--primary);
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
 }
 
 .translation-example {
@@ -91,7 +93,10 @@ body {
 }
 
 .example-btn:hover {
-    background: var(--primary);
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
     color: white;
 }
 
@@ -228,11 +233,13 @@ header {
     font-weight: 600;
     margin-bottom: 10px;
 }
-.level-section{
+
+.level-section {
     display: flex;
     align-items: center;
     gap: 6px;
 }
+
 .beginner,
 .A1,
 .A2 {
@@ -276,7 +283,10 @@ header {
 }
 
 .theme-toggle:hover {
-    background: var(--primary);
+     background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
     color: white;
     border-color: var(--primary);
 }
@@ -321,7 +331,10 @@ header {
 }
 
 .back-button:hover {
-    background: var(--primary-dark);
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
     transform: translateX(-3px);
 }
 
@@ -350,11 +363,16 @@ header {
 
 
 .control-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+     background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
+    color: black;
     transform: translateY(-2px);
 }
-
+.dark-mode .control-btn:hover{
+    color: white;
+}
 .control-btn.active {
     background: var(--primary);
     color: white;
@@ -419,7 +437,7 @@ header {
 
 .word.saved {
     background: rgba(16, 185, 129, 0.15);
-    border-bottom: 2px solid var(--secondary);
+    border-bottom: 2px solid #10b981;
 }
 
 .word.no-translation {
@@ -544,7 +562,10 @@ header {
 }
 
 .dictionary-actions-buttom .btns:hover {
-    background: var(--primary-dark);
+   background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
 
 }
 
@@ -563,7 +584,10 @@ header {
 }
 
 .save-word:hover {
-    background: var(--primary-dark);
+ background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
 }
 
 .save-word:disabled {
@@ -618,7 +642,7 @@ header {
 
 .reading-progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
     width: 0%;
     transition: width 0.3s ease;
 }
@@ -770,8 +794,11 @@ header {
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
+ background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
+        transform: translateY(-2px);
 }
 
 /* Notification */
@@ -824,7 +851,6 @@ header {
     padding: 15px 30px;
     background: none;
     border: none;
-    color: var(--text-light);
     font-weight: 500;
     cursor: pointer;
     border-bottom: 2px solid transparent;
@@ -833,15 +859,20 @@ header {
 }
 
 .nav-tab:hover {
-    color: var(--primary);
+    color: black;
 }
-
+.dark-mode .nav-tab{
+    color: white;
+}
 .nav-tab.active {
-    color: var(--primary);
+    color: black;
     border-bottom-color: var(--primary);
 }
 
-
+.dark-mode .nav-tab.active {
+    color: white;
+    border-bottom-color: var(--primary);
+}
 /* صور القصة الأساسية */
 .paragraph img {
     max-width: 100%;

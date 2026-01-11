@@ -132,10 +132,15 @@ function init() {
     console.log('App initialization complete!');
 }
 
-// ========= Color Selector Functions ==========
+// Function to initialize color selector
+//=========COLOR SELECTOR FUNCTIONS============
+// Function to initialize color selector
 function initColorSelector() {
     const colorOptions = document.querySelectorAll('.color-option:not(.custom-color)');
     const customColorPicker = document.getElementById('customColorPicker');
+
+    console.log('Initializing color selector...'); // Debug log
+    console.log('Found color options:', colorOptions.length); // Debug log
 
     // Remove active class from all options first
     colorOptions.forEach(opt => opt.classList.remove('active'));
@@ -143,11 +148,15 @@ function initColorSelector() {
     // Set active color based on saved preference
     if (colorOptions.length > 0) {
         colorOptions.forEach(option => {
+            // Check if this option matches the saved color
             if (option.dataset.color === selectedColor) {
                 option.classList.add('active');
+                console.log('Setting active color option:', selectedColor); // Debug
             }
 
             option.addEventListener('click', () => {
+                console.log('Color option clicked:', option.dataset.color); // Debug log
+
                 // Remove active class from all options
                 colorOptions.forEach(opt => opt.classList.remove('active'));
 
@@ -168,17 +177,22 @@ function initColorSelector() {
                 if (customColorPicker) {
                     customColorPicker.value = color;
                 }
+
+                // showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
             });
         });
     }
 
     // Custom color picker
     if (customColorPicker) {
+        console.log('Custom color picker found'); // Debug log
+
         // Set initial value from saved color
         customColorPicker.value = selectedColor;
 
         customColorPicker.addEventListener('input', (e) => {
             const color = e.target.value;
+            console.log('Custom color input:', color); // Debug log
 
             // Remove active class from preset colors
             colorOptions.forEach(opt => opt.classList.remove('active'));
@@ -220,9 +234,17 @@ function initColorSelector() {
     // Force apply the color one more time to ensure it's set
     setTimeout(() => {
         applyPrimaryColor(selectedColor);
+        console.log('Final color applied:', selectedColor);
+
+        // Verify CSS variables are set
+        const root = document.documentElement;
+        console.log('CSS Variables:', {
+            '--primary': getComputedStyle(root).getPropertyValue('--primary').trim(),
+            '--primary-dark': getComputedStyle(root).getPropertyValue('--primary-dark').trim()
+        });
     }, 100);
 }
-
+// Function to apply ONLY the primary color
 function applyPrimaryColor(color) {
     // Calculate darker shade for --primary-dark
     const darkerColor = adjustColor(color, -20);
@@ -231,8 +253,11 @@ function applyPrimaryColor(color) {
     const root = document.documentElement;
     root.style.setProperty('--primary', color);
     root.style.setProperty('--primary-dark', darkerColor);
+
+    // DO NOT update other elements - let CSS handle it
 }
 
+// Helper function to adjust color brightness (for --primary-dark)
 function adjustColor(color, percent) {
     const num = parseInt(color.replace('#', ''), 16);
     const amt = Math.round(2.55 * percent);
@@ -248,20 +273,62 @@ function adjustColor(color, percent) {
     ).toString(16).slice(1);
 }
 
-function verifyColorSetup() {
-    const root = document.documentElement;
-    const currentPrimary = getComputedStyle(root).getPropertyValue('--primary').trim();
-    const currentPrimaryDark = getComputedStyle(root).getPropertyValue('--primary-dark').trim();
 
-    // Check if colors match
-    if (selectedColor && selectedColor.toLowerCase() === currentPrimary.toLowerCase()) {
-        console.log('✅ Colors match correctly!');
-    } else {
-        console.log('⚠️ Colors might not match:', { selectedColor, currentPrimary });
+
+
+// Update showNotification to use selected color for success messages
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+
+    // Set background color based on notification type
+    let bgColor = '';
+
+    if (type === 'success') {
+        bgColor = 'var(--primary)'; // Use the CSS variable
+    } else if (type === 'error') {
+        bgColor = '#ff4444';
+    } else if (type === 'warning') {
+        bgColor = '#ff9900';
+    } else if (type === 'info') {
+        bgColor = '#2196F3';
     }
+
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${bgColor};
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        z-index: 1000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+    `;
+
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
 }
 
-// ========= Theme Functions ==========
+
+
+
+
+let theme = localStorage.getItem('theme') || 'light';
+
+// Toggle theme
 function toggleTheme() {
     const currentTheme = localStorage.getItem('theme') || 'light';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -271,8 +338,150 @@ function toggleTheme() {
 
     // Apply the new theme
     applyTheme();
+
+    // Show notification
+    // showNotification(`Switched to ${newTheme} mode`, 'success');
 }
 
+
+
+
+// Secondary color variables
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#f59e0b';
+
+// Function to initialize secondary color selector
+function initSecondaryColorSelector() {
+    const secondaryColorOptions = document.querySelectorAll('.secondary-color:not(.custom-color)');
+    const customSecondaryColorPicker = document.getElementById('customSecondaryColorPicker');
+
+    console.log('Initializing secondary color selector...');
+    console.log('Found secondary color options:', secondaryColorOptions.length);
+
+    // Remove active class from all secondary options first
+    secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+    // Set active secondary color based on saved preference
+    if (secondaryColorOptions.length > 0) {
+        secondaryColorOptions.forEach(option => {
+            // Check if this option matches the saved secondary color
+            if (option.dataset.color === selectedSecondaryColor) {
+                option.classList.add('active');
+                console.log('Setting active secondary color option:', selectedSecondaryColor);
+            }
+
+            option.addEventListener('click', () => {
+                console.log('Secondary color option clicked:', option.dataset.color);
+
+                // Remove active class from all secondary options
+                secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+                // Add active class to clicked option
+                option.classList.add('active');
+
+                // Get selected secondary color
+                const color = option.dataset.color;
+
+                // Apply ONLY the secondary color
+                applySecondaryColor(color);
+
+                // Save to localStorage
+                localStorage.setItem('selectedSecondaryColor', color);
+                selectedSecondaryColor = color;
+
+                // Update custom secondary color picker
+                if (customSecondaryColorPicker) {
+                    customSecondaryColorPicker.value = color;
+                }
+
+                showNotification(`Secondary color changed to ${option.title || 'custom'}`, 'success');
+            });
+        });
+    }
+
+    // Custom secondary color picker
+    if (customSecondaryColorPicker) {
+        console.log('Custom secondary color picker found');
+
+        // Set initial value from saved secondary color
+        customSecondaryColorPicker.value = selectedSecondaryColor;
+
+        customSecondaryColorPicker.addEventListener('input', (e) => {
+            const color = e.target.value;
+            console.log('Custom secondary color input:', color);
+
+            // Remove active class from preset secondary colors
+            secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the secondary color
+            applySecondaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedSecondaryColor', color);
+            selectedSecondaryColor = color;
+
+            showNotification('Custom secondary color applied', 'success');
+        });
+
+        customSecondaryColorPicker.addEventListener('change', (e) => {
+            const color = e.target.value;
+
+            // Remove active class from preset secondary colors
+            secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the secondary color
+            applySecondaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedSecondaryColor', color);
+            selectedSecondaryColor = color;
+
+            showNotification('Custom secondary color saved', 'success');
+        });
+
+        // Also trigger change on custom color picker click
+        customSecondaryColorPicker.parentElement.addEventListener('click', (e) => {
+            if (e.target !== customSecondaryColorPicker) {
+                customSecondaryColorPicker.click();
+            }
+        });
+    }
+
+    // Force apply the secondary color one more time to ensure it's set
+    setTimeout(() => {
+        applySecondaryColor(selectedSecondaryColor);
+        console.log('Final secondary color applied:', selectedSecondaryColor);
+    }, 100);
+}
+
+// Function to apply ONLY the secondary color
+function applySecondaryColor(color) {
+    // Calculate darker and lighter shades for --secondary-dark and --secondary-light
+    const darkerColor = adjustColor(color, -20);
+    const lighterColor = adjustColor(color, 20);
+
+    // Update ONLY the secondary color variables in CSS
+    const root = document.documentElement;
+    root.style.setProperty('--secondary', color);
+    root.style.setProperty('--secondary-dark', darkerColor);
+    root.style.setProperty('--secondary-light', lighterColor);
+}
+
+// Update your DOMContentLoaded event listener:
+document.addEventListener('DOMContentLoaded', function () {
+    init();
+
+    // Initialize primary color selector
+    if (typeof initColorSelector === 'function') {
+        initColorSelector();
+    }
+
+    // Initialize secondary color selector
+    if (typeof initSecondaryColorSelector === 'function') {
+        initSecondaryColorSelector();
+    }
+});
+
+// Update your applyTheme function to also apply secondary color:
 function applyTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
 
@@ -284,6 +493,7 @@ function applyTheme() {
     }
 
     // Update theme toggle icon
+    const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         const themeIcon = themeToggle.querySelector('i');
         if (themeIcon) {
@@ -291,11 +501,28 @@ function applyTheme() {
         }
     }
 
-    // Re-apply primary color to ensure it works with new theme
+    // Re-apply both colors to ensure they work with new theme
     if (selectedColor) {
         applyPrimaryColor(selectedColor);
     }
+    if (selectedSecondaryColor) {
+        applySecondaryColor(selectedSecondaryColor);
+    }
 }
+
+// Helper function to update active color (rename your existing one if needed)
+function updateActiveColor(color, isSecondary = false) {
+    const selector = isSecondary ? '.secondary-color:not(.custom-color)' : '.color-option:not(.custom-color):not(.secondary-color)';
+    const options = document.querySelectorAll(selector);
+
+    options.forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.color === color) {
+            option.classList.add('active');
+        }
+    });
+}
+
 
 // ========= Story Display Functions ==========
 function renderStories(level = 'all') {
@@ -342,6 +569,9 @@ function renderStories(level = 'all') {
         // Check if it's a user story
         const isUserStory = story.isUserStory;
 
+        // Get CEFR level with fallback
+        const cefrLevel = story.levelcefr || '';
+
         storyCard.innerHTML = `
             <div class="story-image">
                 ${authorHTML}
@@ -349,7 +579,11 @@ function renderStories(level = 'all') {
             </div>
             <div class="story-content">
                 <div class="story-header">
+                    <div>
                     <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
+                    <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
+                </div>
+        
                     ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
                 </div>
                 <h3 class="story-title">${story.title}</h3>
@@ -865,6 +1099,10 @@ function setupSettings() {
         settingsOverlay.classList.remove("active");
     });
 
+settingsOverlay.addEventListener("click", function () {
+    settingsPage.classList.remove("open");
+    settingsOverlay.classList.remove("active");
+});
     // Close settings when clicking on overlay
     settingsOverlay.addEventListener("click", function (e) {
         e.stopPropagation();

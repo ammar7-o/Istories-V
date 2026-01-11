@@ -12,7 +12,6 @@
 }
 
 .dark-mode {
-    --secondary: #10b981;
     --text: #f9fafb;
     --text-light: #d1d5db;
     --bg: #111827;
@@ -986,20 +985,24 @@ nav a.active {
     margin-bottom: 10px;
 }
 
-.beginner {
+.beginner,
+.A1,
+.A2 {
     background-color: #dcfce7;
     color: #166534;
     width: fit-content;
 }
 
-.intermediate {
+.intermediate,
+.B1,
+.B2 {
     background-color: #fef3c7;
     color: #92400e;
     width: fit-content;
 
 }
 
-.advanced {
+.advanced,.C1,.C2 {
     background-color: #fee2e2;
     color: #991b1b;
     width: fit-content;

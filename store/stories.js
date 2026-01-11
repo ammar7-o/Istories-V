@@ -401,8 +401,30 @@ window.storiesData = {
       ],
       "wordCount": 215,
       "audio": null
+    },
+
+  {
+
+      "title": "The f Cafe",
+      "level": "beginner",
+      "levelcefr":"a1",
+      "cover": "",
+      "coverType": "image",
+      "sound": "../sounds/story2.mp3",
+      "author": "Istories",
+      "dictionaries": ["../Dictionarys/main.json"],
+      "content": [
+        "One rainy afternoon, Tom decided to visit a new <span class='mark'>cafe</span> near his house. The cafe had a strange name: 'The Whispering Door'. It looked very old and <span class='mark'>mysterious</span> from the outside.",
+        "When Tom entered, he noticed something unusual. The cafe was completely silent, but the <span class='mark'>customers</span> were moving their lips as if talking. A friendly waiter approached him with a warm smile.",
+        "'Welcome to our special cafe,' said the waiter. 'Here, people communicate through written notes instead of speaking. It helps everyone practice their <span class='mark'>language</span> skills!'",
+        "Tom received a small notebook and a pen. He wrote his first note: 'I would like a coffee, please.' The waiter read it and nodded. Soon, a perfect cup of coffee arrived at his table.",
+        "At the next table, a woman was writing in French. Across the room, a man practiced Japanese <span class='mark'>characters</span>. Everyone was learning different languages in this quiet cafe.",
+        "Tom spent two hours there. He wrote simple sentences, read notes from other customers, and learned new words. The silent cafe became his favorite place to study.",
+        "Now, Tom visits 'The Whispering Door' every Saturday. He has made friends from different countries, all learning together in this peaceful environment.",
+        "Sometimes, the best learning happens in the most unexpected places. Have you found your special learning spot yet?"
+      ],
+      "wordCount": 215,
+      "audio": null
     }
-
-
   ]
 };

@@ -409,7 +409,7 @@ function renderVocabulary() {
 
         // FIXED: Get the date with better fallback
         const addedDate = getVocabularyDate(word);
-        
+
         // Check if translation exists (imported data always has translation)
         const hasTranslation = translation && translation !== displayWord;
 
@@ -477,18 +477,18 @@ function getVocabularyDate(word) {
     if (word.dateAdded) return word.dateAdded;
     if (word.added) return word.added;
     if (word.date) return word.date;
-    
+
     // If no date field exists, create one
     const newDate = new Date().toISOString();
-    
+
     // Update the word object with the new date
     word.addedDate = newDate;
-    
+
     // Save back to localStorage if needed
     setTimeout(() => {
         localStorage.setItem('savedWords', JSON.stringify(savedWords));
     }, 100);
-    
+
     return newDate;
 }
 
@@ -496,7 +496,7 @@ function getVocabularyDate(word) {
 // Simple date formatter that always works
 function formatDateForDisplay(dateString) {
     if (!dateString) return 'Unknown date';
-    
+
     try {
         const date = new Date(dateString);
         if (isNaN(date.getTime())) {
@@ -518,7 +518,7 @@ function formatDateForDisplay(dateString) {
 // Alternative: Very simple date formatter
 function simpleFormatDate(dateString) {
     if (!dateString) return '';
-    
+
     try {
         const date = new Date(dateString);
         return date.toLocaleDateString(); // "1/10/2026" format
@@ -664,7 +664,7 @@ function updateStats() {
     document.getElementById('readingStreak').textContent = streak;
 }
 
-// Export vocabulary as CSV file
+// Export vocabulary as CSV file - FIXED: No Blob
 function exportVocabulary() {
     if (savedWords.length === 0) {
         showNotification('No vocabulary to export!');
@@ -691,33 +691,34 @@ function exportVocabulary() {
     // Join rows with newlines
     const csvString = csvRows.join('\n');
 
-    // Create a Blob (file-like object)
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    // Create data URI (NO BLOB) - FIXED
+    const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString);
 
-    // Create download URL
-    const url = URL.createObjectURL(blob);
-
-    // Create invisible download link
+    // Create download link
     const link = document.createElement('a');
-    link.setAttribute('href', url);
+    link.setAttribute('href', dataUri);
 
     // Create filename with current date
     const date = new Date();
     const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
     link.setAttribute('download', `my_vocabulary_${formattedDate}.csv`);
 
-    // Hide the link and trigger download
-    link.style.visibility = 'hidden';
+    // Trigger download
     document.body.appendChild(link);
     link.click();
-
-    // Clean up
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
 
     // Show success message
     showNotification(`Vocabulary exported successfully! (${savedWords.length} words)`);
 }
+
+// Import vocabulary - FIXED: Field mismatch
+// Import vocabulary - FULLY FIXED
+
+
+// ============== IMPORT & CSV PARSER - COMPLETE FIX ==============
+
+// Import vocabulary - FULLY FIXED
 function importVocabulary() {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -732,12 +733,12 @@ function importVocabulary() {
         reader.onload = function (event) {
             try {
                 const content = event.target.result;
-
-                // Parse the file based on extension
                 let importedWords = [];
 
+                console.log('📁 Starting import from:', file.name);
+
                 if (file.name.toLowerCase().endsWith('.json')) {
-                    // Handle JSON - exactly like your localStorage format
+                    // Handle JSON
                     const parsed = JSON.parse(content);
 
                     if (Array.isArray(parsed)) {
@@ -745,7 +746,6 @@ function importVocabulary() {
                     } else if (parsed.savedWords && Array.isArray(parsed.savedWords)) {
                         importedWords = parsed.savedWords;
                     } else {
-                        // Try to extract any array from the object
                         const keys = Object.keys(parsed);
                         for (let key of keys) {
                             if (Array.isArray(parsed[key])) {
@@ -754,9 +754,11 @@ function importVocabulary() {
                             }
                         }
                     }
+                    console.log('✅ JSON parsed:', importedWords.length, 'words found');
                 } else if (file.name.toLowerCase().endsWith('.csv')) {
-                    // Handle CSV - convert to your exact format
+                    // Handle CSV
                     importedWords = parseCSVToExactFormat(content);
+                    console.log('✅ CSV parsed:', importedWords.length, 'words found');
                 }
 
                 if (!Array.isArray(importedWords) || importedWords.length === 0) {
@@ -765,10 +767,12 @@ function importVocabulary() {
 
                 // Get current words
                 const currentWords = JSON.parse(localStorage.getItem('savedWords') || '[]');
+                console.log('📚 Current words in storage:', currentWords.length);
 
-                // Merge without modifying dates
+                // Merge without duplicates
                 const mergedWords = [...currentWords];
                 let addedCount = 0;
+                let skippedCount = 0;
 
                 importedWords.forEach(newWord => {
                     // Check if word already exists (case-insensitive)
@@ -777,47 +781,68 @@ function importVocabulary() {
                     );
 
                     if (!exists) {
-                        // Preserve the exact structure including dates
+                        // Normalize the word object to match your format
                         mergedWords.push({
                             word: newWord.word || '',
                             translation: newWord.translation || newWord.word || '',
                             status: newWord.status || 'saved',
                             story: newWord.story || '',
-                            addedDate: newWord.addedDate || new Date().toISOString()
-                            // Don't add any extra fields
+                            added: newWord.added || new Date().toISOString()
                         });
                         addedCount++;
+                    } else {
+                        skippedCount++;
                     }
                 });
 
-                // Save back to localStorage EXACTLY as before
+                // Save to localStorage
                 localStorage.setItem('savedWords', JSON.stringify(mergedWords));
 
-                // Update UI if functions exist
+                // Update global variable
+                window.savedWords = mergedWords;
+
+                console.log('💾 Saved to localStorage. Total:', mergedWords.length);
+                console.log('➕ Added:', addedCount, '| ⏭️ Skipped (duplicates):', skippedCount);
+
+                // Force refresh UI
                 if (typeof renderVocabulary === 'function') {
                     renderVocabulary();
                 }
+                if (typeof updateStats === 'function') {
+                    updateStats();
+                }
+                if (typeof updateFlashcardStats === 'function') {
+                    updateFlashcardStats();
+                }
 
                 // Show success message
-                const message = `Imported ${addedCount} new vocabulary words. Total: ${mergedWords.length}`;
-
+                const message = `✅ Imported ${addedCount} new words${skippedCount > 0 ? ` (${skippedCount} duplicates skipped)` : ''}. Total: ${mergedWords.length}`;
                 if (typeof showNotification === 'function') {
                     showNotification(message, 'success');
                 } else {
                     alert(message);
                 }
 
-                console.log('Import successful. New total:', mergedWords.length);
+                console.log('✅ Import complete!');
 
             } catch (error) {
-                console.error('Import error:', error);
+                console.error('❌ Import error:', error);
+                console.error('Error details:', error.stack);
                 const errorMsg = `Import failed: ${error.message}`;
-
                 if (typeof showNotification === 'function') {
                     showNotification(errorMsg, 'error');
                 } else {
                     alert(errorMsg);
                 }
+            }
+        };
+
+        reader.onerror = function () {
+            console.error('❌ File reading error');
+            if (typeof showNotification === 'function') {
+                showNotification('Failed to read file', 'error');
+            } else {
+                alert('Failed to read file');
             }
         };
 
@@ -833,52 +858,101 @@ function importVocabulary() {
     }, 1000);
 }
 
-// CSV parser that creates EXACT same format as your localStorage
+// CSV parser that creates EXACT same format as your localStorage - FULLY FIXED
 function parseCSVToExactFormat(csvText) {
     const words = [];
     const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
 
-    if (lines.length < 2) return words;
+    console.log('📄 Parsing CSV. Total lines:', lines.length);
 
-    // Get headers from first line
-    const headers = lines[0].split(',').map(h =>
+    if (lines.length < 2) {
+        console.warn('⚠️ CSV has fewer than 2 lines');
+        return words;
+    }
+
+    // Get headers from first line using the CSV parser
+    const headerLine = lines[0];
+    const headers = parseCSVRow(headerLine).map(h =>
         h.trim().replace(/"/g, '').toLowerCase()
     );
 
+    console.log('📋 CSV Headers found:', headers);
+
+    // Find column indices for each field
+    const wordIdx = headers.findIndex(h => h === 'word' || h === 'english');
+    const translationIdx = headers.findIndex(h => h === 'translation' || h === 'arabic' || h === 'meaning');
+    const statusIdx = headers.findIndex(h => h === 'status');
+    const storyIdx = headers.findIndex(h => h === 'story' || h === 'title');
+    const dateIdx = headers.findIndex(h => h === 'date added' || h === 'added' || h === 'date');
+
+    console.log('🔍 Column indices:', {
+        word: wordIdx,
+        translation: translationIdx,
+        status: statusIdx,
+        story: storyIdx,
+        date: dateIdx
+    });
+
+    // Validate required columns
+    if (wordIdx === -1) {
+        console.error('❌ Required "Word" column not found in CSV');
+        throw new Error('CSV must have a "Word" column');
+    }
+
     // Process each data row
     for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (!line.trim()) continue;
+        const line = lines[i].trim();
+        if (!line) continue;
 
-        // Parse CSV row with quotes
-        const row = parseCSVRow(line);
+        try {
+            const row = parseCSVRow(line);
 
-        // Create object from headers and row values
-        const rowObj = {};
-        headers.forEach((header, index) => {
-            if (index < row.length) {
-                rowObj[header] = row[index].replace(/"/g, '').trim();
+            // Extract values using found indices
+            const wordValue = wordIdx >= 0 && row[wordIdx]
+                ? row[wordIdx].replace(/"/g, '').trim()
+                : '';
+
+            const translationValue = translationIdx >= 0 && row[translationIdx]
+                ? row[translationIdx].replace(/"/g, '').trim()
+                : wordValue; // Fallback to word itself
+
+            const statusValue = statusIdx >= 0 && row[statusIdx]
+                ? row[statusIdx].replace(/"/g, '').trim()
+                : 'saved';
+
+            const storyValue = storyIdx >= 0 && row[storyIdx]
+                ? row[storyIdx].replace(/"/g, '').trim()
+                : '';
+
+            const dateValue = dateIdx >= 0 && row[dateIdx]
+                ? row[dateIdx].replace(/"/g, '').trim()
+                : '';
+
+            // Create word object
+            if (wordValue) {
+                const word = {
+                    word: wordValue,
+                    translation: translationValue,
+                    status: statusValue || 'saved',
+                    story: storyValue,
+                    added: dateValue || new Date().toISOString()
+                };
+
+                words.push(word);
+                console.log(`  ✓ Row ${i}: "${wordValue}"`);
+            } else {
+                console.warn(`  ⚠️ Row ${i}: Skipped (no word value)`);
             }
-        });
-
-        // Convert to your exact format
-        const word = {
-            word: rowObj.word || rowObj.english || '',
-            translation: rowObj.translation || rowObj.arabic || rowObj.meaning || '',
-            status: rowObj.status || 'saved',
-            story: rowObj.story || rowObj.title || '',
-            addedDate: new Date().toISOString() // Use current date for imports
-        };
-
-        if (word.word) {
-            words.push(word);
+        } catch (rowError) {
+            console.error(`  ❌ Row ${i}: Parse error -`, rowError.message);
         }
     }
 
+    console.log(`✅ Parsed ${words.length} valid words from CSV`);
     return words;
 }
 
-// Helper to parse CSV row with quotes
+// Helper to parse CSV row with proper quote handling
 function parseCSVRow(line) {
     const result = [];
     let inQuotes = false;
@@ -890,15 +964,15 @@ function parseCSVRow(line) {
 
         if (char === '"') {
             if (inQuotes && nextChar === '"') {
-                // Escaped quote
+                // Escaped quote (two quotes in a row = one quote)
                 currentField += '"';
                 i++; // Skip next quote
             } else {
-                // Toggle quotes
+                // Toggle quote state
                 inQuotes = !inQuotes;
             }
         } else if (char === ',' && !inQuotes) {
-            // End of field
+            // End of field (only if not inside quotes)
             result.push(currentField);
             currentField = '';
         } else {
@@ -912,31 +986,9 @@ function parseCSVRow(line) {
     return result;
 }
 
-// Alternative simple CSV parser for your exact format
-function parseCSVSimple(csvText) {
-    const words = [];
-    const lines = csvText.split(/\r?\n/);
+// ============== END IMPORT & CSV PARSER ==============
 
-    for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
 
-        // Match: "word","translation","status","story","date"
-        const match = line.match(/"([^"]+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)"/);
-
-        if (match) {
-            words.push({
-                word: match[1],
-                translation: match[2],
-                status: match[3],
-                story: match[4],
-                addedDate: new Date().toISOString()
-            });
-        }
-    }
-
-    return words;
-}
 // Helper function to format date
 function formatDateForExport(dateString) {
     if (!dateString) return '';
@@ -1505,6 +1557,27 @@ function applySecondaryColor(color) {
     root.style.setProperty('--secondary-light', lighterColor);
 }
 
+// Add init function
+function init() {
+    console.log('App initialization started...');
+
+    // Load saved words
+    savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+
+    // Apply theme
+    applyTheme();
+
+    // Apply colors
+    if (selectedColor) {
+        applyPrimaryColor(selectedColor);
+    }
+    if (selectedSecondaryColor) {
+        applySecondaryColor(selectedSecondaryColor);
+    }
+
+    console.log('App initialization complete!');
+}
+
 // Update your DOMContentLoaded event listener:
 document.addEventListener('DOMContentLoaded', function () {
     init();
@@ -1561,11 +1634,3 @@ function updateActiveColor(color, isSecondary = false) {
         }
     });
 }
-
-
-
-
-
-
-
-

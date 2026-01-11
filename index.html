@@ -7,6 +7,7 @@
   <title>Istories</title>
   <link rel="stylesheet" href="font-awesome/css/all.min.css">
   <link rel="icon" type="image/png" href="icon.png">
+  <link rel="manifest" href="manifest.json">
   <meta property="og:title" content="Istories">
   <meta property="og:description" content="Learn Languages Through Interactive Stories.">
   <meta property="og:image" content="icon.png">
@@ -448,5 +449,13 @@
       }, 500);
     });
   </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('Service Worker Registered'))
+      .catch(err => console.log('Service Worker Failed', err));
+      showNotification("offline mode")
+  }
+</script>
 </body>
 </html>

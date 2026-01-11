@@ -14,6 +14,10 @@ closeSettings.addEventListener("click", function () {
     settingsOverlay.classList.remove("active");
 });
 
+settingsOverlay.addEventListener("click", function () {
+    settingsPage.classList.remove("open");
+    settingsOverlay.classList.remove("active");
+});
 
 const ttsBtn = document.getElementById("tts-toggle");
 const sound = document.getElementById("sound");
