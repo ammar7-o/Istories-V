@@ -13,7 +13,13 @@ closeSettings.addEventListener("click", function () {
     settingsPage.classList.remove("open");
     settingsOverlay.classList.remove("active");
 });
-
+// Close settings on Escape key
+document.addEventListener("keydown", function (e) {
+    if (e.key === 'Escape' && settingsPage.classList.contains("open")) {
+        settingsPage.classList.remove("open");
+        settingsOverlay.classList.remove("active");
+    }
+});
 settingsOverlay.addEventListener("click", function () {
     settingsPage.classList.remove("open");
     settingsOverlay.classList.remove("active");

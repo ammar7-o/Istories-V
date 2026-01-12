@@ -259,7 +259,13 @@
                     <h1>Learn Languages Through Interactive Stories</h1>
                     <p>Improve your language skills by reading engaging stories with instant translations, definitions,
                         and audio support.</p>
-                    <button class="cta-button">Start Reading Now</button>
+                    <div class="hero-btns">
+                        <button id="randomStory" class="cta-button"> <i class="fas fa-random"></i> Random Story</button>
+                        <button class="cta-button" onclick="showRecentStories()">
+                            <i class="fas fa-history"></i> Recent Stories
+                        </button>
+                    </div>
+
                 </section>
 
                 <div class="level-filter">
@@ -555,7 +561,7 @@
                                         <textarea id="storyDictionaries" rows="3" placeholder="
 Enter one dictionary path per line"></textarea>
                                         <small>Add paths to external dictionary files (one per line, optional)</small>
-                                        <div >
+                                        <div>
                                             <strong>Example:</strong>
                                             <pre class="example-code">../Dictionarys/story4.json
 ../Dictionarys/main.json</pre>

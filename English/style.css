@@ -167,13 +167,14 @@ nav a.active {
 }
 
 .theme-toggle:hover {
-     background:
+    background:
         linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
         var(--primary);
     background-blend-mode: darken;
     color: white;
     border-color: var(--primary);
 }
+
 .user-actions button {
     background-color: var(--primary);
     color: white;
@@ -781,6 +782,10 @@ nav a.active {
 /* Homepage Styles */
 .hero {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 40px 10px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     color: white;
@@ -1443,6 +1448,10 @@ footer {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
+.story-emoji-recent {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
 .story-image img {
     width: 100%;
     height: 100%;
@@ -1454,9 +1463,287 @@ footer {
     gap: 10px;
 }
 
+.hero-btns {
+    display: flex;
+    gap: 7px;
+}
+
 .v-btn {
     max-height: 45px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============ RECENT STORIES MODAL STYLES ============ */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.863);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    animation: slideUp 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--background-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--hover-color);
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 10px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.recent-stories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recent-story-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: var(--radius);
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.recent-story-item:hover {
+    border-color: var(--primary);
+    background: var(--hover-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.recent-story-rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 30px;
+    text-align: center;
+}
+
+.recent-story-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.recent-story-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.recent-story-info h4 {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recent-story-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.story-level-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.story-level-badge.beginner {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.story-level-badge.intermediate {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+}
+
+.story-level-badge.advanced {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.recent-story-time {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.user-story-tag {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+}
+
+.recent-story-action {
+    color: var(--primary);
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: all 0.2s;
+}
+
+.recent-story-item:hover .recent-story-action {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.recent-stories-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    background: var(--background-color);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+
+    .modal-body {
+        padding: 0px;
+    }
+
+    .recent-story-item {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .recent-story-cover {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .recent-story-rank {
+        min-width: 25px;
+        font-size: 1rem;
+    }
+}
+
+
+
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -1466,6 +1753,14 @@ footer {
         right: -100%;
     }
 
+    .modal-overlay {
+        width: 100%;
+    }
+
+    .modal-body {
+        padding: 0px;
+    }
+
     .header-actions {
         width: 100%;
         justify-content: space-between;
@@ -1473,6 +1768,10 @@ footer {
 
     .hero {
         margin-top: 7.3rem;
+    }
+
+    .hero-btns {
+        flex-direction: column;
     }
 
     .settings-header {

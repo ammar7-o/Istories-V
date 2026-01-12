@@ -45,7 +45,8 @@ function scrollToTop() {
 // Initialize the app
 function init() {
     console.log('App initialization started...');
-
+    // Auto lazy load ALL images
+    document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
     // Wait for stories to be loaded from external file
     if (typeof window.storiesData !== 'undefined') {
         stories = window.storiesData.stories || window.storiesData;
@@ -204,7 +205,7 @@ function setupEventListeners() {
 
     themeToggle.addEventListener('click', toggleTheme);
 
-    document.querySelector('.cta-button').addEventListener('click', () => {
+    document.getElementById("randomStory").addEventListener('click', () => {
         if (stories.length > 0) {
             // Generate a random index from 0 to stories.length - 1
             var randomIndex = Math.floor(Math.random() * stories.length);
@@ -257,12 +258,27 @@ function switchPage(page) {
 
 // Open story in a new page WITH story title
 function openStoryInNewPage(storyId) {
-    // Find the story in the stories array
-    const story = stories.find(s => s.id == storyId);
+    // Find the story in all available sources
+    let story = stories.find(s => s.id == storyId);
+
+    // If not found in main stories, check user stories
+    if (!story) {
+        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        story = userStories.find(s => s.id == storyId);
+
+        if (story && !stories.some(s => s.id == storyId)) {
+            stories.push(story); // Add to stories array for this session
+        }
+    }
 
     if (story) {
-        // Store the story data in localStorage before redirecting
-        localStorage.setItem('currentReadingStory', JSON.stringify({
+        // Add to reading history
+        if (typeof addToReadingHistory === 'function') {
+            addToReadingHistory(story);
+        }
+
+        // Prepare story data for reader page
+        const storyData = {
             id: story.id,
             title: story.title,
             level: story.level,
@@ -270,16 +286,22 @@ function openStoryInNewPage(storyId) {
             isUserStory: story.isUserStory || false,
             cover: story.cover,
             coverType: story.coverType,
-            // Include translations for user stories
-            translations: story.isUserStory ? (userDictionaries[story.id] || {}) : null
-        }));
+            sound: story.sound || null,
+            dictionaries: story.dictionaries || [],
+            translations: story.isUserStory ? (story.translations || {}) : null
+        };
 
-        // Create a new page URL with the story ID
-        const storyPage = 'reader/index.html?id=' + storyId + (story.isUserStory ? '&userStory=true' : '');
+        // Store in localStorage for reader page
+        localStorage.setItem('currentReadingStory', JSON.stringify(storyData));
+
+        // Redirect to reader page
+        const storyPage = 'reader/index.html?id=' + storyId +
+            (story.isUserStory ? '&userStory=true' : '');
         window.location.href = storyPage;
+    } else {
+        showNotification('Story not found!');
     }
 }
-
 // Function to render cover images
 function renderStoryCover(story) {
     if (!story.cover) {
@@ -391,7 +413,13 @@ closeSettings.addEventListener("click", function () {
     settingsPage.classList.remove("open");
     settingsOverlay.classList.remove("active");
 });
-
+// Close settings on Escape key
+document.addEventListener("keydown", function (e) {
+    if (e.key === 'Escape' && settingsPage.classList.contains("open")) {
+        settingsPage.classList.remove("open");
+        settingsOverlay.classList.remove("active");
+    }
+});
 settingsOverlay.addEventListener("click", function () {
     settingsPage.classList.remove("open");
     settingsOverlay.classList.remove("active");

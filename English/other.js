@@ -797,7 +797,7 @@ function importVocabulary() {
                 if (typeof renderVocabulary === 'function') {
                     renderVocabulary();
                     updateStats(); // Fixed: was updateVocabularyStats()
-                    
+
                 }
 
                 // Show success message
@@ -1585,3 +1585,246 @@ function updateActiveColor(color, isSecondary = false) {
         }
     });
 }
+
+// ============ READING HISTORY FUNCTIONS ============
+
+// Get reading history from localStorage
+function getReadingHistory() {
+    try {
+        const history = JSON.parse(localStorage.getItem('readingHistory')) || [];
+        return history.slice(0, 10); // Return only last 10 items
+    } catch (error) {
+        console.error('Error reading history:', error);
+        return [];
+    }
+}
+
+// Add story to reading history
+function addToReadingHistory(story) {
+    try {
+        let history = getReadingHistory();
+
+        // Remove if already exists (to avoid duplicates)
+        history = history.filter(item => item.id !== story.id);
+
+        // Add to beginning of array
+        history.unshift({
+            id: story.id,
+            title: story.title,
+            level: story.level,
+            cover: story.cover,
+            coverType: story.coverType,
+            timestamp: new Date().toISOString(),
+            isUserStory: story.isUserStory || false
+        });
+
+        // Keep only last 10 entries
+        if (history.length > 10) {
+            history = history.slice(0, 10);
+        }
+
+        localStorage.setItem('readingHistory', JSON.stringify(history));
+    } catch (error) {
+        console.error('Error saving reading history:', error);
+    }
+}
+
+// Format time ago
+function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffMs = now - time;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) {
+        return `${diffMins} ${diffMins === 1 ? 'minute' : 'minutes'} ago`;
+    } else if (diffHours < 24) {
+        return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+    } else if (diffDays < 7) {
+        return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+    } else {
+        return new Date(timestamp).toLocaleDateString();
+    }
+}
+
+// Show reading history modal - SHOWS 7 STORIES NOW
+// Show reading history modal - SHOWS 7 STORIES NOW
+function showRecentStories() {
+    const history = getReadingHistory();
+
+    // If no history, show notification
+    if (history.length === 0) {
+        showNotification('No recent stories found. Start reading to build your history!');
+        return;
+    }
+
+    // Create modal - REMOVED THE ONCLICK FROM OVERLAY
+    const modalHTML = `
+        <div class="modal-overlay" id="recentStoriesModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-history"></i> Recent Stories</h3>
+                    <button class="modal-close" onclick="closeRecentStoriesModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="recent-stories-list">
+                        ${history.slice(0, 7).map((story, index) => {
+        // Create a click handler that works for all stories
+        const clickHandler = story.isUserStory
+            ? `openUserStoryFromHistory('${story.id}')`
+            : `openStoryInNewPage(${story.id})`;
+
+        return `
+                            <div class="recent-story-item" onclick="${clickHandler}; closeRecentStoriesModal();">
+                                <div class="recent-story-rank">${index + 1}</div>
+                                <div class="recent-story-cover">
+                                    ${story.coverType === 'emoji' ?
+                `<div class="story-emoji-recent">${story.cover}</div>` :
+                story.coverType === 'icon' ?
+                    `<i class="${story.cover}"></i>` :
+                    story.cover && story.cover.startsWith('http') ?
+                        `<img src="${story.cover}" alt="${story.title}" style="width: 40px; height: 40px; border-radius: 8px;">` :
+                        `<div class="story-emoji-recent">📖</div>`
+            }
+                                </div>
+                                <div class="recent-story-info">
+                                    <h4>${story.title || 'Unknown Story'}</h4>
+                                    <div class="recent-story-meta">
+                                        <span class="story-level-badge ${story.level}">${story.level}</span>
+                                        <span class="recent-story-time">${formatTimeAgo(story.timestamp)}</span>
+                                        ${story.isUserStory ? '<span class="user-story-tag"><i class="fas fa-user"></i></span>' : ''}
+                                    </div>
+                                </div>
+                                <div class="recent-story-action">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                            </div>
+                        `;
+    }).join('')}
+                    </div>
+                    ${history.length > 7 ? `
+                        <div class="recent-stories-footer">
+                            <p>Showing 7 of ${history.length} recent stories</p>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closeRecentStoriesModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="btn-primary" onclick="clearReadingHistory()">
+                        <i class="fas fa-trash"></i> Clear History
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add to page
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHTML;
+    document.body.appendChild(modalContainer);
+    
+    // Add click outside functionality
+    setTimeout(() => {
+        const modal = document.getElementById('recentStoriesModal');
+        if (modal) {
+            // Add event listener to document to detect clicks outside modal
+            const outsideClickHandler = (e) => {
+                // Check if modal exists and if click is outside modal
+                const modal = document.getElementById('recentStoriesModal');
+                if (!modal) {
+                    document.removeEventListener('click', outsideClickHandler);
+                    return;
+                }
+                
+                // Check if click is outside the entire modal overlay
+                if (!modal.contains(e.target)) {
+                    closeRecentStoriesModal();
+                    document.removeEventListener('click', outsideClickHandler);
+                }
+            };
+            
+            // Add the event listener
+            document.addEventListener('click', outsideClickHandler);
+        }
+    }, 10);
+    
+    // Add Escape key support
+    setTimeout(() => {
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeRecentStoriesModal();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+    }, 10);
+}
+// Close the modal - SINGLE FUNCTION (removed duplicate)
+function closeRecentStoriesModal() {
+    const modal = document.getElementById('recentStoriesModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Clear reading history
+function clearReadingHistory() {
+    if (confirm("Clear all reading history? This action cannot be undone.")) {
+        localStorage.removeItem('readingHistory');
+        showNotification('Reading history cleared!');
+        closeRecentStoriesModal();
+    }
+}
+
+// Function to open user stories from history
+function openUserStoryFromHistory(storyId) {
+    try {
+        // First, check if story exists in current stories array
+        const existingStory = stories.find(s => s.id == storyId);
+
+        if (existingStory) {
+            // Story exists in memory, open it normally
+            openStoryInNewPage(storyId);
+            return;
+        }
+
+        // If not in memory, try to load from localStorage
+        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const userStory = userStories.find(s => s.id == storyId);
+
+        if (userStory) {
+            // Add to stories array temporarily
+            if (!stories.some(s => s.id == storyId)) {
+                stories.push(userStory);
+            }
+
+            // Open the story
+            openStoryInNewPage(storyId);
+        } else {
+            // Story not found
+            showNotification('Story not found. It may have been deleted.');
+
+            // Remove from history
+            let history = getReadingHistory();
+            history = history.filter(item => item.id != storyId);
+            localStorage.setItem('readingHistory', JSON.stringify(history));
+
+            // Close modal and refresh
+            closeRecentStoriesModal();
+            setTimeout(() => {
+                showRecentStories(); // Refresh the modal
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error opening user story:', error);
+        showNotification('Error opening story. Please try again.');
+    }
+}
+
+// ============ END READING HISTORY FUNCTIONS ============
