@@ -1389,7 +1389,7 @@ function toggleTheme() {
 
 
 // Secondary color variables
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#f59e0b';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981';
 
 // Function to initialize secondary color selector
 function initSecondaryColorSelector() {
@@ -1685,10 +1685,11 @@ function showRecentStories() {
                                     ${story.coverType === 'emoji' ?
                 `<div class="story-emoji-recent">${story.cover}</div>` :
                 story.coverType === 'icon' ?
-                    `<i class="${story.cover}"></i>` :
+                    `<i class="${story.cover && story.cover.trim() !== '' ? story.cover : 'fas fa-book'}"></i>` :
                     story.cover && story.cover.startsWith('http') ?
                         `<img src="${story.cover}" alt="${story.title}" style="width: 40px; height: 40px; border-radius: 8px;">` :
-                        `<div class="story-emoji-recent">📖</div>`
+                        `<img src="${story.cover}" alt="${story.title}" style="width: 40px; height: 40px; border-radius: 8px;">`
+
             }
                                 </div>
                                 <div class="recent-story-info">
@@ -1728,7 +1729,7 @@ function showRecentStories() {
     const modalContainer = document.createElement('div');
     modalContainer.innerHTML = modalHTML;
     document.body.appendChild(modalContainer);
-    
+
     // Add click outside functionality
     setTimeout(() => {
         const modal = document.getElementById('recentStoriesModal');
@@ -1741,19 +1742,19 @@ function showRecentStories() {
                     document.removeEventListener('click', outsideClickHandler);
                     return;
                 }
-                
+
                 // Check if click is outside the entire modal overlay
                 if (!modal.contains(e.target)) {
                     closeRecentStoriesModal();
                     document.removeEventListener('click', outsideClickHandler);
                 }
             };
-            
+
             // Add the event listener
             document.addEventListener('click', outsideClickHandler);
         }
     }, 10);
-    
+
     // Add Escape key support
     setTimeout(() => {
         const escapeHandler = (e) => {

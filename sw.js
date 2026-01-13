@@ -1,45 +1,58 @@
-const cacheName = 'istories-v1';
-const assets = [
-    './', // بدلاً من '/'
-    'index.html',
-    'style.css',
-    'English/index.html',
-    'English/main.js',
-    'English/style.css',
-    'English/addstories.css',
-    'English/addstories.js',
-    'English/other.js',
-    'English/database/main.js',
-    // أضف أي صور أساسية هنا مثل: 'logo.png'
+const CACHE_NAME = 'istories-v2';
+const BASE = '/Istories-V';
+
+const ASSETS = [
+  `${BASE}/`,
+  `${BASE}/index.html`,
+  `${BASE}/style.css`,
+
+  `${BASE}/English/index.html`,
+  `${BASE}/English/main.js`,
+  `${BASE}/English/style.css`,
+  `${BASE}/English/addstories.css`,
+  `${BASE}/English/addstories.js`,
+  `${BASE}/English/other.js`,
+  `${BASE}/English/database/main.js`
 ];
 
-// تثبيت وتخزين الملفات
-self.addEventListener('install', e => {
-    e.waitUntil(
-        caches.open(cacheName).then(cache => {
-            console.log('Caching assets...');
-            return cache.addAll(assets);
-        })
-    );
+// INSTALL
+self.addEventListener('install', event => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(async cache => {
+      for (const url of ASSETS) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) await cache.put(url, res.clone());
+        } catch (e) {
+          console.warn('Failed to cache:', url);
+        }
+      }
+    })
+  );
 });
 
-// تفعيل السيرفس وركر وحذف الكاش القديم (مهم جداً عند التحديث)
-self.addEventListener('activate', e => {
-    e.waitUntil(
-        caches.keys().then(keys => {
-            return Promise.all(keys
-                .filter(key => key !== cacheName)
-                .map(key => caches.delete(key))
-            );
-        })
-    );
+// ACTIVATE
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(k => k !== CACHE_NAME)
+          .map(k => caches.delete(k))
+      )
+    )
+  );
+  self.clients.claim();
 });
 
-// الاستجابة من الكاش
-self.addEventListener('fetch', e => {
-    e.respondWith(
-        caches.match(e.request).then(response => {
-            return response || fetch(e.request);
-        })
-    );
+// FETCH
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      return cached || fetch(event.request);
+    })
+  );
 });

@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Istories</title>
     <link rel="stylesheet" href="../font-awesome/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="style.css">
+    </noscript>
     <link rel="stylesheet" href="addStories.css">
 
     <link rel="icon" type="image/png" href="../icon.png">
@@ -927,12 +930,12 @@ Enter one dictionary path per line"></textarea>
         </div>
     </footer>
     <!-- stories -->
-    <script src="database/main.js"></script>
+    <script src="database/main.js" defer></script>
     <script src="database/more.js"></script>
 
     <!-- <script src="Dictionarys/main.js"></script> -->
-    <script src="other.js"></script>
-    <script src="main.js"></script>
+    <script src="other.js" defer></script>
+    <script src="main.js" defer></script>
     <script src="addstories.js"></script>
 
 
