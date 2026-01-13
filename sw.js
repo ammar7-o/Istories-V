@@ -4,7 +4,9 @@ const BASE = '/Istories-V';
 const ASSETS = [
   `${BASE}/`,
   `${BASE}/index.html`,
-  `${BASE}/style.css`
+  `${BASE}/style.css`,
+    `${BASE}/English/reader/imdex.html`
+  
 
 ];
 
