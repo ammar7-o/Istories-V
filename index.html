@@ -451,11 +451,33 @@
   </script>
   <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('Service Worker Registered'))
-      .catch(err => console.log('Service Worker Failed', err));
+    // تسجيل الملف
+    navigator.serviceWorker.register(`${BASE}/sw.js`).then(reg => {
       
+      // التحقق مما إذا كان هناك تحديث ينتظر التفعيل
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // هنا نكتشف وجود تحديث جديد
+            if (confirm("يوجد تحديث جديد للموقع، هل تريد التحميل الآن؟")) {
+              window.location.reload();
+            }
+          }
+        });
+      });
+    }).catch(err => console.log('Service Worker Failed', err));
+
+    // كود لضمان إعادة التحميل بمجرد تفعيل الـ SW الجديد
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        window.location.reload();
+        refreshing = true;
+      }
+    });
   }
 </script>
+
 </body>
 </html>
