@@ -4,14 +4,8 @@ const BASE = '/Istories-V';
 const ASSETS = [
   `${BASE}/`,
   `${BASE}/index.html`,
-  `${BASE}/style.css`,
-  `${BASE}/English/index.html`,
-  `${BASE}/English/main.js`,
-  `${BASE}/English/style.css`,
-  `${BASE}/English/addstories.css`,
-  `${BASE}/English/addstories.js`,
-  `${BASE}/English/other.js`,
-  `${BASE}/English/database/main.js`
+  `${BASE}/style.css`
+
 ];
 
 // 1. التثبيت: تحميل الملفات الأساسية فوراً
