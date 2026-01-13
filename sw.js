@@ -1,4 +1,4 @@
-const CACHE_NAME = 'istories-v2';
+const CACHE_NAME = 'istories-v3';
 const BASE = '/Istories-V';
 
 const ASSETS = [
