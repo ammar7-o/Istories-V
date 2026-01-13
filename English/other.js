@@ -1829,3 +1829,190 @@ function openUserStoryFromHistory(storyId) {
 }
 
 // ============ END READING HISTORY FUNCTIONS ============
+// ============profile setting===================
+// DOM Elements
+const profilePhoto = document.getElementById('profile-photo');
+const changePhotoBtn = document.getElementById('change-photo-btn');
+const photoInput = document.getElementById('photo-input');
+const nameInput = document.getElementById('profile-name-input');
+const nameCharCount = document.getElementById('name-char-count');
+const nameValidIcon = document.getElementById('name-valid-icon');
+const cancelBtn = document.getElementById('cancel-btn');
+const saveBtn = document.getElementById('save-btn');
+const profilePic = document.getElementById('profile-pic');
+const profileName = document.getElementById('profile-name');
+
+// Update character counter
+function updateCharCounter() {
+    const currentLength = nameInput.value.length;
+    nameCharCount.textContent = currentLength;
+
+    // Change color based on length
+    if (currentLength === 0) {
+        nameCharCount.style.color = 'var(--text-tertiary)';
+    } else if (currentLength > 40) {
+        nameCharCount.style.color = 'var(--warning-color)';
+    } else {
+        nameCharCount.style.color = 'var(--success-color)';
+    }
+}
+
+// Update displayed profile name in real-time
+function updateDisplayedName() {
+    if (profileName && nameInput) {
+        const name = nameInput.value.trim();
+        profileName.textContent = name || 'Your name ';
+    }
+}
+
+// Load saved data from localStorage
+function loadProfileData() {
+    const savedName = localStorage.getItem('profileName');
+    const savedPhoto = localStorage.getItem('profilePhoto');
+
+    if (savedName) {
+        nameInput.value = savedName;
+        if (profileName) {
+            profileName.textContent = savedName;
+        }
+    } else {
+        if (profileName) {
+            profileName.textContent = 'Ammar Chacal';
+        }
+    }
+
+    if (savedPhoto) {
+        profilePhoto.src = savedPhoto;
+        if (profilePic) {
+            profilePic.src = savedPhoto;
+        }
+    }
+
+    updateCharCounter();
+}
+
+// Save profile data
+function saveProfileData() {
+    const name = nameInput.value.trim();
+    const photo = profilePhoto.src;
+
+    localStorage.setItem('profileName', name);
+    localStorage.setItem('profilePhoto', photo);
+
+    // Update displayed profile
+    if (profileName) {
+        profileName.textContent = name || 'Ammar Chacal';
+    }
+
+    if (profilePic) {
+        profilePic.src = photo;
+    }
+
+    // Show success message
+    showNotification('Profile updated successfully!', 'success');
+}
+
+// Handle photo upload
+function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showNotification('File size must be less than 5MB', 'error');
+        return;
+    }
+
+    // Check file type
+    if (!file.type.match('image.*')) {
+        showNotification('Please select an image file', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        // Update both profile photo elements
+        profilePhoto.src = e.target.result;
+        if (profilePic) {
+            profilePic.src = e.target.result;
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function () {
+    // Load saved data
+    loadProfileData();
+
+    // Event listeners
+    changePhotoBtn.addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', handlePhotoUpload);
+
+    // Update both counter and displayed name on input
+    nameInput.addEventListener('input', function () {
+        updateCharCounter();
+        updateDisplayedName();
+    });
+
+    cancelBtn.addEventListener('click', function () {
+        if (confirm('Discard changes?')) {
+            loadProfileData(); // Reload original data
+            showNotification('Changes discarded', 'info');
+        }
+    });
+
+    saveBtn.addEventListener('click', function () {
+        if (!nameInput.value.trim()) {
+            showNotification('Please enter your name', 'error');
+            nameInput.focus();
+            return;
+        }
+
+        saveProfileData();
+    });
+
+    // Save on Enter key
+    nameInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            saveBtn.click();
+        }
+    });
+});
+
+// Optional: Add drag and drop for photo
+document.addEventListener('DOMContentLoaded', function () {
+    const photoWrapper = document.querySelector('.photo-wrapper');
+
+    if (photoWrapper) {
+        photoWrapper.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--primary-color)';
+        });
+
+        photoWrapper.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--border-color)';
+        });
+
+        photoWrapper.addEventListener('drop', function (e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--border-color)';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const event = { target: { files: files } };
+                handlePhotoUpload(event);
+            }
+        });
+    }
+});
+
+// Notification function (add this if not already exists)
+function showNotification(message, type = 'info') {
+    // Check if notification function exists, otherwise create it
+    console.log(`${type}: ${message}`);
+    alert(message); // Simple fallback
+}
+
+//===================end profile settings===================

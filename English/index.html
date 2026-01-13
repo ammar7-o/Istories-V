@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Istories</title>
     <link rel="stylesheet" href="../font-awesome/css/all.min.css">
-    <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="style.css">
-    </noscript>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="addStories.css">
 
     <link rel="icon" type="image/png" href="../icon.png">
@@ -40,6 +37,8 @@
                                             class="fas fa-plus-circle"></i>Add Stories</a></li>
                                 <li><a class="nav-btn" href="../store/index.html"><i class="fas fa-store"></i>Download
                                         Stories</a></li>
+                                <li><a href="#" class="nav-link nav-btn" data-page="profile-settings"> <i
+                                            class="fas fa-plus-circle"></i>Profile </a></li>
 
                             </div>
 
@@ -259,9 +258,44 @@
             <!-- Home Page -->
             <div id="home" class="page active">
                 <section class="hero">
-                    <h1>Learn Languages Through Interactive Stories</h1>
-                    <p>Improve your language skills by reading engaging stories with instant translations, definitions,
-                        and audio support.</p>
+                    <div class="profile">
+
+                        <!-- Photo -->
+                        <div class="user-profile">
+
+                            <img src="../icon.png" alt="Profile Picture" id="profile-pic">
+                            <!-- Name -->
+                            <h2 id="profile-name">Ammar Chacal</h2>
+                        </div>
+
+
+                        <!-- Stats -->
+                        <div class="user-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-star"></i>
+                                <div class="stat-value" id="xp">100</div>
+                                <div class="stat-label">XP</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-language"></i>
+                                <div class="stat-value" id="words-learned">245</div>
+                                <div class="stat-label">Words</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-clock"></i>
+                                <div class="stat-value" id="reading-time">12h</div>
+                                <div class="stat-label">Time</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-fire"></i>
+                                <div class="stat-value" id="streak-count">5</div>
+                                <div class="stat-label">days</div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
                     <div class="hero-btns">
                         <button id="randomStory" class="cta-button"> <i class="fas fa-random"></i> Random Story</button>
                         <button class="cta-button" onclick="showRecentStories()">
@@ -409,7 +443,53 @@
                     </div>
                 </div>
             </div>
+            <div id="profile-settings" class="page profile-settings">
+                <!-- Photo Upload Area -->
+                <div class="photo-upload-container">
+                    <div class="photo-wrapper">
+                        <img src="../icon.png" alt="Profile Picture" class="profile-photo" id="profile-photo">
+                        <div class="photo-overlay" id="change-photo-btn">
+                            <i class="fas fa-camera"></i>
+                            <span>Change</span>
+                        </div>
+                    </div>
+                    <input type="file" id="photo-input" accept="image/*" hidden>
+                    <p class="photo-hint">Click to upload photo</p>
+                </div>
 
+                <!-- Name Input -->
+                <div class="name-input-container">
+                    <div class="input-group">
+                        <label for="profile-name-input" class="input-label">
+                            <i class="fas fa-user"></i>
+                            Your Name
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="text" id="profile-name-input" class="name-input" placeholder="Enter your name"
+                                value="Ammar Chacal" maxlength="50">
+                            <i class="fas fa-check input-valid-icon" id="name-valid-icon"></i>
+                        </div>
+                        <div class="input-hint">
+                            This name will be displayed on your profile
+                        </div>
+                        <div class="char-counter">
+                            <span id="name-char-count">12</span>/50 characters
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="profile-actions">
+                        <button class="btn-secondary" id="cancel-btn">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button class="btn-primary" id="save-btn">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
             <!-- Add Stories Page -->
             <div id="addStories" class="page">
                 <div class="add-stories-container">
@@ -930,12 +1010,12 @@ Enter one dictionary path per line"></textarea>
         </div>
     </footer>
     <!-- stories -->
-    <script src="database/main.js" defer></script>
+    <script src="database/main.js"></script>
     <script src="database/more.js"></script>
 
     <!-- <script src="Dictionarys/main.js"></script> -->
-    <script src="other.js" defer></script>
-    <script src="main.js" defer></script>
+    <script src="other.js"></script>
+    <script src="main.js"></script>
     <script src="addstories.js"></script>
 
 
