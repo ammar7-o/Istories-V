@@ -42,7 +42,7 @@ let currentCards = [];
 let currentCardIndex = 0;
 let cardsReviewed = 0;
 let sessionCards = [];
- // Navigation menu elements
+// Navigation menu elements
 const toggleNav = document.getElementById("toggle-nav");
 const more = document.getElementById("more");
 
@@ -52,9 +52,9 @@ let isMenuOpen = false;
 // =============== NAVIGATION MENU FUNCTIONS ===============
 function setupNavToggle() {
     if (!toggleNav || !more) return;
-    
+
     console.log('Setting up navigation menu toggle...');
-    
+
     // Toggle menu
     toggleNav.addEventListener("click", function (e) {
         e.stopPropagation();
@@ -95,7 +95,7 @@ function setupNavToggle() {
             console.log('Menu closed by clicking link');
         });
     });
-    
+
     console.log('Navigation menu toggle setup complete');
 }
 // =============== THEME & COLOR FUNCTIONS ===============
@@ -104,20 +104,20 @@ function setupNavToggle() {
 function toggleTheme() {
     const isDarkMode = document.body.classList.contains('dark-mode');
     const newTheme = isDarkMode ? 'light' : 'dark';
-    
+
     console.log('Toggling theme from', isDarkMode ? 'dark' : 'light', 'to', newTheme);
-    
+
     // Update body class
     if (newTheme === 'dark') {
         document.body.classList.add('dark-mode');
     } else {
         document.body.classList.remove('dark-mode');
     }
-    
+
     // Save to localStorage
     localStorage.setItem('theme', newTheme);
     console.log('Theme saved to localStorage:', newTheme);
-    
+
     // Update theme toggle icon
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
@@ -125,11 +125,11 @@ function toggleTheme() {
             icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
     }
-    
+
     // Re-apply colors for the new theme
     applyPrimaryColor(selectedColor);
     applySecondaryColor(selectedSecondaryColor);
-    
+
     // Show notification
     showNotification(`Switched to ${newTheme} mode`, 'success');
 }
@@ -137,7 +137,7 @@ function toggleTheme() {
 function applyTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     console.log('Applying theme from localStorage:', savedTheme);
-    
+
     // Apply to body class
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
@@ -146,7 +146,7 @@ function applyTheme() {
         document.body.classList.remove('dark-mode');
         console.log('Removed dark-mode class from body');
     }
-    
+
     // Update theme toggle icon
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
@@ -199,7 +199,7 @@ function initColorSelector() {
                 if (customColorPicker) {
                     customColorPicker.value = color;
                 }
-                
+
                 showNotification('Primary color updated!', 'success');
             });
         });
@@ -239,7 +239,7 @@ function initColorSelector() {
             // Save to localStorage
             localStorage.setItem('selectedColor', color);
             selectedColor = color;
-            
+
             showNotification('Custom primary color saved', 'success');
         });
 
@@ -294,7 +294,7 @@ function initSecondaryColorSelector() {
                 if (customSecondaryColorPicker) {
                     customSecondaryColorPicker.value = color;
                 }
-                
+
                 showNotification('Secondary color updated!', 'success');
             });
         });
@@ -334,7 +334,7 @@ function initSecondaryColorSelector() {
             // Save to localStorage
             localStorage.setItem('selectedSecondaryColor', color);
             selectedSecondaryColor = color;
-            
+
             showNotification('Custom secondary color saved', 'success');
         });
 
@@ -355,7 +355,7 @@ function applyPrimaryColor(color) {
     const root = document.documentElement;
     root.style.setProperty('--primary', color);
     root.style.setProperty('--primary-dark', darkerColor);
-    
+
     console.log('Applied primary color:', color, 'Dark variant:', darkerColor);
 }
 
@@ -369,7 +369,7 @@ function applySecondaryColor(color) {
     root.style.setProperty('--secondary', color);
     root.style.setProperty('--secondary-dark', darkerColor);
     root.style.setProperty('--secondary-light', lighterColor);
-    
+
     console.log('Applied secondary color:', color, 'Dark variant:', darkerColor, 'Light variant:', lighterColor);
 }
 
@@ -406,7 +406,7 @@ function switchPage(page) {
     if (page === 'flashcards') {
         loadFlashcards();
     }
-    
+
     // Scroll to top when switching pages
     scrollToTop();
 }
@@ -585,7 +585,12 @@ function showNoCardsMessage() {
 function showSessionComplete() {
     flashcardWord.textContent = "Session Complete! 🎉";
     flashcardTranslation.textContent = "Great job!";
-    flashcardStory.textContent = `You reviewed ${cardsReviewed} cards`;
+
+    // Calculate bonus XP based on cards reviewed
+    const bonusXP = Math.min(cardsReviewed * 2, 15); // 2 XP per card, max 15
+    addXP(bonusXP, 'Session completion');
+
+    flashcardStory.textContent = `You reviewed ${cardsReviewed} cards (+${bonusXP} XP bonus)`;
 
     progressText.textContent = `${cardsReviewed}/${cardsReviewed}`;
     progressFill.style.width = "100%";
@@ -678,11 +683,30 @@ function setupFlashcardListeners() {
         });
     }
 }
-
 function reviewCard(daysToAdd) {
     if (currentCardIndex >= sessionCards.length) return;
 
     const card = sessionCards[currentCardIndex];
+
+    // Award XP based on difficulty
+    let xpAmount = 0;
+    switch (daysToAdd) {
+        case 1: // Again
+            xpAmount = 0;
+            break;
+        case 3: // Hard
+            xpAmount = 1;
+            break;
+        case 7: // Good
+            xpAmount = 2;
+            break;
+        case 14: // Easy
+            xpAmount = 3;
+            break;
+    }
+
+    // Add XP for reviewing the card
+    addXP(xpAmount, 'Flashcard review');
 
     // Update card in savedWords
     const wordIndex = savedWords.findIndex(w => w.word === card.word);
@@ -823,18 +847,46 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+// Add XP function
+function addXP(amount, reason = '') {
+    // Get user stats from localStorage
+    let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+        xp: 0,
+        wordsLearned: 0,
+        lvl: 1,
+        streakDays: 0,
+        lastActiveDate: null,
+        totalXP: 0
+    };
 
+    // Add XP
+    userStats.xp += amount;
+    userStats.totalXP += amount;
+
+    // Check for level up (every 100 XP = 1 level)
+    const oldLevel = Math.floor((userStats.totalXP - amount) / 100) + 1;
+    const newLevel = Math.floor(userStats.totalXP / 100) + 1;
+    if (newLevel > oldLevel) {
+        showNotification(`🎉 Level Up! You reached level ${newLevel}!`, 'success');
+    }
+
+    // Save to localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+
+    console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
+}
 // =============== INITIALIZATION ===============
 function init() {
     console.log('App initialization started...');
-    
+
     // Apply saved theme
     applyTheme();
-    
+
     // Apply saved colors
     applyPrimaryColor(selectedColor);
     applySecondaryColor(selectedSecondaryColor);
-    
+
     // Set up navigation
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -846,18 +898,18 @@ function init() {
     setupNavToggle();
     // Set up settings
     setupSettings();
-    
+
     // Initialize color selectors
     setTimeout(() => {
         initColorSelector();
         initSecondaryColorSelector();
     }, 50);
-    
+
     // Initialize flashcards
     if (typeof initFlashcards === 'function') {
         initFlashcards();
     }
-    
+
     console.log('App initialization complete!');
     console.log('Current localStorage theme:', localStorage.getItem('theme'));
     console.log('Current localStorage primary color:', localStorage.getItem('selectedColor'));

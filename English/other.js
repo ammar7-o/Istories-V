@@ -1,5 +1,70 @@
 
+// Add this to your JavaScript
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
 
+// Create and add the button to the page
+function addScrollToTopButton() {
+    const button = document.createElement('button');
+    button.id = 'scrollToTopBtn';
+    button.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    button.title = 'Scroll to top';
+
+    button.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: none; /* Hidden by default */
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    `;
+
+    button.addEventListener('mouseover', () => {
+        button.style.transform = 'scale(1.1)';
+        button.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+    });
+
+    button.addEventListener('mouseout', () => {
+        button.style.transform = 'scale(1)';
+        button.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    });
+
+    button.addEventListener('click', scrollToTop);
+
+    document.body.appendChild(button);
+
+    // Show/hide button based on scroll position
+    window.addEventListener('scroll', toggleScrollToTopButton);
+}
+
+function toggleScrollToTopButton() {
+    const button = document.getElementById('scrollToTopBtn');
+    if (!button) return;
+
+    if (window.scrollY > 300) {
+        button.style.display = 'flex';
+        button.style.alignItems = 'center';
+        button.style.justifyContent = 'center';
+    } else {
+        button.style.display = 'none';
+    }
+}
+
+// Call this in your init() function
+addScrollToTopButton();
 // ========= Start search functions ==========
 // Add these variables to DOM elements section
 const searchForm = document.getElementById('search-form');
@@ -1062,15 +1127,11 @@ function showNotification(message, type = 'info') {
 }
 
 //===================end profile settings===================
-
-
-
-
 // User stats variables
 let userStats = JSON.parse(localStorage.getItem('userStats')) || {
     xp: 0,
     wordsLearned: 0,
-    readingTime: 0, // in minutes
+    lvl: 1, // Level starts at 1
     streakDays: 0,
     lastActiveDate: null,
     totalXP: 0
@@ -1084,6 +1145,9 @@ function initUserStats() {
     const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
     userStats.wordsLearned = savedWords.length;
 
+    // Calculate current level from total XP (CORRECT CALCULATION)
+    userStats.lvl = Math.floor(userStats.totalXP / 100) + 1;
+
     // Check and update streak
     updateStreak();
 
@@ -1093,7 +1157,7 @@ function initUserStats() {
     // Save initial stats if they don't exist
     localStorage.setItem('userStats', JSON.stringify(userStats));
 
-    console.log('Initialized with', userStats.wordsLearned, 'words');
+    console.log('Initialized: Level', userStats.lvl, '| XP:', userStats.totalXP, '| Words:', userStats.wordsLearned);
 }
 
 function updateStreak() {
@@ -1141,11 +1205,14 @@ function addXP(amount, reason = '') {
     userStats.xp += amount;
     userStats.totalXP += amount;
 
-    // Check for level up (every 100 XP = 1 level)
-    const oldLevel = Math.floor((userStats.totalXP - amount) / 100);
-    const newLevel = Math.floor(userStats.totalXP / 100);
+    // Calculate OLD level BEFORE adding XP
+    const oldLevel = Math.floor((userStats.totalXP - amount) / 100) + 1;
+    
+    // Calculate NEW level AFTER adding XP
+    const newLevel = Math.floor(userStats.totalXP / 100) + 1;
 
     if (newLevel > oldLevel) {
+        userStats.lvl = newLevel; // Update level in stats
         showNotification(`🎉 Level Up! You reached level ${newLevel}!`, 'success');
     }
 
@@ -1155,7 +1222,7 @@ function addXP(amount, reason = '') {
     // Update display
     updateUserStatsDisplay();
 
-    console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
+    console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}. Level: ${userStats.lvl}, Total XP: ${userStats.totalXP}`);
 }
 
 function addWordToStats() {
@@ -1176,20 +1243,6 @@ function addWordToStats() {
 
     console.log('Word count updated:', userStats.wordsLearned, 'words found in savedWords');
 }
-function addReadingTime(minutes) {
-    userStats.readingTime += minutes;
-
-    // Add XP for reading (1 XP per minute)
-    addXP(minutes, 'Reading practice');
-
-    // Save to localStorage
-    localStorage.setItem('userStats', JSON.stringify(userStats));
-
-    // Update display
-    updateUserStatsDisplay();
-
-    console.log('Reading time added:', minutes, 'minutes');
-}
 
 function updateUserStatsDisplay() {
     // Update XP
@@ -1204,16 +1257,13 @@ function updateUserStatsDisplay() {
         wordsElement.textContent = userStats.wordsLearned;
     }
 
-    // Update reading time (convert minutes to hours)
-    const timeElement = document.getElementById('reading-time');
-    if (timeElement) {
-        const hours = Math.floor(userStats.readingTime / 60);
-        const minutes = userStats.readingTime % 60;
-        if (hours > 0) {
-            timeElement.textContent = `${hours}h ${minutes}m`;
-        } else {
-            timeElement.textContent = `${minutes}m`;
-        }
+    // Update LEVEL
+    const levelElement = document.getElementById('level') ||
+        document.getElementById('lvl') ||
+        document.getElementById('user-level');
+
+    if (levelElement) {
+        levelElement.textContent = userStats.lvl;
     }
 
     // Update streak
@@ -1221,48 +1271,56 @@ function updateUserStatsDisplay() {
     if (streakElement) {
         streakElement.textContent = userStats.streakDays;
     }
+
+    // Optional: Show progress to next level
+    const progressElement = document.getElementById('level-progress');
+    if (progressElement) {
+        const progressPercent = getLevelProgress();
+        progressElement.textContent = `${progressPercent}%`;
+    }
+    
+    // Optional: Update progress bar
+    const progressBar = document.getElementById('level-progress-bar');
+    if (progressBar) {
+        const progressPercent = getLevelProgress();
+        progressBar.style.width = `${progressPercent}%`;
+    }
+    
+    // Optional: Show XP to next level
+    const xpToNextElement = document.getElementById('xp-to-next');
+    if (xpToNextElement) {
+        const xpToNext = getXPForNextLevel();
+        xpToNextElement.textContent = `${xpToNext} XP to next level`;
+    }
 }
 
-// Modify your existing functions to update stats
-function saveWord(word, translation, story = '', hasTranslation = true) {
-    // ... existing saveWord code ...
-
-    // After saving word, update stats
-    addWordToStats();
-
-    showNotification('Word saved to vocabulary! +5 XP', 'success');
+// Function to calculate level progress (0-100%)
+function getLevelProgress() {
+    const currentXP = userStats.totalXP;
+    const currentLevel = userStats.lvl - 1; // Level 1 = 0-99 XP
+    const xpForCurrentLevel = currentLevel * 100;
+    const xpInCurrentLevel = currentXP - xpForCurrentLevel;
+    
+    return Math.min(100, Math.floor((xpInCurrentLevel / 100) * 100));
 }
 
-function markAsMastered(index) {
-    // ... existing markAsMastered code ...
-
-    // Add XP for mastering a word
-    addXP(15, 'Mastering word');
-
-    showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered! +15 XP`, 'success');
+// Function to get current level
+function getCurrentLevel() {
+    return Math.floor(userStats.totalXP / 100) + 1;
 }
 
-function deleteWord(index) {
-    // ... existing deleteWord code ...
-
-    // Update word count after deletion
-    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
-    userStats.wordsLearned = savedWords.length;
-    localStorage.setItem('userStats', JSON.stringify(userStats));
-    updateUserStatsDisplay();
-
-    showNotification(`"${word}" removed from vocabulary`);
+// Function to get XP needed for next level
+function getXPForNextLevel() {
+    const currentLevel = getCurrentLevel();
+    const xpForNextLevel = currentLevel * 100;
+    return xpForNextLevel - userStats.totalXP;
 }
 
-function removeAll() {
-    // ... existing removeAll code ...
-
-    // Reset word count
-    userStats.wordsLearned = 0;
-    localStorage.setItem('userStats', JSON.stringify(userStats));
-    updateUserStatsDisplay();
-
-    showNotification(`All saved words removed successfully!`);
+// Function to get XP in current level
+function getXPInCurrentLevel() {
+    const currentLevel = getCurrentLevel();
+    const xpForCurrentLevel = (currentLevel - 1) * 100;
+    return userStats.totalXP - xpForCurrentLevel;
 }
 
 // Add daily login bonus
@@ -1282,16 +1340,7 @@ function checkDailyBonus() {
     }
 }
 
-// Add level calculation function
-function getUserLevel() {
-    return Math.floor(userStats.totalXP / 100);
-}
-
-function getXPForNextLevel() {
-    const currentLevel = getUserLevel();
-    const xpForNextLevel = (currentLevel + 1) * 100;
-    return xpForNextLevel - userStats.totalXP;
-}
+// Function to sync word count
 function syncWordCountFromStorage() {
     const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
     const previousCount = userStats.wordsLearned;
@@ -1308,3 +1357,30 @@ function syncWordCountFromStorage() {
 
     console.log(`Synced word count: ${previousCount} → ${userStats.wordsLearned}`);
 }
+
+// Function to add XP for reading activity
+function addReadingActivity(minutes) {
+    // Add XP for reading (1 XP per minute, max 10 XP per session)
+    const xpToAdd = Math.min(minutes, 10);
+    addXP(xpToAdd, 'Reading practice');
+    console.log(`Added ${xpToAdd} XP for ${minutes} minutes of reading`);
+}
+
+// Function to get user stats summary
+function getUserStatsSummary() {
+    return {
+        level: userStats.lvl,
+        xp: userStats.xp,
+        totalXP: userStats.totalXP,
+        wordsLearned: userStats.wordsLearned,
+        streakDays: userStats.streakDays,
+        nextLevelXP: getXPForNextLevel(),
+        progress: getLevelProgress()
+    };
+}
+
+// Initialize user stats when page loads
+document.addEventListener('DOMContentLoaded', function () {
+    initUserStats();
+    checkDailyBonus();
+});

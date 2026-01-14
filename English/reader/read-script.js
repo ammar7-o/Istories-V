@@ -1117,14 +1117,28 @@ function saveWord(word, translation, story = '', hasTranslation = true) {
 function markAsMastered(index) {
     if (index < 0 || index >= savedWords.length) return;
 
+    // Check if it's already mastered BEFORE changing it
+    const wasAlreadyMastered = savedWords[index].status === 'mastered';
+
+    // Save the word for notification
+    const word = savedWords[index].originalWord || savedWords[index].word;
+
+    // Mark as mastered
     savedWords[index].status = 'mastered';
     savedWords[index].masteredDate = new Date().toISOString();
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
 
     updateVocabularyStats();
-    showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered!`, 'success');
     renderVocabulary();
-    addXP(5);
+
+    // Only add XP if it wasn't already mastered
+    if (!wasAlreadyMastered) {
+        addXP(3, 'Mastering word'); // Use 15 XP as in your original code
+        showNotification(`"${word}" marked as mastered! +15 XP`, 'success');
+    } else {
+        // Already mastered, just show message without XP
+        showNotification(`"${word}" is already mastered!`, 'info');
+    }
 }
 
 function deleteWord(index) {
@@ -1509,7 +1523,7 @@ function setupEventListeners() {
     if (saveWordBtn) {
         saveWordBtn.addEventListener('click', function () {
             saveCurrentWord(); // Your existing save function
-            addXP(5); // Add XP
+            addXP(3); // Add XP
         });
     } if (closePopup) closePopup.addEventListener('click', hideDictionary);
     if (modalOverlay) modalOverlay.addEventListener('click', hideDictionary);

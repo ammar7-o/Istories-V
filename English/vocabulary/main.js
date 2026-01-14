@@ -614,18 +614,31 @@ function updateVocabularyStats() {
     const streak = Math.min(30, savedWords.length);
     if (readingStreak) readingStreak.textContent = streak;
 }
-
 function markAsMastered(index) {
     if (index < 0 || index >= savedWords.length) return;
 
+    // Check if it's already mastered BEFORE changing it
+    const wasAlreadyMastered = savedWords[index].status === 'mastered';
+
+    // Save the word for notification
+    const word = savedWords[index].originalWord || savedWords[index].word;
+
+    // Mark as mastered
     savedWords[index].status = 'mastered';
     savedWords[index].masteredDate = new Date().toISOString();
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
 
     updateVocabularyStats();
-    showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered!`, 'success');
     renderVocabulary();
-    addXP(5); // Adds 5 XP
+
+    // Only add XP if it wasn't already mastered
+    if (!wasAlreadyMastered) {
+        addXP(3, 'Mastering word'); // Use 15 XP as in your original code
+        showNotification(`"${word}" marked as mastered! +15 XP`, 'success');
+    } else {
+        // Already mastered, just show message without XP
+        showNotification(`"${word}" is already mastered!`, 'info');
+    }
 }
 
 // Delete word from vocabulary
