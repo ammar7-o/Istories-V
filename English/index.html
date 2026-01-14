@@ -30,9 +30,9 @@
                             <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
                             <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
-                                <li><a href="#" class="nav-link nav-btn" data-page="vocabulary"><i
-                                            class="fa-solid fa-language"></i> Vocabulary</a></li>
-                                <li><a href="#" class="nav-link nav-btn" data-page="flashcards">Flashcards</a></li>
+                                <li><a href="vocabulary/index.html" class="nav-btn"><i class="fa-solid fa-language"></i>
+                                        Vocabulary</a></li>
+                                <li><a href="practice/index.html" class="nav-btn">Flashcards</a></li>
                                 <li><a href="#" class="nav-link nav-btn" data-page="addStories"> <i
                                             class="fas fa-plus-circle"></i>Add Stories</a></li>
                                 <li><a class="nav-btn" href="../store/index.html"><i class="fas fa-store"></i>Download
@@ -320,129 +320,9 @@
 
 
 
-            <!-- Vocabulary Page -->
-            <div id="vocabulary" class="page">
-                <div class="vocabulary-header">
-                    <h2>My Vocabulary</h2>
-                    <div class="Vocabulary-actions">
-                        <button onclick="exportVocabulary()" class="btn btn-primary v-btn" id="exportBtn">
-                            <i class="fas fa-download"></i> Export CSV
-                        </button>
-                        <button onclick="removeAll()" class="btn btn-primary v-btn">
-                            <i class="fas fa-remove"></i> Remove all
-                        </button>
-                    </div>
-
-                </div>
-
-                <div class="vocabulary-stats">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalWords">0</div>
-                        <div class="stat-label">Total Words</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="masteredWords">0</div>
-                        <div class="stat-label">Mastered</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="practiceDue">0</div>
-                        <div class="stat-label">Due for Practice</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="readingStreak">0</div>
-                        <div class="stat-label">Day Streak</div>
-                    </div>
-                </div>
-
-                <div class="vocabulary-list" id="vocabularyList">
-                    <!-- Vocabulary items will be populated by JavaScript -->
-                </div>
-            </div>
 
 
-            <!-- Flashcard Practice Page -->
-            <div id="flashcards" class="page">
-                <div class="flashcards-header">
-                    <h2>Flashcard Practice</h2>
-                    <div class="flashcard-controls">
-                        <button id="shuffleCards" class="btn btn-secondary">
-                            <i class="fas fa-random"></i> Shuffle
-                        </button>
-                        <button id="resetProgress" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> Reset Progress
-                        </button>
-                    </div>
-                </div>
 
-                <div class="flashcard-stats">
-                    <div class="stat-card">
-                        <div class="stat-number" id="dueCards">0</div>
-                        <div class="stat-label">Due Today</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalCards">0</div>
-                        <div class="stat-label">Total Cards</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="masteredCards">0</div>
-                        <div class="stat-label">Mastered</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="learningCards">0</div>
-                        <div class="stat-label">Learning</div>
-                    </div>
-                </div>
-
-                <div class="flashcard-container">
-                    <div class="flashcard" id="flashcard">
-                        <div class="flashcard-front">
-                            <div class="flashcard-content">
-                                <h3 id="flashcardWord">No cards available</h3>
-                                <p class="flashcard-context">Add words from stories to practice them here</p>
-                            </div>
-                            <div class="flashcard-hint">
-                                <i class="fas fa-lightbulb"></i> Click or tap to flip
-                            </div>
-                        </div>
-                        <div class="flashcard-back">
-                            <div class="flashcard-content">
-                                <h3 id="flashcardTranslation">No translation</h3>
-                                <div class="flashcard-details">
-                                    <div class="flashcard-pos" id="flashcardPos"></div>
-                                    <!-- <div class="flashcard-definition" id="flashcardDefinition"></div>
-                                    <div class="flashcard-example" id="flashcardExample"></div> -->
-                                    <div class="flashcard-story" id="flashcardStory"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flashcard-actions">
-                        <button id="cardAgain" class="card-btn card-again" disabled>
-                            <i class="fas fa-times"></i> Again
-                        </button>
-                        <button id="cardHard" class="card-btn card-hard" disabled>
-                            <i class="fas fa-meh"></i> Hard
-                        </button>
-                        <button id="cardGood" class="card-btn card-good" disabled>
-                            <i class="fas fa-smile"></i> Good
-                        </button>
-                        <button id="cardEasy" class="card-btn card-easy" disabled>
-                            <i class="fas fa-laugh"></i> Easy
-                        </button>
-                    </div>
-
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span>Session Progress</span>
-                            <span id="progressText">0/0</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div id="profile-settings" class="page profile-settings">
                 <!-- Photo Upload Area -->
                 <div class="photo-upload-container">

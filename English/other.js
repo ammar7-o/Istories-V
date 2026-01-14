@@ -1,957 +1,3 @@
-// Flashcard DOM elements
-const flashcard = document.getElementById('flashcard');
-const flashcardWord = document.getElementById('flashcardWord');
-const flashcardTranslation = document.getElementById('flashcardTranslation');
-const flashcardStory = document.getElementById('flashcardStory');
-const cardAgain = document.getElementById('cardAgain');
-const cardHard = document.getElementById('cardHard');
-const cardGood = document.getElementById('cardGood');
-const cardEasy = document.getElementById('cardEasy');
-const shuffleCards = document.getElementById('shuffleCards');
-const resetProgress = document.getElementById('resetProgress');
-const progressText = document.getElementById('progressText');
-const progressFill = document.getElementById('progressFill');
-
-// Flashcard statistics elements
-const dueCards = document.getElementById('dueCards');
-const totalCards = document.getElementById('totalCards');
-const masteredCards = document.getElementById('masteredCards');
-const learningCards = document.getElementById('learningCards');
-
-// Flashcard system variables
-let currentCards = [];
-let currentCardIndex = 0;
-let cardsReviewed = 0;
-let sessionCards = [];
-
-// =============== FLASHCARD FUNCTIONS ===============
-
-// Initialize flashcards
-function initFlashcards() {
-    updateFlashcardStats();
-    setupFlashcardListeners();
-    // Don't load cards immediately, wait until page is shown
-}
-
-// Load flashcards from saved words
-function loadFlashcards() {
-    // Filter words that need review
-    currentCards = savedWords.filter(word => {
-        // If no nextReview date, it's due
-        if (!word.nextReview) return true;
-
-        // Check if review is due
-        return new Date(word.nextReview) <= new Date();
-    });
-
-    // Initialize session
-    sessionCards = [...currentCards];
-    currentCardIndex = 0;
-    cardsReviewed = 0;
-
-    if (sessionCards.length > 0) {
-        loadCard(0);
-        enableCardButtons(true);
-    } else {
-        showNoCardsMessage();
-        enableCardButtons(false);
-    }
-
-    updateProgress();
-    updateFlashcardStats();
-}
-
-// Load card data
-function loadCard(index) {
-    if (index >= sessionCards.length) {
-        showSessionComplete();
-        return;
-    }
-
-    const card = sessionCards[index];
-
-    // Format dates - FIXED: Handle both 'added' and 'addedDate'
-    const formatDate = (dateString, short = false) => {
-        if (!dateString) return 'Not set';
-        const date = new Date(dateString);
-        if (short) {
-            return date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-        return date.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
-    };
-
-    // FIXED: Get date from correct field
-    const dateValue = card.addedDate || card.added || card.date || new Date().toISOString();
-    const addedDate = formatDate(dateValue);
-
-    // Front side (word) with date
-    flashcardWord.textContent = card.word;
-    flashcardTranslation.textContent = card.translation || "No translation available";
-
-    // Back side details with dates
-    flashcardStory.innerHTML = `
-        <div class="card-dates">
-            <div style="margin-bottom: 10px;">
-                <div style="font-weight: 600; color: var(--text-color); margin-bottom: 5px;">
-                    <i class="fas fa-book" style="margin-right: 8px;"></i>
-                    ${card.story ? `From: ${card.story}` : "Unknown Story"}
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-                    ${dateValue ? `
-                        <div class="date-item">
-                            <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 2px;">
-                                <i class="far fa-calendar-plus"></i> Added
-                            </div>
-                            <div style="font-size: 0.85rem; font-weight: 500;">
-                                ${addedDate}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${card.lastViewed ? `
-                        <div class="date-item">
-                            <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 2px;">
-                                <i class="far fa-eye"></i> Last Viewed
-                            </div>
-                            <div style="font-size: 0.85rem; font-weight: 500;">
-                                ${formatDate(card.lastViewed, true)}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${card.timesViewed ? `
-                        <div class="date-item">
-                            <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 2px;">
-                                <i class="fas fa-history"></i> Views
-                            </div>
-                            <div style="font-size: 0.85rem; font-weight: 500;">
-                                ${card.timesViewed} times
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Reset card to front side
-    flashcard.classList.remove('flipped');
-
-    // Add event listener for edit button
-    setTimeout(() => {
-        const editBtn = flashcardStory.querySelector('.edit-dates');
-        if (editBtn) {
-            editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const cardIndex = parseInt(e.currentTarget.dataset.cardIndex);
-                openFlashcardDatePicker(cardIndex);
-            });
-        }
-    }, 100);
-
-    // Update progress
-    updateProgress();
-}
-// Check if review is due
-function isReviewDue(dateString) {
-    if (!dateString) return false;
-    const reviewDate = new Date(dateString);
-    const today = new Date();
-    return reviewDate < today;
-}
-
-// Show no cards message
-function showNoCardsMessage() {
-    flashcardWord.textContent = "No cards available";
-    flashcardTranslation.textContent = "Add words from stories to practice";
-    flashcardStory.textContent = "Read stories and save words to practice them here";
-
-    progressText.textContent = "0/0";
-    progressFill.style.width = "0%";
-}
-
-// Show session complete message
-function showSessionComplete() {
-    flashcardWord.textContent = "Session Complete! 🎉";
-    flashcardTranslation.textContent = "Great job!";
-    flashcardStory.textContent = `You reviewed ${cardsReviewed} cards`;
-
-    progressText.textContent = `${cardsReviewed}/${cardsReviewed}`;
-    progressFill.style.width = "100%";
-
-    enableCardButtons(false);
-}
-
-// Update progress display
-function updateProgress() {
-    const total = sessionCards.length;
-    const reviewed = cardsReviewed;
-
-    progressText.textContent = `${reviewed}/${total}`;
-
-    if (total > 0) {
-        const percentage = (reviewed / total) * 100;
-        progressFill.style.width = `${percentage}%`;
-    } else {
-        progressFill.style.width = "0%";
-    }
-}
-
-// Update flashcard statistics
-function updateFlashcardStats() {
-    const total = savedWords.length;
-    const due = savedWords.filter(word => {
-        if (!word.nextReview) return true;
-        return new Date(word.nextReview) <= new Date();
-    }).length;
-
-    const mastered = savedWords.filter(word => word.status === 'known').length;
-    const learning = savedWords.filter(word => word.status === 'saved').length;
-
-    dueCards.textContent = due;
-    totalCards.textContent = total;
-    masteredCards.textContent = mastered;
-    learningCards.textContent = learning;
-}
-
-// Set up flashcard event listeners
-let flashcardListenersAdded = false;
-
-function setupFlashcardListeners() {
-    if (flashcardListenersAdded) return;
-    flashcardListenersAdded = true;
-
-    console.log('Setting up flashcard listeners...');
-
-    // Flip card (only if click is NOT on a button)
-    if (flashcard) {
-        flashcard.addEventListener('click', function (e) {
-            if (e.target.closest('button')) return;
-            if (sessionCards.length === 0) return;
-
-            flashcard.classList.toggle('flipped');
-        });
-    }
-
-    // Review buttons
-    if (cardAgain) {
-        cardAgain.addEventListener('click', (e) => {
-            e.stopPropagation();
-            reviewCard(1);
-        });
-    }
-
-    if (cardHard) {
-        cardHard.addEventListener('click', (e) => {
-            e.stopPropagation();
-            reviewCard(3);
-        });
-    }
-
-    if (cardGood) {
-        cardGood.addEventListener('click', (e) => {
-            e.stopPropagation();
-            reviewCard(7);
-        });
-    }
-
-    if (cardEasy) {
-        cardEasy.addEventListener('click', (e) => {
-            e.stopPropagation();
-            reviewCard(14);
-        });
-    }
-
-    // Control buttons
-    if (shuffleCards) {
-        shuffleCards.addEventListener('click', (e) => {
-            e.stopPropagation();
-            shuffleFlashcards();
-        });
-    }
-
-    if (resetProgress) {
-        resetProgress.addEventListener('click', (e) => {
-            e.stopPropagation();
-            resetCardProgress();
-        });
-    }
-
-    console.log('Flashcard listeners set up ✅');
-}
-
-
-// Review a card with spaced repetition
-function reviewCard(daysToAdd) {
-    if (currentCardIndex >= sessionCards.length) return;
-
-    const card = sessionCards[currentCardIndex];
-
-    // Update card in savedWords
-    const wordIndex = savedWords.findIndex(w => w.word === card.word);
-    if (wordIndex !== -1) {
-        // Calculate next review date
-        const nextReviewDate = new Date();
-        nextReviewDate.setDate(nextReviewDate.getDate() + daysToAdd);
-
-        savedWords[wordIndex].nextReview = nextReviewDate.toISOString();
-
-        // If marked "Again", reset to learning
-        if (daysToAdd === 1) {
-            savedWords[wordIndex].status = 'saved';
-        }
-        // If marked "Easy", mark as mastered
-        else if (daysToAdd === 14) {
-            savedWords[wordIndex].status = 'known';
-            savedWords[wordIndex].mastered = new Date().toISOString();
-        }
-
-        // Save to localStorage
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    }
-
-    // Move to next card
-    cardsReviewed++;
-    currentCardIndex++;
-
-    if (currentCardIndex < sessionCards.length) {
-        loadCard(currentCardIndex);
-    } else {
-        showSessionComplete();
-    }
-
-    // Update stats
-    updateFlashcardStats();
-    updateStats(); // Update main stats too
-}
-
-// Enable/disable card buttons
-function enableCardButtons(enabled) {
-    const buttons = [cardAgain, cardHard, cardGood, cardEasy];
-    buttons.forEach(btn => {
-        if (btn) btn.disabled = !enabled;
-    });
-}
-
-// Shuffle flashcards
-function shuffleFlashcards() {
-    if (sessionCards.length > 0) {
-        // Fisher-Yates shuffle algorithm
-        for (let i = sessionCards.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [sessionCards[i], sessionCards[j]] = [sessionCards[j], sessionCards[i]];
-        }
-
-        currentCardIndex = 0;
-        cardsReviewed = 0;
-        loadCard(currentCardIndex);
-
-        showNotification('Cards shuffled!');
-    }
-}
-
-// Reset all card progress
-function resetCardProgress() {
-    const confirmed = confirm("Reset all card progress? This will set all words back to 'due' status.");
-
-    if (confirmed) {
-        savedWords.forEach(word => {
-            word.nextReview = new Date().toISOString();
-            word.status = 'saved';
-            delete word.mastered;
-        });
-
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
-
-        loadFlashcards();
-        updateFlashcardStats();
-        updateStats();
-
-        showNotification('Card progress reset!');
-    }
-}
-
-// =============== END FLASHCARD FUNCTIONS ===============
-
-// ============== Start vocabulary functions =================
-
-// Render vocabulary list - compatible with both formats
-function renderVocabulary() {
-    if (!vocabularyList) return;
-
-    vocabularyList.innerHTML = '';
-
-    if (savedWords.length === 0) {
-        vocabularyList.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-light);">
-                <p>No words saved yet. Click on words in stories to add them to your vocabulary.</p>
-            </div>
-        `;
-        return;
-    }
-
-    savedWords.forEach((word, index) => {
-        const item = document.createElement('div');
-        item.className = 'vocabulary-item';
-
-        // Handle different field names from different sources
-        const displayWord = word.originalWord || word.word || '';
-        const translation = word.translation || '';
-        const story = word.story || '';
-
-        // FIXED: Get the date with better fallback
-        const addedDate = getVocabularyDate(word);
-
-        // Check if translation exists (imported data always has translation)
-        const hasTranslation = translation && translation !== displayWord;
-
-        // Check status
-        const status = word.status || 'saved';
-
-        // Check if from user story
-        const fromUserStory = word.fromUserStory || false;
-
-        const translationBadge = !hasTranslation
-            ? `<span class="no-translation-badge" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">No Translation</span>`
-            : '';
-
-        const masteredBadge = status === 'mastered'
-            ? `<span class="mastered-badge" style="background: rgb(13, 167, 116); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Mastered</span>`
-            : '';
-
-        const userStoryBadge = fromUserStory
-            ? `<span class="user-story-badge-small" style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Your Story</span>`
-            : '';
-
-        item.innerHTML = `
-            <div class="word-info">
-                <div class="word-main">
-                    <span class="word-text">${displayWord}</span>
-                    <span class="word-translation">${translation || 'No translation available'}</span>
-                    ${translationBadge}
-                    ${masteredBadge}
-                    ${userStoryBadge}
-                </div>
-                ${story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${story}</div>` : ''}
-                <div class="word-date" style="font-size: 0.7rem; color: var(--text-lighter); margin-top: 3px;">
-                    Added: ${formatDateForDisplay(addedDate)}
-                </div>
-            </div>
-            <div class="word-actions">
-                <button title="Mark as mastered" data-index="${index}">
-                    <i class="fas fa-check"></i>
-                </button>
-                <button title="Delete" data-index="${index}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-
-        vocabularyList.appendChild(item);
-    });
-
-    document.querySelectorAll('.word-actions button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            if (e.currentTarget.querySelector('.fa-check')) {
-                markAsMastered(index);
-            } else if (e.currentTarget.querySelector('.fa-trash')) {
-                deleteWord(index);
-            }
-        });
-    });
-}
-
-// Helper function to extract date from word object
-function getVocabularyDate(word) {
-    // Try all possible date field names in order of priority
-    if (word.addedDate) return word.addedDate;
-    if (word.dateAdded) return word.dateAdded;
-    if (word.added) return word.added;
-    if (word.date) return word.date;
-
-    // If no date field exists, create one
-    const newDate = new Date().toISOString();
-
-    // Update the word object with the new date
-    word.addedDate = newDate;
-
-    // Save back to localStorage if needed
-    setTimeout(() => {
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    }, 100);
-
-    return newDate;
-}
-
-// Format date for display - SIMPLER VERSION
-// Simple date formatter that always works
-function formatDateForDisplay(dateString) {
-    if (!dateString) return 'Unknown date';
-
-    try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) {
-            // Try to extract just the date part from ISO string
-            const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
-            if (dateMatch) {
-                const simpleDate = new Date(dateMatch[1]);
-                if (!isNaN(simpleDate.getTime())) {
-                    return simpleDate.toLocaleDateString();
-                }
-            }
-            return 'Invalid date';
-        }
-        return date.toLocaleDateString();
-    } catch (error) {
-        return 'Date error';
-    }
-}
-// Alternative: Very simple date formatter
-function simpleFormatDate(dateString) {
-    if (!dateString) return '';
-
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString(); // "1/10/2026" format
-    } catch (e) {
-        return dateString; // Return raw string if can't parse
-    }
-}
-
-// Helper function to format date properly
-function formatVocabularyDate(dateValue) {
-    if (!dateValue) return 'Unknown date';
-
-    try {
-        const date = new Date(dateValue);
-        if (isNaN(date.getTime())) {
-            return 'Invalid date';
-        }
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    } catch (error) {
-        return 'Invalid date';
-    }
-}
-
-// Also update your saveWord function to handle both formats
-function saveWord(word, translation, story = '', hasTranslation = true) {
-    // Check if word already exists
-    const existingIndex = savedWords.findIndex(w =>
-        w.word.toLowerCase() === word.toLowerCase() ||
-        w.originalWord?.toLowerCase() === word.toLowerCase()
-    );
-
-    if (existingIndex === -1) {
-        // Add new word with both field names for compatibility
-        savedWords.push({
-            word: word,
-            originalWord: word,
-            translation: translation,
-            story: story,
-            hasTranslation: hasTranslation,
-            added: new Date().toISOString(),
-            addedDate: new Date().toISOString(),
-            status: 'saved'
-        });
-    } else {
-        // Update existing word
-        savedWords[existingIndex] = {
-            ...savedWords[existingIndex],
-            translation: translation || savedWords[existingIndex].translation,
-            story: story || savedWords[existingIndex].story,
-            hasTranslation: hasTranslation
-        };
-    }
-
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    renderVocabulary();
-    updateStats();
-
-    showNotification('Word saved to vocabulary!', 'success');
-}
-
-function updateVocabularyStats() {
-    const totalWords = document.getElementById('totalWords');
-    const masteredWords = document.getElementById('masteredWords');
-    const practiceDue = document.getElementById('practiceDue');
-    const readingStreak = document.getElementById('readingStreak');
-
-    if (totalWords) totalWords.textContent = savedWords.length;
-    if (masteredWords) masteredWords.textContent = savedWords.filter(w => w.status === 'mastered' || w.status === 'known').length;
-
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-    const dueCount = savedWords.filter(w => new Date(w.added || w.date) > threeDaysAgo).length;
-    if (practiceDue) practiceDue.textContent = dueCount;
-
-    const streak = Math.min(30, savedWords.length);
-    if (readingStreak) readingStreak.textContent = streak;
-}
-
-function markAsMastered(index) {
-    if (index < 0 || index >= savedWords.length) return;
-
-    savedWords[index].status = 'mastered';
-    savedWords[index].masteredDate = new Date().toISOString();
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
-
-    updateVocabularyStats();
-    showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered!`, 'success');
-    renderVocabulary();
-}
-
-// Delete word from vocabulary
-function deleteWord(index) {
-    const word = savedWords[index].word;
-    savedWords.splice(index, 1);
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    renderVocabulary();
-    updateStats();
-    updateFlashcardStats(); // Also update flashcard stats
-
-    // Show deletion confirmation
-    showNotification(`"${word}" removed from vocabulary`);
-}
-
-function removeAll() {
-    const confirmed = window.confirm("Are you sure you want to remove all saved words? This action cannot be undone.");
-
-    if (!confirmed) return; // user canceled
-
-    // Clear localStorage
-    localStorage.setItem('savedWords', JSON.stringify([]));
-
-    // Clear in-memory array
-    savedWords = [];
-
-    // Show notification
-    showNotification(`All saved words removed successfully! (${savedWords.length} words)`);
-
-    // Update UI
-    renderVocabulary();
-    updateStats(); // Fixed: was updateVocabularyStats()
-    // Update current page
-    // window.location.reload();
-}
-
-// Update vocabulary statistics
-function updateStats() {
-    document.getElementById('totalWords').textContent = savedWords.length;
-    document.getElementById('masteredWords').textContent = savedWords.filter(w => w.status === 'known').length;
-
-    const dueForReview = savedWords.filter(w => {
-        if (!w.nextReview) return false;
-        return new Date(w.nextReview) <= new Date();
-    }).length;
-
-    document.getElementById('practiceDue').textContent = dueForReview;
-
-    // Simple streak calculation (for demo)
-    const streak = Math.min(7, savedWords.length);
-    document.getElementById('readingStreak').textContent = streak;
-}
-
-// Export vocabulary as CSV file
-function exportVocabulary() {
-    if (savedWords.length === 0) {
-        showNotification('No vocabulary to export!');
-        return;
-    }
-
-    // Create CSV content with headers
-    const headers = ['Word', 'Translation', 'Status', 'Story', 'Date Added'];
-
-    // Create CSV rows
-    const csvRows = [
-        headers.join(','), // Add headers first
-        ...savedWords.map(word => {
-            return [
-                `"${word.word || ''}"`,
-                `"${(word.translation || '').replace(/"/g, '""')}"`, // Escape quotes in CSV
-                `"${word.status || ''}"`,
-                `"${(word.story || '').replace(/"/g, '""')}"`,
-                `"${word.added ? new Date(word.added).toLocaleDateString('en-US') : ''}"`
-            ].join(',');
-        })
-    ];
-
-    // Join rows with newlines
-    const csvString = csvRows.join('\n');
-
-    // Create a Blob (file-like object)
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-
-    // Create download URL
-    const url = URL.createObjectURL(blob);
-
-    // Create invisible download link
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-
-    // Create filename with current date
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-    link.setAttribute('download', `my_vocabulary_${formattedDate}.csv`);
-
-    // Hide the link and trigger download
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-
-    // Clean up
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    // Show success message
-    showNotification(`Vocabulary exported successfully! (${savedWords.length} words)`);
-}
-function importVocabulary() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.csv,.json';
-    fileInput.style.display = 'none';
-
-    fileInput.onchange = function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            try {
-                const content = event.target.result;
-
-                // Parse the file based on extension
-                let importedWords = [];
-
-                if (file.name.toLowerCase().endsWith('.json')) {
-                    // Handle JSON - exactly like your localStorage format
-                    const parsed = JSON.parse(content);
-
-                    if (Array.isArray(parsed)) {
-                        importedWords = parsed;
-                    } else if (parsed.savedWords && Array.isArray(parsed.savedWords)) {
-                        importedWords = parsed.savedWords;
-                    } else {
-                        // Try to extract any array from the object
-                        const keys = Object.keys(parsed);
-                        for (let key of keys) {
-                            if (Array.isArray(parsed[key])) {
-                                importedWords = parsed[key];
-                                break;
-                            }
-                        }
-                    }
-                } else if (file.name.toLowerCase().endsWith('.csv')) {
-                    // Handle CSV - convert to your exact format
-                    importedWords = parseCSVToExactFormat(content);
-                }
-
-                if (!Array.isArray(importedWords) || importedWords.length === 0) {
-                    throw new Error('No valid vocabulary data found in file');
-                }
-
-                // Get current words
-                const currentWords = JSON.parse(localStorage.getItem('savedWords') || '[]');
-
-                // Merge without modifying dates
-                const mergedWords = [...currentWords];
-                let addedCount = 0;
-
-                importedWords.forEach(newWord => {
-                    // Check if word already exists (case-insensitive)
-                    const exists = mergedWords.some(existingWord =>
-                        existingWord.word.toLowerCase() === newWord.word.toLowerCase()
-                    );
-
-                    if (!exists) {
-                        // Preserve the exact structure including dates
-                        mergedWords.push({
-                            word: newWord.word || '',
-                            translation: newWord.translation || newWord.word || '',
-                            status: newWord.status || 'saved',
-                            story: newWord.story || '',
-                            addedDate: newWord.addedDate || new Date().toISOString()
-                            // Don't add any extra fields
-                        });
-                        addedCount++;
-                    }
-                });
-
-                // Save back to localStorage EXACTLY as before
-                localStorage.setItem('savedWords', JSON.stringify(mergedWords));
-
-                // Update UI if functions exist
-                if (typeof renderVocabulary === 'function') {
-                    renderVocabulary();
-                    updateStats(); // Fixed: was updateVocabularyStats()
-
-                }
-
-                // Show success message
-                const message = `Imported ${addedCount} new vocabulary words. Total: ${mergedWords.length}`;
-
-                if (typeof showNotification === 'function') {
-                    showNotification(message, 'success');
-                } else {
-                    alert(message);
-                }
-
-                console.log('Import successful. New total:', mergedWords.length);
-
-            } catch (error) {
-                console.error('Import error:', error);
-                const errorMsg = `Import failed: ${error.message}`;
-
-                if (typeof showNotification === 'function') {
-                    showNotification(errorMsg, 'error');
-                } else {
-                    alert(errorMsg);
-                }
-            }
-        };
-
-        reader.readAsText(file, 'UTF-8');
-    };
-
-    document.body.appendChild(fileInput);
-    fileInput.click();
-    setTimeout(() => {
-        if (fileInput.parentNode) {
-            document.body.removeChild(fileInput);
-        }
-    }, 1000);
-}
-
-// CSV parser that creates EXACT same format as your localStorage
-function parseCSVToExactFormat(csvText) {
-    const words = [];
-    const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-
-    if (lines.length < 2) return words;
-
-    // Get headers from first line
-    const headers = lines[0].split(',').map(h =>
-        h.trim().replace(/"/g, '').toLowerCase()
-    );
-
-    // Process each data row
-    for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (!line.trim()) continue;
-
-        // Parse CSV row with quotes
-        const row = parseCSVRow(line);
-
-        // Create object from headers and row values
-        const rowObj = {};
-        headers.forEach((header, index) => {
-            if (index < row.length) {
-                rowObj[header] = row[index].replace(/"/g, '').trim();
-            }
-        });
-
-        // Convert to your exact format
-        const word = {
-            word: rowObj.word || rowObj.english || '',
-            translation: rowObj.translation || rowObj.arabic || rowObj.meaning || '',
-            status: rowObj.status || 'saved',
-            story: rowObj.story || rowObj.title || '',
-            addedDate: new Date().toISOString() // Use current date for imports
-        };
-
-        if (word.word) {
-            words.push(word);
-        }
-    }
-
-    return words;
-}
-
-// Helper to parse CSV row with quotes
-function parseCSVRow(line) {
-    const result = [];
-    let inQuotes = false;
-    let currentField = '';
-
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        const nextChar = i < line.length - 1 ? line[i + 1] : '';
-
-        if (char === '"') {
-            if (inQuotes && nextChar === '"') {
-                // Escaped quote
-                currentField += '"';
-                i++; // Skip next quote
-            } else {
-                // Toggle quotes
-                inQuotes = !inQuotes;
-            }
-        } else if (char === ',' && !inQuotes) {
-            // End of field
-            result.push(currentField);
-            currentField = '';
-        } else {
-            // Normal character
-            currentField += char;
-        }
-    }
-
-    // Add last field
-    result.push(currentField);
-    return result;
-}
-
-// Alternative simple CSV parser for your exact format
-function parseCSVSimple(csvText) {
-    const words = [];
-    const lines = csvText.split(/\r?\n/);
-
-    for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
-
-        // Match: "word","translation","status","story","date"
-        const match = line.match(/"([^"]+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)"/);
-
-        if (match) {
-            words.push({
-                word: match[1],
-                translation: match[2],
-                status: match[3],
-                story: match[4],
-                addedDate: new Date().toISOString()
-            });
-        }
-    }
-
-    return words;
-}
-// Helper function to format date
-function formatDateForExport(dateString) {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
-
-
-// ============== End vocabulary functions =================
 
 
 // ========= Start search functions ==========
@@ -2016,3 +1062,249 @@ function showNotification(message, type = 'info') {
 }
 
 //===================end profile settings===================
+
+
+
+
+// User stats variables
+let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+    xp: 0,
+    wordsLearned: 0,
+    readingTime: 0, // in minutes
+    streakDays: 0,
+    lastActiveDate: null,
+    totalXP: 0
+};
+
+// =============== USER STATS FUNCTIONS ===============
+function initUserStats() {
+    console.log('Initializing user stats...');
+
+    // Sync word count from savedWords on init
+    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    userStats.wordsLearned = savedWords.length;
+
+    // Check and update streak
+    updateStreak();
+
+    // Update displayed stats
+    updateUserStatsDisplay();
+
+    // Save initial stats if they don't exist
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    console.log('Initialized with', userStats.wordsLearned, 'words');
+}
+
+function updateStreak() {
+    const today = new Date().toDateString(); // Get today's date as string
+    const lastActive = userStats.lastActiveDate;
+
+    if (!lastActive) {
+        // First time user
+        userStats.streakDays = 1;
+        userStats.lastActiveDate = today;
+        console.log('First time user, streak set to 1');
+        return;
+    }
+
+    const lastActiveDate = new Date(lastActive);
+    const currentDate = new Date();
+
+    // Calculate days difference
+    const timeDiff = currentDate.getTime() - lastActiveDate.getTime();
+    const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+    if (daysDiff === 0) {
+        // Same day, no change
+        console.log('User active today, streak unchanged');
+    } else if (daysDiff === 1) {
+        // Consecutive day - increment streak
+        userStats.streakDays++;
+        userStats.lastActiveDate = today;
+        console.log('Consecutive day, streak increased to:', userStats.streakDays);
+
+        // Award XP for maintaining streak
+        addXP(10, 'Daily streak');
+    } else if (daysDiff > 1) {
+        // Streak broken - reset to 1
+        userStats.streakDays = 1;
+        userStats.lastActiveDate = today;
+        console.log('Streak broken, reset to 1');
+    }
+
+    // Save updated streak
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+}
+
+function addXP(amount, reason = '') {
+    userStats.xp += amount;
+    userStats.totalXP += amount;
+
+    // Check for level up (every 100 XP = 1 level)
+    const oldLevel = Math.floor((userStats.totalXP - amount) / 100);
+    const newLevel = Math.floor(userStats.totalXP / 100);
+
+    if (newLevel > oldLevel) {
+        showNotification(`🎉 Level Up! You reached level ${newLevel}!`, 'success');
+    }
+
+    // Save to localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    // Update display
+    updateUserStatsDisplay();
+
+    console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
+}
+
+function addWordToStats() {
+    // Get savedWords from localStorage
+    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+
+    // Update word count
+    userStats.wordsLearned = savedWords.length;
+
+    // Add XP for learning new words
+    addXP(5, 'Learning new word');
+
+    // Save to localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    // Update display
+    updateUserStatsDisplay();
+
+    console.log('Word count updated:', userStats.wordsLearned, 'words found in savedWords');
+}
+function addReadingTime(minutes) {
+    userStats.readingTime += minutes;
+
+    // Add XP for reading (1 XP per minute)
+    addXP(minutes, 'Reading practice');
+
+    // Save to localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    // Update display
+    updateUserStatsDisplay();
+
+    console.log('Reading time added:', minutes, 'minutes');
+}
+
+function updateUserStatsDisplay() {
+    // Update XP
+    const xpElement = document.getElementById('xp');
+    if (xpElement) {
+        xpElement.textContent = userStats.xp;
+    }
+
+    // Update words learned
+    const wordsElement = document.getElementById('words-learned');
+    if (wordsElement) {
+        wordsElement.textContent = userStats.wordsLearned;
+    }
+
+    // Update reading time (convert minutes to hours)
+    const timeElement = document.getElementById('reading-time');
+    if (timeElement) {
+        const hours = Math.floor(userStats.readingTime / 60);
+        const minutes = userStats.readingTime % 60;
+        if (hours > 0) {
+            timeElement.textContent = `${hours}h ${minutes}m`;
+        } else {
+            timeElement.textContent = `${minutes}m`;
+        }
+    }
+
+    // Update streak
+    const streakElement = document.getElementById('streak-count');
+    if (streakElement) {
+        streakElement.textContent = userStats.streakDays;
+    }
+}
+
+// Modify your existing functions to update stats
+function saveWord(word, translation, story = '', hasTranslation = true) {
+    // ... existing saveWord code ...
+
+    // After saving word, update stats
+    addWordToStats();
+
+    showNotification('Word saved to vocabulary! +5 XP', 'success');
+}
+
+function markAsMastered(index) {
+    // ... existing markAsMastered code ...
+
+    // Add XP for mastering a word
+    addXP(15, 'Mastering word');
+
+    showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered! +15 XP`, 'success');
+}
+
+function deleteWord(index) {
+    // ... existing deleteWord code ...
+
+    // Update word count after deletion
+    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    userStats.wordsLearned = savedWords.length;
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+    updateUserStatsDisplay();
+
+    showNotification(`"${word}" removed from vocabulary`);
+}
+
+function removeAll() {
+    // ... existing removeAll code ...
+
+    // Reset word count
+    userStats.wordsLearned = 0;
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+    updateUserStatsDisplay();
+
+    showNotification(`All saved words removed successfully!`);
+}
+
+// Add daily login bonus
+function checkDailyBonus() {
+    const today = new Date().toDateString();
+    const lastBonusDate = localStorage.getItem('lastBonusDate');
+
+    if (lastBonusDate !== today) {
+        // Award daily bonus
+        addXP(25, 'Daily login bonus');
+        localStorage.setItem('lastBonusDate', today);
+
+        // Show notification for first login of the day
+        setTimeout(() => {
+            showNotification('🎁 Daily bonus! +25 XP for logging in today!', 'success');
+        }, 1000);
+    }
+}
+
+// Add level calculation function
+function getUserLevel() {
+    return Math.floor(userStats.totalXP / 100);
+}
+
+function getXPForNextLevel() {
+    const currentLevel = getUserLevel();
+    const xpForNextLevel = (currentLevel + 1) * 100;
+    return xpForNextLevel - userStats.totalXP;
+}
+function syncWordCountFromStorage() {
+    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    const previousCount = userStats.wordsLearned;
+    userStats.wordsLearned = savedWords.length;
+
+    // If words were added or removed elsewhere, update XP
+    if (userStats.wordsLearned > previousCount) {
+        const newWords = userStats.wordsLearned - previousCount;
+        addXP(newWords * 5, `Sync: ${newWords} new words found`);
+    }
+
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+    updateUserStatsDisplay();
+
+    console.log(`Synced word count: ${previousCount} → ${userStats.wordsLearned}`);
+}

@@ -24,7 +24,6 @@ const levelBtns = document.querySelectorAll('.level-btn');
 const storiesGrid = document.getElementById('storiesGrid');
 const storyText = document.getElementById('storyText');
 const dictionaryPopup = document.getElementById('dictionaryPopup');
-const vocabularyList = document.getElementById('vocabularyList');
 const backToStories = document.getElementById('backToStories');
 const fontSmaller = document.getElementById('fontSmaller');
 const fontNormal = document.getElementById('fontNormal');
@@ -99,7 +98,12 @@ function init() {
     if (selectedSecondaryColor) {
         applySecondaryColor(selectedSecondaryColor);
     }
-
+ 
+    // Initialize user stats
+    initUserStats();
+    
+    // Check for daily bonus
+    checkDailyBonus();
     // STEP 4: Initialize color selectors
     console.log('Step 3: Initializing color selectors...');
     setTimeout(() => {
@@ -111,14 +115,9 @@ function init() {
     console.log('Step 4: Rendering UI...');
     renderStories();
     setupSearch();
-    renderVocabulary();
-    updateStats();
+  
 
-    // STEP 6: Initialize flashcards
-    console.log('Step 5: Initializing flashcards...');
-    if (typeof initFlashcards === 'function') {
-        initFlashcards();
-    }
+    
 
     // STEP 7: Set up event listeners
     console.log('Step 6: Setting up event listeners...');
@@ -250,10 +249,7 @@ function switchPage(page) {
         }
     });
 
-    // Refresh flashcards when switching to flashcards page
-    if (page === 'flashcards') {
-        loadFlashcards();
-    }
+    
 }
 
 // Open story in a new page WITH story title

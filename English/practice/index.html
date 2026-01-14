@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Istories - flashcards</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="icon" type="image/png" href="../icon.png">
+    <meta property="og:title" content="Istories">
+    <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+    <meta property="og:image" content="../icon.png">
+    <meta property="og:type" content="website">
+</head>
+
+<body>
+    <header id="top">
+        <div class="container">
+            <div class="header-content">
+                <div class="left">
+                    <a href="../index.html" class="logo">
+                        <img src="../icon.svg" alt="">
+                        <span>IStories</span>
+                    </a>
+                    <nav>
+                        <ul>
+                            <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                            <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
+                            <div id="more" class="more">
+                                <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i> Home</a>
+                                </li>
+
+
+                            </div>
+
+
+                        </ul>
+                    </nav>
+                </div>
+                <div class="header-actions">
+                    <!--search bar-->
+                    <form id="search-form" class="search-form" action="#">
+                        <input class="search-input" placeholder="Search stories" type="text" id="storySearch">
+                        <button id="search-btn" type="submit" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    <div class="settings-container">
+                        <button class="settings-btn" id="settings-button">
+                            <i class="fas fa-cog"></i>
+                        </button>
+
+
+                    </div>
+                </div>
+            </div>
+    </header>
+    <div class="settings-page" id="settings-page">
+        <div class="settings-header">
+            <h2><i class="fas fa-cog"></i> Settings</h2>
+            <button class="close-settings" id="close-settings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="settings-content">
+            <!-- قسم المظهر -->
+            <div class="settings-section">
+                <h3><i class="fas fa-palette"></i> Appearance</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Theme</span>
+                        <span class="setting-desc">Light or Dark mode</span>
+                    </div>
+                    <!-- Theme toggle button -->
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+
+                <!-- Color Selector -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Accent Color</span>
+                        <span class="setting-desc">Choose your primary color</span>
+                    </div>
+                    <div class="color-selector">
+                        <div class="color-options">
+                            <!-- Default Colors -->
+                            <div class="color-option active" data-color="#4a6cf7" style="background-color: #4a6cf7;"
+                                title="Blue">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#7c4dff" style="background-color: #7c4dff;"
+                                title="Purple">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#008638" style="background-color: #008638;"
+                                title="Green">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#2f9600c5" style="background-color: #2f9600c5;"
+                                title="Orange">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <div class="color-option" data-color="#009688" style="background-color: #009688;"
+                                title="Teal">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <!-- Custom Color Picker -->
+                            <div class="color-option custom-color" title="Custom Color">
+                                <i class="fas fa-palette"></i>
+                                <input type="color" id="customColorPicker" class="custom-color-input">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Secondary Color Setting -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Secondary Color</span>
+                        <span class="setting-desc">Choose your Secondary color</span>
+                    </div>
+                    <div class="color-selector secondary-selector">
+                        <div class="color-options">
+                            <!-- Default Secondary Colors -->
+                            <div class="secondary-color active" data-color="#10b981" style="background-color:  #10b981;"
+                                title="teal">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#ec4899" style="background-color: #ec4899;"
+                                title="Pink">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#b90000" style="background-color: #b90000;"
+                                title="red">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#8b5cf6" style="background-color: #8b5cf6;"
+                                title="Violet">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#f97316" style="background-color: #f97316;"
+                                title="Orange">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <!-- Custom Secondary Color Picker -->
+                            <div class="color-option secondary-color custom-color" title="Custom Secondary Color">
+                                <i class="fas fa-palette"></i>
+                                <input type="color" id="customSecondaryColorPicker" class="custom-color-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- قسم التطبيق -->
+            <div class="settings-section">
+                <h3><i class="fas fa-info-circle"></i> About</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Version</span>
+                        <span class="setting-desc">Story Reader 2.1.0</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Author</span>
+                        <span class="setting-desc">Ammar chacal</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Refresh App</span>
+                        <span class="setting-desc">Reload all data</span>
+                    </div>
+                    <button class="action-btn" id="refresh-app">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-overlay" class="settings-overlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Home Page -->
+            <div id="home" class="page active">
+
+
+
+                <div class="flashcards-header">
+                    <h2>Flashcard Practice</h2>
+                    <div class="flashcard-controls">
+                        <button id="shuffleCards" class="btn btn-secondary">
+                            <i class="fas fa-random"></i> Shuffle
+                        </button>
+                        <button id="resetProgress" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset Progress
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flashcard-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="dueCards">0</div>
+                        <div class="stat-label">Due Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCards">0</div>
+                        <div class="stat-label">Total Cards</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="masteredCards">0</div>
+                        <div class="stat-label">Mastered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="learningCards">0</div>
+                        <div class="stat-label">Learning</div>
+                    </div>
+                </div>
+
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard">
+                        <div class="flashcard-front">
+                            <div class="flashcard-content">
+                                <h3 id="flashcardWord">No cards available</h3>
+                                <p class="flashcard-context">Add words from stories to practice them here</p>
+                            </div>
+                            <div class="flashcard-hint">
+                                <i class="fas fa-lightbulb"></i> Click or tap to flip
+                            </div>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="flashcard-content">
+                                <h3 id="flashcardTranslation">No translation</h3>
+                                <div class="flashcard-details">
+                                    <div class="flashcard-pos" id="flashcardPos"></div>
+                                    <!-- <div class="flashcard-definition" id="flashcardDefinition"></div>
+                                    <div class="flashcard-example" id="flashcardExample"></div> -->
+                                    <div class="flashcard-story" id="flashcardStory"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard-actions">
+                        <button id="cardAgain" class="card-btn card-again" disabled>
+                            <i class="fas fa-times"></i> Again
+                        </button>
+                        <button id="cardHard" class="card-btn card-hard" disabled>
+                            <i class="fas fa-meh"></i> Hard
+                        </button>
+                        <button id="cardGood" class="card-btn card-good" disabled>
+                            <i class="fas fa-smile"></i> Good
+                        </button>
+                        <button id="cardEasy" class="card-btn card-easy" disabled>
+                            <i class="fas fa-laugh"></i> Easy
+                        </button>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Session Progress</span>
+                            <span id="progressText">0/0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>IStories</span>
+                </div>
+                <div class="footer-links">
+                    <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <script src="main.js"></script>
+
+
+
+</body>
+
+</html>

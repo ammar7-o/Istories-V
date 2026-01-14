@@ -1124,6 +1124,7 @@ function markAsMastered(index) {
     updateVocabularyStats();
     showNotification(`"${savedWords[index].originalWord || savedWords[index].word}" marked as mastered!`, 'success');
     renderVocabulary();
+    addXP(5);
 }
 
 function deleteWord(index) {
@@ -1450,6 +1451,35 @@ function switchPage(page) {
     }
 }
 
+// User stats variables
+let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+    xp: 0,
+    wordsLearned: 0,
+    readingTime: 0, // in minutes
+    streakDays: 0,
+    lastActiveDate: null,
+    totalXP: 0
+};
+function addXP(amount, reason = '') {
+    userStats.xp += amount;
+    userStats.totalXP += amount;
+
+    // Check for level up (every 100 XP = 1 level)
+    const oldLevel = Math.floor((userStats.totalXP - amount) / 100);
+    const newLevel = Math.floor(userStats.totalXP / 100);
+
+    if (newLevel > oldLevel) {
+        showNotification(`🎉 Level Up! You reached level ${newLevel}!`, 'success');
+    }
+
+    // Save to localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    // Update display
+    updateUserStatsDisplay();
+
+    console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
+}
 // ----------------------------------------------------
 // 🛠️ وظائف التنظيف والإدارة
 // ----------------------------------------------------
@@ -1476,8 +1506,12 @@ function setupEventListeners() {
     if (fontLarger) fontLarger.addEventListener('click', () => adjustFontSize(0.1));
     if (lineSpacingBtn) lineSpacingBtn.addEventListener('click', toggleLineSpacing);
     if (listenBtn) listenBtn.addEventListener('click', toggleAudio);
-    if (saveWordBtn) saveWordBtn.addEventListener('click', saveCurrentWord);
-    if (closePopup) closePopup.addEventListener('click', hideDictionary);
+    if (saveWordBtn) {
+        saveWordBtn.addEventListener('click', function () {
+            saveCurrentWord(); // Your existing save function
+            addXP(5); // Add XP
+        });
+    } if (closePopup) closePopup.addEventListener('click', hideDictionary);
     if (modalOverlay) modalOverlay.addEventListener('click', hideDictionary);
     if (backToHome) backToHome.addEventListener('click', () => window.location.href = '../index.html');
     if (exportVocabularyBtn) exportVocabularyBtn.addEventListener('click', exportVocabulary);

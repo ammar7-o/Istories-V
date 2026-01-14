@@ -5,8 +5,9 @@ const ASSETS = [
   `${BASE}/`,
   `${BASE}/index.html`,
   `${BASE}/style.css`,
-    `${BASE}/English/reader/imdex.html`
-  
+  `${BASE}/English/imdex.html`,
+  `${BASE}/English/reader/imdex.html`
+
 
 ];
 
