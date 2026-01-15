@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Istories Download stories</title>
-    <link rel="stylesheet" href="../font-awesome/css/all.min.css">
+    <title>Istories - flashcards</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 
-    <link rel="icon" type="image/png" href="../icon.png?v=2">
+    <link rel="icon" type="image/png" href="../icon.png">
     <meta property="og:title" content="Istories">
     <meta property="og:description" content="Learn Languages Through Interactive Stories.">
     <meta property="og:image" content="../icon.png">
@@ -21,27 +21,26 @@
             <div class="header-content">
                 <div class="left">
                     <a href="../index.html" class="logo">
-                        <img src="../icon.svg" alt="">
+                        <img src="../../icon.svg" alt="">
                         <span>IStories</span>
                     </a>
                     <nav>
                         <ul>
-                            <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-store"></i></a>
+                            <li> <a href="#" class="nav-btn active" title="Vocabulary"><i
+                                        class="fa-solid fa-layer-group" data-page="home"></i> </a>
                             </li>
-                            <li id="toggle-nav"><a href="" title="more" id="toggle-nav"><i id="toggle-nav"
-                                        class="fas fa-bars"></i></a></li>
+                            <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
-                                <li><a href="../English/index.html" class="nav-btn"><i class="fa-solid fa-home"></i>
-                                        Home</a>
+                                <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i> Home</a>
                                 </li>
-                                <li><a class="nav-btn" href="../English/vocabulary/index.html"><i
-                                            class="fas fa-language"></i>
+                                <li><a class="nav-btn" href="../../store/index.html"><i class="fas fa-store"></i>
                                         Store</a></li>
-                                <li><a href="../English/practice/index.html" class="nav-btn"><i
-                                            class="fas fa-language"></i> Flashcard</a>
+                                <li><a href="../vocabulary/index.html" class="nav-btn"><i class="fas fa-language"></i>
+                                        Flashcard</a>
                                 </li>
 
                             </div>
+
 
 
                         </ul>
@@ -49,12 +48,7 @@
                 </div>
                 <div class="header-actions">
                     <!--search bar-->
-                    <form id="search-form" class="search-form" action="#">
-                        <input class="search-input" placeholder="Search stories" type="text" id="storySearch">
-                        <button id="search-btn" type="submit" aria-label="Search">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
+                    <div class="space"></div>
                     <div class="settings-container">
                         <button class="settings-btn" id="settings-button">
                             <i class="fas fa-cog"></i>
@@ -65,7 +59,6 @@
                 </div>
             </div>
     </header>
-
     <div class="settings-page" id="settings-page">
         <div class="settings-header">
             <h2><i class="fas fa-cog"></i> Settings</h2>
@@ -128,8 +121,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
                 <!-- Secondary Color Setting -->
                 <div class="setting-item">
                     <div class="setting-info">
@@ -168,9 +161,10 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
+
+
 
             <!-- قسم التطبيق -->
             <div class="settings-section">
@@ -194,7 +188,9 @@
                         <span class="setting-label">Refresh App</span>
                         <span class="setting-desc">Reload all data</span>
                     </div>
-
+                    <button class="action-btn" id="refresh-app">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                 </div>
             </div>
         </div>
@@ -206,17 +202,48 @@
         <div class="container">
             <!-- Home Page -->
             <div id="home" class="page active">
-                <div class="level-filter">
-                    <button class="level-btn active" data-level="all">All Levels</button>
-                    <button class="level-btn" data-level="beginner">Beginner</button>
-                    <button class="level-btn" data-level="intermediate">Intermediate</button>
-                    <button class="level-btn" data-level="advanced">Advanced</button>
-                </div>
 
-                <div class="stories-grid" id="storiesGrid">
-                    <!-- Stories will be populated by JavaScript -->
-                </div>
+
+    <div class="quiz-header">
+        <h2>Vocabulary Quiz</h2>
+        <div class="quiz-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="quizScore">0</div>
+                <div class="stat-label">Score</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-number" id="quizStreak">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="quizProgress">0/0</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-container" id="quizContainer">
+        <!-- Quiz content will be loaded here -->
+    </div>
+
+    <div class="quiz-controls">
+        <button id="startQuiz" class="btn btn-primary">
+            <i class="fas fa-play"></i> Start Quiz
+        </button>
+        <button id="nextQuestion" class="btn btn-secondary" style="display: none;">
+            <i class="fas fa-arrow-right"></i> Next Question
+        </button>
+        <button id="endQuiz" class="btn btn-danger" style="display: none;">
+            <i class="fas fa-stop"></i> End Quiz
+        </button>
+    </div>
+
+            </div>
+        </div>
+        </div>
+        </div>
+
+
         </div>
         </div>
     </main>
@@ -238,81 +265,9 @@
     </footer>
 
 
-    <!-- stories -->
-    <!-- <script>
-        // add stories
-
-        var storiesFile = "stories.js";
-        // var storiesFile = prompt("Enter the file:");
-        var s = document.createElement("script");
-        s.src = storiesFile;
-
-        s.onload = function () {
-            console.log(window.storiesData);
-        };
-
-        s.onerror = function () {
-            console.error("Failed to load stories.js");
-        };
-
-        document.head.appendChild(s);
-    </script> -->
-    <script>
-        // Global variable to track if stories are loaded
-        window.storiesLoaded = false;
-        window.storiesData = [];
-
-        // Function to initialize app after stories are loaded
-        function initAppAfterStoriesLoad() {
-            if (window.storiesLoaded) {
-                init();
-            } else {
-                console.log('Waiting for stories to load...');
-                setTimeout(initAppAfterStoriesLoad, 100);
-            }
-        }
-
-        // Load stories
-        var storiesFile = "stories.js";
-        var s = document.createElement("script");
-        s.src = storiesFile;
-
-        s.onload = function () {
-            console.log('Stories loaded successfully');
-            console.log('Stories data:', window.storiesData);
-            window.storiesLoaded = true;
-
-            // Initialize app
-            initAppAfterStoriesLoad();
-        };
-
-        s.onerror = function () {
-            console.error("Failed to load stories.js");
-            // Use fallback stories
-            window.storiesData = {
-                stories: [
-                    {
-                        id: 1,
-                        title: "The Mysterious Island",
-                        level: "beginner",
-                        cover: "🏝️",
-                        coverType: "emoji",
-                        wordCount: 350,
-                        content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
-                    }
-                ]
-            };
-            window.storiesLoaded = true;
-
-            // Initialize app with fallback
-            initAppAfterStoriesLoad();
-        };
-
-        document.head.appendChild(s);
-    </script>
-    <!-- <script src="stories.js"></script> -->
 
     <script src="main.js"></script>
+
 
 
 </body>

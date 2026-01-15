@@ -26,10 +26,17 @@
                     </a>
                     <nav>
                         <ul>
-                            <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                            <li> <a href="#" class="nav-btn active" title="Vocabulary"><i class="fas fa-language"
+                                        data-page="home"></i> </a>
+                            </li>
                             <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
                                 <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i> Home</a>
+                                </li>
+                                <li><a class="nav-btn" href="../../store/index.html"><i class="fas fa-store"></i>
+                                        Store</a></li>
+                                <li><a href="../practice/index.html" class="nav-btn"><i
+                                            class="fa-solid fa-layer-group"></i> Flashcard</a>
                                 </li>
 
                             </div>
@@ -41,7 +48,7 @@
                 <div class="header-actions">
                     <!--search bar-->
                     <form id="search-form" class="search-form" action="#">
-                        <input class="search-input" placeholder="Search stories" type="text" id="storySearch">
+                        <input class="search-input" placeholder="Search Words" type="text" id="storySearch">
                         <button id="search-btn" type="submit" aria-label="Search">
                             <i class="fas fa-search"></i>
                         </button>
@@ -50,6 +57,7 @@
                         <button class="settings-btn" id="settings-button">
                             <i class="fas fa-cog"></i>
                         </button>
+
 
 
                     </div>
@@ -206,9 +214,13 @@
                         <button onclick="exportVocabulary()" class="btn btn-primary v-btn" id="exportBtn">
                             <i class="fas fa-download"></i> Export CSV
                         </button>
+                           <button onclick="importVocabulary()" class="btn btn-primary v-btn">
+                            <i class="fa-solid fa-file-import"></i> Import
+                        </button>
                         <button onclick="removeAll()" class="btn btn-primary v-btn">
                             <i class="fas fa-remove"></i> Remove all
                         </button>
+                      
                     </div>
 
                 </div>

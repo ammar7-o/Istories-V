@@ -26,14 +26,20 @@
                     </a>
                     <nav>
                         <ul>
-                            <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                            <li> <a href="#" class="nav-btn active" title="Vocabulary"><i class="fa-solid fa-layer-group"
+                                        data-page="home"></i> </a>
+                            </li>
                             <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
                                 <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i> Home</a>
                                 </li>
-
+                                <li><a class="nav-btn" href="../../store/index.html"><i class="fas fa-store"></i>
+                                        Store</a></li>
+                                <li><a href="../vocabulary/index.html" class="nav-btn"><i class="fas fa-language"></i> Flashcard</a>
+                                </li>
 
                             </div>
+
 
 
                         </ul>
@@ -41,12 +47,7 @@
                 </div>
                 <div class="header-actions">
                     <!--search bar-->
-                    <form id="search-form" class="search-form" action="#">
-                        <input class="search-input" placeholder="Search stories" type="text" id="storySearch">
-                        <button id="search-btn" type="submit" aria-label="Search">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
+                   <div class="space"></div>
                     <div class="settings-container">
                         <button class="settings-btn" id="settings-button">
                             <i class="fas fa-cog"></i>
@@ -206,10 +207,10 @@
                 <div class="flashcards-header">
                     <h2>Flashcard Practice</h2>
                     <div class="flashcard-controls">
-                        <button id="shuffleCards" class="btn btn-secondary">
+                        <button id="shuffleCards" class="btn btn-primary">
                             <i class="fas fa-random"></i> Shuffle
                         </button>
-                        <button id="resetProgress" class="btn btn-secondary">
+                        <button id="resetProgress" class="btn btn-primary">
                             <i class="fas fa-redo"></i> Reset Progress
                         </button>
                     </div>

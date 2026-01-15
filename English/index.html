@@ -27,18 +27,20 @@
                     </a>
                     <nav>
                         <ul>
-                            <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                            <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i>
+                                    Home</a></li>
                             <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
                                 <li><a href="vocabulary/index.html" class="nav-btn"><i class="fa-solid fa-language"></i>
                                         Vocabulary</a></li>
-                                <li><a href="practice/index.html" class="nav-btn">Flashcards</a></li>
+                                <li><a href="practice/index.html" class="nav-btn"> <i
+                                            class="fa-solid fa-layer-group"></i>Flashcards</a></li>
                                 <li><a href="#" class="nav-link nav-btn" data-page="addStories"> <i
                                             class="fas fa-plus-circle"></i>Add Stories</a></li>
-                                <li><a class="nav-btn" href="../store/index.html"><i class="fas fa-store"></i>Download
-                                        Stories</a></li>
+                                <li><a class="nav-btn" href="../store/index.html"><i class="fas fa-store"></i>
+                                        Store</a></li>
                                 <li><a href="#" class="nav-link nav-btn" data-page="profile-settings"> <i
-                                            class="fas fa-plus-circle"></i>Profile </a></li>
+                                            class="fa-solid fa-user"></i>Profile </a></li>
 
                             </div>
 
@@ -173,34 +175,7 @@
             <div class="settings-section">
                 <h3><i class="fas fa-database"></i> Data Management</h3>
 
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">Export Vocabulary</span>
-                        <span class="setting-desc">Download saved words as CSV</span>
-                    </div>
-                    <button onclick="exportVocabulary()" class="action-btn" id="export-vocab">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">Import Vocabulary</span>
-                        <span class="setting-desc">import all saved Vocabulary as json file</span>
-                    </div>
-                    <button onclick="importVocabulary()" class="primary-btn" id="import-vocab">
-                        <i class="fas fa-upload"></i> Import
-                    </button>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">Clear Vocabulary</span>
-                        <span class="setting-desc">Remove all saved words</span>
-                    </div>
-                    <button onclick="removeAll()" class="danger-btn" id="clear-data">
-                        <i class="fas fa-trash"></i> Clear
-                    </button>
-                </div>
+              
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Export All user stories</span>

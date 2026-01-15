@@ -192,6 +192,7 @@ nav a.active {
 /* Main Content Styles */
 .main-content {
     min-height: calc(100vh - 140px);
+    width: 100%;
     padding: 30px 0;
 }
 
@@ -1745,9 +1746,9 @@ footer {
 }
 
 .btn-secondary {
-    background: var(--secondary-color);
-    color: var(--text-color);
-    border: 2px solid var(--border-color);
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4);
 }
 
 .btn-secondary:hover {
@@ -1756,7 +1757,7 @@ footer {
 }
 
 .btn-primary {
-    background: var(--primary-color);
+    background: var(--primary);
     color: white;
     box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
 }
@@ -2091,6 +2092,10 @@ footer {
         right: -100%;
     }
 
+    .flashcards-header {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
 
     .modal-overlay {
