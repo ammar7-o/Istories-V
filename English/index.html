@@ -246,22 +246,22 @@
 
                         <!-- Stats -->
                         <div class="user-stats">
-                            <div class="stat-item">
+                            <div class="stat-item xp-item">
                                 <i class="fas fa-star"></i>
                                 <div class="stat-value" id="xp">100</div>
                                 <div class="stat-label">XP</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item words-u">
                                 <i class="fas fa-language"></i>
                                 <div class="stat-value" id="words-learned">245</div>
                                 <div class="stat-label">Words</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item level-u">
                                 <i class="fas fa-trophy "></i>
                                 <div class="stat-value" id="level">12h</div>
                                 <div class="stat-label">Level</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item  Streak">
                                 <i class="fas fa-fire"></i>
                                 <div class="stat-value" id="streak-count">5</div>
                                 <div class="stat-label">days</div>
@@ -276,6 +276,11 @@
                         <button class="cta-button" onclick="showRecentStories()">
                             <i class="fas fa-history"></i> Recent Stories
                         </button>
+                         <select name="" id="Select">
+                        <option value="database/main.js">English-1</option>
+                        <option value="database/more.js">English-2</option>
+
+                    </select>
                     </div>
 
                 </section>
@@ -864,9 +869,85 @@ Enter one dictionary path per line"></textarea>
             </div>
         </div>
     </footer>
+       <script>
+        // Global variable to track if stories are loaded
+        window.storiesLoaded = false;
+        window.storiesData = [];
+
+        // Function to initialize app after stories are loaded
+        function initAppAfterStoriesLoad() {
+            if (window.storiesLoaded) {
+                init();
+            } else {
+                console.log('Waiting for stories to load...');
+                setTimeout(initAppAfterStoriesLoad, 100);
+            }
+        }
+
+        // Function to load stories based on selected file
+        function loadStoriesFile(filename) {
+            // Reset loaded state
+            window.storiesLoaded = false;
+
+            // Remove old script if exists
+            const oldScript = document.querySelector('script[data-stories="true"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            console.log(`Loading stories from: ${filename}`);
+
+            // Create and load new script
+            const s = document.createElement("script");
+            s.src = filename;
+            s.setAttribute('data-stories', 'true');
+
+            s.onload = function () {
+                console.log('Stories loaded successfully');
+                console.log('Stories data:', window.storiesData);
+                window.storiesLoaded = true;
+                // Initialize app
+                initAppAfterStoriesLoad();
+            };
+
+            s.onerror = function () {
+                console.error(`Failed to load ${filename}`);
+                // Use fallback stories
+                window.storiesData = {
+                    stories: [
+                        {
+                            id: 1,
+                            title: "The Mysterious Island",
+                            level: "beginner",
+                            cover: "🏝️",
+                            coverType: "emoji",
+                            wordCount: 350,
+                            content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+                        }
+                    ]
+                };
+                window.storiesLoaded = true;
+                // Initialize app with fallback
+                initAppAfterStoriesLoad();
+            };
+
+            document.head.appendChild(s);
+        }
+
+        // Add event listener to select element
+        document.getElementById('Select').addEventListener('change', function (e) {
+            const selectedFile = e.target.value;
+            console.log(`File changed to: ${selectedFile}`);
+            loadStoriesFile(selectedFile);
+        });
+
+        // Load initial stories based on default selection
+        const initialFile = document.getElementById('Select').value;
+        loadStoriesFile(initialFile);
+    </script>
     <!-- stories -->
-    <script src="database/main.js"></script>
-    <script src="database/more.js"></script>
+    <!-- <script src="database/main.js"></script>
+    <script src="database/more.js"></script> -->
 
     <!-- <script src="Dictionarys/main.js"></script> -->
     <script src="other.js"></script>

@@ -1,4 +1,3 @@
-
 .settings-btn {
     background: none;
     border: none;
@@ -13,14 +12,15 @@
 }
 
 .settings-btn:hover {
-   background-color: #69696991;
+    background-color: #69696991;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* صفحة الإعدادات */
 .settings-page {
     position: absolute;
-        position: fixed; /* keep it above content */
+    position: fixed;
+    /* keep it above content */
     top: 0;
     right: -400px;
     width: 350px;
@@ -260,7 +260,8 @@
     border-color: #4b5563;
     color: #f9fafb;
 }
-.tts-open{
+
+.tts-open {
     display: none;
     visibility: hidden;
     position: absolute
@@ -282,8 +283,21 @@
     justify-content: center;
 }
 
-.tts-btn{
-     background: var(--primary);
+select {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 20px;
+    justify-content: center;
+}
+
+.tts-btn {
+    background: var(--primary);
     border: 2px solid var(--border);
     padding: 10px 10px;
     border-radius: var(--radius-sm);
@@ -297,8 +311,9 @@
     min-width: 50px;
     justify-content: center;
 }
-.tts-active{
-        background: var(--bg);
+
+.tts-active {
+    background: var(--bg);
 }
 
 /* Responsive Design */

@@ -117,9 +117,9 @@ function init() {
 
     // STEP 6: Set up navigation and event listeners
     console.log('Step 6: Setting up navigation and event listeners...');
- 
-        setupNavToggle();
-    
+
+    setupNavToggle();
+
     setupEventListeners();
     setupSettings();
 
@@ -629,7 +629,72 @@ function renderStories(level = 'all') {
         storiesGrid.appendChild(storyCard);
     });
 }
+// Add this to your JavaScript
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
 
+// Create and add the button to the page
+function addScrollToTopButton() {
+    const button = document.createElement('button');
+    button.id = 'scrollToTopBtn';
+    button.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    button.title = 'Scroll to top';
+
+    button.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: none; /* Hidden by default */
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    `;
+
+    button.addEventListener('mouseover', () => {
+        button.style.transform = 'scale(1.1)';
+        button.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+    });
+
+    button.addEventListener('mouseout', () => {
+        button.style.transform = 'scale(1)';
+        button.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    });
+
+    button.addEventListener('click', scrollToTop);
+
+    document.body.appendChild(button);
+
+    // Show/hide button based on scroll position
+    window.addEventListener('scroll', toggleScrollToTopButton);
+}
+
+function toggleScrollToTopButton() {
+    const button = document.getElementById('scrollToTopBtn');
+    if (!button) return;
+
+    if (window.scrollY > 300) {
+        button.style.display = 'flex';
+        button.style.alignItems = 'center';
+        button.style.justifyContent = 'center';
+    } else {
+        button.style.display = 'none';
+    }
+}
+
+// Call this in your init() function
+addScrollToTopButton();
 // Function to save story to user stories
 function saveStoryToUserStories(story) {
     // Check if story already exists in user stories
@@ -899,6 +964,8 @@ function displayFilteredStories(filteredStories, query) {
             : '';
 
         const isUserStory = story.isUserStory;
+        // Get CEFR level with fallback
+        const cefrLevel = story.levelcefr || '';
 
         storyCard.innerHTML = `
             <div class="story-image">
@@ -906,7 +973,12 @@ function displayFilteredStories(filteredStories, query) {
                 ${renderStoryCover(story)}
             </div>
             <div class="story-content">
-                <span class="story-level ${story.level}">${story.level}</span>
+            <div>
+              <span class="story-level ${story.level}">${story.level}</span>
+              <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
+            </div>
+              
+
                 ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
                 <h3 class="story-title">${highlightedTitle}</h3>
                 <div class="story-meta">
@@ -1030,38 +1102,44 @@ function switchPage(page) {
     }
 }
 
-// ========= Navigation Toggle ==========
-function setupNavToggle() {
-    console.log('Setting up navigation toggle...');
+// Navigation menu state
+let isMenuOpen = false;
 
-   
-    
-    console.log('Navigation elements found');
+// =============== NAVIGATION MENU FUNCTIONS ===============
+function setupNavToggle() {
+    if (!toggleNav || !more) return;
+
+    console.log('Setting up navigation menu toggle...');
 
     // Toggle menu
     toggleNav.addEventListener("click", function (e) {
-        e.stopPropagation(); // Prevent event bubbling
-        e.preventDefault();
-
-        console.log('Toggle clicked, current class:', more.classList.contains('open'));
-        
-        // Simply toggle the "open" class
-        more.classList.add("open");
-        
-        console.log('After toggle, class:', more.classList.contains('open'));
+        e.stopPropagation();
+        isMenuOpen = !isMenuOpen;
+        more.classList.toggle("open");
+        console.log('Menu toggled, isOpen:', isMenuOpen);
     });
 
     // Close menu when clicking anywhere
-    document.addEventListener("click", function (e) {
-        // Only close if the click is NOT on the toggle button or inside the menu
-        if (!more.contains(e.target) && e.target !== toggleNav) {
+    document.addEventListener("click", function () {
+        if (isMenuOpen) {
             more.classList.remove("open");
+            isMenuOpen = false;
+            console.log('Menu closed by clicking outside');
         }
     });
 
-    // Prevent menu from closing when clicking inside it
+    // Prevent closing when clicking inside the menu
     more.addEventListener("click", function (e) {
         e.stopPropagation();
+    });
+
+    // Close menu on Escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && isMenuOpen) {
+            more.classList.remove("open");
+            isMenuOpen = false;
+            console.log('Menu closed by Escape key');
+        }
     });
 
     // Close menu when clicking on any <a> inside the menu
@@ -1069,10 +1147,13 @@ function setupNavToggle() {
     links.forEach(link => {
         link.addEventListener("click", function () {
             more.classList.remove("open");
+            isMenuOpen = false;
+            console.log('Menu closed by clicking link');
         });
     });
-}
 
+    console.log('Navigation menu toggle setup complete');
+}
 // ========= Settings Functions ==========
 function setupSettings() {
     console.log('Setting up settings...');
@@ -1099,10 +1180,10 @@ function setupSettings() {
         settingsOverlay.classList.remove("active");
     });
 
-settingsOverlay.addEventListener("click", function () {
-    settingsPage.classList.remove("open");
-    settingsOverlay.classList.remove("active");
-});
+    settingsOverlay.addEventListener("click", function () {
+        settingsPage.classList.remove("open");
+        settingsOverlay.classList.remove("active");
+    });
     // Close settings when clicking on overlay
     settingsOverlay.addEventListener("click", function (e) {
         e.stopPropagation();

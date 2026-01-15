@@ -4,6 +4,7 @@ let theme = localStorage.getItem('theme') || 'light';
 let fontSize = 1.2; // rem
 let lineHeight = 1.8;
 let isAudioPlaying = false;
+let fontFamily = localStorage.getItem('fontFamily') || 'sans-serif'; // Add this line
 let currentStory = null;
 let currentWordData = null;
 let dictionary = {};
@@ -38,6 +39,7 @@ const removebtn = document.getElementById("removebtn");
 const sound = document.getElementById("sound");
 const lvl = document.getElementById("lvl");
 const lvlcefr = document.getElementById("lvlcefr");
+const fontFamilySelect = document.getElementById('fontFamily'); // Add this line
 
 const googleTranslateBtn = document.getElementById('googleTranslateBtn');
 
@@ -271,7 +273,72 @@ function addTranslationBadge() {
         }
     }, 5000);
 }
+// Function to get all available database files
+async function getDatabaseFiles() {
+    // Default files
+    const defaultFiles = [
+        '../database/main.js',
+        '../database/more.js',
+        '../database/stories1.js',
+        '../database/stories2.js',
+        '../database/stories3.js',
+        '../database/adventure.js',
+        '../database/romance.js',
+        '../database/scifi.js',
+        '../database/mystery.js',
+        '../database/fantasy.js',
+        '../database/horror.js'
+    ];
 
+    // Try to get dynamic list from server
+    try {
+        const response = await fetch('../database/db-list.json');
+        if (response.ok) {
+            const fileList = await response.json();
+            return fileList.files || defaultFiles;
+        }
+    } catch (error) {
+        console.log('No db-list.json found, using default files');
+    }
+
+    return defaultFiles;
+}
+// Add this helper function to debug database loading
+async function debugDatabaseFiles() {
+    console.log("=== DEBUG DATABASE FILES ===");
+
+    const databaseFiles = await getDatabaseFiles();
+    console.log("Database files to check:", databaseFiles);
+
+    for (const dbFile of databaseFiles) {
+        try {
+            console.log(`\n--- Checking: ${dbFile} ---`);
+            const response = await fetch(dbFile);
+
+            if (!response.ok) {
+                console.log(`❌ File not accessible: HTTP ${response.status}`);
+                continue;
+            }
+
+            const content = await response.text();
+            console.log(`✅ File accessible, size: ${content.length} chars`);
+
+            // Check for common patterns
+            const hasWindowAssignment = content.includes('window.storiesData');
+            const hasStoriesArray = content.includes('stories = [') || content.includes('const stories') || content.includes('let stories');
+
+            console.log(`Has window.storiesData: ${hasWindowAssignment}`);
+            console.log(`Has stories array: ${hasStoriesArray}`);
+
+            // Try to extract first 500 chars for inspection
+            console.log("First 500 chars:", content.substring(0, 500));
+
+        } catch (error) {
+            console.log(`❌ Error checking ${dbFile}:`, error.message);
+        }
+    }
+    console.log("=== END DEBUG ===");
+}
 // Load story from database files by ID or user stories
 async function loadStory() {
     try {
@@ -309,9 +376,10 @@ async function loadStory() {
         }
 
         // If not a user story or user story not found, try regular stories
+        // First check if stories are already loaded in window.storiesData
         if (typeof window.storiesData !== 'undefined') {
             const allStories = window.storiesData.stories || window.storiesData;
-            currentStory = allStories.find(s => s.id == storyId); // Use == instead of === to handle string vs number
+            currentStory = allStories.find(s => s.id == storyId);
             if (currentStory) {
                 await loadDictionary(currentStory.dictionaries);
                 displayStory(currentStory);
@@ -319,74 +387,137 @@ async function loadStory() {
             }
         }
 
-        // Try loading from main.js
-        try {
-            const mainResponse = await fetch('../database/main.js');
-            if (mainResponse.ok) {
-                const mainText = await mainResponse.text();
-                const mainMatch = mainText.match(/window\.storiesData\s*=\s*({[\s\S]*?});/);
-                if (mainMatch) {
-                    try {
-                        const jsonStr = mainMatch[1].replace(/window\.storiesData\s*=\s*/, '');
-                        window.storiesData = JSON.parse(jsonStr);
-                    } catch (e) {
-                        eval(mainMatch[0]);
+        // Get all database files to check
+        const databaseFiles = await getDatabaseFiles();
+        let storyFound = false;
+
+        // Try loading from all database files
+        for (const dbFile of databaseFiles) {
+            try {
+                console.log(`Trying to load story from: ${dbFile}`);
+                const response = await fetch(dbFile);
+
+                if (!response.ok) {
+                    console.log(`Skipping ${dbFile}: HTTP ${response.status}`);
+                    continue;
+                }
+
+                const fileContent = await response.text();
+
+                // Execute the JavaScript file to load window.storiesData
+                try {
+                    // Create a script element and execute it
+                    const script = document.createElement('script');
+                    script.textContent = fileContent;
+                    document.head.appendChild(script);
+
+                    // Wait a moment for execution
+                    await new Promise(resolve => setTimeout(resolve, 10));
+
+                    // Check if window.storiesData was set
+                    if (typeof window.storiesData !== 'undefined') {
+                        const allStories = window.storiesData.stories || window.storiesData;
+
+                        if (Array.isArray(allStories)) {
+                            console.log(`Found ${allStories.length} stories in ${dbFile}`);
+
+                            // Try to find the story by ID
+                            currentStory = allStories.find(s => s.id == storyId);
+
+                            if (currentStory) {
+                                console.log(`🎉 Story found in ${dbFile}!`);
+
+                                // Load dictionary if specified
+                                if (currentStory.dictionaries) {
+                                    await loadDictionary(currentStory.dictionaries);
+                                }
+
+                                displayStory(currentStory);
+                                storyFound = true;
+
+                                // Clean up script
+                                document.head.removeChild(script);
+                                break; // Stop searching
+                            } else {
+                                console.log(`Story ID ${storyId} not found in ${dbFile}`);
+                            }
+                        }
                     }
 
-                    const allStories = window.storiesData.stories || window.storiesData;
-                    currentStory = allStories.find(s => s.id == storyId);
-                    if (currentStory) {
-                        await loadDictionary(currentStory.dictionaries);
-                        displayStory(currentStory);
-                        return;
+                    // Clean up script if story not found
+                    if (!storyFound && script.parentNode) {
+                        document.head.removeChild(script);
                     }
+
+                } catch (execError) {
+                    console.error(`Error executing ${dbFile}:`, execError);
                 }
+
+            } catch (error) {
+                console.error(`Error loading from ${dbFile}:`, error);
             }
-        } catch (error) {
-            console.log('Could not load main.js:', error);
         }
 
-        // Try loading from more.js
-        try {
-            const moreResponse = await fetch('../database/more.js');
-            if (moreResponse.ok) {
-                const moreText = await moreResponse.text();
-                const moreMatch = moreText.match(/window\.storiesData\s*=\s*({[\s\S]*?});/);
-                if (moreMatch) {
-                    try {
-                        const jsonStr = moreMatch[1].replace(/window\.storiesData\s*=\s*/, '');
-                        window.storiesData = JSON.parse(jsonStr);
-                    } catch (e) {
-                        eval(moreMatch[0]);
-                    }
+        if (storyFound) {
+            return;
+        }
 
-                    const allStories = window.storiesData.stories || window.storiesData;
-                    currentStory = allStories.find(s => s.id == storyId);
-                    if (currentStory) {
-                        await loadDictionary(currentStory.dictionaries);
-                        displayStory(currentStory);
-                        return;
-                    }
+        // If story not found in any database file, try direct story file
+        console.log(`Story ID ${storyId} not found in database files, trying direct story load...`);
+
+        try {
+            const storyResponse = await fetch(`../database/story_${storyId}.js`);
+            if (storyResponse.ok) {
+                const storyContent = await storyResponse.text();
+
+                // Execute the script
+                const script = document.createElement('script');
+                script.textContent = storyContent;
+                document.head.appendChild(script);
+
+                await new Promise(resolve => setTimeout(resolve, 10));
+
+                // Check if window.currentStory or window.story was set
+                if (typeof window.currentStory !== 'undefined') {
+                    currentStory = window.currentStory;
+                } else if (typeof window.story !== 'undefined') {
+                    currentStory = window.story;
                 }
+
+                if (currentStory) {
+                    if (currentStory.dictionaries) {
+                        await loadDictionary(currentStory.dictionaries);
+                    }
+                    displayStory(currentStory);
+                    document.head.removeChild(script);
+                    console.log(`Story loaded from story_${storyId}.js`);
+                    return;
+                }
+
+                document.head.removeChild(script);
             }
         } catch (error) {
-            console.log('Could not load more.js:', error);
+            console.log(`No story_${storyId}.js file found:`, error);
         }
 
         // Fallback story
+        console.log(`Using fallback story for ID ${storyId}`);
         currentStory = getFallbackStory(storyId);
         if (currentStory.dictionaries || currentStory.dictionary) {
             await loadDictionary(currentStory.dictionaries || currentStory.dictionary);
         }
         displayStory(currentStory);
+        showNotification(`Story ID ${storyId} not found in any database. Showing fallback.`, 'warning');
 
     } catch (error) {
         console.error('Error loading story:', error);
         showNotification('Failed to load story. Using fallback story.', 'error');
-        currentStory = getFallbackStory(fallbackId);
+        currentStory = getFallbackStory(storyId);
         displayStory(currentStory);
     }
 }
+// Call this during initialization if needed
+// debugDatabaseFiles();
 
 // ----------------------------------------------------
 // 🧭 وظائف حفظ واستعادة موقع القراءة
@@ -1512,7 +1643,6 @@ function cleanup() {
 // ----------------------------------------------------
 // 🎯 إعداد Event Listeners
 // ----------------------------------------------------
-
 function setupEventListeners() {
     if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
     if (fontSmaller) fontSmaller.addEventListener('click', () => adjustFontSize(-0.1));
@@ -1520,16 +1650,25 @@ function setupEventListeners() {
     if (fontLarger) fontLarger.addEventListener('click', () => adjustFontSize(0.1));
     if (lineSpacingBtn) lineSpacingBtn.addEventListener('click', toggleLineSpacing);
     if (listenBtn) listenBtn.addEventListener('click', toggleAudio);
+
+    // Font family listener
+    if (fontFamilySelect) {
+        fontFamilySelect.addEventListener('change', function () {
+            changeFontFamily(this.value);
+        });
+    }
+
     if (saveWordBtn) {
         saveWordBtn.addEventListener('click', function () {
             saveCurrentWord(); // Your existing save function
             addXP(3); // Add XP
         });
-    } if (closePopup) closePopup.addEventListener('click', hideDictionary);
+    }
+
+    if (closePopup) closePopup.addEventListener('click', hideDictionary);
     if (modalOverlay) modalOverlay.addEventListener('click', hideDictionary);
     if (backToHome) backToHome.addEventListener('click', () => window.location.href = '../index.html');
     if (exportVocabularyBtn) exportVocabularyBtn.addEventListener('click', exportVocabulary);
-
     if (googleSearchBtn) googleSearchBtn.addEventListener('click', searchOnGoogle);
     if (listenWordBtn) listenWordBtn.addEventListener('click', listenToWord);
     if (removebtn) removebtn.addEventListener("click", removeAll);
@@ -1650,7 +1789,17 @@ document.head.appendChild(style);
 // ----------------------------------------------------
 // 🚀 دالة التهيئة (Initialization)
 // ----------------------------------------------------
+// Function to apply saved font family
+function applyFontFamily() {
+    if (storyText && fontFamily) {
+        storyText.style.fontFamily = fontFamily;
+    }
 
+    // Set the select value
+    if (fontFamilySelect) {
+        fontFamilySelect.value = fontFamily;
+    }
+}
 async function init() {
     try {
 
@@ -1676,7 +1825,7 @@ async function init() {
         setTimeout(() => {
             setupEventListeners();
         }, 100);
-
+        applyFontFamily()
         // Load story
         await loadStory();
 

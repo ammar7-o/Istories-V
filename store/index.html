@@ -28,17 +28,17 @@
                         <ul>
                             <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-store"></i></a>
                             </li>
-                            <li id="toggle-nav"><a href="" title="more" id="toggle-nav"><i id="toggle-nav"
-                                        class="fas fa-bars"></i></a></li>
+                            <li id="toggle-nav"><a title="more" id="toggle-nav"><i class="fas fa-bars"></i></a>
+                            </li>
                             <div id="more" class="more">
                                 <li><a href="../English/index.html" class="nav-btn"><i class="fa-solid fa-home"></i>
                                         Home</a>
                                 </li>
                                 <li><a class="nav-btn" href="../English/vocabulary/index.html"><i
                                             class="fas fa-language"></i>
-                                        Store</a></li>
+                                        Vocabulary</a></li>
                                 <li><a href="../English/practice/index.html" class="nav-btn"><i
-                                            class="fas fa-language"></i> Flashcard</a>
+                                            class="fa-solid fa-layer-group"></i> Flashcard</a>
                                 </li>
 
                             </div>
@@ -206,6 +206,15 @@
         <div class="container">
             <!-- Home Page -->
             <div id="home" class="page active">
+                <section class="hero">
+                    <select name="" id="Select">
+                        <option value="stories.js">English-1</option>
+                        <option value="stories2.js">English-2</option>
+
+                    </select>
+                </section>
+
+
                 <div class="level-filter">
                     <button class="level-btn active" data-level="all">All Levels</button>
                     <button class="level-btn" data-level="beginner">Beginner</button>
@@ -237,26 +246,6 @@
         </div>
     </footer>
 
-
-    <!-- stories -->
-    <!-- <script>
-        // add stories
-
-        var storiesFile = "stories.js";
-        // var storiesFile = prompt("Enter the file:");
-        var s = document.createElement("script");
-        s.src = storiesFile;
-
-        s.onload = function () {
-            console.log(window.storiesData);
-        };
-
-        s.onerror = function () {
-            console.error("Failed to load stories.js");
-        };
-
-        document.head.appendChild(s);
-    </script> -->
     <script>
         // Global variable to track if stories are loaded
         window.storiesLoaded = false;
@@ -272,43 +261,66 @@
             }
         }
 
-        // Load stories
-        var storiesFile = "stories.js";
-        var s = document.createElement("script");
-        s.src = storiesFile;
+        // Function to load stories based on selected file
+        function loadStoriesFile(filename) {
+            // Reset loaded state
+            window.storiesLoaded = false;
 
-        s.onload = function () {
-            console.log('Stories loaded successfully');
-            console.log('Stories data:', window.storiesData);
-            window.storiesLoaded = true;
+            // Remove old script if exists
+            const oldScript = document.querySelector('script[data-stories="true"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
 
-            // Initialize app
-            initAppAfterStoriesLoad();
-        };
+            console.log(`Loading stories from: ${filename}`);
 
-        s.onerror = function () {
-            console.error("Failed to load stories.js");
-            // Use fallback stories
-            window.storiesData = {
-                stories: [
-                    {
-                        id: 1,
-                        title: "The Mysterious Island",
-                        level: "beginner",
-                        cover: "🏝️",
-                        coverType: "emoji",
-                        wordCount: 350,
-                        content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
-                    }
-                ]
+            // Create and load new script
+            const s = document.createElement("script");
+            s.src = filename;
+            s.setAttribute('data-stories', 'true');
+
+            s.onload = function () {
+                console.log('Stories loaded successfully');
+                console.log('Stories data:', window.storiesData);
+                window.storiesLoaded = true;
+                // Initialize app
+                initAppAfterStoriesLoad();
             };
-            window.storiesLoaded = true;
 
-            // Initialize app with fallback
-            initAppAfterStoriesLoad();
-        };
+            s.onerror = function () {
+                console.error(`Failed to load ${filename}`);
+                // Use fallback stories
+                window.storiesData = {
+                    stories: [
+                        {
+                            id: 1,
+                            title: "The Mysterious Island",
+                            level: "beginner",
+                            cover: "🏝️",
+                            coverType: "emoji",
+                            wordCount: 350,
+                            content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+                        }
+                    ]
+                };
+                window.storiesLoaded = true;
+                // Initialize app with fallback
+                initAppAfterStoriesLoad();
+            };
 
-        document.head.appendChild(s);
+            document.head.appendChild(s);
+        }
+
+        // Add event listener to select element
+        document.getElementById('Select').addEventListener('change', function (e) {
+            const selectedFile = e.target.value;
+            console.log(`File changed to: ${selectedFile}`);
+            loadStoriesFile(selectedFile);
+        });
+
+        // Load initial stories based on default selection
+        const initialFile = document.getElementById('Select').value;
+        loadStoriesFile(initialFile);
     </script>
     <!-- <script src="stories.js"></script> -->
 

@@ -384,7 +384,7 @@ window.storiesData = {
 
       "title": "The Mysterious Cafe",
       "level": "beginner",
-      "levelcefr": "beginner",
+      "levelcefr": "A1",
       "cover": "https://cdn.pixabay.com/photo/2014/09/17/20/26/restaurant-449952_960_720.jpg",
       "coverType": "image",
       "sound": "",

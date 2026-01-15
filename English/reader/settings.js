@@ -44,3 +44,21 @@ ttsBtn.addEventListener("click", function () {
         active = false;
     }
 });
+
+// Function to change font family
+function changeFontFamily(family) {
+    fontFamily = family;
+    
+    // Apply to story text
+    if (storyText) {
+        storyText.style.fontFamily = family;
+    }
+    
+   
+    // Save to localStorage
+    localStorage.setItem('fontFamily', family);
+    
+    // Show notification
+    showNotification(`Font changed to ${family}`, 'success');
+}
+
