@@ -825,9 +825,7 @@ function showRecentStories() {
                     ` : ''}
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-secondary" onclick="closeRecentStoriesModal()">
-                        <i class="fas fa-times"></i> Close
-                    </button>
+                 
                     <button class="btn-primary" onclick="clearReadingHistory()">
                         <i class="fas fa-trash"></i> Clear History
                     </button>

@@ -2,22 +2,45 @@
     --primary: #4f46e5;
     --primary-dark: #4338ca;
     --secondary: #10b981;
+    --accent: #f59e0b;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --warning-light: rgba(245, 158, 11, 0.1);
+    --success: #10b981;
     --text: #1f2937;
     --text-light: #6b7280;
+    --text-lighter: #9ca3af;
     --bg: #ffffff;
     --bg-secondary: #f9fafb;
     --border: #e5e7eb;
+    --border-light: #f3f4f6;
+    --hover: #f9fafb;
+    --code-bg: #f7f7f7;
+    --input-bg: #ffffff;
+    --card-bg: #ffffff;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --radius: 8px;
+    --radius: 12px;
     --radius-sm: 8px;
 }
 
 .dark-mode {
+    --primary-dark: #4f46e5;
+    --accent: #f59e0b;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --warning-light: rgba(217, 119, 6, 0.1);
+    --success: #10b981;
     --text: #f9fafb;
     --text-light: #d1d5db;
+    --text-lighter: #9ca3af;
     --bg: #111827;
     --bg-secondary: #1f2937;
     --border: #374151;
+    --border-light: #4b5563;
+    --hover: #1f2937;
+    --code-bg: #2d2d2d;
+    --input-bg: #1f2937;
+    --card-bg: #1f2937;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
 
@@ -555,10 +578,6 @@ nav a.active {
     color: white;
 }
 
-.danger-btn {
-    background: var(--danger);
-    color: white;
-}
 
 .toggle-btn:hover,
 .action-btn:hover,
@@ -808,7 +827,7 @@ nav a.active {
 
 .cta-button {
     background-color: white;
-    color: var(--primary);
+    color: black;
     border: none;
     padding: 12px 30px;
     border-radius: 50px;
@@ -816,6 +835,11 @@ nav a.active {
     font-weight: 600;
     cursor: pointer;
     box-shadow: var(--shadow);
+}
+
+.dark-mode .cta-button {
+    background-color: #111827;
+    color: white;
 }
 
 .cta-button:hover {
@@ -1523,7 +1547,7 @@ footer {
     justify-content: center;
     gap: 5px;
     /* From https://css.glass */
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(20, 20, 20, 0.342);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
@@ -1534,6 +1558,11 @@ footer {
     text-align: center;
     transition: all 0.3s ease;
     border: 1px solid transparent;
+}
+
+.dark-mode .stat-item {
+    background: rgba(0, 0, 0, 0.425);
+
 }
 
 .stat-item:hover {
@@ -1561,12 +1590,14 @@ footer {
 }
 
 .Streak {
-    color: red;
+    color: rgb(255, 102, 0);
 }
 
 .words-u {
-    color: blue;
+    color: rgb(11, 186, 255);
+    text-shadow: 2px 2px 10px black;
 }
+
 .stat-label {
     font-size: 12px;
     color: var(--text-secondary);
@@ -1578,7 +1609,7 @@ footer {
 
 select {
     background-color: white;
-    color: var(--primary);
+    color: black;
     border: none;
     padding: 12px 30px;
     border-radius: 50px;
@@ -1827,6 +1858,356 @@ select:disabled {
     transform: translateY(0);
 }
 
+/* ===========add css popup ===================*/
+
+/* ============================================
+   CUSTOM CSS MODAL - IMPROVED DESIGN
+   ============================================ */
+
+/* Modal overlay */
+
+
+/* ================================
+   BUTTON STYLES - ADD THIS SECTION
+   ================================ */
+
+/* Base button class */
+.btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    min-width: 100px !important;
+}
+
+/* Button variants */
+.btn-primary {
+    background: #4f46e5 !important;
+    color: white !important;
+}
+
+.btn-secondary {
+    background: #6b7280 !important;
+    color: white !important;
+}
+
+.btn-danger {
+    background: #ef4444 !important;
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 50px;
+    justify-content: center;
+}
+
+.btn-success {
+    background: #10b981 !important;
+    color: white !important;
+}
+
+/* Hover effects */
+.btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+    opacity: 0.9 !important;
+}
+
+/* Active state */
+.btn:active {
+    transform: translateY(0) !important;
+}
+
+/* ================================
+   FIX CSS-ACTIONS BUTTONS
+   ================================ */
+
+/* Remove the green background from .css-actions */
+.css-actions {
+    width: 100%;
+    display: flex !important;
+    gap: 10px !important;
+    flex-wrap: wrap;
+    margin-bottom: 15px !important;
+    background-color: transparent !important;
+    /* REMOVE THE GREEN */
+    z-index: 90000 !important;
+    justify-content: center;
+}
+
+
+
+/* Custom CSS Modal Styles */
+.custom-css-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    background: var(--background);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.custom-css-modal.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.custom-css-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    border-radius: 12px 12px 0 0;
+}
+
+.custom-css-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-css-header h3 i {
+    color: var(--primary);
+}
+
+.close-modal {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.close-modal:hover {
+    background: var(--hover);
+    color: var(--text);
+}
+
+.custom-css-body {
+    padding: 20px;
+    background-color: rgb(165, 165, 165);
+    flex: 1;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.dark-mode .custom-css-body {
+    background-color: #111827;
+}
+
+.css-editor-header {
+    margin-bottom: 15px;
+}
+
+.css-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.css-examples small {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.css-examples code {
+    background: var(--code-bg);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: black;
+    border: 1px solid var(--border);
+}
+
+.dark-mode .css-examples code {
+    color: white;
+}
+
+#customCSSInput {
+    width: 100%;
+    flex: 1;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    margin-bottom: 15px;
+    transition: border-color 0.3s;
+}
+
+#customCSSInput:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.1);
+}
+
+.css-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    background-color: green;
+    z-index: 90000;
+}
+
+.css-actions .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+.css-info {
+    padding: 10px;
+    background: var(--hover);
+    border-radius: 6px;
+    border-left: 3px solid var(--warning);
+}
+
+.css-info small {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.css-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1099;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.css-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Reset confirmation modal */
+.reset-confirm-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 500px;
+    background: var(--background);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.reset-confirm-modal.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.reset-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--warning-light);
+    border-radius: 12px 12px 0 0;
+}
+
+.reset-modal-header h3 {
+    margin: 0;
+    color: var(--warning);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reset-modal-body {
+    padding: 20px;
+}
+
+.reset-modal-body p {
+    margin: 0 0 15px 0;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.reset-warning {
+    background: var(--warning-light);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--warning);
+}
+
+.reset-warning i {
+    color: var(--warning);
+    margin-right: 8px;
+}
+
+.reset-warning span {
+    color: white;
+    font-weight: 600;
+}
+
+.reset-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Button danger style */
+.btn-danger {
+    background: var(--danger) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-danger:hover {
+    background: #dc2626 !important;
+    transform: translateY(-2px);
+}
 
 
 /* ============ RECENT STORIES MODAL STYLES ============ */
@@ -2158,6 +2539,10 @@ select:disabled {
 
     }
 
+    .css-actions {
+        flex-wrap: wrap;
+    }
+
     .modal-body {
         padding: 0px;
     }
@@ -2172,7 +2557,13 @@ select:disabled {
     }
 
     .hero-btns {
-        flex-direction: column;
+        padding: 0 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    select {
+        font-size: 0.9rem;
     }
 
     .settings-header {
@@ -2187,6 +2578,11 @@ select:disabled {
 
         align-items: flex-start;
         gap: 10px;
+    }
+
+
+    .cta-button {
+        font-size: 0.9rem;
     }
 
     .level-filter {

@@ -12,8 +12,10 @@
     <link rel="icon" type="image/png" href="../icon.png">
     <meta property="og:title" content="Istories">
     <meta property="og:description" content="Learn Languages Through Interactive Stories.">
-    <meta property="og:image" content="../icon.png">
+    <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+
 </head>
 
 <body>
@@ -175,7 +177,7 @@
             <div class="settings-section">
                 <h3><i class="fas fa-database"></i> Data Management</h3>
 
-              
+
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Export All user stories</span>
@@ -192,6 +194,31 @@
                     </div>
                     <button onclick="deleteAllUserStories()" class="danger-btn" id="delete-all-stories-btn">
                         <i class="fas fa-trash-alt"></i> Delete All
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم التخصيص المتقدم -->
+            <div class="settings-section">
+                <h3><i class="fas fa-code"></i> Advanced Customization</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Custom CSS</span>
+                        <span class="setting-desc">Add your own CSS styles</span>
+                    </div>
+                    <button class="danger-btn" id="showCustomCSS">
+                        <i class="fas fa-code"></i> Edit Custom CSS
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Reset All Settings</span>
+                        <span class="setting-desc">Restore default settings</span>
+                    </div>
+                    <button class=" btn-danger" id="resetAllSettings">
+                        <i class="fas fa-redo"></i> Reset
                     </button>
                 </div>
             </div>
@@ -218,7 +245,7 @@
                         <span class="setting-label">Refresh App</span>
                         <span class="setting-desc">Reload all data</span>
                     </div>
-                    <button class="action-btn" id="refresh-app">
+                    <button onclick="Refresh()" class="action-btn" id="refresh-app">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
@@ -238,9 +265,9 @@
                         <!-- Photo -->
                         <div class="user-profile">
 
-                            <img src="../icon.png" alt="Profile Picture" id="profile-pic">
+                            <img src="../imges/user.jpg" alt="Profile Picture" id="profile-pic">
                             <!-- Name -->
-                            <h2 id="profile-name">Ammar Chacal</h2>
+                            <h2 id="profile-name">Your name</h2>
                         </div>
 
 
@@ -276,11 +303,11 @@
                         <button class="cta-button" onclick="showRecentStories()">
                             <i class="fas fa-history"></i> Recent Stories
                         </button>
-                         <select name="" id="Select">
-                        <option value="database/main.js">English-1</option>
-                        <option value="database/more.js">English-2</option>
+                        <select name="" id="Select">
+                            <option value="database/main.js">English-1</option>
+                            <option value="database/more.js">English-2</option>
 
-                    </select>
+                        </select>
                     </div>
 
                 </section>
@@ -854,7 +881,49 @@ Enter one dictionary path per line"></textarea>
         </div>
     </main>
 
+    <!-- Custom CSS Modal (add at bottom of settings page) -->
+    <div class="custom-css-modal" id="customCSSModal">
+        <div class="custom-css-header">
+            <h3><i class="fas fa-code"></i> Custom CSS Editor</h3>
+            <button class="close-modal" id="closeCustomCSS">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="custom-css-body">
+            <div class="css-actions">
+                <button class="ntb btn btn-secondary" id="previewCSS">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class="ntb btn btn-primary" id="saveCustomCSS">
+                    <i class="fas fa-save"></i> Save CSS
+                </button>
+                <button class="ntb btn btn-danger" id="clearCustomCSS">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+            <div class="css-editor-header">
+                <div class="css-examples">
+                    <small>Examples:</small>
+                    <code>.story-text { color: #333; }</code>
+                    <code>.word:hover { background: yellow; }</code>
+                    <code>body { font-size: 18px; }</code>
+                </div>
+            </div>
+            <textarea id="customCSSInput" placeholder="Enter your custom CSS here... Example: 
+.story-card:has(.user-story-badge) {
+    display: none;
+}
 
+" rows="15"></textarea>
+
+
+
+            <div class="css-info">
+                <small><i class="fas fa-info-circle"></i> Your CSS will be applied to the entire application.
+                    Use with caution.</small>
+            </div>
+        </div>
+    </div>
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -869,7 +938,7 @@ Enter one dictionary path per line"></textarea>
             </div>
         </div>
     </footer>
-       <script>
+    <script>
         // Global variable to track if stories are loaded
         window.storiesLoaded = false;
         window.storiesData = [];
@@ -953,6 +1022,7 @@ Enter one dictionary path per line"></textarea>
     <script src="other.js"></script>
     <script src="main.js"></script>
     <script src="addstories.js"></script>
+    <script src="custumecss.js"></script>
 
 
 </body>

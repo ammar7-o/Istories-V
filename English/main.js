@@ -98,10 +98,10 @@ function init() {
     if (selectedSecondaryColor) {
         applySecondaryColor(selectedSecondaryColor);
     }
- 
+
     // Initialize user stats
     initUserStats();
-    
+
     // Check for daily bonus
     checkDailyBonus();
     // STEP 4: Initialize color selectors
@@ -115,9 +115,9 @@ function init() {
     console.log('Step 4: Rendering UI...');
     renderStories();
     setupSearch();
-  
 
-    
+
+
 
     // STEP 7: Set up event listeners
     console.log('Step 6: Setting up event listeners...');
@@ -249,9 +249,11 @@ function switchPage(page) {
         }
     });
 
-    
-}
 
+}
+function Refresh() {
+    window.location.reload()
+}
 // Open story in a new page WITH story title
 function openStoryInNewPage(storyId) {
     // Find the story in all available sources

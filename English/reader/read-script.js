@@ -1085,23 +1085,6 @@ function translateOnGoogle() {
     window.open(translateUrl, '_blank');
 }
 
-function updateVocabularyStats() {
-    const totalWords = document.getElementById('totalWords');
-    const masteredWords = document.getElementById('masteredWords');
-    const practiceDue = document.getElementById('practiceDue');
-    const readingStreak = document.getElementById('readingStreak');
-
-    if (totalWords) totalWords.textContent = savedWords.length;
-    if (masteredWords) masteredWords.textContent = savedWords.filter(w => w.status === 'mastered' || w.status === 'known').length;
-
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-    const dueCount = savedWords.filter(w => new Date(w.added || w.date) > threeDaysAgo).length;
-    if (practiceDue) practiceDue.textContent = dueCount;
-
-    const streak = Math.min(30, savedWords.length);
-    if (readingStreak) readingStreak.textContent = streak;
-}
 
 // Render vocabulary list - compatible with both formats
 function renderVocabulary() {
@@ -1118,7 +1101,17 @@ function renderVocabulary() {
         return;
     }
 
-    savedWords.forEach((word, index) => {
+    // Create a copy to avoid mutating original array
+    const wordsToDisplay = [...savedWords];
+
+    // Sort by date (newest first) - if you want explicit sorting
+    wordsToDisplay.sort((a, b) => {
+        const dateA = new Date(a.addedDate || a.added || a.date || 0);
+        const dateB = new Date(b.addedDate || b.added || b.date || 0);
+        return dateB - dateA; // Newest first
+    });
+
+    wordsToDisplay.forEach((word, displayIndex) => {
         const item = document.createElement('div');
         item.className = 'vocabulary-item';
 
@@ -1127,10 +1120,10 @@ function renderVocabulary() {
         const translation = word.translation || '';
         const story = word.story || '';
 
-        // Handle date field - imported data uses 'addedDate', existing uses 'added' or 'date'
-        const addedDate = word.addedDate || word.added || word.date || new Date().toISOString();
+        // Get the date with better fallback
+        const addedDate = getVocabularyDate(word);
 
-        // Check if translation exists (imported data always has translation)
+        // Check if translation exists
         const hasTranslation = translation && translation !== displayWord;
 
         // Check status
@@ -1151,6 +1144,12 @@ function renderVocabulary() {
             ? `<span class="user-story-badge-small" style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Your Story</span>`
             : '';
 
+        // Find the original index in savedWords array
+        const originalIndex = savedWords.findIndex(w =>
+            (w.word === word.word && w.translation === word.translation) ||
+            (w.originalWord === word.originalWord && w.translation === word.translation)
+        );
+
         item.innerHTML = `
             <div class="word-info">
                 <div class="word-main">
@@ -1162,14 +1161,14 @@ function renderVocabulary() {
                 </div>
                 ${story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${story}</div>` : ''}
                 <div class="word-date" style="font-size: 0.7rem; color: var(--text-lighter); margin-top: 3px;">
-                    Added: ${formatVocabularyDate(addedDate)}
+                    Added: ${formatDateForDisplay(addedDate)}
                 </div>
             </div>
             <div class="word-actions">
-                <button title="Mark as mastered" data-index="${index}">
+                <button title="Mark as mastered" data-index="${originalIndex}">
                     <i class="fas fa-check"></i>
                 </button>
-                <button title="Delete" data-index="${index}">
+                <button title="Delete" data-index="${originalIndex}">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -1189,27 +1188,52 @@ function renderVocabulary() {
         });
     });
 }
+// Helper function to extract date from word object
+function getVocabularyDate(word) {
+    // Try all possible date field names in order of priority
+    if (word.addedDate) return word.addedDate;
+    if (word.dateAdded) return word.dateAdded;
+    if (word.added) return word.added;
+    if (word.date) return word.date;
 
-// Helper function to format date properly
-function formatVocabularyDate(dateValue) {
-    if (!dateValue) return 'Unknown date';
+    // If no date field exists, create one
+    const newDate = new Date().toISOString();
+
+    // Update the word object with the new date
+    word.addedDate = newDate;
+
+    // Save back to localStorage if needed
+    setTimeout(() => {
+        localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    }, 100);
+
+    return newDate;
+}
+
+// Format date for display - SIMPLER VERSION
+function formatDateForDisplay(dateString) {
+    if (!dateString) return 'Unknown date';
 
     try {
-        const date = new Date(dateValue);
+        const date = new Date(dateString);
         if (isNaN(date.getTime())) {
+            // Try to extract just the date part from ISO string
+            const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
+            if (dateMatch) {
+                const simpleDate = new Date(dateMatch[1]);
+                if (!isNaN(simpleDate.getTime())) {
+                    return simpleDate.toLocaleDateString();
+                }
+            }
             return 'Invalid date';
         }
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
+        return date.toLocaleDateString();
     } catch (error) {
-        return 'Invalid date';
+        return 'Date error';
     }
 }
 
-// Also update your saveWord function to handle both formats
+// Save word to vocabulary
 function saveWord(word, translation, story = '', hasTranslation = true) {
     // Check if word already exists
     const existingIndex = savedWords.findIndex(w =>
@@ -1218,8 +1242,8 @@ function saveWord(word, translation, story = '', hasTranslation = true) {
     );
 
     if (existingIndex === -1) {
-        // Add new word with both field names for compatibility
-        savedWords.push({
+        // Add new word at the BEGINNING of the array (newest first)
+        savedWords.unshift({
             word: word,
             originalWord: word,
             translation: translation,
@@ -1245,6 +1269,25 @@ function saveWord(word, translation, story = '', hasTranslation = true) {
 
     showNotification('Word saved to vocabulary!', 'success');
 }
+
+function updateVocabularyStats() {
+    const totalWords = document.getElementById('totalWords');
+    const masteredWords = document.getElementById('masteredWords');
+    const practiceDue = document.getElementById('practiceDue');
+    const readingStreak = document.getElementById('readingStreak');
+
+    if (totalWords) totalWords.textContent = savedWords.length;
+    if (masteredWords) masteredWords.textContent = savedWords.filter(w => w.status === 'mastered' || w.status === 'known').length;
+
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    const dueCount = savedWords.filter(w => new Date(w.added || w.date) > threeDaysAgo).length;
+    if (practiceDue) practiceDue.textContent = dueCount;
+
+    const streak = Math.min(30, savedWords.length);
+    if (readingStreak) readingStreak.textContent = streak;
+}
+
 function markAsMastered(index) {
     if (index < 0 || index >= savedWords.length) return;
 
@@ -1264,27 +1307,26 @@ function markAsMastered(index) {
 
     // Only add XP if it wasn't already mastered
     if (!wasAlreadyMastered) {
-        addXP(3, 'Mastering word'); // Use 15 XP as in your original code
-        showNotification(`"${word}" marked as mastered! +15 XP`, 'success');
+        addXP(3, 'Mastering word');
     } else {
         // Already mastered, just show message without XP
         showNotification(`"${word}" is already mastered!`, 'info');
     }
 }
 
+// Delete word from vocabulary
 function deleteWord(index) {
     if (index < 0 || index >= savedWords.length) return;
 
-    const word = savedWords[index].originalWord || savedWords[index].word;
-
-    // Remove the word immediately without confirmation
+    const word = savedWords[index].word;
     savedWords.splice(index, 1);
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    updateVocabularyStats();
     renderVocabulary();
+    updateStats();
+
+    // Show deletion confirmation
     showNotification(`"${word}" removed from vocabulary`);
 }
-
 // copy button
 const copyBtn = document.getElementById("copy");
 if (copyBtn) {

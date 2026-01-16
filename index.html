@@ -10,8 +10,10 @@
   <link rel="manifest" href="manifest.json">
   <meta property="og:title" content="Istories">
   <meta property="og:description" content="Learn Languages Through Interactive Stories.">
-  <meta property="og:image" content="icon.png">
+  <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+
   <style>
     :root {
       --primary: #4f46e5;
@@ -236,6 +238,7 @@
         transform: translateX(100%);
         opacity: 0;
       }
+
       to {
         transform: translateX(0);
         opacity: 1;
@@ -247,6 +250,7 @@
         transform: translateX(0);
         opacity: 1;
       }
+
       to {
         transform: translateX(100%);
         opacity: 0;
@@ -312,7 +316,7 @@
 
   <script>
     // SIMPLIFIED VERSION - Secondary color will work now!
-    
+
     // Load saved colors or use defaults
     let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
     let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981'; // Changed to match CSS
@@ -362,13 +366,13 @@
 
     function applyTheme() {
       const savedTheme = localStorage.getItem('theme') || 'light';
-      
+
       if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
       } else {
         document.body.classList.remove('dark-mode');
       }
-      
+
       // Update theme toggle icon
       if (themeToggle) {
         const themeIcon = themeToggle.querySelector('i');
@@ -376,7 +380,7 @@
           themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
       }
-      
+
       // Apply both colors
       applyPrimaryColor(selectedColor);
       applySecondaryColor(selectedSecondaryColor);
@@ -428,17 +432,17 @@
     }
 
     // Initialize everything when page loads
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       console.log('Page loaded, initializing colors...');
-      
+
       // Apply theme first
       applyTheme();
-      
+
       // Add theme toggle event listener
       themeToggle.addEventListener('click', toggleTheme);
-      
-    
-      
+
+
+
       // Log the current colors to console
       setTimeout(() => {
         const root = document.documentElement;
@@ -450,34 +454,35 @@
     });
   </script>
   <script>
-  if ('serviceWorker' in navigator) {
-    // تسجيل الملف
-    navigator.serviceWorker.register(`${BASE}/sw.js`).then(reg => {
-      
-      // التحقق مما إذا كان هناك تحديث ينتظر التفعيل
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // هنا نكتشف وجود تحديث جديد
-            if (confirm("يوجد تحديث جديد للموقع، هل تريد التحميل الآن؟")) {
-              window.location.reload();
-            }
-          }
-        });
-      });
-    }).catch(err => console.log('Service Worker Failed', err));
+    if ('serviceWorker' in navigator) {
+      // تسجيل الملف
+      navigator.serviceWorker.register(`${BASE}/sw.js`).then(reg => {
 
-    // كود لضمان إعادة التحميل بمجرد تفعيل الـ SW الجديد
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
-        window.location.reload();
-        refreshing = true;
-      }
-    });
-  }
-</script>
+        // التحقق مما إذا كان هناك تحديث ينتظر التفعيل
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // هنا نكتشف وجود تحديث جديد
+              if (confirm("يوجد تحديث جديد للموقع، هل تريد التحميل الآن؟")) {
+                window.location.reload();
+              }
+            }
+          });
+        });
+      }).catch(err => console.log('Service Worker Failed', err));
+
+      // كود لضمان إعادة التحميل بمجرد تفعيل الـ SW الجديد
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          window.location.reload();
+          refreshing = true;
+        }
+      });
+    }
+  </script>
 
 </body>
+
 </html>

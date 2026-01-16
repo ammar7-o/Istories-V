@@ -1,68 +1,3 @@
-// settings
-const settingsButton = document.getElementById("settings-button");
-const settingsPage = document.getElementById("settings-page");
-const closeSettings = document.getElementById("close-settings");
-const settingsOverlay = document.getElementById("settings-overlay");
-
-settingsButton.addEventListener("click", function () {
-    settingsPage.classList.toggle("open");
-    settingsOverlay.classList.add("active");
-});
-
-closeSettings.addEventListener("click", function () {
-    settingsPage.classList.remove("open");
-    settingsOverlay.classList.remove("active");
-});
-// Close settings on Escape key
-document.addEventListener("keydown", function (e) {
-    if (e.key === 'Escape' && settingsPage.classList.contains("open")) {
-        settingsPage.classList.remove("open");
-        settingsOverlay.classList.remove("active");
-    }
-});
-settingsOverlay.addEventListener("click", function () {
-    settingsPage.classList.remove("open");
-    settingsOverlay.classList.remove("active");
-});
-
-const ttsBtn = document.getElementById("tts-toggle");
-const sound = document.getElementById("sound");
-let active = false; // Start with TTS disabled
-
-ttsBtn.addEventListener("click", function () {
-    if (active === false) {
-        // Enable TTS
-        sound.classList.add("tts-open");
-        ttsBtn.classList.add("tts-active");
-        ttsBtn.innerHTML = `<i class="fas fa-volume-up"></i> Disable`;
-        active = true;
-    } else {
-        // Disable TTS
-        sound.classList.remove("tts-open");
-        ttsBtn.classList.remove("tts-active");
-        ttsBtn.innerHTML = `<i class="fas fa-volume-up"></i> Enable`;
-        active = false;
-    }
-});
-
-// Function to change font family
-function changeFontFamily(family) {
-    fontFamily = family;
-
-    // Apply to story text
-    if (storyText) {
-        storyText.style.fontFamily = family;
-    }
-
-
-    // Save to localStorage
-    localStorage.setItem('fontFamily', family);
-
-    // Show notification
-    showNotification(`Font changed to ${family}`, 'success');
-}
-
-
 
 
 
@@ -80,7 +15,7 @@ const resetAllSettingsBtn = document.getElementById('resetAllSettings');
 
 // Load saved custom CSS
 function loadCustomCSS() {
-    const savedCSS = localStorage.getItem('customCSS') || '';
+    const savedCSS = localStorage.getItem('customCSSHome') || '';
     customCSSInput.value = savedCSS;
     applyCustomCSS(savedCSS);
 }
@@ -132,7 +67,7 @@ function previewCustomCSS() {
 // Save custom CSS
 function saveCustomCSS() {
     const css = customCSSInput.value.trim();
-    localStorage.setItem('customCSS', css);
+    localStorage.setItem('customCSSHome', css);
     applyCustomCSS(css);
     showNotification('Custom CSS saved successfully!', 'success');
     closeCustomCSSModal();
@@ -142,7 +77,7 @@ function saveCustomCSS() {
 function clearCustomCSS() {
     if (confirm('Are you sure you want to clear all custom CSS?')) {
         customCSSInput.value = '';
-        localStorage.removeItem('customCSS');
+        localStorage.removeItem('customCSSHome');
 
         // Remove custom style element
         const existingStyle = document.getElementById('custom-css-style');
@@ -187,8 +122,8 @@ function resetAllSettings() {
                 <i class="fas fa-exclamation-circle"></i>
                 <span>This action cannot be undone!</span>
             </div>
-            <p>Are you sure you want to reset ALL settings to default? This will reset:</p>
-            <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--text-light);">
+            <p style="color:white;">Are you sure you want to reset ALL settings to default? This will reset:</p>
+            <ul style="margin-left: 20px; margin-bottom: 20px; color: white;">
                 <li>Theme and colors</li>
                 <li>Font settings</li>
                 <li>Custom CSS</li>
@@ -242,13 +177,11 @@ function resetAllSettings() {
         }, 300);
     });
 }
-function Refresh() {
-    window.location.reload()
-}
+
 // Perform the actual reset
 function performFullReset() {
     // Ask about vocabulary
-    const keepVocabulary = confirm('Do you want to keep your vocabulary words?');
+    const keepVocabulary = confirm('Do you want to reset all style?');
 
     // Reset all localStorage items
     const defaultSettings = {
@@ -257,10 +190,6 @@ function performFullReset() {
         selectedColor: '#4a6cf7',
         selectedSecondaryColor: '#10b981',
 
-        // Font
-        fontFamily: 'sans-serif',
-        fontSize: 1.2,
-        lineHeight: 1.8,
 
         // Other
         customCSS: '',
@@ -271,9 +200,7 @@ function performFullReset() {
     localStorage.setItem('theme', defaultSettings.theme);
     localStorage.setItem('selectedColor', defaultSettings.selectedColor);
     localStorage.setItem('selectedSecondaryColor', defaultSettings.selectedSecondaryColor);
-    localStorage.setItem('fontFamily', defaultSettings.fontFamily);
-    localStorage.setItem('customCSS', defaultSettings.customCSS);
-    localStorage.setItem('ttsEnabled', defaultSettings.ttsEnabled);
+    localStorage.setItem('customCSSHome', defaultSettings.customCSS);
 
     // Remove reading position
     localStorage.removeItem('readingPosition');

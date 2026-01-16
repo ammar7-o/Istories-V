@@ -49,7 +49,8 @@ function scrollToTop() {
 // Initialize the app
 function init() {
     console.log('App initialization started...');
-
+    // Auto lazy load ALL images
+    document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
     // Load stories from external file
     if (typeof window.storiesData !== 'undefined') {
         stories = window.storiesData.stories || window.storiesData;
@@ -1829,7 +1830,9 @@ function processStoryData(storyData, fileName) {
     // Open the story in reader
     openUserStoryInReader(storyId);
 }
-
+function Refresh() {
+    window.location.reload()
+}
 function deleteUserStory(index) {
     if (confirm('Are you sure you want to delete this story? This will also delete all associated translations. This action cannot be undone.')) {
         const storyId = userStories[index].id;

@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Istories - flashcards</title>
+    <title>IStories - Vocabulary Practice</title>
     <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-
     <link rel="icon" type="image/png" href="../icon.png">
-    <meta property="og:title" content="Istories">
-    <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="IStories - Vocabulary Practice">
+    <meta property="og:description" content="Learn Languages Through Interactive Quizzes">
     <meta property="og:image" content="../icon.png">
     <meta property="og:type" content="website">
 </head>
@@ -21,44 +22,60 @@
             <div class="header-content">
                 <div class="left">
                     <a href="../index.html" class="logo">
-                        <img src="../../icon.svg" alt="">
+                        <img src="../../icon.svg" alt="IStories Logo">
                         <span>IStories</span>
                     </a>
                     <nav>
                         <ul>
-                            <li> <a href="#" class="nav-btn active" title="Vocabulary"><i
-                                        class="fa-solid fa-layer-group" data-page="home"></i> </a>
+                            <li>
+                                <a href="#" class="nav-btn active" title="Vocabulary" data-page="home">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </a>
                             </li>
-                            <li><a href="#" title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
+                            <li>
+                                <a href="#" title="more" id="toggle-nav">
+                                    <i class="fas fa-bars"></i>
+                                </a>
+                            </li>
                             <div id="more" class="more">
-                                <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i> Home</a>
+                                <li>
+                                    <a href="../index.html" class="nav-btn">
+                                        <i class="fa-solid fa-home"></i> Home
+                                    </a>
                                 </li>
-                                <li><a class="nav-btn" href="../../store/index.html"><i class="fas fa-store"></i>
-                                        Store</a></li>
-                                <li><a href="../vocabulary/index.html" class="nav-btn"><i class="fas fa-language"></i>
-                                        Flashcard</a>
+                                <li>
+                                    <a class="nav-btn" href="../../store/index.html">
+                                        <i class="fas fa-store"></i> Store
+                                    </a>
                                 </li>
-
+                                <li>
+                                    <a href="../vocabulary/index.html" class="nav-btn">
+                                        <i class="fas fa-language"></i> Flashcard
+                                    </a>
+                                </li>
                             </div>
-
-
-
                         </ul>
                     </nav>
+                    <select name="" id="quizfile">
+                        <option value="main.json">main.json</option>
+                        <option value="quizzes_index.json">main2.json</option>
+
+                       
+                    </select>
                 </div>
                 <div class="header-actions">
-                    <!--search bar-->
                     <div class="space"></div>
                     <div class="settings-container">
                         <button class="settings-btn" id="settings-button">
                             <i class="fas fa-cog"></i>
                         </button>
-
-
                     </div>
                 </div>
             </div>
+        </div>
     </header>
+
+    <!-- Settings Page -->
     <div class="settings-page" id="settings-page">
         <div class="settings-header">
             <h2><i class="fas fa-cog"></i> Settings</h2>
@@ -66,9 +83,8 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-
         <div class="settings-content">
-            <!-- قسم المظهر -->
+            <!-- Appearance Section -->
             <div class="settings-section">
                 <h3><i class="fas fa-palette"></i> Appearance</h3>
 
@@ -77,7 +93,6 @@
                         <span class="setting-label">Theme</span>
                         <span class="setting-desc">Light or Dark mode</span>
                     </div>
-                    <!-- Theme toggle button -->
                     <button class="theme-toggle" id="themeToggle">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -91,7 +106,6 @@
                     </div>
                     <div class="color-selector">
                         <div class="color-options">
-                            <!-- Default Colors -->
                             <div class="color-option active" data-color="#4a6cf7" style="background-color: #4a6cf7;"
                                 title="Blue">
                                 <i class="fas fa-check"></i>
@@ -108,22 +122,19 @@
                                 title="Orange">
                                 <i class="fas fa-check"></i>
                             </div>
-
                             <div class="color-option" data-color="#009688" style="background-color: #009688;"
                                 title="Teal">
                                 <i class="fas fa-check"></i>
                             </div>
-
-                            <!-- Custom Color Picker -->
                             <div class="color-option custom-color" title="Custom Color">
                                 <i class="fas fa-palette"></i>
                                 <input type="color" id="customColorPicker" class="custom-color-input">
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <!-- Secondary Color Setting -->
+
+                <!-- Secondary Color Selector -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Secondary Color</span>
@@ -131,8 +142,7 @@
                     </div>
                     <div class="color-selector secondary-selector">
                         <div class="color-options">
-                            <!-- Default Secondary Colors -->
-                            <div class="secondary-color active" data-color="#10b981" style="background-color:  #10b981;"
+                            <div class="secondary-color active" data-color="#10b981" style="background-color: #10b981;"
                                 title="teal">
                                 <i class="fas fa-check"></i>
                             </div>
@@ -152,8 +162,6 @@
                                 title="Orange">
                                 <i class="fas fa-check"></i>
                             </div>
-
-                            <!-- Custom Secondary Color Picker -->
                             <div class="color-option secondary-color custom-color" title="Custom Secondary Color">
                                 <i class="fas fa-palette"></i>
                                 <input type="color" id="customSecondaryColorPicker" class="custom-color-input">
@@ -163,10 +171,7 @@
                 </div>
             </div>
 
-
-
-
-            <!-- قسم التطبيق -->
+            <!-- About Section -->
             <div class="settings-section">
                 <h3><i class="fas fa-info-circle"></i> About</h3>
 
@@ -183,6 +188,7 @@
                         <span class="setting-desc">Ammar chacal</span>
                     </div>
                 </div>
+
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Refresh App</span>
@@ -202,52 +208,129 @@
         <div class="container">
             <!-- Home Page -->
             <div id="home" class="page active">
+                <!-- Quiz Header -->
+                <div class="quiz-header">
+                    <h1>Vocabulary Practice</h1>
+                    <p>Test your knowledge with interactive quizzes from the database</p>
+
+                    <!-- Quiz Selection -->
+                    <div class="quiz-selection">
+                        <div class="select-container">
+                            <label for="quizSelect">
+                                <i class="fas fa-list"></i> Select Quiz
+                            </label>
+                            <select id="quizSelect" class="quiz-select">
+                                <option value="">Loading quizzes...</option>
+                            </select>
+                        </div>
+
+                        <div class="quiz-info" id="quizInfo">
+                            <!-- Quiz info will be displayed here -->
+                        </div>
+                    </div>
+                    <div class="quiz-screen">
+                        <!-- Quiz Stats -->
+                        <div class="quiz-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="quizScore">0</div>
+                                    <div class="stat-label">Score</div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="quizStreak">0</div>
+                                    <div class="stat-label">Streak</div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="quizProgress">0/0</div>
+                                    <div class="stat-label">Progress</div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="quizTime">00:00</div>
+                                    <div class="stat-label">Time</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quiz-practice">
+                            <!-- Quiz Container -->
+                            <div class="quiz-container" id="quizContainer">
+                                <!-- Initial state -->
+                                <div class="quiz-welcome">
+                                    <div class="welcome-icon">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <h3>Ready to Test Your Knowledge?</h3>
+                                    <p>Select a quiz from the dropdown menu above and click "Start Quiz" to begin!</p>
+                                    <p class="quiz-tips">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <strong>Tips:</strong>
+                                        <br>• Multiple choice questions test your vocabulary
+                                        <br>• Translation questions help with recall
+                                        <br>• Complete quizzes to earn XP and level up
+                                    </p>
+                                </div>
+
+                            </div>
+                            <!-- Quiz Controls -->
+                            <div class="quiz-controls">
+                                <div class="quiz-actions" id="quizActions" style="display: none;">
+                                    <button id="nextQuestion" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-right"></i> Next Question
+                                    </button>
+                                    <button id="endQuiz" class="btn btn-danger">
+                                        <i class="fas fa-stop"></i> End Quiz
+                                    </button>
+                                </div>
+
+                                <button id="startQuiz" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-play"></i> Start Quiz
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
 
 
-    <div class="quiz-header">
-        <h2>Vocabulary Quiz</h2>
-        <div class="quiz-stats">
-            <div class="stat-card">
-                <div class="stat-number" id="quizScore">0</div>
-                <div class="stat-label">Score</div>
+                </div>
+
+
+
+
+                <!-- Database Info -->
+                <div class="database-info">
+                    <h4><i class="fas fa-database"></i> Database Quizzes</h4>
+                    <p>Quizzes are loaded from the database folder. To add new quizzes, place JSON files in the
+                        database/quizzes/ directory.</p>
+                    <div class="db-stats">
+                        <span id="totalQuizzes">0 quizzes available</span>
+                        <button id="refreshQuizzes" class="btn btn-small">
+                            <i class="fas fa-sync"></i> Refresh List
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="quizStreak">0</div>
-                <div class="stat-label">Streak</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="quizProgress">0/0</div>
-                <div class="stat-label">Progress</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="quiz-container" id="quizContainer">
-        <!-- Quiz content will be loaded here -->
-    </div>
-
-    <div class="quiz-controls">
-        <button id="startQuiz" class="btn btn-primary">
-            <i class="fas fa-play"></i> Start Quiz
-        </button>
-        <button id="nextQuestion" class="btn btn-secondary" style="display: none;">
-            <i class="fas fa-arrow-right"></i> Next Question
-        </button>
-        <button id="endQuiz" class="btn btn-danger" style="display: none;">
-            <i class="fas fa-stop"></i> End Quiz
-        </button>
-    </div>
-
-            </div>
-        </div>
-        </div>
-        </div>
-
-
-        </div>
         </div>
     </main>
-
 
     <footer>
         <div class="container">
@@ -258,16 +341,12 @@
                 </div>
                 <div class="footer-links">
                     <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
-
                 </div>
             </div>
         </div>
     </footer>
 
-
-
     <script src="main.js"></script>
-
 
 
 </body>
