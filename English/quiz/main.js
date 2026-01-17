@@ -1,808 +1,317 @@
-// Quiz data - will be loaded from selected JSON file
-let quizDatabase = null;
-let availableQuizzes = [];
+// ========= App State Variables ==========
 
-// App state
 let currentPage = 'home';
-let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let currentStory = null;
+let stories = []; // Will be loaded from external file
+let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
 
-// Quiz state
-let currentQuiz = {
-    active: false,
-    currentQuestionIndex: 0,
-    score: 0,
-    streak: 0,
-    questions: [],
-    answered: false,
-    startTime: null,
-    timer: null,
-    selectedQuiz: null,
-    correctAnswers: 0,
-    totalQuestions: 0,
-    bestStreak: 0
-};
+// Add Stories variables (ADDED)
+let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+let userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+let currentEditIndex = -1; // For editing stories
 
-// DOM Elements
-const quizFileSelect = document.getElementById('quizfile'); // Your dropdown
-const quizInfo = document.getElementById('quizInfo');
-const quizContainer = document.getElementById('quizContainer');
-const startQuizBtn = document.getElementById('startQuiz');
-const nextQuestionBtn = document.getElementById('nextQuestion');
-const endQuizBtn = document.getElementById('endQuiz');
-const quizActions = document.getElementById('quizActions');
-const quizScore = document.getElementById('quizScore');
-const quizStreak = document.getElementById('quizStreak');
-const quizProgress = document.getElementById('quizProgress');
-const quizTime = document.getElementById('quizTime');
+// ========= DOM Elements ==========
+const pages = document.querySelectorAll('.page');
+const navLinks = document.querySelectorAll('.nav-link');
+const levelBtns = document.querySelectorAll('.level-btn');
+const storiesGrid = document.getElementById('storiesGrid');
+const toggleNav = document.getElementById("toggle-nav");
+const more = document.getElementById("more");
+const themeToggle = document.getElementById('themeToggle');
 const settingsButton = document.getElementById("settings-button");
 const settingsPage = document.getElementById("settings-page");
 const closeSettings = document.getElementById("close-settings");
 const settingsOverlay = document.getElementById("settings-overlay");
-const themeToggle = document.getElementById('themeToggle');
+const searchForm = document.getElementById('search-form');
+const searchInput = searchForm ? searchForm.querySelector('.search-input') : null;
 
-// Get quiz ID from URL
-const urlParams = new URLSearchParams(window.location.search);
-const quizIdFromUrl = urlParams.get('id');
+// Color variables
+const defaultColors = [
+    { name: 'indigo', value: '#4f46e5' },
+    { name: 'blue', value: '#4a6cf7' },
+    { name: 'purple', value: '#7c4dff' },
+    { name: 'green', value: '#008638' },
+    { name: 'orange', value: '#ff5722' },
+    { name: 'pink', value: '#e91e63' },
+    { name: 'teal', value: '#009688' }
+];
 
-// =============== QUIZ DATABASE LOADING ===============
+// ========= Core Functions ==========
 
-async function loadQuizDatabase(filePath = null) {
-    console.log('Loading quiz database...');
-    
-    // Determine which file to load
-    let fileToLoad = filePath;
-    if (!fileToLoad && quizFileSelect) {
-        fileToLoad = quizFileSelect.value || 'main.json';
-    } else if (!fileToLoad) {
-        fileToLoad = 'main.json';
+// Function to scroll to top of page
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// Initialize the app
+function init() {
+    console.log('App initialization started...');
+    // Auto lazy load ALL images
+    document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
+    // Load stories from external file
+    if (typeof window.storiesData !== 'undefined') {
+        stories = window.storiesData.stories || window.storiesData;
+        console.log('Loaded stories from external file:', stories.length);
+    } else {
+        // Fallback if external file fails
+        stories = [
+            {
+                id: 1,
+                title: "The Mysterious Island",
+                level: "beginner",
+                cover: "🏝️",
+                coverType: "emoji",
+                wordCount: 350,
+                content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+            }
+        ];
+        console.log('Using fallback stories');
     }
-    
+
+    // Load user stories from localStorage
     try {
-        // Load the selected JSON file
-        const response = await fetch(fileToLoad);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status} for ${fileToLoad}`);
+        const storedStories = localStorage.getItem('userStories');
+        const storedDictionaries = localStorage.getItem('userDictionaries');
+
+        if (storedStories) {
+            userStories = JSON.parse(storedStories);
         }
-        
-        quizDatabase = await response.json();
-        
-        console.log(`Successfully loaded ${fileToLoad}:`, quizDatabase);
-        
-        if (quizDatabase && quizDatabase.quizzes) {
-            availableQuizzes = quizDatabase.quizzes;
-            
-            // Update UI with loaded quizzes
-            displayAvailableQuizzes();
-            
-            // Check if there's a quiz ID in the URL
-            if (quizIdFromUrl) {
-                const quiz = availableQuizzes.find(q => q.id === quizIdFromUrl);
-                if (quiz) {
-                    // Auto-select this quiz
-                    setTimeout(() => {
-                        selectQuiz(quiz.id);
-                        showNotification(`Loaded quiz: ${quiz.title}`, 'success');
-                    }, 500);
-                } else {
-                    showNotification(`Quiz with ID "${quizIdFromUrl}" not found in ${fileToLoad}`, 'error');
-                }
-            }
-            
-            // If no quizzes in file, show warning
-            if (availableQuizzes.length === 0) {
-                showNotification(`No quizzes found in ${fileToLoad}`, 'warning');
-            }
-            
-        } else {
-            throw new Error(`Invalid quiz database format in ${fileToLoad} - missing "quizzes" array`);
+
+        if (storedDictionaries) {
+            userDictionaries = JSON.parse(storedDictionaries);
         }
-        
     } catch (error) {
-        console.error('Error loading quiz database:', error);
-        showNotification(`Could not load ${fileToLoad}. Using default quizzes.`, 'error');
-        
-        // Fallback to default quizzes
-        availableQuizzes = getDefaultQuizzes();
-        displayAvailableQuizzes();
+        console.error('Error loading user stories:', error);
+        userStories = [];
+        userDictionaries = {};
     }
+
+    // STEP 1: Apply saved theme FIRST
+    console.log('Step 1: Applying theme...');
+    applyTheme();
+
+    // STEP 2: Apply saved primary color immediately
+    console.log('Step 2: Applying saved color:', selectedColor);
+    if (selectedColor) {
+        applyPrimaryColor(selectedColor);
+    }
+
+    // STEP 3: Initialize color selector
+    console.log('Step 3: Initializing color selector...');
+    setTimeout(() => {
+        initColorSelector();
+    }, 50);
+
+    // STEP 4: Render stories and other UI elements
+    console.log('Step 4: Rendering UI...');
+    renderStories();
+    setupSearch();
+
+    // STEP 5: Initialize Add Stories if on that page
+    if (document.getElementById('addStories')) {
+        console.log('Step 5: Initializing Add Stories page...');
+        initAddStories();
+    }
+
+    // STEP 6: Set up navigation and event listeners
+    console.log('Step 6: Setting up navigation and event listeners...');
+
+    setupNavToggle();
+
+    setupEventListeners();
+    setupSettings();
+
+    // STEP 7: Verify everything is set up correctly
+    console.log('Step 7: Final verification...');
+    setTimeout(() => {
+        verifyColorSetup();
+    }, 200);
+
+    console.log('App initialization complete!');
 }
 
-function getDefaultQuizzes() {
-    return [
-        {
-            id: 'vocabulary-practice',
-            title: 'Vocabulary Practice',
-            description: 'Quiz based on your saved words',
-            level: 'beginner',
-            type: 'vocabulary',
-            questionCount: 10,
-            author: 'System',
-            createdAt: new Date().toISOString(),
-            tags: ['vocabulary', 'adaptive', 'practice']
-        }
-    ];
-}
+// Function to initialize color selector
+//=========COLOR SELECTOR FUNCTIONS============
+// Function to initialize color selector
+function initColorSelector() {
+    const colorOptions = document.querySelectorAll('.color-option:not(.custom-color)');
+    const customColorPicker = document.getElementById('customColorPicker');
 
-function displayAvailableQuizzes() {
-    // Clear previous quizzes display
-    const quizzesContainer = document.getElementById('quizzesContainer');
-    if (quizzesContainer) {
-        quizzesContainer.remove();
-    }
-    
-    // Create container for quizzes
-    const container = document.createElement('div');
-    container.id = 'quizzesContainer';
-    container.className = 'quizzes-container';
-    
-    // Add heading
-    const heading = document.createElement('h3');
-    heading.textContent = 'Available Quizzes';
-    heading.style.marginTop = '20px';
-    heading.style.marginBottom = '15px';
-    container.appendChild(heading);
-    
-    if (availableQuizzes.length === 0) {
-        const noQuizzes = document.createElement('div');
-        noQuizzes.className = 'no-quizzes';
-        noQuizzes.innerHTML = `
-            <p>No quizzes found in the selected file.</p>
-            <p>Create a quiz in your JSON file with this format:</p>
-            <pre>
-{
-  "version": "1.0.0",
-  "quizzes": [
-    {
-      "id": "quiz-id",
-      "title": "Quiz Title",
-      "description": "Quiz description",
-      "level": "beginner",
-      "questions": [...]
-    }
-  ]
-}</pre>
-        `;
-        container.appendChild(noQuizzes);
-    } else {
-        // Display each quiz
-        availableQuizzes.forEach(quiz => {
-            const quizCard = createQuizCard(quiz);
-            container.appendChild(quizCard);
-        });
-    }
-    
-    // Insert after the file selector
-    if (quizFileSelect && quizFileSelect.parentNode) {
-        quizFileSelect.parentNode.appendChild(container);
-    } else if (quizContainer) {
-        quizContainer.parentNode.insertBefore(container, quizContainer);
-    }
-}
+    console.log('Initializing color selector...'); // Debug log
+    console.log('Found color options:', colorOptions.length); // Debug log
 
-function createQuizCard(quiz) {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    card.dataset.quizId = quiz.id;
-    
-    const levelBadge = quiz.level === 'beginner' ? '🟢 Beginner' : 
-                      quiz.level === 'intermediate' ? '🟡 Intermediate' : 
-                      quiz.level === 'advanced' ? '🔴 Advanced' : '⚪ All Levels';
-    
-    // Determine question count
-    let questionCount = quiz.questionCount;
-    if (!questionCount && quiz.questions) {
-        questionCount = quiz.questions.length;
-    }
-    if (!questionCount) {
-        questionCount = 'Variable';
-    }
-    
-    card.innerHTML = `
-        <div class="quiz-card-header">
-            <h4>${quiz.title}</h4>
-            <span class="level-badge ${quiz.level}">${levelBadge}</span>
-        </div>
-        <div class="quiz-card-body">
-            <p class="quiz-description">${quiz.description || 'No description available.'}</p>
-            <div class="quiz-card-meta">
-                <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
-                <span><i class="fas fa-user"></i> ${quiz.author || 'Unknown'}</span>
-                ${quiz.tags && quiz.tags.length > 0 ? 
-                    `<span><i class="fas fa-tags"></i> ${quiz.tags.slice(0, 2).join(', ')}</span>` : ''}
-            </div>
-            ${quiz.instructions ? `<div class="quiz-instructions"><strong>Instructions:</strong> ${quiz.instructions}</div>` : ''}
-        </div>
-        <div class="quiz-card-footer">
-            <button class="btn btn-primary select-quiz-btn" data-quiz-id="${quiz.id}">
-                <i class="fas fa-play"></i> Select Quiz
-            </button>
-            ${quizIdFromUrl === quiz.id ? '<span class="from-url-badge">From URL</span>' : ''}
-        </div>
-    `;
-    
-    // Add click event to select button
-    const selectBtn = card.querySelector('.select-quiz-btn');
-    selectBtn.addEventListener('click', () => selectQuiz(quiz.id));
-    
-    // Make entire card clickable
-    card.addEventListener('click', (e) => {
-        if (!e.target.closest('.select-quiz-btn')) {
-            selectQuiz(quiz.id);
-        }
-    });
-    
-    return card;
-}
+    // Remove active class from all options first
+    colorOptions.forEach(opt => opt.classList.remove('active'));
 
-function selectQuiz(quizId) {
-    const quiz = availableQuizzes.find(q => q.id === quizId);
-    if (!quiz) {
-        showNotification('Quiz not found!', 'error');
-        return;
-    }
-    
-    // Update selected quiz UI
-    document.querySelectorAll('.quiz-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    
-    const selectedCard = document.querySelector(`.quiz-card[data-quiz-id="${quizId}"]`);
-    if (selectedCard) {
-        selectedCard.classList.add('selected');
-    }
-    
-    // Update quiz info
-    if (quizInfo) {
-        quizInfo.innerHTML = `
-            <div class="selected-quiz-info">
-                <h3>Selected Quiz: ${quiz.title}</h3>
-                <p><strong>Description:</strong> ${quiz.description || 'No description'}</p>
-                <p><strong>Level:</strong> ${quiz.level}</p>
-                <p><strong>Questions:</strong> ${quiz.questionCount || (quiz.questions ? quiz.questions.length : 'Variable')}</p>
-                <p><strong>Author:</strong> ${quiz.author || 'Unknown'}</p>
-                ${quiz.instructions ? `<p><strong>Instructions:</strong> ${quiz.instructions}</p>` : ''}
-            </div>
-        `;
-    }
-    
-    // Enable start button
-    if (startQuizBtn) {
-        startQuizBtn.disabled = false;
-        startQuizBtn.innerHTML = `<i class="fas fa-play"></i> Start "${quiz.title}"`;
-        startQuizBtn.dataset.selectedQuizId = quizId;
-    }
-    
-    // Update URL
-    updateUrlWithQuizId(quizId);
-    
-    showNotification(`Selected quiz: ${quiz.title}`, 'success');
-}
-
-function updateUrlWithQuizId(quizId) {
-    const url = new URL(window.location);
-    if (quizId) {
-        url.searchParams.set('id', quizId);
-    } else {
-        url.searchParams.delete('id');
-    }
-    
-    // Update URL without reloading the page
-    window.history.replaceState({}, '', url);
-}
-
-// =============== QUIZ FUNCTIONS ===============
-
-async function startQuiz() {
-    if (!startQuizBtn || startQuizBtn.disabled) {
-        showNotification('Please select a quiz first!', 'warning');
-        return;
-    }
-    
-    const quizId = startQuizBtn.dataset.selectedQuizId;
-    if (!quizId) {
-        showNotification('No quiz selected!', 'error');
-        return;
-    }
-    
-    const quiz = availableQuizzes.find(q => q.id === quizId);
-    if (!quiz) {
-        showNotification('Selected quiz not found!', 'error');
-        return;
-    }
-    
-    // Load questions
-    let questions = [];
-    
-    if (quiz.questions && quiz.questions.length > 0) {
-        questions = [...quiz.questions];
-    } else {
-        // Fallback to vocabulary questions
-        questions = generateVocabularyQuestions(10);
-    }
-    
-    if (questions.length === 0) {
-        showNotification('No questions available for this quiz!', 'error');
-        return;
-    }
-    
-    // Reset quiz state
-    currentQuiz = {
-        active: true,
-        currentQuestionIndex: 0,
-        score: 0,
-        streak: 0,
-        questions: shuffleArray(questions),
-        answered: false,
-        startTime: new Date(),
-        timer: null,
-        selectedQuiz: quiz,
-        correctAnswers: 0,
-        totalQuestions: questions.length,
-        bestStreak: 0
-    };
-    
-    // Update UI
-    if (quizFileSelect) quizFileSelect.disabled = true;
-    if (startQuizBtn) {
-        startQuizBtn.style.display = 'none';
-    }
-    
-    // Hide quizzes container
-    const quizzesContainer = document.getElementById('quizzesContainer');
-    if (quizzesContainer) {
-        quizzesContainer.style.display = 'none';
-    }
-    
-    if (quizInfo) {
-        quizInfo.style.display = 'none';
-    }
-    
-    if (quizActions) {
-        quizActions.style.display = 'flex';
-    }
-    
-    // Load first question
-    loadQuestion();
-    updateQuizStats();
-    startTimer();
-    
-    showNotification(`Started "${quiz.title}"! Good luck!`, 'success');
-}
-
-function generateVocabularyQuestions(count) {
-    const questions = [];
-    const wordPool = [...savedWords].filter(word => 
-        word.translation && 
-        word.translation !== word.word && 
-        word.translation.trim() !== ''
-    );
-    
-    if (wordPool.length < 4) {
-        showNotification('Need at least 4 words with translations for a quiz!', 'warning');
-        return [];
-    }
-    
-    const questionCount = Math.min(count, Math.floor(wordPool.length / 2));
-    
-    for (let i = 0; i < questionCount; i++) {
-        const correctWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-        const incorrectWords = [];
-        
-        // Get 3 incorrect choices from different words
-        while (incorrectWords.length < 3) {
-            const randomWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-            if (randomWord !== correctWord && 
-                !incorrectWords.includes(randomWord) &&
-                randomWord.translation !== correctWord.translation) {
-                incorrectWords.push(randomWord);
+    // Set active color based on saved preference
+    if (colorOptions.length > 0) {
+        colorOptions.forEach(option => {
+            // Check if this option matches the saved color
+            if (option.dataset.color === selectedColor) {
+                option.classList.add('active');
+                console.log('Setting active color option:', selectedColor); // Debug
             }
-        }
-        
-        // Create multiple choice question
-        questions.push({
-            type: 'multiple_choice',
-            question: `What is the translation of "${correctWord.word}"?`,
-            correctAnswer: correctWord.translation,
-            choices: shuffleArray([
-                correctWord.translation,
-                ...incorrectWords.map(w => w.translation)
-            ]),
-            word: correctWord,
-            explanation: `"${correctWord.word}" means "${correctWord.translation}" in Arabic.`
-        });
-    }
-    
-    return questions;
-}
 
-function loadQuestion() {
-    if (!currentQuiz.active || !quizContainer) return;
-    
-    const question = currentQuiz.questions[currentQuiz.currentQuestionIndex];
-    const letters = ['A', 'B', 'C', 'D'];
-    
-    let questionHTML = '';
-    
-    if (question.type === 'multiple_choice') {
-        questionHTML = `
-            <div class="question-card">
-                <div class="question-header">
-                    <span class="question-number">Question ${currentQuiz.currentQuestionIndex + 1} of ${currentQuiz.totalQuestions}</span>
-                    <span class="quiz-title">${currentQuiz.selectedQuiz.title}</span>
-                </div>
-                <div class="question-text">
-                    ${question.question}
-                </div>
-                <div class="choices-container">
-                    ${question.choices.map((choice, index) => `
-                        <button class="choice-btn" data-choice="${choice}">
-                            <span class="choice-letter">${letters[index]}</span>
-                            <span class="choice-text">${choice}</span>
-                        </button>
-                    `).join('')}
-                </div>
-                <div id="questionFeedback" class="feedback"></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" 
-                         style="width: ${((currentQuiz.currentQuestionIndex + 1) / currentQuiz.totalQuestions) * 100}%">
-                    </div>
-                </div>
-            </div>
-        `;
-    } else if (question.type === 'translation') {
-        questionHTML = `
-            <div class="question-card">
-                <div class="question-header">
-                    <span class="question-number">Question ${currentQuiz.currentQuestionIndex + 1} of ${currentQuiz.totalQuestions}</span>
-                    <span class="quiz-title">${currentQuiz.selectedQuiz.title}</span>
-                </div>
-                <div class="question-text">
-                    ${question.question}
-                </div>
-                <div class="translation-input">
-                    <input type="text" id="translationAnswer" 
-                           placeholder="Type your translation..." 
-                           autocomplete="off"
-                           autofocus>
-                    <button id="submitTranslation" class="btn btn-primary">
-                        <i class="fas fa-check"></i> Submit
-                    </button>
-                </div>
-                <div id="questionFeedback" class="feedback"></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" 
-                         style="width: ${((currentQuiz.currentQuestionIndex + 1) / currentQuiz.totalQuestions) * 100}%">
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    
-    quizContainer.innerHTML = questionHTML;
-    
-    // Add event listeners
-    if (question.type === 'multiple_choice') {
-        document.querySelectorAll('.choice-btn').forEach(button => {
-            button.addEventListener('click', () => handleAnswer(button.dataset.choice));
-        });
-    } else if (question.type === 'translation') {
-        const submitBtn = document.getElementById('submitTranslation');
-        const answerInput = document.getElementById('translationAnswer');
-        
-        if (submitBtn) {
-            submitBtn.addEventListener('click', () => {
-                const answer = answerInput.value.trim();
-                if (answer) {
-                    handleAnswer(answer);
-                } else {
-                    answerInput.focus();
+            option.addEventListener('click', () => {
+                console.log('Color option clicked:', option.dataset.color); // Debug log
+
+                // Remove active class from all options
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+
+                // Add active class to clicked option
+                option.classList.add('active');
+
+                // Get selected color
+                const color = option.dataset.color;
+
+                // Apply ONLY the primary color
+                applyPrimaryColor(color);
+
+                // Save to localStorage
+                localStorage.setItem('selectedColor', color);
+                selectedColor = color;
+
+                // Update custom color picker
+                if (customColorPicker) {
+                    customColorPicker.value = color;
                 }
-            });
-        }
-        
-        if (answerInput) {
-            answerInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const answer = answerInput.value.trim();
-                    if (answer) {
-                        handleAnswer(answer);
-                    } else {
-                        answerInput.focus();
-                    }
-                }
-            });
-            
-            // Auto-focus input
-            answerInput.focus();
-        }
-    }
-    
-    currentQuiz.answered = false;
-}
 
-function handleAnswer(selectedAnswer) {
-    if (currentQuiz.answered || !currentQuiz.active) return;
-    
-    const question = currentQuiz.questions[currentQuiz.currentQuestionIndex];
-    const isCorrect = normalizeAnswer(selectedAnswer) === normalizeAnswer(question.correctAnswer);
-    const feedback = document.getElementById('questionFeedback');
-    
-    // Handle different question types
-    if (question.type === 'multiple_choice') {
-        const choiceButtons = document.querySelectorAll('.choice-btn');
-        
-        // Mark correct/incorrect choices
-        choiceButtons.forEach(button => {
-            button.classList.add('disabled');
-            if (normalizeAnswer(button.dataset.choice) === normalizeAnswer(question.correctAnswer)) {
-                button.classList.add('correct');
-            } else if (normalizeAnswer(button.dataset.choice) === normalizeAnswer(selectedAnswer) && !isCorrect) {
-                button.classList.add('incorrect');
+                // showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
+            });
+        });
+    }
+
+    // Custom color picker
+    if (customColorPicker) {
+        console.log('Custom color picker found'); // Debug log
+
+        // Set initial value from saved color
+        customColorPicker.value = selectedColor;
+
+        customColorPicker.addEventListener('input', (e) => {
+            const color = e.target.value;
+            console.log('Custom color input:', color); // Debug log
+
+            // Remove active class from preset colors
+            colorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the primary color
+            applyPrimaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedColor', color);
+            selectedColor = color;
+
+            showNotification('Custom primary color applied', 'success');
+        });
+
+        customColorPicker.addEventListener('change', (e) => {
+            const color = e.target.value;
+
+            // Remove active class from preset colors
+            colorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the primary color
+            applyPrimaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedColor', color);
+            selectedColor = color;
+
+            showNotification('Custom primary color saved', 'success');
+        });
+
+        // Also trigger change on custom color picker click
+        customColorPicker.parentElement.addEventListener('click', (e) => {
+            if (e.target !== customColorPicker) {
+                customColorPicker.click();
             }
         });
     }
-    
-    // Show feedback with explanation
-    const explanation = question.explanation || '';
-    
-    if (isCorrect) {
-        if (feedback) {
-            feedback.innerHTML = `
-                <div class="feedback-content">
-                    <i class="fas fa-check-circle"></i> 
-                    <div>
-                        <strong>Correct!</strong> ${question.correctAnswer} is the right answer.
-                        ${explanation ? `<p class="explanation">${explanation}</p>` : ''}
-                    </div>
-                </div>
-            `;
-            feedback.className = 'feedback correct';
-        }
-        
-        // Update score
-        currentQuiz.score += 10;
-        currentQuiz.streak++;
-        currentQuiz.correctAnswers++;
-        
-        // Update best streak
-        if (currentQuiz.streak > currentQuiz.bestStreak) {
-            currentQuiz.bestStreak = currentQuiz.streak;
-        }
-        
-    } else {
-        if (feedback) {
-            feedback.innerHTML = `
-                <div class="feedback-content">
-                    <i class="fas fa-times-circle"></i> 
-                    <div>
-                        <strong>Incorrect.</strong> The correct answer is ${question.correctAnswer}.
-                        ${selectedAnswer ? `<p>You answered: ${selectedAnswer}</p>` : ''}
-                        ${explanation ? `<p class="explanation">${explanation}</p>` : ''}
-                    </div>
-                </div>
-            `;
-            feedback.className = 'feedback incorrect';
-        }
-        
-        // Reset streak
-        currentQuiz.streak = 0;
-    }
-    
-    currentQuiz.answered = true;
-    updateQuizStats();
+
+    // Force apply the color one more time to ensure it's set
+    setTimeout(() => {
+        applyPrimaryColor(selectedColor);
+        console.log('Final color applied:', selectedColor);
+
+        // Verify CSS variables are set
+        const root = document.documentElement;
+        console.log('CSS Variables:', {
+            '--primary': getComputedStyle(root).getPropertyValue('--primary').trim(),
+            '--primary-dark': getComputedStyle(root).getPropertyValue('--primary-dark').trim()
+        });
+    }, 100);
+}
+// Function to apply ONLY the primary color
+function applyPrimaryColor(color) {
+    // Calculate darker shade for --primary-dark
+    const darkerColor = adjustColor(color, -20);
+
+    // Update ONLY the primary color variables in CSS
+    const root = document.documentElement;
+    root.style.setProperty('--primary', color);
+    root.style.setProperty('--primary-dark', darkerColor);
+
+    // DO NOT update other elements - let CSS handle it
 }
 
-function nextQuestion() {
-    if (!currentQuiz.answered) {
-        showNotification('Please answer the current question first!', 'warning');
-        return;
-    }
-    
-    currentQuiz.currentQuestionIndex++;
-    
-    if (currentQuiz.currentQuestionIndex < currentQuiz.questions.length) {
-        loadQuestion();
-    } else {
-        showQuizResults();
-    }
-    
-    updateQuizStats();
+// Helper function to adjust color brightness (for --primary-dark)
+function adjustColor(color, percent) {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+
+    return '#' + (
+        0x1000000 +
+        (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255)
+    ).toString(16).slice(1);
 }
 
-function endQuiz() {
-    if (currentQuiz.active && currentQuiz.currentQuestionIndex < currentQuiz.questions.length) {
-        if (!confirm('Are you sure you want to end the quiz? Your progress will be lost.')) {
-            return;
-        }
-    }
-    
-    if (currentQuiz.timer) {
-        clearInterval(currentQuiz.timer);
-    }
-    currentQuiz.active = false;
-    
-    // Reset UI
-    if (quizFileSelect) quizFileSelect.disabled = false;
-    if (startQuizBtn) {
-        startQuizBtn.style.display = 'inline-block';
-        startQuizBtn.disabled = true;
-        startQuizBtn.innerHTML = '<i class="fas fa-play"></i> Start Quiz';
-        delete startQuizBtn.dataset.selectedQuizId;
-    }
-    
-    // Show quizzes container
-    const quizzesContainer = document.getElementById('quizzesContainer');
-    if (quizzesContainer) {
-        quizzesContainer.style.display = 'block';
-    }
-    
-    if (quizInfo) {
-        quizInfo.style.display = 'block';
-        quizInfo.innerHTML = '<p>Select a quiz from the list above.</p>';
-    }
-    
-    if (quizActions) {
-        quizActions.style.display = 'none';
-    }
-    
-    // Clear quiz container
-    if (quizContainer) {
-        quizContainer.innerHTML = `
-            <div class="quiz-welcome">
-                <div class="welcome-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h3>Quiz Ended</h3>
-                <p>Select a quiz from the list above to start a new quiz!</p>
-            </div>
-        `;
-    }
-    
-    // Reset stats
-    resetQuizStats();
-    
-    showNotification('Quiz ended', 'info');
-}
 
-function showQuizResults() {
-    if (currentQuiz.timer) {
-        clearInterval(currentQuiz.timer);
-    }
-    currentQuiz.active = false;
-    
-    const percentage = Math.round((currentQuiz.correctAnswers / currentQuiz.totalQuestions) * 100);
-    const elapsed = Math.floor((new Date() - currentQuiz.startTime) / 1000);
-    const minutes = Math.floor(elapsed / 60);
-    const seconds = elapsed % 60;
-    
-    let message = '';
-    let icon = '';
-    
-    if (percentage >= 90) {
-        message = 'Excellent! Perfect score! 🏆';
-        icon = 'fas fa-trophy';
-    } else if (percentage >= 75) {
-        message = 'Great job! Keep practicing! ⭐';
-        icon = 'fas fa-star';
-    } else if (percentage >= 60) {
-        message = 'Good effort! Try again to improve. 👍';
-        icon = 'fas fa-thumbs-up';
-    } else {
-        message = 'Keep practicing! You\'ll get better! 💪';
-        icon = 'fas fa-redo';
-    }
-    
-    if (quizContainer) {
-        quizContainer.innerHTML = `
-            <div class="quiz-complete">
-                <div class="completion-icon">
-                    <i class="${icon}"></i>
-                </div>
-                <h3>${currentQuiz.selectedQuiz.title}</h3>
-                <div class="score-display">${percentage}%</div>
-                <div class="result-details">
-                    <p><strong>Correct Answers:</strong> ${currentQuiz.correctAnswers}/${currentQuiz.totalQuestions}</p>
-                    <p><strong>Time:</strong> ${minutes}m ${seconds}s</p>
-                    <p><strong>Best Streak:</strong> ${currentQuiz.bestStreak}</p>
-                    <p><strong>Total Score:</strong> ${currentQuiz.score} points</p>
-                    <p class="result-message">${message}</p>
-                </div>
-                
-                <div class="quiz-complete-actions">
-                    <button id="restartQuiz" class="btn btn-primary">
-                        <i class="fas fa-redo"></i> Try Again
-                    </button>
-                    <button id="newQuiz" class="btn btn-secondary">
-                        <i class="fas fa-list"></i> New Quiz
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        // Add event listeners
-        const restartBtn = document.getElementById('restartQuiz');
-        const newQuizBtn = document.getElementById('newQuiz');
-        
-        if (restartBtn) restartBtn.addEventListener('click', startQuiz);
-        if (newQuizBtn) newQuizBtn.addEventListener('click', endQuiz);
-    }
-}
 
-function startTimer() {
-    if (currentQuiz.timer) clearInterval(currentQuiz.timer);
-    
-    currentQuiz.timer = setInterval(() => {
-        if (currentQuiz.active) {
-            const elapsed = Math.floor((new Date() - currentQuiz.startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-            const seconds = (elapsed % 60).toString().padStart(2, '0');
-            if (quizTime) {
-                quizTime.textContent = `${minutes}:${seconds}`;
-            }
-        }
-    }, 1000);
-}
 
-function updateQuizStats() {
-    if (!currentQuiz.active) return;
-    
-    if (quizScore) quizScore.textContent = currentQuiz.score;
-    if (quizStreak) quizStreak.textContent = currentQuiz.streak;
-    if (quizProgress) quizProgress.textContent = `${currentQuiz.currentQuestionIndex + 1}/${currentQuiz.totalQuestions}`;
-}
-
-function resetQuizStats() {
-    if (quizScore) quizScore.textContent = '0';
-    if (quizStreak) quizStreak.textContent = '0';
-    if (quizProgress) quizProgress.textContent = '0/0';
-    if (quizTime) quizTime.textContent = '00:00';
-}
-
-// =============== UTILITY FUNCTIONS ===============
-
-function shuffleArray(array) {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
-
-function normalizeAnswer(answer) {
-    return answer.toString().toLowerCase().trim().replace(/[.,!?;:]/g, '');
-}
-
+// Update showNotification to use selected color for success messages
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.textContent = message;
-    
-    // Set background color based on type
-    const colors = {
-        success: '#10b981',
-        error: '#ef4444',
-        warning: '#f59e0b',
-        info: '#3b82f6'
-    };
-    
+
+    // Set background color based on notification type
+    let bgColor = '';
+
+    if (type === 'success') {
+        bgColor = 'var(--primary)'; // Use the CSS variable
+    } else if (type === 'error') {
+        bgColor = '#ff4444';
+    } else if (type === 'warning') {
+        bgColor = '#ff9900';
+    } else if (type === 'info') {
+        bgColor = '#2196F3';
+    }
+
     notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: ${colors[type] || colors.info};
+        background: ${bgColor};
         color: white;
         padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
         z-index: 1000;
         font-weight: 500;
         animation: slideIn 0.3s ease;
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
@@ -814,110 +323,1871 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// =============== SETUP FUNCTIONS ===============
 
-function setupEventListeners() {
-    // File selection change
-    if (quizFileSelect) {
-        quizFileSelect.addEventListener('change', async function() {
-            console.log(`Switching to quiz file: ${this.value}`);
-            
-            // Show loading
-            const quizzesContainer = document.getElementById('quizzesContainer');
-            if (quizzesContainer) {
-                quizzesContainer.innerHTML = '<div class="loading">Loading quizzes...</div>';
+
+
+
+let theme = localStorage.getItem('theme') || 'light';
+
+// Toggle theme
+function toggleTheme() {
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+    // Save new theme
+    localStorage.setItem('theme', newTheme);
+
+    // Apply the new theme
+    applyTheme();
+
+    // Show notification
+    // showNotification(`Switched to ${newTheme} mode`, 'success');
+}
+
+
+
+
+// Secondary color variables
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#f59e0b';
+
+// Function to initialize secondary color selector
+function initSecondaryColorSelector() {
+    const secondaryColorOptions = document.querySelectorAll('.secondary-color:not(.custom-color)');
+    const customSecondaryColorPicker = document.getElementById('customSecondaryColorPicker');
+
+    console.log('Initializing secondary color selector...');
+    console.log('Found secondary color options:', secondaryColorOptions.length);
+
+    // Remove active class from all secondary options first
+    secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+    // Set active secondary color based on saved preference
+    if (secondaryColorOptions.length > 0) {
+        secondaryColorOptions.forEach(option => {
+            // Check if this option matches the saved secondary color
+            if (option.dataset.color === selectedSecondaryColor) {
+                option.classList.add('active');
+                console.log('Setting active secondary color option:', selectedSecondaryColor);
             }
-            
-            if (startQuizBtn) {
-                startQuizBtn.disabled = true;
-                startQuizBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+            option.addEventListener('click', () => {
+                console.log('Secondary color option clicked:', option.dataset.color);
+
+                // Remove active class from all secondary options
+                secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+                // Add active class to clicked option
+                option.classList.add('active');
+
+                // Get selected secondary color
+                const color = option.dataset.color;
+
+                // Apply ONLY the secondary color
+                applySecondaryColor(color);
+
+                // Save to localStorage
+                localStorage.setItem('selectedSecondaryColor', color);
+                selectedSecondaryColor = color;
+
+                // Update custom secondary color picker
+                if (customSecondaryColorPicker) {
+                    customSecondaryColorPicker.value = color;
+                }
+
+                showNotification(`Secondary color changed to ${option.title || 'custom'}`, 'success');
+            });
+        });
+    }
+
+    // Custom secondary color picker
+    if (customSecondaryColorPicker) {
+        console.log('Custom secondary color picker found');
+
+        // Set initial value from saved secondary color
+        customSecondaryColorPicker.value = selectedSecondaryColor;
+
+        customSecondaryColorPicker.addEventListener('input', (e) => {
+            const color = e.target.value;
+            console.log('Custom secondary color input:', color);
+
+            // Remove active class from preset secondary colors
+            secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the secondary color
+            applySecondaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedSecondaryColor', color);
+            selectedSecondaryColor = color;
+
+            showNotification('Custom secondary color applied', 'success');
+        });
+
+        customSecondaryColorPicker.addEventListener('change', (e) => {
+            const color = e.target.value;
+
+            // Remove active class from preset secondary colors
+            secondaryColorOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Apply ONLY the secondary color
+            applySecondaryColor(color);
+
+            // Save to localStorage
+            localStorage.setItem('selectedSecondaryColor', color);
+            selectedSecondaryColor = color;
+
+            showNotification('Custom secondary color saved', 'success');
+        });
+
+        // Also trigger change on custom color picker click
+        customSecondaryColorPicker.parentElement.addEventListener('click', (e) => {
+            if (e.target !== customSecondaryColorPicker) {
+                customSecondaryColorPicker.click();
             }
-            
-            // Load the new database
-            await loadQuizDatabase(this.value);
-            
-            showNotification(`Loaded ${this.value} successfully!`, 'success');
         });
     }
-    
-    // Quiz controls
-    if (startQuizBtn) {
-        startQuizBtn.addEventListener('click', startQuiz);
+
+    // Force apply the secondary color one more time to ensure it's set
+    setTimeout(() => {
+        applySecondaryColor(selectedSecondaryColor);
+        console.log('Final secondary color applied:', selectedSecondaryColor);
+    }, 100);
+}
+
+// Function to apply ONLY the secondary color
+function applySecondaryColor(color) {
+    // Calculate darker and lighter shades for --secondary-dark and --secondary-light
+    const darkerColor = adjustColor(color, -20);
+    const lighterColor = adjustColor(color, 20);
+
+    // Update ONLY the secondary color variables in CSS
+    const root = document.documentElement;
+    root.style.setProperty('--secondary', color);
+    root.style.setProperty('--secondary-dark', darkerColor);
+    root.style.setProperty('--secondary-light', lighterColor);
+}
+
+// Update your DOMContentLoaded event listener:
+document.addEventListener('DOMContentLoaded', function () {
+    init();
+
+    // Initialize primary color selector
+    if (typeof initColorSelector === 'function') {
+        initColorSelector();
     }
-    
-    if (nextQuestionBtn) {
-        nextQuestionBtn.addEventListener('click', nextQuestion);
+
+    // Initialize secondary color selector
+    if (typeof initSecondaryColorSelector === 'function') {
+        initSecondaryColorSelector();
     }
-    
-    if (endQuizBtn) {
-        endQuizBtn.addEventListener('click', endQuiz);
+});
+
+// Update your applyTheme function to also apply secondary color:
+function applyTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+
+    // Apply theme to body class
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
     }
-    
-    // Settings
-    if (settingsButton) {
-        settingsButton.addEventListener('click', () => {
-            if (settingsPage) settingsPage.classList.toggle('open');
-            if (settingsOverlay) settingsOverlay.classList.add('active');
-        });
+
+    // Update theme toggle icon
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        const themeIcon = themeToggle.querySelector('i');
+        if (themeIcon) {
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
     }
-    
-    if (closeSettings) {
-        closeSettings.addEventListener('click', () => {
-            if (settingsPage) settingsPage.classList.remove('open');
-            if (settingsOverlay) settingsOverlay.classList.remove('active');
-        });
+
+    // Re-apply both colors to ensure they work with new theme
+    if (selectedColor) {
+        applyPrimaryColor(selectedColor);
     }
-    
-    if (settingsOverlay) {
-        settingsOverlay.addEventListener('click', () => {
-            if (settingsPage) settingsPage.classList.remove('open');
-            if (settingsOverlay) settingsOverlay.classList.remove('active');
-        });
+    if (selectedSecondaryColor) {
+        applySecondaryColor(selectedSecondaryColor);
     }
-    
-    // Escape key to close settings
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (settingsPage && settingsPage.classList.contains('open')) {
-                settingsPage.classList.remove('open');
-                if (settingsOverlay) settingsOverlay.classList.remove('active');
-            }
+}
+
+// Helper function to update active color (rename your existing one if needed)
+function updateActiveColor(color, isSecondary = false) {
+    const selector = isSecondary ? '.secondary-color:not(.custom-color)' : '.color-option:not(.custom-color):not(.secondary-color)';
+    const options = document.querySelectorAll(selector);
+
+    options.forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.color === color) {
+            option.classList.add('active');
         }
     });
 }
 
-// =============== INITIALIZATION ===============
 
-async function init() {
-    console.log('Initializing Quiz App...');
-    
-    // Load saved words
-    try {
-        savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
-        console.log(`Loaded ${savedWords.length} saved words`);
-    } catch (error) {
-        console.error('Error loading saved words:', error);
-        savedWords = [];
+// ========= Story Display Functions ==========
+function renderStories(level = 'all') {
+    if (!storiesGrid) return;
+
+    storiesGrid.innerHTML = '';
+
+    let filteredStories;
+
+    if (level === 'all') {
+        filteredStories = stories;
+    } else if (level === 'user') {
+        filteredStories = userStories; // Show only user stories
+    } else {
+        // Filter by level (beginner, intermediate, advanced)
+        filteredStories = stories.filter(story => story.level === level);
     }
-    
-    // Setup event listeners
-    setupEventListeners();
-    
-    // Load initial quiz database
-    await loadQuizDatabase();
-    
-    // Initialize quiz system
-    resetQuizStats();
-    
-    console.log('Quiz App initialized successfully!');
-    
-    // Log URL parameters
-    if (quizIdFromUrl) {
-        console.log('Quiz ID from URL:', quizIdFromUrl);
+
+    if (filteredStories.length === 0) {
+        storiesGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <p>No stories found for this ${level === 'user' ? 'category' : 'level'}.</p>
+                ${level === 'user' ? '<p><a href="add-stories.html" style="color: var(--primary); text-decoration: underline;">Add your first story</a></p>' : ''}
+            </div>
+        `;
+        return;
+    }
+
+    filteredStories.forEach(story => {
+        const storyCard = document.createElement('div');
+        storyCard.className = 'story-card';
+        storyCard.dataset.storyTitle = story.title;
+
+        // Check if story is already saved (only for non-user stories)
+        const isSaved = !story.isUserStory && userStories.some(savedStory =>
+            savedStory.title.toLowerCase() === story.title.toLowerCase()
+        );
+
+        // Create author HTML conditionally
+        const authorHTML = story.author && story.author.trim() !== ""
+            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
+            : '';
+
+        // Check if it's a user story
+        const isUserStory = story.isUserStory;
+
+        // Get CEFR level with fallback
+        const cefrLevel = story.levelcefr || '';
+
+        storyCard.innerHTML = `
+            <div class="story-image">
+                ${authorHTML}
+                ${renderStoryCover(story)}
+            </div>
+            <div class="story-content">
+                <div class="story-header">
+                    <div>
+                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
+                    <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
+                </div>
+        
+                    ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
+                </div>
+                <h3 class="story-title">${story.title}</h3>
+                <div class="story-meta">
+                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
+                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                </div>
+                
+                <!-- Action Buttons - Save button and Download button -->
+                <div class="story-actions">
+                    ${!isUserStory ? `
+                        <button class="story-action-btn save-story-btn" data-story-title="${story.title}" ${isSaved ? 'disabled' : ''}>
+                            <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save Story'}
+                        </button>
+                    ` : ''}
+                    <button class="story-action-btn download-btn" data-story-title="${story.title}">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Add event listeners for buttons
+        const saveBtn = storyCard.querySelector('.save-story-btn');
+        const downloadBtn = storyCard.querySelector('.download-btn');
+
+        if (saveBtn && !isSaved) {
+            saveBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                saveStoryToUserStories(story);
+            });
+        }
+
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                downloadStory(story.title, isUserStory);
+            });
+        }
+
+        storiesGrid.appendChild(storyCard);
+    });
+}
+// Add this to your JavaScript
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// Create and add the button to the page
+function addScrollToTopButton() {
+    const button = document.createElement('button');
+    button.id = 'scrollToTopBtn';
+    button.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    button.title = 'Scroll to top';
+
+    button.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: none; /* Hidden by default */
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    `;
+
+    button.addEventListener('mouseover', () => {
+        button.style.transform = 'scale(1.1)';
+        button.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+    });
+
+    button.addEventListener('mouseout', () => {
+        button.style.transform = 'scale(1)';
+        button.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    });
+
+    button.addEventListener('click', scrollToTop);
+
+    document.body.appendChild(button);
+
+    // Show/hide button based on scroll position
+    window.addEventListener('scroll', toggleScrollToTopButton);
+}
+
+function toggleScrollToTopButton() {
+    const button = document.getElementById('scrollToTopBtn');
+    if (!button) return;
+
+    if (window.scrollY > 300) {
+        button.style.display = 'flex';
+        button.style.alignItems = 'center';
+        button.style.justifyContent = 'center';
+    } else {
+        button.style.display = 'none';
     }
 }
 
-// Add CSS styles
+// Call this in your init() function
+addScrollToTopButton();
+// Function to save story to user stories
+function saveStoryToUserStories(story) {
+    // Check if story already exists in user stories
+    const alreadyExists = userStories.some(savedStory =>
+        savedStory.title.toLowerCase() === story.title.toLowerCase()
+    );
+
+    if (alreadyExists) {
+        showNotification('This story is already saved!', 'warning');
+        return;
+    }
+
+    // Create a copy of the story for user stories
+    const storyToSave = {
+        ...story,
+        id: `saved_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        isUserStory: true,
+        savedDate: new Date().toISOString(),
+        originalSource: story.isUserStory ? 'user' : 'external'
+    };
+
+    // Add to user stories
+    userStories.push(storyToSave);
+
+    // If the story has translations, save them to userDictionaries
+    if (story.translations && Object.keys(story.translations).length > 0) {
+        userDictionaries[storyToSave.id] = story.translations;
+        // Save userDictionaries to localStorage
+        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+        console.log(`Saved ${Object.keys(story.translations).length} translations for story: ${story.title}`);
+    }
+
+    // Save to localStorage
+    localStorage.setItem('userStories', JSON.stringify(userStories));
+
+    // Update UI
+    renderStories();
+
+    // Show success notification
+    const translationCount = story.translations ? Object.keys(story.translations).length : 0;
+    if (translationCount > 0) {
+        showNotification(`"${story.title}" saved to your stories with ${translationCount} translation${translationCount !== 1 ? 's' : ''}!`, 'success');
+    } else {
+        showNotification(`"${story.title}" saved to your stories!`, 'success');
+    }
+}
+
+function renderStoryCover(story) {
+    if (!story.cover) {
+        // Default book icon if no cover specified
+        return '<i class="fas fa-book"></i>';
+    }
+
+    if (story.coverType === 'emoji') {
+        return `<div class="story-emoji">${story.cover}</div>`;
+    } else if (story.coverType === 'image') {
+        return `<img src="${story.cover}" alt="${story.title}" class="story-image">`;
+    } else if (story.coverType === 'icon') {
+        return `<i class="${story.cover}"></i>`;
+    } else {
+        // Default to emoji if type not specified
+        return `<div class="story-emoji">${story.cover}</div>`;
+    }
+}
+
+// ========= Download Functions ==========
+function downloadStory(storyTitle, isUserStory = false) {
+    console.log('Downloading story with title:', storyTitle);
+
+    let story;
+
+    if (isUserStory) {
+        // Find in userStories
+        story = userStories.find(s => s.title.toLowerCase() === storyTitle.toLowerCase());
+    } else {
+        // Find in main stories array
+        story = stories.find(s => s.title.toLowerCase() === storyTitle.toLowerCase());
+    }
+
+    if (!story) {
+        console.error('Story not found! Title:', storyTitle);
+        showNotification('Story not found!', 'error');
+        return;
+    }
+
+    console.log('Found story:', story.title);
+
+    // Find the download button
+    const downloadBtn = document.querySelector(`.download-btn[data-story-title="${story.title}"]`);
+    const originalText = downloadBtn ? downloadBtn.innerHTML : '';
+
+    // Add loading state
+    if (downloadBtn) {
+        downloadBtn.classList.add('loading');
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+        downloadBtn.disabled = true;
+    }
+
+    try {
+        // Get translations for this story
+        let translations = {};
+        if (isUserStory && userDictionaries[story.id]) {
+            translations = userDictionaries[story.id];
+        } else if (story.translations) {
+            translations = story.translations;
+        }
+
+        // Prepare the story object for download
+        const storyForDownload = {
+            // Generate a unique ID if none exists
+            id: story.id || `story_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            title: story.title,
+            level: story.level,
+            cover: story.cover,
+            coverType: story.coverType,
+            content: story.content,
+            author: story.author || '',
+            wordCount: story.wordCount || calculateWordCount(story.content),
+            // Include translations if they exist
+            ...(Object.keys(translations).length > 0 && { translations: translations }),
+            // Metadata
+            exportedDate: new Date().toISOString(),
+            exportedFrom: "IStories",
+            version: "1.0"
+        };
+
+        // Convert to JSON string
+        const jsonString = JSON.stringify(storyForDownload, null, 2);
+
+        // Create a Blob with the JSON data
+        const blob = new Blob([jsonString], { type: 'application/json' });
+
+        // Create download URL
+        const url = URL.createObjectURL(blob);
+
+        // Create download link
+        const a = document.createElement('a');
+        a.href = url;
+
+        // Create filename from story title
+        const sanitizedTitle = story.title
+            .toLowerCase()
+            .replace(/[^a-z0-9\s\-_]/g, '')
+            .replace(/\s+/g, '-')
+            .trim();
+
+        const date = new Date().toISOString().split('T')[0];
+        a.download = `istories-${sanitizedTitle}-${date}.json`;
+
+        // Trigger download
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+
+        // Show success notification
+        const translationCount = Object.keys(translations).length;
+        if (translationCount > 0) {
+            showNotification(`"${story.title}" downloaded with ${translationCount} translation${translationCount !== 1 ? 's' : ''}!`, 'success');
+        } else {
+            showNotification(`"${story.title}" downloaded successfully!`, 'success');
+        }
+
+        // Track download
+        trackDownload(story.title);
+
+    } catch (error) {
+        console.error('Error downloading story:', error);
+        showNotification('Failed to download story. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        if (downloadBtn) {
+            setTimeout(() => {
+                downloadBtn.classList.remove('loading');
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }, 500);
+        }
+    }
+}
+
+function calculateWordCount(content) {
+    if (!content || !Array.isArray(content)) return 0;
+    return content.join(' ').split(/\s+/).length;
+}
+
+function trackDownload(storyId) {
+    try {
+        const downloadStats = JSON.parse(localStorage.getItem('downloadStats')) || {
+            totalDownloads: 0,
+            downloads: {}
+        };
+
+        downloadStats.totalDownloads = (downloadStats.totalDownloads || 0) + 1;
+
+        // Track per story
+        if (!downloadStats.downloads[storyId]) {
+            downloadStats.downloads[storyId] = 0;
+        }
+        downloadStats.downloads[storyId]++;
+
+        // Save last download date
+        downloadStats.lastDownload = new Date().toISOString();
+
+        localStorage.setItem('downloadStats', JSON.stringify(downloadStats));
+    } catch (error) {
+        console.error('Error tracking download:', error);
+    }
+}
+
+// ========= Search Functions ==========
+function filterStoriesBySearch(query) {
+    if (!query || query.trim() === '') {
+        return stories;
+    }
+
+    query = query.toLowerCase().trim();
+
+    return stories.filter(story => {
+        const titleMatch = story.title.toLowerCase().includes(query);
+        const contentMatch = story.content.some(paragraph =>
+            paragraph.toLowerCase().includes(query)
+        );
+        const levelMatch = story.level.toLowerCase().includes(query);
+        const tagsMatch = story.tags?.some(tag =>
+            tag.toLowerCase().includes(query)
+        ) || false;
+
+        return titleMatch || contentMatch || levelMatch || tagsMatch;
+    });
+}
+
+function displayFilteredStories(filteredStories, query) {
+    if (!storiesGrid) return;
+
+    storiesGrid.innerHTML = '';
+
+    if (filteredStories.length === 0) {
+        storiesGrid.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-search fa-2x"></i>
+                <h3>No stories found for "${query}"</h3>
+                <p>Try different keywords or browse all stories</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredStories.forEach(story => {
+        const storyCard = document.createElement('div');
+        storyCard.className = 'story-card';
+        storyCard.dataset.storyTitle = story.title;
+
+        // Check if story is already saved (only for non-user stories)
+        const isSaved = !story.isUserStory && userStories.some(savedStory =>
+            savedStory.title.toLowerCase() === story.title.toLowerCase()
+        );
+
+        const highlightedTitle = highlightSearchMatch(story.title, query);
+
+        const authorHTML = story.author && story.author.trim() !== ""
+            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
+            : '';
+
+        const isUserStory = story.isUserStory;
+        // Get CEFR level with fallback
+        const cefrLevel = story.levelcefr || '';
+
+        storyCard.innerHTML = `
+            <div class="story-image">
+                ${authorHTML}
+                ${renderStoryCover(story)}
+            </div>
+            <div class="story-content">
+            <div>
+              <span class="story-level ${story.level}">${story.level}</span>
+              <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
+            </div>
+              
+
+                ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
+                <h3 class="story-title">${highlightedTitle}</h3>
+                <div class="story-meta">
+                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
+                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                </div>
+                
+                <!-- Action Buttons for search results -->
+                <div class="story-actions">
+                    ${!isUserStory ? `
+                        <button class="story-action-btn save-story-btn" data-story-title="${story.title}" ${isSaved ? 'disabled' : ''}>
+                            <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save Story'}
+                        </button>
+                    ` : ''}
+                    <button class="story-action-btn download-btn" data-story-title="${story.title}">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Add event listeners for buttons in search results
+        const saveBtn = storyCard.querySelector('.save-story-btn');
+        const downloadBtn = storyCard.querySelector('.download-btn');
+
+        if (saveBtn && !isSaved) {
+            saveBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                saveStoryToUserStories(story);
+            });
+        }
+
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                downloadStory(story.title, isUserStory);
+            });
+        }
+
+        storiesGrid.appendChild(storyCard);
+    });
+}
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function highlightSearchMatch(text, query) {
+    if (!query) return text;
+
+    try {
+        const escapedQuery = escapeRegExp(query);
+        const regex = new RegExp(`(${escapedQuery})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    } catch (error) {
+        console.error('Error in highlightSearchMatch:', error);
+        return text;
+    }
+}
+
+function setupSearch() {
+    if (!searchForm || !searchInput) return;
+
+    // Search when form is submitted
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        performSearch();
+    });
+
+    // Search while typing
+    searchInput.addEventListener('input', (e) => {
+        performSearch();
+    });
+
+    // Clear on Escape
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            performSearch();
+        }
+    });
+}
+
+function performSearch() {
+    const query = searchInput.value.trim();
+    const filteredStories = filterStoriesBySearch(query);
+    displayFilteredStories(filteredStories, query);
+
+    if (query) {
+        levelBtns.forEach(btn => btn.classList.remove('active'));
+        if (levelBtns.length > 0) {
+            levelBtns[0].classList.add('active');
+        }
+    }
+}
+
+// ========= Navigation Functions ==========
+function switchPage(page) {
+    currentPage = page;
+    pages.forEach(p => p.classList.remove('active'));
+
+    // Show the requested page
+    const pageElement = document.getElementById(page);
+    if (pageElement) {
+        pageElement.classList.add('active');
+    }
+
+    navLinks.forEach(link => {
+        if (link.dataset.page === page) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+    // Load user stories when switching to addStories page
+    if (page === 'addStories') {
+        loadUserStories();
+    }
+}
+
+// Navigation menu state
+let isMenuOpen = false;
+
+// =============== NAVIGATION MENU FUNCTIONS ===============
+function setupNavToggle() {
+    if (!toggleNav || !more) return;
+
+    console.log('Setting up navigation menu toggle...');
+
+    // Toggle menu
+    toggleNav.addEventListener("click", function (e) {
+        e.stopPropagation();
+        isMenuOpen = !isMenuOpen;
+        more.classList.toggle("open");
+        console.log('Menu toggled, isOpen:', isMenuOpen);
+    });
+
+    // Close menu when clicking anywhere
+    document.addEventListener("click", function () {
+        if (isMenuOpen) {
+            more.classList.remove("open");
+            isMenuOpen = false;
+            console.log('Menu closed by clicking outside');
+        }
+    });
+
+    // Prevent closing when clicking inside the menu
+    more.addEventListener("click", function (e) {
+        e.stopPropagation();
+    });
+
+    // Close menu on Escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && isMenuOpen) {
+            more.classList.remove("open");
+            isMenuOpen = false;
+            console.log('Menu closed by Escape key');
+        }
+    });
+
+    // Close menu when clicking on any <a> inside the menu
+    const links = more.querySelectorAll("a");
+    links.forEach(link => {
+        link.addEventListener("click", function () {
+            more.classList.remove("open");
+            isMenuOpen = false;
+            console.log('Menu closed by clicking link');
+        });
+    });
+
+    console.log('Navigation menu toggle setup complete');
+}
+// ========= Settings Functions ==========
+function setupSettings() {
+    console.log('Setting up settings...');
+
+    // Check if elements exist
+    if (!settingsButton || !settingsPage || !closeSettings || !settingsOverlay) {
+        console.error('Settings elements not found!');
+        return;
+    }
+
+    console.log('Settings elements found, setting up listeners...');
+
+    settingsButton.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        settingsPage.classList.add("open");
+        settingsOverlay.classList.add("active");
+    });
+
+    closeSettings.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        settingsPage.classList.remove("open");
+        settingsOverlay.classList.remove("active");
+    });
+
+    settingsOverlay.addEventListener("click", function () {
+        settingsPage.classList.remove("open");
+        settingsOverlay.classList.remove("active");
+    });
+    // Close settings when clicking on overlay
+    settingsOverlay.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        settingsPage.classList.remove("open");
+        settingsOverlay.classList.remove("active");
+    });
+
+    // Close settings with Escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && settingsPage.classList.contains("open")) {
+            settingsPage.classList.remove("open");
+            settingsOverlay.classList.remove("active");
+        }
+    });
+}
+
+// ========= Notification Function ==========
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+
+    // Set background color based on notification type
+    let bgColor = '';
+
+    if (type === 'success') {
+        bgColor = 'var(--primary)';
+    } else if (type === 'error') {
+        bgColor = '#ff4444';
+    } else if (type === 'warning') {
+        bgColor = '#ff9900';
+    } else if (type === 'info') {
+        bgColor = '#2196F3';
+    }
+
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${bgColor};
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        z-index: 1000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+    `;
+
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// ========= Event Listeners Setup ==========
+function setupEventListeners() {
+    // Navigation links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchPage(link.dataset.page);
+            scrollToTop();
+        });
+    });
+
+    // Level filter buttons
+    levelBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            levelBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderStories(btn.dataset.level);
+        });
+    });
+
+    // Theme toggle
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+}
+
+// ========= Add Stories Functions (INTEGRATED) ==========
+function initAddStories() {
+    // Add event listeners
+    setupAddStoriesListeners();
+
+    // Load existing user stories
+    loadUserStories();
+}
+
+function setupAddStoriesListeners() {
+    // File upload elements
+    const browseBtn = document.getElementById('browseBtn');
+    const storyFileInput = document.getElementById('storyFileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const removeFileBtn = document.getElementById('removeFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    // Form elements
+    const storyForm = document.getElementById('storyForm');
+    const previewBtn = document.getElementById('previewBtn');
+    const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+    const loadExampleTranslationsBtn = document.getElementById('loadExampleTranslations');
+
+    // Preview modal elements
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+    const closePreview = document.getElementById('closePreview');
+    const saveFromPreviewBtn = document.getElementById('saveFromPreviewBtn');
+
+    // Edit modal elements
+    const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+    const closeEditModalBtn2 = document.getElementById('closeEditModalBtn2');
+    const editStoryForm = document.getElementById('editStoryForm');
+    const editStoryCoverType = document.getElementById('editStoryCoverType');
+    const editStoryModal = document.getElementById('editStoryModal');
+
+    // File upload functionality
+    if (browseBtn && storyFileInput) {
+        browseBtn.addEventListener('click', () => storyFileInput.click());
+    }
+
+    if (storyFileInput) {
+        storyFileInput.addEventListener('change', handleFileSelect);
+    }
+
+    if (uploadArea) {
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleFileDrop);
+        uploadArea.addEventListener('click', () => storyFileInput.click());
+    }
+
+    if (removeFileBtn) {
+        removeFileBtn.addEventListener('click', clearSelectedFile);
+    }
+
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', uploadStoryFile);
+    }
+
+    // Form functionality
+    if (storyForm) {
+        storyForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    if (previewBtn) {
+        previewBtn.addEventListener('click', showStoryPreview);
+    }
+
+    if (downloadTemplateBtn) {
+        downloadTemplateBtn.addEventListener('click', downloadStoryTemplate);
+    }
+
+    if (copyJsonBtn) {
+        copyJsonBtn.addEventListener('click', copyJsonExample);
+    }
+
+    if (loadExampleTranslationsBtn) {
+        loadExampleTranslationsBtn.addEventListener('click', loadExampleTranslations);
+    }
+
+    // Preview modal functionality
+    if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', closePreviewModal);
+    }
+
+    if (closePreview) {
+        closePreview.addEventListener('click', closePreviewModal);
+    }
+
+    if (saveFromPreviewBtn) {
+        saveFromPreviewBtn.addEventListener('click', saveStoryFromPreview);
+    }
+
+    // Edit modal functionality
+    if (closeEditModalBtn) {
+        closeEditModalBtn.addEventListener('click', closeEditModal);
+    }
+
+    if (closeEditModalBtn2) {
+        closeEditModalBtn2.addEventListener('click', closeEditModal);
+    }
+
+    if (editStoryForm) {
+        editStoryForm.addEventListener('submit', handleEditStorySubmit);
+    }
+
+    if (editStoryCoverType) {
+        editStoryCoverType.addEventListener('change', updateEditCoverLabel);
+    }
+
+    // Close modals when clicking outside
+    const previewModal = document.getElementById('previewModal');
+    if (previewModal) {
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                closePreviewModal();
+            }
+        });
+    }
+
+    if (editStoryModal) {
+        editStoryModal.addEventListener('click', (e) => {
+            if (e.target === editStoryModal) {
+                closeEditModal();
+            }
+        });
+    }
+}
+
+function loadUserStories() {
+    const userStoriesList = document.getElementById('userStoriesList');
+    if (!userStoriesList) return;
+
+    userStoriesList.innerHTML = '';
+
+    if (userStories.length === 0) {
+        userStoriesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-book-open"></i>
+                <p>No stories saved yet</p>
+            </div>
+        `;
+        return;
+    }
+
+    userStories.forEach((story, index) => {
+        const storyItem = document.createElement('div');
+        storyItem.className = 'story-item';
+
+        // Check if this story has translations in userDictionaries
+        const hasTranslations = userDictionaries[story.id] && Object.keys(userDictionaries[story.id]).length > 0;
+
+        const translationBadge = hasTranslations
+            ? '<span class="translation-badge" title="Has custom translations"><i class="fas fa-language"></i></span>'
+            : '';
+
+        // Determine if it's an image cover
+        const isImageCover = story.coverType === 'image' ||
+            (story.cover && (story.cover.startsWith('http://') || story.cover.startsWith('https://')));
+
+        // Create icon/emoji/image display
+        let coverDisplay = '';
+        if (isImageCover) {
+            // For image covers, show a small thumbnail
+            coverDisplay = `<div class="story-image-small" style="background-image: url('${story.cover}')"></div>`;
+        } else if (story.coverType === 'icon') {
+            coverDisplay = `<i class="${story.cover || 'fas fa-book'}"></i>`;
+        } else {
+            // Default to emoji
+            coverDisplay = `<div class="story-emoji-small">${story.cover || '📚'}</div>`;
+        }
+
+        storyItem.innerHTML = `
+        <div class="imtitle">
+         <div class="story-icon">
+                ${coverDisplay}
+                ${translationBadge}
+            </div>
+            <div class="story-item-info">
+                <span class="story-item-title">${story.title}</span>
+                <span class="story-item-meta">
+                    ${story.level} • ${story.wordCount || 'Unknown'} words • 
+                    ${new Date(story.savedDate || story.uploadDate).toLocaleDateString()}
+                </span>
+            </div>
+        </div>
+           
+            <div class="story-item-actions">
+                <button class="story-action-btn read-story-btn" title="Read Story" data-index="${index}">
+                    <i class="fas fa-book-reader"></i>
+                </button>
+                <button class="story-action-btn share-story-btn" title="Share as JSON" data-index="${index}">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="story-action-btn edit-story-btn" title="Edit Story" data-index="${index}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="story-action-btn delete-story-btn" title="Delete Story" data-index="${index}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+
+        userStoriesList.appendChild(storyItem);
+    });
+
+    // Add event listeners to buttons
+    document.querySelectorAll('.read-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            openUserStoryInReader(userStories[index].id);
+        });
+    });
+
+    document.querySelectorAll('.share-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            shareStoryAsJson(index);
+        });
+    });
+
+    document.querySelectorAll('.edit-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            openEditStoryModal(index);
+        });
+    });
+
+    document.querySelectorAll('.delete-story-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            deleteUserStory(index);
+        });
+    });
+}
+
+// ========= Helper Functions for Add Stories ==========
+function openUserStoryInReader(storyId) {
+    // Find the story
+    const story = userStories.find(s => s.id === storyId);
+
+    if (!story) {
+        showNotification('Story not found.', 'error');
+        return;
+    }
+
+    // Get translations for this story from userDictionaries
+    const translations = userDictionaries[storyId] || {};
+
+    // Store story data in localStorage for the reader
+    localStorage.setItem('currentReadingStory', JSON.stringify({
+        id: story.id,
+        title: story.title,
+        level: story.level,
+        content: story.content,
+        isUserStory: true,
+        cover: story.cover,
+        coverType: story.coverType,
+        author: story.author || '',
+        translations: translations
+    }));
+
+    // Redirect to reader page
+    const storyPage = '../English/reader/index.html?id=' + storyId + '&userStory=true';
+    window.location.href = storyPage;
+}
+
+function shareStoryAsJson(index) {
+    if (index < 0 || index >= userStories.length) {
+        showNotification('Story not found.', 'error');
+        return;
+    }
+
+    const story = userStories[index];
+    const storyId = story.id;
+
+    // Get translations for this story from userDictionaries
+    const translations = userDictionaries[storyId] || {};
+
+    // Prepare the complete story object for export
+    const exportStory = {
+        title: story.title,
+        level: story.level,
+        cover: story.cover,
+        coverType: story.coverType,
+        content: story.content,
+        author: story.author || '',
+        uploadDate: story.uploadDate || story.savedDate,
+        wordCount: story.wordCount,
+        // Include translations if they exist
+        ...(Object.keys(translations).length > 0 && { translations: translations })
+    };
+
+    // Convert to JSON string with nice formatting
+    const jsonString = JSON.stringify(exportStory, null, 2);
+
+    // Create a Blob with the JSON data
+    const blob = new Blob([jsonString], { type: 'application/json' });
+
+    // Create download URL
+    const url = URL.createObjectURL(blob);
+
+    // Create download link
+    const a = document.createElement('a');
+    a.href = url;
+
+    // Create filename from story title (sanitize for filename)
+    const sanitizedTitle = story.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '')
+        .replace(/\s+/g, '-')
+        .substring(0, 50);
+
+    const date = new Date().toISOString().split('T')[0];
+    a.download = `${sanitizedTitle}-${date}.json`;
+
+    // Trigger download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Clean up
+    URL.revokeObjectURL(url);
+
+    // Show notification
+    const translationCount = Object.keys(translations).length;
+    if (translationCount > 0) {
+        showNotification(`"${story.title}" exported with ${translationCount} translation${translationCount !== 1 ? 's' : ''}!`, 'success');
+    } else {
+        showNotification(`"${story.title}" exported as JSON file!`, 'success');
+    }
+}
+
+function openEditStoryModal(index) {
+    currentEditIndex = index;
+    const story = userStories[index];
+
+    // Fill form with story data
+    document.getElementById('editStoryTitle').value = story.title || '';
+    document.getElementById('editStoryLevel').value = story.level || 'intermediate';
+    document.getElementById('editStoryAuthor').value = story.author || '';
+    document.getElementById('editStoryCoverType').value = story.coverType || 'emoji';
+
+    // Set cover input based on type
+    const editStoryCover = document.getElementById('editStoryCover');
+    if (editStoryCover) {
+        editStoryCover.value = story.cover || '📚';
+        updateEditCoverLabel();
+    }
+
+    // Fill content
+    const editStoryContent = document.getElementById('editStoryContent');
+    if (editStoryContent) {
+        editStoryContent.value = Array.isArray(story.content) ? story.content.join('\n') : story.content || '';
+    }
+
+    // Fill translations from userDictionaries
+    const editStoryTranslations = document.getElementById('editStoryTranslations');
+    if (editStoryTranslations) {
+        const storyId = story.id;
+        if (userDictionaries[storyId]) {
+            editStoryTranslations.value = JSON.stringify(userDictionaries[storyId], null, 2);
+        } else {
+            editStoryTranslations.value = '';
+        }
+    }
+
+    // Show modal
+    const editStoryModal = document.getElementById('editStoryModal');
+    if (editStoryModal) {
+        editStoryModal.classList.add('show');
+    }
+}
+
+function updateEditCoverLabel() {
+    const editStoryCoverType = document.getElementById('editStoryCoverType');
+    const editCoverLabel = document.getElementById('editCoverLabel');
+    const editStoryCover = document.getElementById('editStoryCover');
+
+    if (editStoryCoverType && editCoverLabel && editStoryCover) {
+        const coverType = editStoryCoverType.value;
+
+        if (coverType === 'emoji') {
+            editCoverLabel.textContent = 'Emoji';
+            editStoryCover.placeholder = '📚';
+        } else if (coverType === 'icon') {
+            editCoverLabel.textContent = 'Font Awesome Icon';
+            editStoryCover.placeholder = 'fas fa-book';
+        } else if (coverType === 'image') {
+            editCoverLabel.textContent = 'Image URL';
+            editStoryCover.placeholder = 'https://example.com/image.jpg';
+        }
+    }
+}
+
+function handleEditStorySubmit(e) {
+    e.preventDefault();
+
+    if (currentEditIndex === -1) {
+        showNotification('No story selected for editing.', 'error');
+        return;
+    }
+
+    const story = userStories[currentEditIndex];
+    const storyId = story.id;
+
+    // Get form values
+    const title = document.getElementById('editStoryTitle').value.trim();
+    const level = document.getElementById('editStoryLevel').value;
+    const author = document.getElementById('editStoryAuthor').value.trim();
+    const coverType = document.getElementById('editStoryCoverType').value;
+    const cover = document.getElementById('editStoryCover').value.trim();
+    const contentText = document.getElementById('editStoryContent').value.trim();
+    const translationsText = document.getElementById('editStoryTranslations').value.trim();
+
+    // Validation
+    if (!title || !level || !contentText) {
+        showNotification('Please fill in all required fields.', 'error');
+        return;
+    }
+
+    // Process content
+    const content = contentText.split('\n').filter(line => line.trim() !== '');
+    const wordCount = calculateWordCount(content);
+
+    // Update story in userStories array
+    userStories[currentEditIndex] = {
+        ...story,
+        title,
+        level,
+        author: author || '',
+        coverType,
+        cover: cover || (coverType === 'emoji' ? '📚' : 'fas fa-book'),
+        content,
+        wordCount,
+        uploadDate: new Date().toISOString()
+    };
+
+    // Update translations in userDictionaries if provided
+    if (translationsText) {
+        try {
+            const translations = JSON.parse(translationsText);
+            userDictionaries[storyId] = translations;
+            // Save userDictionaries to localStorage
+            localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+            showNotification(`${Object.keys(translations).length} translations saved.`, 'success');
+        } catch (error) {
+            showNotification('Invalid translations format. Translations not updated.', 'error');
+        }
+    } else {
+        // Remove translations if cleared
+        delete userDictionaries[storyId];
+        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+    }
+
+    // Save userStories to localStorage
+    localStorage.setItem('userStories', JSON.stringify(userStories));
+
+    // Update UI
+    loadUserStories();
+    if (currentPage === 'home' || currentPage === 'addStories') {
+        renderStories();
+    }
+
+    // Close modal
+    closeEditModal();
+
+    // Show success message
+    showNotification('Story updated successfully!', 'success');
+}
+
+function closeEditModal() {
+    const editStoryModal = document.getElementById('editStoryModal');
+    if (editStoryModal) {
+        editStoryModal.classList.remove('show');
+    }
+    currentEditIndex = -1;
+
+    // Reset form
+    const editStoryForm = document.getElementById('editStoryForm');
+    if (editStoryForm) {
+        editStoryForm.reset();
+    }
+}
+
+function processStoryData(storyData, fileName) {
+    // Validate story structure
+    if (!validateStory(storyData)) {
+        showNotification('Invalid story format. Please check the template.', 'error');
+        return;
+    }
+
+    // Process translations if they exist
+    let translations = {};
+    if (storyData.translations) {
+        try {
+            translations = storyData.translations;
+        } catch (error) {
+            console.error('Error parsing translations:', error);
+            translations = {};
+        }
+    }
+
+    // Generate unique ID
+    const storyId = 'user_' + Date.now();
+
+    // Prepare story object
+    const userStory = {
+        ...storyData,
+        id: storyId,
+        isUserStory: true,
+        fileName: fileName,
+        uploadDate: new Date().toISOString(),
+        wordCount: calculateWordCount(storyData.content)
+    };
+
+    // Remove translations from story object to keep it clean
+    delete userStory.translations;
+
+    // Add to user stories
+    userStories.push(userStory);
+
+    // Save translations separately if they exist
+    if (Object.keys(translations).length > 0) {
+        userDictionaries[storyId] = translations;
+    }
+
+    // Save to localStorage
+    localStorage.setItem('userStories', JSON.stringify(userStories));
+    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+
+    // Update stories array and render
+    stories.push(userStory);
+
+    // ALWAYS render stories regardless of current page
+    renderStories();
+
+    // Show success message
+    const translationCount = Object.keys(translations).length;
+    const message = translationCount > 0
+        ? `Story uploaded successfully with ${translationCount} custom translation${translationCount !== 1 ? 's' : ''}!`
+        : 'Story uploaded successfully!';
+
+    showNotification(message, 'success');
+
+    // Clear file selection
+    clearSelectedFile();
+
+    // Update user stories list
+    loadUserStories();
+
+    // Open the story in reader
+    openUserStoryInReader(storyId);
+}
+function Refresh() {
+    window.location.reload()
+}
+function deleteUserStory(index) {
+    if (confirm('Are you sure you want to delete this story? This will also delete all associated translations. This action cannot be undone.')) {
+        const storyId = userStories[index].id;
+
+        // Remove from userStories array
+        userStories.splice(index, 1);
+
+        // Remove from stories array
+        const storyIndex = stories.findIndex(s => s.id === storyId);
+        if (storyIndex !== -1) {
+            stories.splice(storyIndex, 1);
+        }
+
+        // Remove translations from userDictionaries
+        delete userDictionaries[storyId];
+
+        // Update localStorage
+        localStorage.setItem('userStories', JSON.stringify(userStories));
+        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+
+        // Update UI
+        loadUserStories();
+        if (currentPage === 'home' || currentPage === 'addStories') {
+            renderStories();
+        }
+
+        showNotification('Story and translations deleted successfully.', 'success');
+    }
+}
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/json') {
+        displaySelectedFile(file);
+    } else {
+        showNotification('Please select a valid JSON file.', 'error');
+    }
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.style.borderColor = 'var(--primary-dark)';
+        uploadArea.style.background = 'rgba(255, 255, 255, 0.3)';
+    }
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
+    }
+}
+
+function handleFileDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = 'rgba(255, 255, 255, 0.1)';
+    }
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        const file = files[0];
+        if (file.type === 'application/json') {
+            displaySelectedFile(file);
+        } else {
+            showNotification('Please drop a valid JSON file.', 'error');
+        }
+    }
+}
+
+function displaySelectedFile(file) {
+    const selectedFileInfo = document.getElementById('selectedFileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    if (selectedFileInfo && fileName && fileSize && uploadBtn) {
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        selectedFileInfo.style.display = 'block';
+        uploadBtn.disabled = false;
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function clearSelectedFile() {
+    const storyFileInput = document.getElementById('storyFileInput');
+    const selectedFileInfo = document.getElementById('selectedFileInfo');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    if (storyFileInput && selectedFileInfo && uploadBtn) {
+        storyFileInput.value = '';
+        selectedFileInfo.style.display = 'none';
+        uploadBtn.disabled = true;
+    }
+}
+
+function uploadStoryFile() {
+    const storyFileInput = document.getElementById('storyFileInput');
+    if (!storyFileInput || !storyFileInput.files[0]) return;
+
+    const file = storyFileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        try {
+            const storyData = JSON.parse(e.target.result);
+            processStoryData(storyData, file.name);
+        } catch (error) {
+            showNotification('Error parsing JSON file: ' + error.message, 'error');
+        }
+    };
+
+    reader.onerror = function () {
+        showNotification('Error reading file.', 'error');
+    };
+
+    reader.readAsText(file);
+}
+
+function validateStory(story) {
+    const requiredFields = ['title', 'level', 'content'];
+
+    // Check required fields
+    for (const field of requiredFields) {
+        if (!story[field]) {
+            return false;
+        }
+    }
+
+    // Check content is array
+    if (!Array.isArray(story.content) || story.content.length === 0) {
+        return false;
+    }
+
+    // Check level is valid
+    const validLevels = ['beginner', 'intermediate', 'advanced'];
+    if (!validLevels.includes(story.level)) {
+        return false;
+    }
+
+    return true;
+}
+
+function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const title = document.getElementById('storyTitle').value.trim();
+    const level = document.getElementById('storyLevel').value;
+    const cover = document.getElementById('storyCover').value.trim() || '📚';
+    const coverType = document.getElementById('storyCoverType').value;
+    const contentText = document.getElementById('storyContent').value.trim();
+    const author = document.getElementById('storyAuthor').value.trim();
+    const translationsText = document.getElementById('storyTranslations').value.trim();
+
+    if (!title || !level || !contentText) {
+        showNotification('Please fill in all required fields.', 'error');
+        return;
+    }
+
+    // Split content into paragraphs
+    const content = contentText.split('\n').filter(line => line.trim() !== '');
+
+    // Create story object
+    const storyData = {
+        title: title,
+        level: level,
+        cover: cover,
+        coverType: coverType,
+        content: content,
+        author: author || '',
+        tags: ['custom']
+    };
+
+    // Add translations if provided
+    if (translationsText) {
+        try {
+            const translations = JSON.parse(translationsText);
+            storyData.translations = translations;
+        } catch (error) {
+            showNotification('Invalid translations format. Please check the JSON syntax.', 'error');
+            return;
+        }
+    }
+
+    // Process the story
+    processStoryData(storyData, 'manual_entry.json');
+
+    // Reset form
+    e.target.reset();
+    document.getElementById('storyCover').value = '📚';
+}
+
+function showStoryPreview() {
+    const title = document.getElementById('storyTitle').value.trim();
+    const level = document.getElementById('storyLevel').value;
+    const cover = document.getElementById('storyCover').value.trim() || '📚';
+    const coverType = document.getElementById('storyCoverType').value;
+    const contentText = document.getElementById('storyContent').value.trim();
+    const author = document.getElementById('storyAuthor').value.trim();
+    const translationsText = document.getElementById('storyTranslations').value.trim();
+
+    if (!title || !level || !contentText) {
+        showNotification('Please fill in all required fields to preview.', 'error');
+        return;
+    }
+
+    // Update preview modal
+    document.getElementById('previewTitle').textContent = title;
+    document.getElementById('previewLevel').textContent = level;
+    document.getElementById('previewLevel').className = `preview-level ${level}`;
+
+    if (coverType === 'emoji') {
+        document.getElementById('previewCoverDisplay').textContent = cover;
+        document.getElementById('previewCoverDisplay').innerHTML = cover;
+    } else {
+        document.getElementById('previewCoverDisplay').innerHTML = `<i class="${cover}"></i>`;
+    }
+
+    // Calculate word count
+    const content = contentText.split('\n').filter(line => line.trim() !== '');
+    const wordCount = calculateWordCount(content);
+    document.getElementById('previewWordCount').textContent = wordCount;
+
+    // Display author
+    document.getElementById('previewAuthor').textContent = author || 'Anonymous';
+
+    // Display content
+    const previewText = document.getElementById('previewText');
+    previewText.innerHTML = content.map(para => `<p>${para}</p>`).join('');
+
+    // Display translations if any
+    const translationsSection = document.getElementById('previewTranslationsSection');
+    const translationsList = document.getElementById('previewTranslationsList');
+
+    if (translationsText) {
+        try {
+            const translations = JSON.parse(translationsText);
+            const translationCount = Object.keys(translations).length;
+
+            translationsList.innerHTML = '';
+            for (const [word, data] of Object.entries(translations)) {
+                const translation = typeof data === 'string' ? data : (data.translation || 'No translation');
+                const item = document.createElement('div');
+                item.className = 'translation-item';
+                item.innerHTML = `
+                    <span class="translation-word">${word}</span>
+                    <span class="translation-meaning">${translation}</span>
+                `;
+                translationsList.appendChild(item);
+            }
+
+            const countElement = document.createElement('div');
+            countElement.className = 'translation-count';
+            countElement.textContent = `${translationCount} custom translation${translationCount !== 1 ? 's' : ''}`;
+            translationsList.appendChild(countElement);
+
+            translationsSection.style.display = 'block';
+        } catch (error) {
+            translationsSection.style.display = 'none';
+        }
+    } else {
+        translationsSection.style.display = 'none';
+    }
+
+    // Show modal
+    document.getElementById('previewModal').classList.add('show');
+}
+
+function closePreviewModal() {
+    document.getElementById('previewModal').classList.remove('show');
+}
+
+function saveStoryFromPreview() {
+    handleFormSubmit(new Event('submit'));
+    closePreviewModal();
+}
+
+function downloadStoryTemplate() {
+    const template = {
+        "title": "My Custom Story",
+        "level": "intermediate",
+        "cover": "📚",
+        "coverType": "emoji",
+        "content": [
+            "Hello and welcome to <span class='mark'>IStories!</span> This website was created by Ammar Chacal to help people learn languages in a fun and engaging way <img src='../../imges/cover.jpg' alt='Example' >  Through these interactive stories, you can improve your vocabulary and comprehension skills naturally.",
+            "Each story is designed for different learning levels - beginner, intermediate, and advanced. The beginner stories use simple words and short sentences, perfect for those just starting their language learning journey.",
+            "As you read, you can click on any word to see its translation and definition. This feature helps you learn new vocabulary in context, which is much more effective than memorizing word lists.",
+            "The stories cover various topics and genres, from everyday situations to exciting adventures. This variety ensures that you encounter different types of vocabulary and sentence structures.",
+            "Reading regularly is one of the best ways to improve your language skills. With IStories, you can practice reading comprehension while enjoying interesting narratives.",
+            "Remember that learning a language takes time and patience. Don't worry if you don't understand every word at first. Use the click-to-translate feature and try to understand the general meaning of each paragraph.",
+            "We recommend reading one story each day and reviewing the vocabulary you learn. Consistent practice is the key to making progress in any language.",
+            "Thank you for choosing IStories for your language learning journey. We hope you enjoy these stories and find them helpful in achieving your language goals."
+        ],
+        "author": "Istories",
+        "translations": {
+            "hello": { "translation": "مرحبا" },
+            "world": { "translation": "عالم" },
+            "book": { "translation": "كتاب" }
+        },
+        "description": "A short description of your story",
+        "tags": ["custom", "learning"]
+    };
+
+    const templateStr = JSON.stringify(template, null, 2);
+    const blob = new Blob([templateStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'story-template.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showNotification('Template downloaded successfully!', 'success');
+}
+
+function copyJsonExample() {
+    const jsonExample = document.getElementById('jsonExample').textContent;
+    navigator.clipboard.writeText(jsonExample)
+        .then(() => showNotification('JSON example copied to clipboard!', 'success'))
+        .catch(err => showNotification('Failed to copy: ' + err, 'error'));
+}
+
+function loadExampleTranslations() {
+    const exampleTranslations = {
+        "hello": { "translation": "مرحبا" },
+        "world": { "translation": "عالم" },
+        "book": { "translation": "كتاب" }
+    };
+
+    document.getElementById('storyTranslations').value = JSON.stringify(exampleTranslations, null, 2);
+    showNotification('Example translations loaded!', 'success');
+}
+
+// ========= Add CSS Animations ==========
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -928,333 +2198,76 @@ style.textContent = `
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
     }
-    
-    /* Quizzes container */
-    .quizzes-container {
-        margin: 20px 0;
-        padding: 20px;
-        background: var(--bg-secondary);
-        border-radius: 10px;
-        border: 1px solid var(--border);
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
     
-    .quizzes-container h3 {
-        margin: 0 0 15px 0;
-        color: var(--text-primary);
-        font-size: 1.2rem;
-    }
-    
-    /* Quiz cards */
-    .quiz-card {
-        background: var(--bg-primary);
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 15px;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    
-    .quiz-card:hover {
-        border-color: var(--primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .quiz-card.selected {
-        border-color: var(--primary);
-        background: rgba(74, 108, 247, 0.1);
-    }
-    
-    .quiz-card-header {
+    /* Story card button styles */
+    .story-actions {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    
-    .quiz-card-header h4 {
-        margin: 0;
-        font-size: 1.1rem;
-        color: var(--text-primary);
-    }
-    
-    .level-badge {
-        font-size: 0.8rem;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-weight: 600;
-    }
-    
-    .level-badge.beginner { 
-        color: #10b981;
-        background: rgba(16, 185, 129, 0.1);
-    }
-    .level-badge.intermediate { 
-        color: #f59e0b;
-        background: rgba(245, 158, 11, 0.1);
-    }
-    .level-badge.advanced { 
-        color: #ef4444;
-        background: rgba(239, 68, 68, 0.1);
-    }
-    
-    .quiz-card-body {
-        margin-bottom: 15px;
-    }
-    
-    .quiz-description {
-        margin: 0 0 10px 0;
-        color: var(--text-light);
-        font-size: 0.95rem;
-        line-height: 1.4;
-    }
-    
-    .quiz-card-meta {
-        display: flex;
-        flex-wrap: wrap;
         gap: 10px;
-        font-size: 0.85rem;
-        color: var(--text-light);
+        margin-top: 15px;
     }
     
-    .quiz-card-meta span {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .quiz-card-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .select-quiz-btn {
-        padding: 8px 16px;
-        font-size: 0.9rem;
-    }
-    
-    .from-url-badge {
-        background: #3b82f6;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-    
-    /* Selected quiz info */
-    .selected-quiz-info {
-        background: var(--bg-secondary);
-        padding: 15px;
-        border-radius: 8px;
-        margin: 15px 0;
-        border-left: 4px solid var(--primary);
-    }
-    
-    .selected-quiz-info h3 {
-        margin: 0 0 10px 0;
-        color: var(--text-primary);
-    }
-    
-    .selected-quiz-info p {
-        margin: 5px 0;
-        color: var(--text-light);
-    }
-    
-    /* Quiz container */
-    .quiz-welcome {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-light);
-    }
-    
-    .welcome-icon {
-        font-size: 48px;
-        color: var(--primary);
-        margin-bottom: 20px;
-        opacity: 0.7;
-    }
-    
-    .question-card {
-        background: var(--bg-primary);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        border: 1px solid var(--border);
-    }
-    
-    .question-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid var(--border);
-    }
-    
-    .question-number {
-        color: var(--text-light);
-        font-weight: 500;
-    }
-    
-    .quiz-title {
-        color: var(--primary);
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-    
-    .question-text {
-        font-size: 1.2rem;
-        margin-bottom: 20px;
-        color: var(--text-primary);
-        line-height: 1.4;
-    }
-    
-    .choices-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    
-    .choice-btn {
-        background: var(--bg-secondary);
-        border: 2px solid var(--border);
-        border-radius: 8px;
-        padding: 15px;
-        text-align: left;
+    .story-action-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
         cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 15px;
     }
     
-    .choice-btn:hover:not(.disabled) {
-        background: var(--bg-hover);
-        border-color: var(--primary);
+    .save-story-btn {
+        background: var(--primary);
+        color: white;
     }
     
-    .choice-btn.correct {
-        background: rgba(16, 185, 129, 0.2);
-        border-color: #10b981;
-        color: #10b981;
+    .save-story-btn:hover:not(:disabled) {
+        background: var(--primary-dark);
     }
     
-    .choice-btn.incorrect {
-        background: rgba(239, 68, 68, 0.2);
-        border-color: #ef4444;
-        color: #ef4444;
-    }
-    
-    .choice-btn.disabled {
+    .save-story-btn:disabled {
+        background: #4CAF50;
         cursor: not-allowed;
         opacity: 0.8;
     }
     
-    .choice-letter {
-        width: 30px;
-        height: 30px;
-        background: var(--bg-primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
+    .download-btn {
+        background: var(--secondary);
+        color: white;
     }
     
-    .choice-text {
-        flex: 1;
-        font-size: 1rem;
+    .download-btn:hover {
+        background: var(--secondary-dark);
     }
     
-    /* Quiz results */
-    .quiz-complete {
-        text-align: center;
-        padding: 30px 20px;
+    .story-action-btn.loading {
+        opacity: 0.7;
+        cursor: wait;
     }
     
-    .completion-icon {
-        font-size: 64px;
-        color: var(--primary);
-        margin-bottom: 20px;
-        opacity: 0.8;
+    .story-action-btn i {
+        font-size: 0.9rem;
     }
     
-    .score-display {
-        font-size: 48px;
-        font-weight: 800;
-        color: var(--primary);
-        margin: 20px 0;
-        line-height: 1;
-    }
-    
-    .result-details {
-        background: var(--bg-secondary);
-        padding: 20px;
-        border-radius: 10px;
-        margin: 20px 0;
-        text-align: left;
-    }
-    
-    .result-details p {
-        margin: 8px 0;
-        color: var(--text-primary);
-    }
-    
-    .result-message {
-        margin-top: 15px !important;
-        padding-top: 15px;
-        border-top: 1px solid var(--border);
-        font-size: 18px;
-        font-weight: 600;
-    }
-    
-    .quiz-complete-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 30px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    /* Loading state */
-    .loading {
-        text-align: center;
-        padding: 20px;
-        color: var(--text-light);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .quiz-card-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 5px;
-        }
-        
-        .quiz-card-footer {
-            flex-direction: column;
-            gap: 10px;
-            align-items: flex-start;
-        }
-        
-        .quiz-complete-actions {
-            flex-direction: column;
-        }
-        
-        .quiz-complete-actions .btn {
-            width: 100%;
-        }
+    .user-story-badge {
+        background: #ff9800;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-left: 8px;
     }
 `;
 document.head.appendChild(style);
 
-// Initialize when DOM is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
+// ========= Initialize App ==========
+document.addEventListener('DOMContentLoaded', function () {
     init();
-}
+});
