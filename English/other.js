@@ -1204,10 +1204,10 @@ function addXP(amount, reason = '') {
     userStats.totalXP += amount;
 
     // Calculate OLD level BEFORE adding XP
-    const oldLevel = Math.floor((userStats.totalXP - amount) / 100) + 1;
+    const oldLevel = Math.floor((userStats.totalXP - amount) / 170) + 1;
     
     // Calculate NEW level AFTER adding XP
-    const newLevel = Math.floor(userStats.totalXP / 100) + 1;
+    const newLevel = Math.floor(userStats.totalXP / 170) + 1;
 
     if (newLevel > oldLevel) {
         userStats.lvl = newLevel; // Update level in stats

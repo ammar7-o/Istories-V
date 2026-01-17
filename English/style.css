@@ -1727,6 +1727,12 @@ select:disabled {
     background: var(--background-color);
 }
 
+.story-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .modal-header h3 {
     margin: 0;
     color: var(--text-color);

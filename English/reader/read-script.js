@@ -1652,8 +1652,8 @@ function addXP(amount, reason = '') {
     userStats.totalXP += amount;
 
     // Check for level up (every 100 XP = 1 level)
-    const oldLevel = Math.floor((userStats.totalXP - amount) / 100);
-    const newLevel = Math.floor(userStats.totalXP / 100);
+    const oldLevel = Math.floor((userStats.totalXP - amount) / 170);
+    const newLevel = Math.floor(userStats.totalXP / 170);
 
     if (newLevel > oldLevel) {
         showNotification(`🎉 Level Up! You reached level ${newLevel}!`, 'success');

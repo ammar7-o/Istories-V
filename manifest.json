@@ -1,14 +1,14 @@
 {
   "name": "Istories - Learn Languages",
   "short_name": "Istories",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
   "icons": [
     {
-      "src": "icon.png",
-      "sizes": "192x192",
+      "src": "icon-manifest.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]

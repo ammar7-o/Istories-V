@@ -36,8 +36,7 @@
                                 <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i>
                                         Home</a>
                                 </li>
-                                <li><a class="nav-btn" href="../vocabulary/index.html"><i
-                                            class="fas fa-language"></i>
+                                <li><a class="nav-btn" href="../vocabulary/index.html"><i class="fas fa-language"></i>
                                         Vocabulary</a></li>
                                 <li><a href="..//flashcard/index.html" class="nav-btn"><i
                                             class="fa-solid fa-layer-group"></i> Flashcard</a>
@@ -212,8 +211,8 @@
             <div id="home" class="page active">
                 <section class="hero">
                     <select name="" id="Select">
-                        <option value="quiz.js">quizes-1</option>
-                        <option value="quizes.js">quizes-2</option>
+                        <option value="database/quiz.js">quiz-1</option>
+                        <option value="database/quiz-2.js">quiz-2</option>
 
                     </select>
                 </section>
@@ -249,67 +248,120 @@
             </div>
         </div>
     </footer>
-
     <script>
-        // Global variable to track if stories are loaded
-        window.storiesLoaded = false;
-        window.storiesData = [];
+        // Global variables for quizzes
+        window.quizzesLoaded = false;
+        window.quizData = [];
 
-        // Function to initialize app after stories are loaded
-        function initAppAfterStoriesLoad() {
-            if (window.storiesLoaded) {
+        // Function to initialize app after quizzes are loaded
+        function initAppAfterQuizzesLoad() {
+            if (window.quizzesLoaded) {
                 init();
             } else {
-                console.log('Waiting for stories to load...');
-                setTimeout(initAppAfterStoriesLoad, 100);
+                console.log('Waiting for quizzes to load...');
+                setTimeout(initAppAfterQuizzesLoad, 100);
             }
         }
 
-        // Function to load stories based on selected file
-        function loadStoriesFile(filename) {
+        // Function to load quiz data based on selected file
+        function loadQuizFile(filename) {
             // Reset loaded state
-            window.storiesLoaded = false;
+            window.quizzesLoaded = false;
 
             // Remove old script if exists
-            const oldScript = document.querySelector('script[data-stories="true"]');
+            const oldScript = document.querySelector('script[data-quiz="true"]');
             if (oldScript) {
                 oldScript.remove();
             }
 
-            console.log(`Loading stories from: ${filename}`);
+            console.log(`Loading quizzes from: ${filename}`);
 
             // Create and load new script
             const s = document.createElement("script");
             s.src = filename;
-            s.setAttribute('data-stories', 'true');
+            s.setAttribute('data-quiz', 'true');
 
             s.onload = function () {
-                console.log('Stories loaded successfully');
-                console.log('Stories data:', window.storiesData);
-                window.storiesLoaded = true;
+                console.log('Quizzes loaded successfully');
+
+                // Check if quiz data exists in different formats
+                if (typeof window.quizData !== 'undefined') {
+                    console.log('Quiz data found:', window.quizData);
+                    window.quizzesLoaded = true;
+                } else if (typeof window.quizzes !== 'undefined') {
+                    // Some files might export directly as 'quizzes' array
+                    window.quizData = { quizzes: window.quizzes };
+                    console.log('Quizzes array found:', window.quizData);
+                    window.quizzesLoaded = true;
+                } else {
+                    console.warn('No quiz data found in the expected format');
+                    // Create fallback quiz data
+                    window.quizData = {
+                        quizzes: [
+                            {
+                                id: "fallback-quiz",
+                                title: "Sample Quiz",
+                                description: "Test your knowledge with this sample quiz",
+                                level: "beginner",
+                                type: "vocab",
+                                author: "IStories",
+                                createdAt: "2024-01-16",
+                                questions: [
+                                    {
+                                        id: 1,
+                                        type: "multiple_choice",
+                                        question: "What is the translation of 'hello'?",
+                                        choices: [
+                                            { value: "مرحبا", correct: true },
+                                            { value: "شكرا", correct: false },
+                                            { value: "مع السلامة", correct: false }
+                                        ],
+                                        explanation: "'مرحبا' means hello in Arabic."
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+                    window.quizzesLoaded = true;
+                }
+
                 // Initialize app
-                initAppAfterStoriesLoad();
+                initAppAfterQuizzesLoad();
             };
 
             s.onerror = function () {
                 console.error(`Failed to load ${filename}`);
-                // Use fallback stories
-                window.storiesData = {
-                    stories: [
+                // Use fallback quiz data
+                window.quizData = {
+                    quizzes: [
                         {
-                            id: 1,
-                            title: "The Mysterious Island",
+                            id: "error-quiz",
+                            title: "Sample Quiz",
+                            description: "This is a sample quiz. The quiz file could not be loaded.",
                             level: "beginner",
-                            cover: "🏝️",
-                            coverType: "emoji",
-                            wordCount: 350,
-                            content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+                            type: "vocab",
+                            author: "IStories",
+                            createdAt: "2024-01-16",
+                            questions: [
+                                {
+                                    id: 1,
+                                    type: "multiple_choice",
+                                    question: "What does 'quiz' mean?",
+                                    choices: [
+                                        { value: "A test of knowledge", correct: true },
+                                        { value: "A type of story", correct: false },
+                                        { value: "A language", correct: false },
+                                        { value: "A game", correct: false }
+                                    ],
+                                    explanation: "A quiz is a test of knowledge, especially a brief, informal test given to students."
+                                }
+                            ]
                         }
                     ]
                 };
-                window.storiesLoaded = true;
+                window.quizzesLoaded = true;
                 // Initialize app with fallback
-                initAppAfterStoriesLoad();
+                initAppAfterQuizzesLoad();
             };
 
             document.head.appendChild(s);
@@ -319,12 +371,12 @@
         document.getElementById('Select').addEventListener('change', function (e) {
             const selectedFile = e.target.value;
             console.log(`File changed to: ${selectedFile}`);
-            loadStoriesFile(selectedFile);
+            loadQuizFile(selectedFile);
         });
 
-        // Load initial stories based on default selection
+        // Load initial quizzes based on default selection
         const initialFile = document.getElementById('Select').value;
-        loadStoriesFile(initialFile);
+        loadQuizFile(initialFile);
     </script>
     <!-- <script src="stories.js"></script> -->
 
