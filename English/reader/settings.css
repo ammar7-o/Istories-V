@@ -559,6 +559,7 @@ select {
 
 #customCSSInput {
     width: 100%;
+    min-height: 220px;
     flex: 1;
     padding: 15px;
     border: 1px solid var(--border);
@@ -569,6 +570,7 @@ select {
     font-size: 14px;
     line-height: 1.5;
     resize: none;
+    overflow-y: scroll;
     margin-bottom: 15px;
     transition: border-color 0.3s;
 }
@@ -581,6 +583,9 @@ select {
 
 .css-actions {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
     background-color: green;
@@ -630,7 +635,7 @@ select {
     transform: translate(-50%, -50%) scale(0.9);
     width: 90%;
     max-width: 500px;
-    background: var(--background);
+    background: rgba(0, 0, 0, 0.801);
     border-radius: 12px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
     z-index: 1100;
@@ -638,6 +643,8 @@ select {
     visibility: hidden;
     transition: all 0.3s ease;
 }
+
+
 
 .reset-confirm-modal.active {
     opacity: 1;
@@ -662,6 +669,7 @@ select {
 
 .reset-modal-body {
     padding: 20px;
+
 }
 
 .reset-modal-body p {
@@ -691,7 +699,8 @@ select {
 .reset-modal-actions {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
+    justify-content: center;
+
 }
 
 /* Button danger style */

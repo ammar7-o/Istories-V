@@ -179,7 +179,7 @@ function resetAllSettings() {
     const confirmModal = document.createElement('div');
     confirmModal.className = 'reset-confirm-modal';
     confirmModal.innerHTML = `
-        <div class="reset-modal-header">
+       <div class="reset-modal-header">
             <h3><i class="fas fa-exclamation-triangle"></i> Reset All Settings</h3>
         </div>
         <div class="reset-modal-body">
@@ -187,8 +187,8 @@ function resetAllSettings() {
                 <i class="fas fa-exclamation-circle"></i>
                 <span>This action cannot be undone!</span>
             </div>
-            <p>Are you sure you want to reset ALL settings to default? This will reset:</p>
-            <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--text-light);">
+            <p style="color:white;">Are you sure you want to reset ALL settings to default? This will reset:</p>
+            <ul style="margin-left: 20px; margin-bottom: 20px; color: white;">
                 <li>Theme and colors</li>
                 <li>Font settings</li>
                 <li>Custom CSS</li>
