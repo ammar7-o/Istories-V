@@ -925,9 +925,30 @@ nav a.active {
     background-color: rgba(16, 185, 129, 0.1);
 }
 
+details {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+}
+
+details:hover {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
+    color: white;
+}
+
+details a:hover {
+    background-color: var(--primary-dark);
+    color: white;
+
+}
 
 select {
-    width: 160px;
+    width: fit-content;
     height: 40px;
     padding: 6px 12px;
     font-size: 16px;

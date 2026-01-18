@@ -986,7 +986,7 @@ function loadProfileData() {
         }
     } else {
         if (profileName) {
-            profileName.textContent = 'Ammar Chacal';
+            profileName.textContent = 'Your name';
         }
     }
 
@@ -1010,7 +1010,7 @@ function saveProfileData() {
 
     // Update displayed profile
     if (profileName) {
-        profileName.textContent = name || 'Ammar Chacal';
+        profileName.textContent = name || 'Your name';
     }
 
     if (profilePic) {
@@ -1205,7 +1205,7 @@ function addXP(amount, reason = '') {
 
     // Calculate OLD level BEFORE adding XP
     const oldLevel = Math.floor((userStats.totalXP - amount) / 170) + 1;
-    
+
     // Calculate NEW level AFTER adding XP
     const newLevel = Math.floor(userStats.totalXP / 170) + 1;
 
@@ -1276,14 +1276,14 @@ function updateUserStatsDisplay() {
         const progressPercent = getLevelProgress();
         progressElement.textContent = `${progressPercent}%`;
     }
-    
+
     // Optional: Update progress bar
     const progressBar = document.getElementById('level-progress-bar');
     if (progressBar) {
         const progressPercent = getLevelProgress();
         progressBar.style.width = `${progressPercent}%`;
     }
-    
+
     // Optional: Show XP to next level
     const xpToNextElement = document.getElementById('xp-to-next');
     if (xpToNextElement) {
@@ -1298,7 +1298,7 @@ function getLevelProgress() {
     const currentLevel = userStats.lvl - 1; // Level 1 = 0-99 XP
     const xpForCurrentLevel = currentLevel * 100;
     const xpInCurrentLevel = currentXP - xpForCurrentLevel;
-    
+
     return Math.min(100, Math.floor((xpInCurrentLevel / 100) * 100));
 }
 
@@ -1384,36 +1384,52 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-//=======================import export local storage========================
-
+//=======================import export  delete local storage========================
+// EXPORT localStorage with date
 document.getElementById("exportLS").addEventListener("click", () => {
     const data = JSON.stringify(localStorage, null, 2);
+
+    // Create date string: YYYY-MM-DD_HH-MM
+    const now = new Date();
+    const date =
+        now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0") + "_" +
+        String(now.getHours()).padStart(2, "0") + "-" +
+        String(now.getMinutes()).padStart(2, "0");
 
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "localStorage-backup.json";
+    a.download = `Istories-backup-${date}.json`;
     a.click();
 
     URL.revokeObjectURL(url);
+
+    showNotification("✅ Backup exported successfully!");
 });
 
+
+// OPEN file picker
 document.getElementById("importBtn").addEventListener("click", () => {
     document.getElementById("importLS").click();
 });
 
+
+// IMPORT localStorage
 document.getElementById("importLS").addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
+
     reader.onload = function (e) {
         try {
             const data = JSON.parse(e.target.result);
 
-            // Clear existing localStorage (optional)
+            // Clear existing localStorage
             localStorage.clear();
 
             // Restore data
@@ -1421,12 +1437,41 @@ document.getElementById("importLS").addEventListener("change", (event) => {
                 localStorage.setItem(key, data[key]);
             }
 
-            alert("✅ LocalStorage imported successfully!");
+            showNotification("✅ Backup imported successfully!");
             location.reload(); // optional
+
         } catch (err) {
-            alert("❌ Invalid JSON file");
+            showNotification("❌ Invalid backup file!");
         }
     };
 
     reader.readAsText(file);
+});
+document.getElementById("deletAllBtn").addEventListener("click", () => {
+
+    // Generate random 4-digit number
+    const code = Math.floor(1000 + Math.random() * 9000);
+
+    const input = prompt(
+        `⚠️ DELETE CONFIRMATION\n\n` +
+        `To delete ALL data, type this number:\n\n` +
+        `${code}`
+    );
+
+    if (input === null) {
+        showNotification("❌ Deletion canceled");
+        return;
+    }
+
+    if (input !== String(code)) {
+        showNotification("❌ Incorrect number. Deletion canceled.");
+        return;
+    }
+
+    // Delete all data
+    localStorage.clear();
+
+    showNotification("🗑️ All data deleted successfully!");
+
+    location.reload(); // optional
 });

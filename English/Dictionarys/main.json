@@ -686,7 +686,7 @@
   "friend": {
     "translation": "صديق"
   },
-    "friends": {
+  "friends": {
     "translation": "اصدقاء"
   },
   "important": {
@@ -2719,6 +2719,422 @@
   },
   "claim": {
     "translation": "مطالبة"
+  },
+  "every": {
+    "translation": "كل"
+  },
+  "woke": {
+    "translation": "استيقظ"
+  },
+  "waves": {
+    "translation": "أمواج"
+  },
+  "listened": {
+    "translation": "استمع"
+  },
+  "opened": {
+    "translation": "فتح"
+  },
+  "sky": {
+    "translation": "سماء"
+  },
+  "lived": {
+    "translation": "عاش"
+  },
+  "sun": {
+    "translation": "شمس"
+  },
+  "helped": {
+    "translation": "ساعد"
+  },
+  "salt": {
+    "translation": "ملح"
+  },
+  "made": {
+    "translation": "صنع"
+  },
+  "noise": {
+    "translation": "ضجة"
+  },
+  "busy": {
+    "translation": "مشغول"
+  },
+  "quiet": {
+    "translation": "هادئ"
+  },
+  "eggs": {
+    "translation": "بيض"
+  },
+  "breakfast": {
+    "translation": "فطور"
+  },
+  "daniel": {
+    "translation": "دانيال"
+  },
+  "waking": {
+    "translation": "استيقاظ"
+  },
+  "nets": {
+    "translation": "شباك"
+  },
+  "boats": {
+    "translation": "قوارب"
+  },
+  "fishermen": {
+    "translation": "صيادون"
+  },
+  "craft": {
+    "translation": "مركب"
+  },
+  "more": {
+    "translation": "المزيد"
+  },
+  "said": {
+    "translation": "قال"
+  },
+  "hello": {
+    "translation": "مرحباً"
+  },
+  "went": {
+    "translation": "ذهب"
+  },
+  "soft": {
+    "translation": "لين"
+  },
+  "learning": {
+    "translation": "تعلم"
+  },
+  "horizon": {
+    "translation": "أفق"
+  },
+  "filled": {
+    "translation": "مملوء"
+  },
+  "pink": {
+    "translation": "وردي"
+  },
+  "creating": {
+    "translation": "إنشاء"
+  },
+  "sat": {
+    "translation": "جلس"
+  },
+  "came": {
+    "translation": "جاء"
+  },
+  "felt": {
+    "translation": "شعر"
+  },
+  "apartment": {
+    "translation": "شقة"
+  },
+  "disconnected": {
+    "translation": "منفصل"
+  },
+  "unfamiliar": {
+    "translation": "غير مألوف"
+  },
+  "previous": {
+    "translation": "سابق"
+  },
+  "immediate": {
+    "translation": "فوري"
+  },
+  "curious": {
+    "translation": "فضولي"
+  },
+  "welcomed": {
+    "translation": "رحب"
+  },
+  "included": {
+    "translation": "تضمن"
+  },
+  "conversations": {
+    "translation": "محادثات"
+  },
+  "neighbors": {
+    "translation": "جيران"
+  },
+  "invited": {
+    "translation": "دعا"
+  },
+  "collection": {
+    "translation": "مجموعة"
+  },
+  "apartments": {
+    "translation": "شقق"
+  },
+  "organized": {
+    "translation": "منظم"
+  },
+  "festive": {
+    "translation": "احتفالي"
+  },
+  "practiced": {
+    "translation": "مارس"
+  },
+  "traditions": {
+    "translation": "تقاليد"
+  },
+  "isolated": {
+    "translation": "معزول"
+  },
+  "mutual": {
+    "translation": "متبادل"
+  },
+  "residents": {
+    "translation": "سكان"
+  },
+  "connections": {
+    "translation": "روابط"
+  },
+  "importance": {
+    "translation": "أهمية"
+  },
+  "strangers": {
+    "translation": "غرباء"
+  },
+  "neighborhood": {
+    "translation": "حي"
+  },
+  "where": {
+    "translation": "حيث"
+  },
+  "reaching": {
+    "translation": "وصول"
+  },
+  "stress": {
+    "translation": "توتر"
+  },
+  "comfortable": {
+    "translation": "مريح"
+  },
+  "laughter": {
+    "translation": "ضحك"
+  },
+  "stories": {
+    "translation": "قصص"
+  },
+  "english": {
+    "translation": "الإنجليزية"
+  },
+  "dinner": {
+    "translation": "عشاء"
+  },
+  "potluck": {
+    "translation": "وجبة مشتركة"
+  },
+  "homemade": {
+    "translation": "منزلي الصنع"
+  },
+  "atmosphere": {
+    "translation": "جو"
+  },
+  "met": {
+    "translation": "التقى"
+  },
+  "children": {
+    "translation": "أطفال"
+  },
+  "laughed": {
+    "translation": "ضحك"
+  },
+  "hallway": {
+    "translation": "ردهة"
+  },
+  "heavy": {
+    "translation": "ثقيل"
+  },
+  "smile": {
+    "translation": "ابتسامة"
+  },
+  "warm": {
+    "translation": "دافئ"
+  },
+  "kindness": {
+    "translation": "لطف"
+  },
+  "afternoon": {
+    "translation": "بعد الظهر"
+  },
+  "engaged": {
+    "translation": "منخرط"
+  },
+  "openness": {
+    "translation": "انفتاح"
+  },
+  "supportive": {
+    "translation": "داعم"
+  },
+  "acquaintances": {
+    "translation": "معارف"
+  },
+  "friendship": {
+    "translation": "صداقة"
+  },
+  "awareness": {
+    "translation": "وعي"
+  },
+  "expanding": {
+    "translation": "توسع"
+  },
+  "backgrounds": {
+    "translation": "خلفيات"
+  },
+  "diverse": {
+    "translation": "متنوع"
+  },
+  "related": {
+    "translation": "ذات صلة"
+  },
+  "cooking": {
+    "translation": "طبخ"
+  },
+  "deeply": {
+    "translation": "بعمق"
+  },
+  "nearby": {
+    "translation": "قريب"
+  },
+  "friendly": {
+    "translation": "ودود"
+  },
+  "knowing": {
+    "translation": "معرفة"
+  },
+  "slowly": {
+    "translation": "ببطء"
+  },
+  "safer": {
+    "translation": "أكثر أماناً"
+  },
+  "happier": {
+    "translation": "أكثر سعادة"
+  },
+  "brought": {
+    "translation": "أحضر"
+  },
+  "shared": {
+    "translation": "مشترك"
+  },
+  "lonely": {
+    "translation": "وحيد"
+  },
+  "finished": {
+    "translation": "أنهى"
+  },
+  "casting": {
+    "translation": "يُلقي"
+  },
+  "resting": {
+    "translation": "يرتاح"
+  },
+  "repeatedly": {
+    "translation": "بشكل متكرر"
+  },
+  "apprehensive": {
+    "translation": "قلق"
+  },
+  "nervous": {
+    "translation": "عصبي"
+  },
+  "continued": {
+    "translation": "استمر"
+  },
+  "solitude": {
+    "translation": "عزلة"
+  },
+  "crisp": {
+    "translation": "هش"
+  },
+  "serenity": {
+    "translation": "صفاء"
+  },
+  "confident": {
+    "translation": "واثق"
+  },
+  "resourceful": {
+    "translation": "ذكي"
+  },
+  "preparation": {
+    "translation": "تحضير"
+  },
+  "adaptability": {
+    "translation": "قابلية التكيف"
+  },
+  "unexpected": {
+    "translation": "غير متوقع"
+  },
+  "decided": {
+    "translation": "قرر"
+  },
+  "flashlight": {
+    "translation": "مصباح يدوي"
+  },
+  "taught": {
+    "translation": "علم"
+  },
+  "attitude": {
+    "translation": "موقف"
+  },
+  "positive": {
+    "translation": "إيجابي"
+  },
+  "valuable": {
+    "translation": "قيم"
+  },
+  "stronger": {
+    "translation": "أقوى"
+  },
+  "courage": {
+    "translation": "شجاعة"
+  },
+  "dangerous": {
+    "translation": "خطير"
+  },
+  "journey": {
+    "translation": "رحلة"
+  },
+  "resilience": {
+    "translation": "مرونة"
+  },
+  "completing": {
+    "translation": "إكمال"
+  },
+  "looked": {
+    "translation": "نظر"
+  },
+  "peaceful": {
+    "translation": "مسالم"
+  },
+  "traffic": {
+    "translation": "مرور"
+  },
+  "halfway": {
+    "translation": "منتصف الطريق"
+  },
+  "fresh": {
+    "translation": "طازج"
+  },
+  "park": {
+    "translation": "حديقة"
+  },
+  "checked": {
+    "translation": "فحص"
+  },
+  "forty-five": {
+    "translation": "خمسة وأربعون"
+  },
+  "bus": {
+    "translation": "حافلة"
+  },
+  "tired": {
+    "translation": "متعب"
+  },
+  "pavement": {
+    "translation": "رصيف"
+  },
+  "shadows": {
+    "translation": "ظلال"
   }
-
 }

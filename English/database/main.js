@@ -14,7 +14,7 @@ window.storiesData = {
             "dictionaries": ["../Dictionarys/story1.json"],  // Note: capital D
             "content": [
 
-                "Hello and welcome to <span class='mark'>IStories!</span> This website was created by Ammar Chacal to help people learn languages in a fun and engaging way <img src='../../imges/cover.jpg' alt='Example' >  Through these interactive stories, you can improve your vocabulary and comprehension skills naturally.",
+                "Hello and welcome to <span class='mark'>IStories!</span> This website was created by Ammar Chacal to help people learn languages in a fun and engaging way <img src='../../imges/cover.webp' alt='Example' >  Through these interactive stories, you can improve your vocabulary and comprehension skills naturally.",
                 "Each story is designed for different learning levels - beginner, intermediate, and advanced. The beginner stories use simple words and short sentences, perfect for those just starting their language learning journey.",
                 "As you read, you can click on any word to see its translation and definition. This feature helps you learn new vocabulary in context, which is much more effective than memorizing word lists.",
                 "The stories cover various topics and genres, from everyday situations to exciting adventures. This variety ensures that you encounter different types of vocabulary and sentence structures.",

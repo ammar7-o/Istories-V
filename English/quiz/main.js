@@ -248,7 +248,7 @@ function initColorSelector() {
                     customColorPicker.value = color;
                 }
 
-                showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
+                // showNotification(`Primary color changed to ${option.title || 'custom'}`, 'success');
             });
         });
     }
@@ -393,7 +393,7 @@ function toggleTheme() {
     // Apply the new theme
     applyTheme();
 
-    showNotification(`Switched to ${newTheme} mode`, 'success');
+    // showNotification(`Switched to ${newTheme} mode`, 'success');
 }
 
 // Secondary color variables
@@ -443,7 +443,7 @@ function initSecondaryColorSelector() {
                     customSecondaryColorPicker.value = color;
                 }
 
-                showNotification(`Secondary color changed to ${option.title || 'custom'}`, 'success');
+                // showNotification(`Secondary color changed to ${option.title || 'custom'}`, 'success');
             });
         });
     }
