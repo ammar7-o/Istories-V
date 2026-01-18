@@ -1382,3 +1382,51 @@ document.addEventListener('DOMContentLoaded', function () {
     initUserStats();
     checkDailyBonus();
 });
+
+
+//=======================import export local storage========================
+
+document.getElementById("exportLS").addEventListener("click", () => {
+    const data = JSON.stringify(localStorage, null, 2);
+
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "localStorage-backup.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById("importBtn").addEventListener("click", () => {
+    document.getElementById("importLS").click();
+});
+
+document.getElementById("importLS").addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const data = JSON.parse(e.target.result);
+
+            // Clear existing localStorage (optional)
+            localStorage.clear();
+
+            // Restore data
+            for (const key in data) {
+                localStorage.setItem(key, data[key]);
+            }
+
+            alert("✅ LocalStorage imported successfully!");
+            location.reload(); // optional
+        } catch (err) {
+            alert("❌ Invalid JSON file");
+        }
+    };
+
+    reader.readAsText(file);
+});

@@ -198,6 +198,32 @@
                         <i class="fas fa-trash-alt"></i> Delete All
                     </button>
                 </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Backup All Data</span>
+                        <span class="setting-desc">Download a backup of all your saved data</span>
+                    </div>
+                    <button class="danger-btn" id="exportLS">
+                        Backup Data
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Restore Data</span>
+                        <span class="setting-desc">Import a previously saved backup file</span>
+                    </div>
+
+                    <input type="file" id="importLS" accept="application/json" hidden>
+
+                    <button class="btn-danger" id="importBtn">
+                        Import Data
+                    </button>
+                </div>
+
+
+
+
             </div>
 
             <!-- قسم التخصيص المتقدم -->

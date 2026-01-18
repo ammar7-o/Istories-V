@@ -17,9 +17,6 @@ let score = 0;
 let quizData = [];
 let quizzes = [];
 
-// Add quiz history storage
-let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
-
 // ========= DOM Elements ==========
 const pages = document.querySelectorAll('.page');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -562,8 +559,6 @@ function applyTheme() {
 
 // ========= Quiz Functions ==========
 
-
-// Also update the renderQuizzes function to call this
 function renderQuizzes() {
     if (!storiesGrid) return;
 
@@ -587,25 +582,7 @@ function renderQuizzes() {
         quizCard.dataset.quizId = quiz.id;
 
         const questionCount = quiz.questions ? quiz.questions.length : 0;
-        const timeEstimate = Math.ceil(questionCount * 0.5);
-
-        // Get quiz history
-        const history = quizHistory[quiz.id];
-        const hasHistory = history && history.lastScore !== undefined;
-        const lastScore = hasHistory ? history.lastScore : null;
-        const bestScore = hasHistory ? history.bestScore : null;
-        const attempts = hasHistory ? history.attempts : 0;
-
-        // Format date for last attempt
-        let lastAttemptDate = '';
-        if (hasHistory && history.lastDate) {
-            const date = new Date(history.lastDate);
-            lastAttemptDate = date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        }
+        const timeEstimate = Math.ceil(questionCount * 0.5); // 30 seconds per question
 
         quizCard.innerHTML = `
             <div class="quiz-header">
@@ -625,42 +602,12 @@ function renderQuizzes() {
                 <div class="quiz-meta">
                     <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
                     <span><i class="fas fa-clock"></i> ${timeEstimate} min</span>
-                    ${attempts > 0 ?
-                `<span><i class="fas fa-history"></i> ${attempts} attempt${attempts !== 1 ? 's' : ''}</span>` :
-                ''
-            }
                 </div>
-                
-                ${hasHistory ? `
-                    <div class="quiz-progress-section">
-                        <div class="quiz-score-display">
-                            <div class="score-progress-bar">
-                                <div class="score-progress-fill" style="width: ${lastScore}%; 
-                                    background: ${getScoreColor(lastScore)};"></div>
-                            </div>
-                            <div class="score-details">
-                                <span class="last-score">Last: <strong>${lastScore}%</strong></span>
-                                ${bestScore !== lastScore ?
-                    `<span class="best-score">Best: <strong>${bestScore}%</strong></span>` :
-                    ''
-                }
-                            </div>
-                        </div>
-                        ${lastAttemptDate ?
-                    `<p class="last-attempt-date"><i class="far fa-calendar"></i> ${lastAttemptDate}</p>` :
-                    ''
-                }
-                    </div>
-                ` : `
-                    <div class="quiz-progress-section">
-                        <p class="no-attempts"><i class="far fa-star"></i> Not attempted yet</p>
-                    </div>
-                `}
             </div>
             
             <div class="quiz-actions">
                 <button class="quiz-start-btn" data-quiz-id="${quiz.id}">
-                    <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
+                    <i class="fas fa-play"></i> Start Quiz
                 </button>
                 <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
                     <i class="fas fa-eye"></i> Preview
@@ -678,12 +625,7 @@ function renderQuizzes() {
         storiesGrid.appendChild(quizCard);
     });
 }
-function getScoreColor(score) {
-    if (score >= 80) return '#4CAF50'; // Green
-    if (score >= 60) return '#FF9800'; // Orange
-    if (score >= 40) return '#FFC107'; // Yellow
-    return '#F44336'; // Red
-}
+
 function getQuizIcon(quizType) {
     const icons = {
         'grammar': 'fa-language',
@@ -1102,7 +1044,7 @@ function submitQuiz() {
     score = 0;
     currentQuiz.questions.forEach((question, index) => {
         const userAnswer = userAnswers[index];
-
+        
         switch (question.type) {
             case 'multiple_choice':
             case 'true_false':
@@ -1111,7 +1053,7 @@ function submitQuiz() {
                     score++;
                 }
                 break;
-
+                
             case 'fill_in_blank':
                 // Check if answer matches any of the correct answers (case insensitive)
                 const correctAnswers = question.correctAnswers || [];
@@ -1120,7 +1062,7 @@ function submitQuiz() {
                     score++;
                 }
                 break;
-
+                
             case 'short_answer':
                 // For short answer, we might want partial credit or manual grading
                 // For now, just check if answer exists
@@ -1128,7 +1070,7 @@ function submitQuiz() {
                     score += 0.5; // Half point for attempting
                 }
                 break;
-
+                
             case 'matching':
                 // Check if all matches are correct
                 if (userAnswer && question.correctMatches) {
@@ -1147,112 +1089,12 @@ function submitQuiz() {
 
     // Round score to 1 decimal place for display
     score = Math.round(score * 10) / 10;
-
+    
     // Display results
     showResults();
 }
-// Helper function to save quiz results
-function saveQuizResult(quizId, score, totalQuestions) {
-    const percentage = Math.round((score / totalQuestions) * 100);
-    const quizResult = {
-        score: score,
-        total: totalQuestions,
-        percentage: percentage,
-        date: new Date().toISOString(),
-        attempts: (quizHistory[quizId]?.attempts || 0) + 1
-    };
 
-    // Update quiz history
-    if (!quizHistory[quizId]) {
-        quizHistory[quizId] = {
-            bestScore: percentage,
-            lastScore: percentage,
-            lastDate: quizResult.date,
-            attempts: 1,
-            history: []
-        };
-    } else {
-        quizHistory[quizId].bestScore = Math.max(quizHistory[quizId].bestScore, percentage);
-        quizHistory[quizId].lastScore = percentage;
-        quizHistory[quizId].lastDate = quizResult.date;
-        quizHistory[quizId].attempts += 1;
-    }
 
-    // Add to history array
-    quizHistory[quizId].history.unshift(quizResult);
-
-    // Keep only last 10 attempts
-    if (quizHistory[quizId].history.length > 10) {
-        quizHistory[quizId].history = quizHistory[quizId].history.slice(0, 10);
-    }
-
-    // Save to localStorage
-    localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
-
-    // Update quiz cards if they're visible
-    updateQuizCardsWithScores();
-}
-// Function to update quiz cards with scores (when viewing quiz list)
-function updateQuizCardsWithScores() {
-    // Check if we're in quiz mode
-    const selectElement = document.getElementById('Select');
-    const isQuizMode = selectElement && selectElement.value.includes('quiz');
-
-    if (isQuizMode && storiesGrid) {
-        // Find all quiz cards and update their scores
-        document.querySelectorAll('.quiz-card').forEach(card => {
-            const quizId = card.dataset.quizId;
-            const history = quizHistory[quizId];
-            const hasHistory = history && history.lastScore !== undefined;
-
-            if (hasHistory) {
-                // Update the score display in the card
-                const progressSection = card.querySelector('.quiz-progress-section');
-                if (progressSection) {
-                    const lastScore = history.lastScore;
-                    const bestScore = history.bestScore;
-                    const attempts = history.attempts;
-
-                    let lastAttemptDate = '';
-                    if (history.lastDate) {
-                        const date = new Date(history.lastDate);
-                        lastAttemptDate = date.toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        });
-                    }
-
-                    progressSection.innerHTML = `
-                        <div class="quiz-score-display">
-                            <div class="score-progress-bar">
-                                <div class="score-progress-fill" style="width: ${lastScore}%; 
-                                    background: ${getScoreColor(lastScore)};"></div>
-                            </div>
-                            <div class="score-details">
-                                <span class="last-score">Last: <strong>${lastScore}%</strong></span>
-                                ${bestScore !== lastScore ?
-                            `<span class="best-score">Best: <strong>${bestScore}%</strong></span>` :
-                            ''
-                        }
-                            </div>
-                        </div>
-                        ${lastAttemptDate ?
-                            `<p class="last-attempt-date"><i class="far fa-calendar"></i> ${lastAttemptDate}</p>` :
-                            ''
-                        }
-                    `;
-                }
-
-                // Update the start button text
-                const startBtn = card.querySelector('.quiz-start-btn');
-                if (startBtn) {
-                    startBtn.innerHTML = '<i class="fas fa-play"></i> Retry Quiz';
-                }
-            }
-        });
-    }
-}
 function showResults() {
     const resultsContainer = document.getElementById('resultsContainer');
     const questionContainer = document.getElementById('questionContainer');
@@ -1279,9 +1121,6 @@ function showResults() {
         message = 'Keep learning! You can do better!';
         icon = 'fa-redo';
     }
-
-    // Save quiz result to history BEFORE showing results
-    saveQuizResult(currentQuiz.id, score, currentQuiz.questions.length);
 
     // Generate answer review for each question
     const answersReview = currentQuiz.questions.map((question, index) => {
@@ -1310,6 +1149,7 @@ function showResults() {
                 break;
 
             case 'short_answer':
+                // For short answer, we consider it "correct" if they attempted it
                 isCorrect = userAnswer && userAnswer.trim().length > 0;
                 correctAnswerText = 'Answer provided';
                 userAnswerText = userAnswer || 'Not answered';
@@ -1343,10 +1183,10 @@ function showResults() {
                 <div class="answer-details">
                     <div class="your-answer">
                         <strong>Your answer:</strong> ${userAnswerText}
-                        ${isCorrect ?
-                '<i class="fas fa-check correct-icon"></i>' :
-                '<i class="fas fa-times incorrect-icon"></i>'
-            }
+                        ${isCorrect ? 
+                            '<i class="fas fa-check correct-icon"></i>' : 
+                            '<i class="fas fa-times incorrect-icon"></i>'
+                        }
                     </div>
                     ${!isCorrect && correctAnswerText ? `
                         <div class="correct-answer">
@@ -1378,10 +1218,6 @@ function showResults() {
             <div class="score-details">
                 <p><strong>${score.toFixed(1)}</strong> out of <strong>${currentQuiz.questions.length}</strong> correct</p>
                 <p>${currentQuiz.questions.length} questions total</p>
-                ${quizHistory[currentQuiz.id]?.attempts > 1 ?
-            `<p class="history-info"><i class="fas fa-history"></i> Attempt ${quizHistory[currentQuiz.id].attempts} | Best: ${quizHistory[currentQuiz.id].bestScore}%</p>` :
-            ''
-        }
             </div>
         </div>
         
@@ -1402,28 +1238,12 @@ function showResults() {
 
     // Add event listeners for results buttons
     document.getElementById('retryQuiz').addEventListener('click', () => {
-        // Hide results and show quiz questions again
-        resultsContainer.style.display = 'none';
-        questionContainer.style.display = 'block';
-        navigation.style.display = 'flex';
-
-        // Reset quiz state for retry
-        userAnswers = {};
-        currentQuestionIndex = 0;
-        score = 0;
-
-        // Display first question
-        displayQuestion(currentQuestionIndex);
-
-        // Update navigation buttons
-        updateNavigationButtons();
-
-        // Update progress bar
-        updateProgressBar();
+        startQuiz(currentQuiz.id);
     });
 
     document.getElementById('backToQuizzesFromResults').addEventListener('click', backToQuizzes);
 }
+
 
 function backToQuizzes() {
     // Hide quiz container and show stories grid
@@ -1446,9 +1266,6 @@ function previewQuiz(quizId) {
     const quiz = quizzes.find(q => q.id === quizId);
     if (!quiz) return;
 
-    const history = quizHistory[quizId];
-    const hasHistory = history && history.lastScore !== undefined;
-
     // Create preview modal
     const modal = document.createElement('div');
     modal.className = 'quiz-preview-modal';
@@ -1467,8 +1284,8 @@ function previewQuiz(quizId) {
     `;
 
     const previewContent = `
-        <div class="preview-content">
-            <div class="preview-header">
+        <div class="preview-content" >
+            <div class="preview-header" >
                 <h2 style="color: var(--primary); margin: 0;">${quiz.title}</h2>
                 <button class="close-preview" style="background: none; border: none; font-size: 30px; cursor: pointer; color: #666;">&times;</button>
             </div>
@@ -1478,23 +1295,6 @@ function previewQuiz(quizId) {
                 <p><strong>Level:</strong> ${quiz.level}</p>
                 <p><strong>Type:</strong> ${quiz.type}</p>
                 <p><strong>Questions:</strong> ${quiz.questions.length}</p>
-                
-                ${hasHistory ? `
-                    <div class="history-grade-preview">
-                        <p><strong>Your Progress:</strong></p>
-                        <p><i class="fas fa-chart-line"></i> Last Score: <strong>${history.lastScore}%</strong></p>
-                        ${history.bestScore !== history.lastScore ?
-                `<p><i class="fas fa-trophy"></i> Best Score: <strong>${history.bestScore}%</strong></p>` :
-                ''
-            }
-                        <p><i class="fas fa-redo"></i> Attempts: <strong>${history.attempts}</strong></p>
-                    </div>
-                ` : `
-                    <div class="history-grade-preview"">
-                        <p><i class="far fa-star"></i> <strong>Not attempted yet</strong></p>
-                        <p style="font-size: 0.9rem; color: #666;">Start this quiz to track your progress!</p>
-                    </div>
-                `}
             </div>
             
             <div>
@@ -1518,7 +1318,7 @@ function previewQuiz(quizId) {
             
             <div style="margin-top: 20px; display: flex; gap: 10px;">
                 <button class="start-from-preview" style="flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
+                    <i class="fas fa-play"></i> Start Quiz
                 </button>
                 <button class="close-btn" style="flex: 1; padding: 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
                     Close

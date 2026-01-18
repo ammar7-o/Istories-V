@@ -4,16 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Istories Download stories</title>
+    <title>Istories - Language Quizzes</title>
     <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- Add Quiz Styles -->
+    <link rel="stylesheet" href="quiz-styles.css">
 
     <link rel="icon" type="image/png" href="../../icon.png?v=2">
-    <meta property="og:title" content="Istories">
-    <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+    <meta property="og:title" content="IStories Quizzes">
+    <meta property="og:description" content="Learn Languages Through Interactive Quizzes.">
     <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+
 
 </head>
 
@@ -23,35 +26,28 @@
             <div class="header-content">
                 <div class="left">
                     <a href="../index.html" class="logo">
-                        <img src="../../icon.svg" alt="">
-                        <span>IStories</span>
+                        <img src="../../icon.svg" alt="IStories Logo">
+                        <span>IStories Quizzes</span>
                     </a>
                     <nav>
                         <ul>
                             <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-brain"></i></a>
                             </li>
-                            <li id="toggle-nav"><a title="more" id="toggle-nav"><i class="fas fa-bars"></i></a>
-                            </li>
+                            <li id="toggle-nav"><a title="more" id="toggle-nav"><i class="fas fa-bars"></i></a></li>
                             <div id="more" class="more">
-                                <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i>
-                                        Home</a>
+                                <li><a href="../index.html" class="nav-btn"><i class="fa-solid fa-home"></i> Home</a>
                                 </li>
                                 <li><a class="nav-btn" href="../vocabulary/index.html"><i class="fas fa-language"></i>
                                         Vocabulary</a></li>
-                                <li><a href="..//flashcard/index.html" class="nav-btn"><i
-                                            class="fa-solid fa-layer-group"></i> Flashcard</a>
-                                </li>
-
+                                <li><a href="../flashcard/index.html" class="nav-btn"><i
+                                            class="fa-solid fa-layer-group"></i> Flashcard</a></li>
                             </div>
-
-
                         </ul>
                     </nav>
                 </div>
                 <div class="header-actions">
-                    <!--search bar-->
                     <form id="search-form" class="search-form" action="#">
-                        <input class="search-input" placeholder="Search stories" type="text" id="storySearch">
+                        <input class="search-input" placeholder="Search quizzes..." type="text" id="storySearch">
                         <button id="search-btn" type="submit" aria-label="Search">
                             <i class="fas fa-search"></i>
                         </button>
@@ -60,11 +56,10 @@
                         <button class="settings-btn" id="settings-button">
                             <i class="fas fa-cog"></i>
                         </button>
-
-
                     </div>
                 </div>
             </div>
+        </div>
     </header>
 
     <div class="settings-page" id="settings-page">
@@ -76,7 +71,7 @@
         </div>
 
         <div class="settings-content">
-            <!-- قسم المظهر -->
+            <!-- Appearance Section -->
             <div class="settings-section">
                 <h3><i class="fas fa-palette"></i> Appearance</h3>
 
@@ -85,7 +80,6 @@
                         <span class="setting-label">Theme</span>
                         <span class="setting-desc">Light or Dark mode</span>
                     </div>
-                    <!-- Theme toggle button -->
                     <button class="theme-toggle" id="themeToggle">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -94,31 +88,30 @@
                 <!-- Color Selector -->
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Accent Color</span>
-                        <span class="setting-desc">Choose your primary color</span>
+                        <span class="setting-label">Primary Color</span>
+                        <span class="setting-desc">Choose your main color</span>
                     </div>
                     <div class="color-selector">
                         <div class="color-options">
-                            <!-- Default Colors -->
-                            <div class="color-option active" data-color="#4a6cf7" style="background-color: #4a6cf7;"
-                                title="Blue">
+                            <!-- Duolingo Colors -->
+                            <div class="color-option active" data-color="#58CC02" style="background-color: #58CC02;"
+                                title="Duolingo Green">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <div class="color-option" data-color="#7c4dff" style="background-color: #7c4dff;"
-                                title="Purple">
+                            <div class="color-option" data-color="#1CB0F6" style="background-color: #1CB0F6;"
+                                title="Duolingo Blue">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <div class="color-option" data-color="#008638" style="background-color: #008638;"
-                                title="Green">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="color-option" data-color="#2f9600c5" style="background-color: #2f9600c5;"
+                            <div class="color-option" data-color="#FF9500" style="background-color: #FF9500;"
                                 title="Orange">
                                 <i class="fas fa-check"></i>
                             </div>
-
-                            <div class="color-option" data-color="#009688" style="background-color: #009688;"
-                                title="Teal">
+                            <div class="color-option" data-color="#FF4B4B" style="background-color: #FF4B4B;"
+                                title="Red">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#9C27B0" style="background-color: #9C27B0;"
+                                title="Purple">
                                 <i class="fas fa-check"></i>
                             </div>
 
@@ -135,29 +128,29 @@
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Secondary Color</span>
-                        <span class="setting-desc">Choose your Secondary color</span>
+                        <span class="setting-desc">Choose your secondary color</span>
                     </div>
                     <div class="color-selector secondary-selector">
                         <div class="color-options">
                             <!-- Default Secondary Colors -->
-                            <div class="secondary-color active" data-color="#10b981" style="background-color:  #10b981;"
-                                title="teal">
+                            <div class="secondary-color active" data-color="#1CB0F6" style="background-color: #1CB0F6;"
+                                title="Blue">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <div class="secondary-color" data-color="#ec4899" style="background-color: #ec4899;"
+                            <div class="secondary-color" data-color="#FFCC00" style="background-color: #FFCC00;"
+                                title="Yellow">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#4CAF50" style="background-color: #4CAF50;"
+                                title="Green">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#E91E63" style="background-color: #E91E63;"
                                 title="Pink">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <div class="secondary-color" data-color="#b90000" style="background-color: #b90000;"
-                                title="red">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="secondary-color" data-color="#8b5cf6" style="background-color: #8b5cf6;"
-                                title="Violet">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="secondary-color" data-color="#f97316" style="background-color: #f97316;"
-                                title="Orange">
+                            <div class="secondary-color" data-color="#00BCD4" style="background-color: #00BCD4;"
+                                title="Cyan">
                                 <i class="fas fa-check"></i>
                             </div>
 
@@ -169,25 +162,46 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
+            <!-- قسم التخصيص المتقدم -->
+            <div class="settings-section">
+                <h3><i class="fas fa-code"></i> Advanced Customization</h3>
 
-            <!-- قسم التطبيق -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Custom CSS</span>
+                        <span class="setting-desc">Add your own CSS styles</span>
+                    </div>
+                    <button class="btn btn-secondary" id="showCustomCSS">
+                        <i class="fas fa-code"></i> Edit Custom CSS
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Reset All Settings</span>
+                        <span class="setting-desc">Restore default settings</span>
+                    </div>
+                    <button class="btn btn-danger" id="resetAllSettings">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+            <!-- About Section -->
             <div class="settings-section">
                 <h3><i class="fas fa-info-circle"></i> About</h3>
 
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Version</span>
-                        <span class="setting-desc">Story Reader 2.1.0</span>
+                        <span class="setting-desc">Quiz Master 3.0.0</span>
                     </div>
                 </div>
 
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-label">Author</span>
-                        <span class="setting-desc">Ammar chacal</span>
+                        <span class="setting-desc">Ammar Chacal</span>
                     </div>
                 </div>
                 <div class="setting-item">
@@ -195,7 +209,7 @@
                         <span class="setting-label">Refresh App</span>
                         <span class="setting-desc">Reload all data</span>
                     </div>
-                    <button onclick="Refresh()" class="action-btn" id="refresh-app">
+                    <button onclick="Refresh()" class="action-btn control-btn " id="refresh-app">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
@@ -210,13 +224,14 @@
             <!-- Home Page -->
             <div id="home" class="page active">
                 <section class="hero">
-                    <select name="" id="Select">
-                        <option value="database/quiz.js">quiz-1</option>
-                        <option value="database/quiz-2.js">quiz-2</option>
-
-                    </select>
+                    <div class="quiz-selector">
+                        <label for="Select"><i class="fas fa-book-open"></i> Select Quiz Collection:</label>
+                        <select name="" id="Select">
+                            <option value="database/quiz.js">Basic Arabic Quizzes</option>
+                            <option value="database/quiz-2.js">Advanced Arabic Quizzes</option>
+                        </select>
+                    </div>
                 </section>
-
 
                 <div class="level-filter">
                     <button class="level-btn active" data-level="all">All Levels</button>
@@ -226,32 +241,167 @@
                 </div>
 
                 <div class="stories-grid" id="storiesGrid">
-                    <!-- Stories will be populated by JavaScript -->
+                    <!-- Quiz cards will be populated by JavaScript -->
                 </div>
             </div>
         </div>
-        </div>
     </main>
 
+    <!-- Quiz Preview Modal -->
+    <div id="quizPreviewModal" class="quiz-preview-modal" style="display: none;">
+        <div class="preview-overlay"></div>
+        <div class="preview-content">
+            <button class="close-preview" id="closePreview">&times;</button>
+            <div class="preview-header">
+                <div class="preview-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h2 id="previewTitle">Quiz Title</h2>
+            </div>
+            <div class="preview-body">
+                <p id="previewDescription">Quiz description</p>
+                <div class="preview-stats">
+                    <div class="stat">
+                        <i class="fas fa-question-circle"></i>
+                        <span id="previewQuestionCount">0 questions</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-clock"></i>
+                        <span id="previewTimeEstimate">0 min</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="previewLevel">Beginner</span>
+                    </div>
+                </div>
+                <div class="preview-history">
+                    <h3><i class="fas fa-history"></i> Last Attempt</h3>
+                    <div class="history-score" id="previewHistoryScore">
+                        <div class="score-circle">
+                            <span class="score-percentage">--%</span>
+                        </div>
+                        <div class="history-details">
+                            <p class="history-date">Not attempted yet</p>
+                            <p class="history-streak">Start your learning streak!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-actions">
+                <button class="start-quiz-btn" id="startFromPreview">
+                    <i class="fas fa-play"></i> Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
 
+
+
+
+
+
+
+
+    <div class="quiz-container">
+
+        <div class="quiz-header2">
+            <div class="quiz-header-top">
+                <button class="back-to-quizzes-btn" id="backToQuizzes">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="quiz-stats">
+
+                    <span class="quiz-progress" id="quizProgress"></span>
+                </div>
+            </div>
+            <div class="quiz-progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="question-container" id="questionContainer"></div>
+
+        <div class="quiz-navigation">
+            <button class="quiz-nav-btn" id="prevBtn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="quiz-nav-btn" id="nextBtn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="quiz-nav-btn submit-btn" id="submitQuiz" style="display: none;">
+                <i class="fas fa-check-circle"></i> Submit Quiz
+            </button>
+        </div>
+
+        <div class="results-container" id="resultsContainer" style="display: none;"></div>
+
+    </div>
+    <!-- Custom CSS Modal (add at bottom of settings page) -->
+    <div class="custom-css-modal" id="customCSSModal">
+        <div class="custom-css-header">
+            <h3><i class="fas fa-code"></i> Custom CSS Editor</h3>
+            <button class="close-modal" id="closeCustomCSS">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="custom-css-body">
+            <div class="css-actions">
+                <button class="btn btn-secondary" id="previewCSS">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class="btn btn-primary" id="saveCustomCSS">
+                    <i class="fas fa-save"></i> Save CSS
+                </button>
+                <button class="btn btn-danger" id="clearCustomCSS">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+            <div class="css-editor-header">
+                <div class="css-examples">
+                    <small>Examples:</small>
+                    <code>.story-text { color: #333; }</code>
+                    <code>.word:hover { background: yellow; }</code>
+                    <code>body { font-size: 18px; }</code>
+                </div>
+            </div>
+            <textarea id="customCSSInput" placeholder="Enter your custom CSS here... Example: 
+.word {
+    border-bottom: 2px dotted #4a6cf7;
+}
+
+.vocabulary-item {
+    background: #f8f9fa;
+}" rows="15"></textarea>
+
+
+
+            <div class="css-info">
+                <small><i class="fas fa-info-circle"></i> Your CSS will be applied to the entire application.
+                    Use with caution.</small>
+            </div>
+        </div>
+    </div>
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="logo">
-                    <img src="../../icon.svg" alt="">
-                    <span>IStories</span>
+                    <img src="../../icon.svg" alt="IStories Logo">
+                    <span>IStories Quizzes</span>
                 </div>
                 <div class="footer-links">
                     <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
-
+                    <a href="#" id="privacyLink">Privacy Policy</a>
+                    <a href="#" id="termsLink">Terms of Service</a>
                 </div>
             </div>
         </div>
     </footer>
+
     <script>
         // Global variables for quizzes
         window.quizzesLoaded = false;
         window.quizData = [];
+        window.quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
 
         // Function to initialize app after quizzes are loaded
         function initAppAfterQuizzesLoad() {
@@ -297,6 +447,14 @@
                     console.warn('No quiz data found in the expected format');
                     // Create fallback quiz data
                     window.quizData = {
+                        meta: {
+                            app: "IStories",
+                            version: "1.0.0",
+                            lastUpdated: "2024-01-16",
+                            language: "ar",
+                            totalQuizzes: 1,
+                            totalQuestions: 5
+                        },
                         quizzes: [
                             {
                                 id: "fallback-quiz",
@@ -333,6 +491,14 @@
                 console.error(`Failed to load ${filename}`);
                 // Use fallback quiz data
                 window.quizData = {
+                    meta: {
+                        app: "IStories",
+                        version: "1.0.0",
+                        lastUpdated: "2024-01-16",
+                        language: "ar",
+                        totalQuizzes: 1,
+                        totalQuestions: 5
+                    },
                     quizzes: [
                         {
                             id: "error-quiz",
@@ -378,9 +544,9 @@
         const initialFile = document.getElementById('Select').value;
         loadQuizFile(initialFile);
     </script>
-    <!-- <script src="stories.js"></script> -->
 
     <script src="main.js"></script>
+    <script src="customecss.js"></script>
 
 
 </body>

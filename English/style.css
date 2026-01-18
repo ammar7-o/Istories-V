@@ -1382,6 +1382,7 @@ select:disabled {
     transition: all 0.3s ease;
     min-width: 50px;
     justify-content: center;
+    margin: 10px;
 }
 
 .btn-success {
