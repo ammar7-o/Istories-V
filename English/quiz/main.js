@@ -1,7 +1,5 @@
 // ========= App State Variables ==========
 let currentPage = 'home';
-let currentStory = null;
-let stories = []; // Will be loaded from external file
 let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
 
 // Add Stories variables (ADDED)
@@ -16,7 +14,9 @@ let currentQuestionIndex = 0;
 let score = 0;
 let quizData = [];
 let quizzes = [];
-
+// Add these to your App State Variables section:
+let isReviewMode = false;
+let showExplanations = {}; // Track which explanations are shown per question
 // Add quiz history storage
 let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
 
@@ -71,26 +71,6 @@ function init() {
 
     // Auto lazy load ALL images
     document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
-
-    // Load stories from external file
-    if (typeof window.storiesData !== 'undefined') {
-        stories = window.storiesData.stories || window.storiesData;
-        console.log('Loaded stories from external file:', stories.length);
-    } else {
-        // Fallback if external file fails
-        stories = [
-            {
-                id: 1,
-                title: "The Mysterious Island",
-                level: "beginner",
-                cover: "🏝️",
-                coverType: "emoji",
-                wordCount: 350,
-                content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
-            }
-        ];
-        console.log('Using fallback stories');
-    }
 
     // Load quizzes from external file
     if (typeof window.quizData !== 'undefined') {
@@ -397,7 +377,7 @@ function toggleTheme() {
 }
 
 // Secondary color variables
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#f59e0b';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981';
 
 // Function to initialize secondary color selector
 function initSecondaryColorSelector() {
@@ -695,10 +675,12 @@ function getQuizIcon(quizType) {
         'true_false': 'fa-check-square',
         'fill_in_blank': 'fa-keyboard',
         'matching': 'fa-random',
-        'short_answer': 'fa-pen'
+        'short_answer': 'fa-pen',
+        'drag_drop': 'fa-arrows-alt'  // NEW
     };
     return icons[quizType] || 'fa-brain';
 }
+
 
 
 function startQuiz(quizId) {
@@ -712,6 +694,8 @@ function startQuiz(quizId) {
     userAnswers = {};
     currentQuestionIndex = 0;
     score = 0;
+    isReviewMode = false;
+    showExplanations = {}; // Reset all explanation toggles
 
     // Hide stories grid and show quiz container
     storiesGrid.style.display = 'none';
@@ -732,7 +716,6 @@ function startQuiz(quizId) {
     // Scroll to quiz
     quizContainer.scrollIntoView({ behavior: 'smooth' });
 }
-
 function createQuizContainer() {
     quizContainer = document.createElement('div');
     quizContainer.className = 'quiz-container';
@@ -782,7 +765,15 @@ function createQuizContainer() {
     document.getElementById('nextBtn').addEventListener('click', nextQuestion);
     document.getElementById('submitQuiz').addEventListener('click', submitQuiz);
 }
-
+// Helper function to shuffle array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 // Helper function to get question type label
 function getQuestionTypeLabel(type) {
     const labels = {
@@ -790,9 +781,66 @@ function getQuestionTypeLabel(type) {
         'true_false': 'True or False',
         'fill_in_blank': 'Fill in the Blank',
         'short_answer': 'Short Answer',
-        'matching': 'Matching'
+        'matching': 'Matching',
+        'drag_drop': 'Drag & Drop'  // NEW
     };
     return labels[type] || 'Question';
+}
+function generateDragDropHTML(question, index) {
+    const userAnswer = userAnswers[index] || [];
+
+    // Shuffle words if it's a new attempt
+    let scrambledWords = [...question.scrambledWords];
+    if (!userAnswer.length) {
+        scrambledWords = shuffleArray([...scrambledWords]);
+    }
+
+    return `
+        <div class="drag-drop-container">
+            <div class="drag-instructions">
+                <i class="fas fa-arrows-alt"></i>
+                <span>Drag words from the top area into the sentence area below to form a correct sentence.</span>
+            </div>
+            
+            <div class="scrambled-words-container" id="scrambledWords_${index}">
+                ${scrambledWords.map((word, i) => `
+                    <div class="scrambled-word" draggable="true" data-word="${word}" data-index="${i}">
+                        ${word}
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="sentence-container" id="sentenceContainer_${index}">
+                ${userAnswer.length > 0 ?
+            userAnswer.map(word => `
+                        <div class="word-in-slot" draggable="true" data-word="${word}">
+                            <span>${word}</span>
+                            <button type="button" class="remove-btn" onclick="removeFromSentence(${index}, '${word}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('') :
+            '<div class="sentence-slot empty" style="width: 100%; text-align: center; color: var(--text-muted);">Drop words here to build your sentence</div>'
+        }
+            </div>
+            
+            ${question.hint ? `
+                <div class="drag-drop-hint">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Hint:</strong> ${question.hint}
+                </div>
+            ` : ''}
+            
+            <button type="button" class="reset-drag-btn" onclick="resetDragDropQuestion(${index})">
+                <i class="fas fa-redo"></i> Reset Words
+            </button>
+            
+            <div class="drag-drop-feedback" id="feedback_${index}"></div>
+            
+            <!-- Hidden input to store the answer -->
+            <input type="hidden" id="dragDropAnswer_${index}" value="${JSON.stringify(userAnswer)}">
+        </div>
+    `;
 }
 // Generate HTML for multiple choice questions
 function generateMultipleChoiceHTML(question, index) {
@@ -926,16 +974,23 @@ function addQuestionTypeEventListeners(type, index) {
                 });
             });
             break;
+
+        case 'drag_drop':  // NEW
+            setTimeout(() => {
+                initDragDrop(index);
+            }, 100);
+            break;
+
     }
 }
 
+// Update the displayQuestion function to remove explanations entirely:
 function displayQuestion(index) {
     if (!currentQuiz || !currentQuiz.questions[index]) return;
 
     const question = currentQuiz.questions[index];
     const questionContainer = document.getElementById('questionContainer');
 
-    let questionHtml = '';
     let optionsHtml = '';
 
     // Handle different question types
@@ -960,8 +1015,11 @@ function displayQuestion(index) {
             optionsHtml = generateMatchingHTML(question, index);
             break;
 
+        case 'drag_drop':
+            optionsHtml = generateDragDropHTML(question, index);
+            break;
+
         default:
-            // Fallback to multiple choice
             optionsHtml = generateMultipleChoiceHTML(question, index);
     }
 
@@ -973,11 +1031,6 @@ function displayQuestion(index) {
         <div class="options-container" data-question-type="${question.type}">
             ${optionsHtml}
         </div>
-        ${question.explanation && userAnswers[index] ? `
-            <div class="explanation">
-                <strong>Explanation:</strong> ${question.explanation}
-            </div>
-        ` : ''}
     `;
 
     // Add event listeners based on question type
@@ -991,14 +1044,14 @@ function displayQuestion(index) {
 
 
 // Update selectOption to handle different types
+
+
 function selectOption(value, questionIndex) {
     const question = currentQuiz.questions[questionIndex];
 
-    // Handle different question types
     if (question.type === 'true_false') {
         userAnswers[questionIndex] = value;
 
-        // Update UI for true/false
         document.querySelectorAll('.option').forEach(option => {
             if (option.dataset.value === value) {
                 option.classList.add('selected');
@@ -1009,7 +1062,6 @@ function selectOption(value, questionIndex) {
             }
         });
     } else {
-        // Default behavior for multiple choice
         userAnswers[questionIndex] = value;
 
         document.querySelectorAll('.option').forEach(option => {
@@ -1023,16 +1075,7 @@ function selectOption(value, questionIndex) {
         });
     }
 
-    // Show explanation if available
-    if (question.explanation) {
-        const explanationDiv = document.querySelector('.explanation');
-        if (explanationDiv) {
-            explanationDiv.style.display = 'block';
-            explanationDiv.innerHTML = `<strong>Explanation:</strong> ${question.explanation}`;
-        }
-    }
-
-    // Update progress bar
+    // Remove explanation logic
     updateProgressBar();
 }
 
@@ -1113,7 +1156,6 @@ function submitQuiz() {
                 break;
 
             case 'fill_in_blank':
-                // Check if answer matches any of the correct answers (case insensitive)
                 const correctAnswers = question.correctAnswers || [];
                 if (userAnswer && correctAnswers.some(correct =>
                     userAnswer.toLowerCase().trim() === correct.toLowerCase().trim())) {
@@ -1122,15 +1164,12 @@ function submitQuiz() {
                 break;
 
             case 'short_answer':
-                // For short answer, we might want partial credit or manual grading
-                // For now, just check if answer exists
                 if (userAnswer && userAnswer.trim().length > 0) {
-                    score += 0.5; // Half point for attempting
+                    score += 0.5;
                 }
                 break;
 
             case 'matching':
-                // Check if all matches are correct
                 if (userAnswer && question.correctMatches) {
                     let correctMatches = 0;
                     Object.keys(userAnswer).forEach(key => {
@@ -1138,8 +1177,19 @@ function submitQuiz() {
                             correctMatches++;
                         }
                     });
-                    // Award partial points for correct matches
                     score += (correctMatches / Object.keys(question.correctMatches).length);
+                }
+                break;
+
+            case 'drag_drop':  // NEW
+                if (userAnswer && question.correctOrder) {
+                    // Compare word order
+                    const isCorrect = JSON.stringify(userAnswer) === JSON.stringify(
+                        question.correctOrder.map(idx => question.scrambledWords[idx - 1])
+                    );
+                    if (isCorrect) {
+                        score++;
+                    }
                 }
                 break;
         }
@@ -1150,6 +1200,197 @@ function submitQuiz() {
 
     // Display results
     showResults();
+}
+// Initialize drag & drop functionality
+function initDragDrop(questionIndex) {
+    const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+    const feedbackDiv = document.getElementById(`feedback_${questionIndex}`);
+
+    if (!scrambledContainer || !sentenceContainer) return;
+
+    // Get all draggable words
+    const draggables = document.querySelectorAll(`#scrambledWords_${questionIndex} .scrambled-word, #sentenceContainer_${questionIndex} .word-in-slot`);
+
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', handleDragStart);
+        draggable.addEventListener('dragend', handleDragEnd);
+    });
+
+    // Sentence container drop zone
+    sentenceContainer.addEventListener('dragover', handleDragOver);
+    sentenceContainer.addEventListener('dragleave', handleDragLeave);
+    sentenceContainer.addEventListener('drop', (e) => handleDrop(e, questionIndex, 'sentence'));
+
+    // Scrambled words container drop zone (for moving back)
+    scrambledContainer.addEventListener('dragover', handleDragOver);
+    scrambledContainer.addEventListener('dragleave', handleDragLeave);
+    scrambledContainer.addEventListener('drop', (e) => handleDrop(e, questionIndex, 'scrambled'));
+
+    // Store the current state
+    updateDragDropAnswer(questionIndex);
+}
+// Drag & Drop event handlers
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.dataset.word || e.target.textContent);
+    e.target.classList.add('dragging');
+
+    // Visual feedback
+    if (e.target.classList.contains('scrambled-word')) {
+        e.dataTransfer.setData('source', 'scrambled');
+    } else if (e.target.classList.contains('word-in-slot')) {
+        e.dataTransfer.setData('source', 'sentence');
+    }
+}
+
+
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('active-drop');
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('active-drop');
+}
+
+function handleDrop(e, questionIndex, targetArea) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('active-drop');
+
+    const word = e.dataTransfer.getData('text/plain');
+    const sourceArea = e.dataTransfer.getData('source');
+
+    // If dragging from scrambled to sentence
+    if (sourceArea === 'scrambled' && targetArea === 'sentence') {
+        addToSentence(questionIndex, word);
+    }
+    // If dragging from sentence to scrambled (removing)
+    else if (sourceArea === 'sentence' && targetArea === 'scrambled') {
+        removeFromSentence(questionIndex, word);
+    }
+    // If reordering within sentence (not implemented in basic version)
+    // You could add this for advanced functionality
+
+    updateDragDropAnswer(questionIndex);
+}
+// Add word to sentence
+function addToSentence(questionIndex, word) {
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+    const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
+
+    // Remove from scrambled words
+    const scrambledWord = scrambledContainer.querySelector(`[data-word="${word}"]`);
+    if (scrambledWord) {
+        scrambledWord.remove();
+    }
+
+    // Add to sentence
+    const wordElement = document.createElement('div');
+    wordElement.className = 'word-in-slot';
+    wordElement.draggable = true;
+    wordElement.dataset.word = word;
+    wordElement.innerHTML = `
+        <span>${word}</span>
+        <button type="button" class="remove-btn" onclick="removeFromSentence(${questionIndex}, '${word}')">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    // Remove placeholder if exists
+    const placeholder = sentenceContainer.querySelector('.sentence-slot.empty');
+    if (placeholder) {
+        placeholder.remove();
+    }
+
+    sentenceContainer.appendChild(wordElement);
+
+    // Add drag events to new element
+    wordElement.addEventListener('dragstart', handleDragStart);
+    wordElement.addEventListener('dragend', handleDragEnd);
+
+    // Provide visual feedback
+    wordElement.classList.add('correct-place');
+    setTimeout(() => {
+        wordElement.classList.remove('correct-place');
+    }, 500);
+
+    // Update answer
+    updateDragDropAnswer(questionIndex);
+}
+
+
+// Remove word from sentence
+function removeFromSentence(questionIndex, word) {
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+    const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
+
+    // Remove from sentence
+    const wordElement = sentenceContainer.querySelector(`[data-word="${word}"]`);
+    if (wordElement) {
+        wordElement.remove();
+    }
+
+    // Add back to scrambled words
+    const scrambledWord = document.createElement('div');
+    scrambledWord.className = 'scrambled-word';
+    scrambledWord.draggable = true;
+    scrambledWord.dataset.word = word;
+    scrambledWord.textContent = word;
+
+    scrambledContainer.appendChild(scrambledWord);
+
+    // Add drag events
+    scrambledWord.addEventListener('dragstart', handleDragStart);
+    scrambledWord.addEventListener('dragend', handleDragEnd);
+
+    // If sentence is empty, show placeholder
+    if (sentenceContainer.children.length === 0) {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'sentence-slot empty';
+        placeholder.style.cssText = 'width: 100%; text-align: center; color: var(--text-muted);';
+        placeholder.textContent = 'Drop words here to build your sentence';
+        sentenceContainer.appendChild(placeholder);
+    }
+
+    // Update answer
+    updateDragDropAnswer(questionIndex);
+}
+
+// Reset drag & drop question
+function resetDragDropQuestion(questionIndex) {
+    const question = currentQuiz.questions[questionIndex];
+    const userAnswer = [];
+
+    // Clear user answer
+    userAnswers[questionIndex] = userAnswer;
+
+    // Update UI
+    displayQuestion(questionIndex);
+
+    // Show feedback
+    showNotification('Words have been reset. Try again!', 'info');
+}
+
+// Update the hidden answer field
+function updateDragDropAnswer(questionIndex) {
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+    const answerInput = document.getElementById(`dragDropAnswer_${questionIndex}`);
+
+    if (!sentenceContainer || !answerInput) return;
+
+    // Get current words in sentence
+    const wordElements = sentenceContainer.querySelectorAll('.word-in-slot');
+    const currentAnswer = Array.from(wordElements).map(el => el.dataset.word);
+
+    // Store in userAnswers
+    userAnswers[questionIndex] = currentAnswer;
+
+    // Update hidden input
+    answerInput.value = JSON.stringify(currentAnswer);
 }
 // Helper function to save quiz results
 function saveQuizResult(quizId, score, totalQuestions) {
@@ -1262,6 +1503,9 @@ function showResults() {
     navigation.style.display = 'none';
     resultsContainer.style.display = 'block';
 
+    // Enable review mode
+    isReviewMode = true;
+
     const percentage = Math.round((score / currentQuiz.questions.length) * 100);
     let message = '';
     let icon = '';
@@ -1280,10 +1524,10 @@ function showResults() {
         icon = 'fa-redo';
     }
 
-    // Save quiz result to history BEFORE showing results
+    // Save quiz result to history
     saveQuizResult(currentQuiz.id, score, currentQuiz.questions.length);
 
-    // Generate answer review for each question
+    // Generate answer review for each question (WITH explanations always shown)
     const answersReview = currentQuiz.questions.map((question, index) => {
         const userAnswer = userAnswers[index];
         let isCorrect = false;
@@ -1332,6 +1576,20 @@ function showResults() {
                     userAnswerText = 'Not completed';
                 }
                 break;
+
+            case 'drag_drop':
+                if (userAnswer && question.correctOrder) {
+                    const correctAnswer = question.correctOrder.map(idx => question.scrambledWords[idx - 1]);
+                    isCorrect = JSON.stringify(userAnswer) === JSON.stringify(correctAnswer);
+                    correctAnswerText = correctAnswer.join(' ');
+                    userAnswerText = userAnswer.join(' ') || 'Not answered';
+                } else {
+                    isCorrect = false;
+                    correctAnswerText = question.correctOrder ?
+                        question.correctOrder.map(idx => question.scrambledWords[idx - 1]).join(' ') : 'N/A';
+                    userAnswerText = 'Not answered';
+                }
+                break;
         }
 
         return `
@@ -1354,9 +1612,16 @@ function showResults() {
                         </div>
                     ` : ''}
                 </div>
+                
                 ${question.explanation ? `
-                    <div class="answer-explanation">
-                        <strong>Explanation:</strong> ${question.explanation}
+                    <div class="explanation-section">
+                        <div class="explanation-content">
+                            <div class="explanation-header">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>Explanation</strong>
+                            </div>
+                            <div class="explanation-text">${question.explanation}</div>
+                        </div>
                     </div>
                 ` : ''}
             </div>
@@ -1411,6 +1676,7 @@ function showResults() {
         userAnswers = {};
         currentQuestionIndex = 0;
         score = 0;
+        isReviewMode = false;
 
         // Display first question
         displayQuestion(currentQuestionIndex);
@@ -1425,7 +1691,13 @@ function showResults() {
     document.getElementById('backToQuizzesFromResults').addEventListener('click', backToQuizzes);
 }
 
+
+
 function backToQuizzes() {
+    // Reset review mode
+    isReviewMode = false;
+    showExplanations = {};
+
     // Hide quiz container and show stories grid
     if (quizContainer) {
         quizContainer.style.display = 'none';
@@ -1441,7 +1713,29 @@ function backToQuizzes() {
     storiesGrid.scrollIntoView({ behavior: 'smooth' });
 }
 
+// Helper function to check if user has answered
+function checkUserHasAnswered(userAnswer, questionType) {
+    if (!userAnswer) return false;
 
+    switch (questionType) {
+        case 'multiple_choice':
+        case 'true_false':
+        case 'short_answer':
+        case 'sentence_correction':
+        case 'fill_in_blank':
+            return typeof userAnswer === 'string' && userAnswer.trim() !== '';
+
+        case 'matching':
+            return userAnswer && typeof userAnswer === 'object' &&
+                Object.keys(userAnswer).length > 0;
+
+        case 'drag_drop':
+            return Array.isArray(userAnswer) && userAnswer.length > 0;
+
+        default:
+            return userAnswer !== undefined && userAnswer !== null;
+    }
+}
 function previewQuiz(quizId) {
     const quiz = quizzes.find(q => q.id === quizId);
     if (!quiz) return;
@@ -1667,7 +1961,6 @@ function filterQuizzesBySearch(query) {
 
     displayFilteredQuizzes(filteredQuizzes, query);
 }
-
 function displayFilteredQuizzes(filteredQuizzes, query) {
     if (!storiesGrid) return;
 
@@ -1692,6 +1985,24 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
         const questionCount = quiz.questions ? quiz.questions.length : 0;
         const timeEstimate = Math.ceil(questionCount * 0.5);
 
+        // Get quiz history (moved inside the forEach loop)
+        const history = quizHistory[quiz.id];
+        const hasHistory = history && history.lastScore !== undefined;
+        const lastScore = hasHistory ? history.lastScore : null;
+        const bestScore = hasHistory ? history.bestScore : null;
+        const attempts = hasHistory ? history.attempts : 0;
+
+        // Format date for last attempt
+        let lastAttemptDate = '';
+        if (hasHistory && history.lastDate) {
+            const date = new Date(history.lastDate);
+            lastAttemptDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
         // Highlight search matches in title
         const highlightedTitle = highlightSearchMatch(quiz.title, query);
 
@@ -1713,12 +2024,42 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
                 <div class="quiz-meta">
                     <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
                     <span><i class="fas fa-clock"></i> ${timeEstimate} min</span>
+                    ${attempts > 0 ?
+                `<span><i class="fas fa-history"></i> ${attempts} attempt${attempts !== 1 ? 's' : ''}</span>` :
+                ''
+            }
                 </div>
+                
+                ${hasHistory ? `
+                    <div class="quiz-progress-section">
+                        <div class="quiz-score-display">
+                            <div class="score-progress-bar">
+                                <div class="score-progress-fill" style="width: ${lastScore}%; 
+                                    background: ${getScoreColor(lastScore)};"></div>
+                            </div>
+                            <div class="score-details">
+                                <span class="last-score">Last: <strong>${lastScore}%</strong></span>
+                                ${bestScore !== lastScore ?
+                    `<span class="best-score">Best: <strong>${bestScore}%</strong></span>` :
+                    ''
+                }
+                            </div>
+                        </div>
+                        ${lastAttemptDate ?
+                    `<p class="last-attempt-date"><i class="far fa-calendar"></i> ${lastAttemptDate}</p>` :
+                    ''
+                }
+                    </div>
+                ` : `
+                    <div class="quiz-progress-section">
+                        <p class="no-attempts"><i class="far fa-star"></i> Not attempted yet</p>
+                    </div>
+                `}
             </div>
             
             <div class="quiz-actions">
                 <button class="quiz-start-btn" data-quiz-id="${quiz.id}">
-                    <i class="fas fa-play"></i> Start Quiz
+                    <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
                 </button>
                 <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
                     <i class="fas fa-eye"></i> Preview
@@ -1778,24 +2119,90 @@ function displayFilteredStories(filteredStories, query) {
         const storyCard = document.createElement('div');
         storyCard.className = 'story-card';
         storyCard.dataset.storyTitle = story.title;
+        storyCard.dataset.storyId = story.id || story.title.toLowerCase().replace(/\s+/g, '-');
 
+        // Get story history if available
+        const storyHistory = quizHistory[`story-${story.id}`] || {};
+        const hasHistory = storyHistory.lastReadDate !== undefined;
+        
+        // Format last read date if available
+        let lastReadDate = '';
+        if (hasHistory && storyHistory.lastReadDate) {
+            const date = new Date(storyHistory.lastReadDate);
+            lastReadDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // Highlight search matches
         const highlightedTitle = highlightSearchMatch(story.title, query);
+        const wordCount = story.wordCount || 'N/A';
+        const readTime = Math.ceil((wordCount !== 'N/A' ? wordCount : 100) / 200);
 
         storyCard.innerHTML = `
-            <div class="story-image">
-                ${renderStoryCover(story)}
+            <div class="story-header">
+                <div class="story-icon">
+                    ${renderStoryCover(story)}
+                </div>
+                <div class="story-info">
+                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
+                    ${story.category ? `<span class="story-category">${story.category}</span>` : ''}
+                </div>
             </div>
+            
             <div class="story-content">
-                <div class="story-header">
-                    <span class="story-level ${story.level}">${story.level}</span>
-                </div>
                 <h3 class="story-title">${highlightedTitle}</h3>
+                <p class="story-description">${story.description || 'Read this interesting story to improve your language skills.'}</p>
+                
                 <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                    <span><i class="fas fa-font"></i> ${wordCount} words</span>
+                    <span><i class="fas fa-clock"></i> ${readTime} min read</span>
+                    ${story.chapters ? `<span><i class="fas fa-book"></i> ${story.chapters} chapters</span>` : ''}
                 </div>
+                
+                ${hasHistory ? `
+                    <div class="story-progress-section">
+                        <div class="story-progress-display">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${storyHistory.completionPercentage || 0}%; 
+                                    background: ${storyHistory.completionPercentage >= 100 ? '#4CAF50' : '#FF9800'};"></div>
+                            </div>
+                            <div class="progress-details">
+                                <span class="completion-rate">
+                                    <i class="fas fa-percentage"></i> ${storyHistory.completionPercentage || 0}% complete
+                                </span>
+                            </div>
+                        </div>
+                        ${lastReadDate ?
+                            `<p class="last-read-date"><i class="far fa-calendar"></i> Last read: ${lastReadDate}</p>` :
+                            ''
+                        }
+                    </div>
+                ` : `
+                    <div class="story-progress-section">
+                        <p class="no-history"><i class="far fa-star"></i> Not read yet</p>
+                    </div>
+                `}
+            </div>
+            
+            <div class="story-actions">
+                <button class="story-read-btn" data-story-id="${story.id || story.title.toLowerCase().replace(/\s+/g, '-')}">
+                    <i class="fas fa-book-open"></i> Read Story
+                </button>
+                <button class="story-preview-btn" data-story-id="${story.id || story.title.toLowerCase().replace(/\s+/g, '-')}">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
             </div>
         `;
+
+        // Add event listeners
+        const readBtn = storyCard.querySelector('.story-read-btn');
+        const previewBtn = storyCard.querySelector('.story-preview-btn');
+
+        readBtn.addEventListener('click', () => readStory(story.id || story.title));
+        previewBtn.addEventListener('click', () => previewStory(story.id || story.title));
 
         storiesGrid.appendChild(storyCard);
     });
@@ -2009,6 +2416,24 @@ function filterQuizzesByLevel(level) {
         const questionCount = quiz.questions ? quiz.questions.length : 0;
         const timeEstimate = Math.ceil(questionCount * 0.5);
 
+        // Get quiz history (add this part)
+        const history = quizHistory[quiz.id];
+        const hasHistory = history && history.lastScore !== undefined;
+        const lastScore = hasHistory ? history.lastScore : null;
+        const bestScore = hasHistory ? history.bestScore : null;
+        const attempts = hasHistory ? history.attempts : 0;
+
+        // Format date for last attempt
+        let lastAttemptDate = '';
+        if (hasHistory && history.lastDate) {
+            const date = new Date(history.lastDate);
+            lastAttemptDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
         quizCard.innerHTML = `
             <div class="quiz-header">
                 <div class="quiz-icon">
@@ -2027,12 +2452,42 @@ function filterQuizzesByLevel(level) {
                 <div class="quiz-meta">
                     <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
                     <span><i class="fas fa-clock"></i> ${timeEstimate} min</span>
+                    ${attempts > 0 ?
+                `<span><i class="fas fa-history"></i> ${attempts} attempt${attempts !== 1 ? 's' : ''}</span>` :
+                ''
+            }
                 </div>
+                
+                ${hasHistory ? `
+                    <div class="quiz-progress-section">
+                        <div class="quiz-score-display">
+                            <div class="score-progress-bar">
+                                <div class="score-progress-fill" style="width: ${lastScore}%; 
+                                    background: ${getScoreColor(lastScore)};"></div>
+                            </div>
+                            <div class="score-details">
+                                <span class="last-score">Last: <strong>${lastScore}%</strong></span>
+                                ${bestScore !== lastScore ?
+                    `<span class="best-score">Best: <strong>${bestScore}%</strong></span>` :
+                    ''
+                }
+                            </div>
+                        </div>
+                        ${lastAttemptDate ?
+                    `<p class="last-attempt-date"><i class="far fa-calendar"></i> ${lastAttemptDate}</p>` :
+                    ''
+                }
+                    </div>
+                ` : `
+                    <div class="quiz-progress-section">
+                        <p class="no-attempts"><i class="far fa-star"></i> Not attempted yet</p>
+                    </div>
+                `}
             </div>
             
             <div class="quiz-actions">
                 <button class="quiz-start-btn" data-quiz-id="${quiz.id}">
-                    <i class="fas fa-play"></i> Start Quiz
+                    <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
                 </button>
                 <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
                     <i class="fas fa-eye"></i> Preview
@@ -2050,71 +2505,7 @@ function filterQuizzesByLevel(level) {
     });
 }
 
-// ========= Story Display Functions (Kept for compatibility) ==========
-function renderStories(level = 'all') {
-    if (!storiesGrid) return;
 
-    storiesGrid.innerHTML = '';
-
-    let filteredStories;
-
-    if (level === 'all') {
-        filteredStories = stories;
-    } else if (level === 'user') {
-        filteredStories = userStories;
-    } else {
-        filteredStories = stories.filter(story => story.level === level);
-    }
-
-    if (filteredStories.length === 0) {
-        storiesGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p>No stories found for this ${level === 'user' ? 'category' : 'level'}.</p>
-            </div>
-        `;
-        return;
-    }
-
-    filteredStories.forEach(story => {
-        const storyCard = document.createElement('div');
-        storyCard.className = 'story-card';
-        storyCard.dataset.storyTitle = story.title;
-
-        storyCard.innerHTML = `
-            <div class="story-image">
-                ${renderStoryCover(story)}
-            </div>
-            <div class="story-content">
-                <div class="story-header">
-                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                </div>
-                <h3 class="story-title">${story.title}</h3>
-                <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
-                </div>
-            </div>
-        `;
-
-        storiesGrid.appendChild(storyCard);
-    });
-}
-
-function renderStoryCover(story) {
-    if (!story.cover) {
-        return '<i class="fas fa-book"></i>';
-    }
-
-    if (story.coverType === 'emoji') {
-        return `<div class="story-emoji">${story.cover}</div>`;
-    } else if (story.coverType === 'image') {
-        return `<img src="${story.cover}" alt="${story.title}" class="story-image">`;
-    } else if (story.coverType === 'icon') {
-        return `<i class="${story.cover}"></i>`;
-    } else {
-        return `<div class="story-emoji">${story.cover}</div>`;
-    }
-}
 
 
 

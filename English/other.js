@@ -1144,7 +1144,7 @@ function initUserStats() {
     userStats.wordsLearned = savedWords.length;
 
     // Calculate current level from total XP (CORRECT CALCULATION)
-    userStats.lvl = Math.floor(userStats.totalXP / 100) + 1;
+    userStats.lvl = Math.floor(userStats.totalXP / 170) + 1;
 
     // Check and update streak
     updateStreak();

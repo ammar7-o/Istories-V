@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <!-- Add Quiz Styles -->
     <link rel="stylesheet" href="quiz-styles.css">
-
+    <link rel="stylesheet" href="add-quiz.css">
     <link rel="icon" type="image/png" href="../../icon.png?v=2">
     <meta property="og:title" content="IStories Quizzes">
     <meta property="og:description" content="Learn Languages Through Interactive Quizzes.">
@@ -39,6 +39,8 @@
                                 </li>
                                 <li><a class="nav-btn" href="../vocabulary/index.html"><i class="fas fa-language"></i>
                                         Vocabulary</a></li>
+                                <li><a href="#" class="nav-link nav-btn" data-page="addquiz"> <i
+                                            class="fas fa-plus-circle"></i>Add Stories</a></li>
                                 <li><a href="../flashcard/index.html" class="nav-btn"><i
                                             class="fa-solid fa-layer-group"></i> Flashcard</a></li>
                                 <li><a class="nav-btn" href="../../store/index.html"><i class="fas fa-store"></i>
@@ -223,6 +225,8 @@
                         <select name="" id="Select">
                             <option value="database/quiz.js">Basic Arabic Quizzes</option>
                             <option value="database/quiz-2.js">Advanced Arabic Quizzes</option>
+                            <option value="database/quiz-3.js">Advanced Arabic Quizzes</option>
+
                         </select>
                     </div>
                 </section>
@@ -236,6 +240,336 @@
 
                 <div class="stories-grid" id="storiesGrid">
                     <!-- Quiz cards will be populated by JavaScript -->
+                </div>
+            </div>
+            <!-- Add Quiz Page -->
+            <div id="addquiz" class="page">
+                <div class="add-stories-container">
+                    <h1><i class="fas fa-plus-circle"></i> Upload Your Own Quiz</h1>
+                    <p class="page-description">Upload custom quizzes in JSON format or upload existing quizzes to test
+                        your knowledge.</p>
+
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <div class="upload-card">
+                            <div class="upload-header">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h2>Upload Quiz File</h2>
+                            </div>
+                            <p class="upload-description">
+                                Upload a JSON file containing your quiz. The file should follow the quiz JSON format.
+                            </p>
+
+                            <div class="upload-area" id="quizUploadArea">
+                                <i class="fas fa-file-upload"></i>
+                                <h3>Drop your quiz JSON file here</h3>
+                                <p>or click to browse</p>
+                                <input type="file" id="quizFileInput" accept=".json" hidden>
+                                <button class="browse-btn" id="quizBrowseBtn">
+                                    <i class="fas fa-folder-open"></i> Browse Files
+                                </button>
+                                <p class="file-types">Supported format: .json</p>
+                            </div>
+
+                            <div class="selected-file" id="quizSelectedFileInfo" style="display: none;">
+                                <div class="file-info">
+                                    <i class="fas fa-file-code"></i>
+                                    <div class="file-details">
+                                        <span class="file-name" id="quizFileName"></span>
+                                        <span class="file-size" id="quizFileSize"></span>
+                                    </div>
+                                    <button class="remove-file" id="quizRemoveFile">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="upload-action-btn" id="quizUploadBtn" disabled>
+                                <i class="fas fa-upload"></i> Upload Quiz
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Two Column Layout -->
+                    <div class="content-columns">
+                        <!-- Left Column: Your Quizzes -->
+                        <div class="left-column">
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-history"></i>
+                                    <h2>Your Created Quizzes</h2>
+                                </div>
+                                <div class="user-stories-list" id="userQuizzesList">
+                                    <!-- Dynamic content will be inserted here -->
+                                    <div class="empty-state">
+                                        <i class="fas fa-brain"></i>
+                                        <p>No quizzes created yet</p>
+                                        <small>Create your first quiz using the text area or file upload!</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Template & Instructions -->
+                        <div class="right-column">
+                            <!-- Template Download -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-file-download"></i>
+                                    <h2>Download Quiz Template</h2>
+                                </div>
+                                <p>Use our pre-formatted JSON template to create quizzes that work perfectly.</p>
+                                <button class="download-template-btn" id="downloadQuizTemplateBtn">
+                                    <i class="fas fa-download"></i> Download Quiz Template
+                                </button>
+                            </div>
+
+                            <!-- Instructions -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h2>How to Create Your Quiz</h2>
+                                </div>
+                                <div class="instructions">
+                                    <div class="instruction-step">
+                                        <span class="step-number">1</span>
+                                        <div class="step-content">
+                                            <h3>Plan Your Quiz</h3>
+                                            <p>Decide on quiz title, description, level
+                                                (beginner/intermediate/advanced), and type (vocab/grammar/etc).</p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">2</span>
+                                        <div class="step-content">
+                                            <h3>Create Questions</h3>
+                                            <p>Add questions with different types: multiple choice, true/false, fill in
+                                                blank, matching, or drag & drop.</p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">3</span>
+                                        <div class="step-content">
+                                            <h3>Add Answers & Explanations</h3>
+                                            <p>Mark correct answers and add explanations to help learners understand.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">4</span>
+                                        <div class="step-content">
+                                            <h3>Upload & Test</h3>
+                                            <p>Upload your JSON file and test your quiz with all interactive features!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Export Quizzes Button -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-file-export"></i>
+                                    <h2>Export Your Quizzes</h2>
+                                </div>
+                                <p>Export all your created quizzes as a JSON file for backup or sharing with others.</p>
+                                <button class="download-template-btn" id="exportQuizzesBtn">
+                                    <i class="fas fa-download"></i> Export All Quizzes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Import Area for Quizzes -->
+                    <div class="text-import-area">
+                        <textarea id="quizJsonTextArea" placeholder='Paste your quiz JSON here. Example:
+{
+    "title": "My Vocabulary Quiz",
+    "description": "Test your vocabulary knowledge",
+    "level": "beginner",
+    "type": "vocab",
+    "questions": [
+        {
+            "id": 1,
+            "type": "multiple_choice",
+            "question": "What is the Arabic word for book?",
+            "choices": [
+                {"value": "كتاب", "correct": true},
+                {"value": "قلم", "correct": false},
+                {"value": "مدرسة", "correct": false}
+            ],
+            "explanation": "كتاب means book in Arabic."
+        }
+    ]
+}'></textarea>
+
+                        <div class="text-import-actions">
+                            <button class="btn-secondary" id="clearQuizJsonBtn">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                            <button class="btn-primary" id="importQuizJsonBtn">
+                                <i class="fas fa-file-import"></i> Import Quiz from Text
+                            </button>
+                        </div>
+
+                        <div class="json-validation" id="quizJsonValidation" style="display: none;">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="quizValidationMessage"></span>
+                        </div>
+
+                        <!-- Quiz JSON Format Example -->
+                        <div class="json-example-card">
+                            <h2><i class="fas fa-code"></i> Complete Quiz JSON Format Example</h2>
+                            <div class="code-container">
+                                <pre><code id="quizJsonExample">{
+    "id": "my-custom-quiz",
+    "title": "Basic Arabic Vocabulary Quiz",
+    "description": "Test your basic Arabic vocabulary knowledge",
+    "level": "beginner",
+    "type": "vocab",
+    "author": "Your Name",
+    "createdAt": "2024-01-01",
+    "questions": [
+        {
+            "id": 1,
+            "type": "multiple_choice",
+            "question": "What is the Arabic word for 'hello'?",
+            "choices": [
+                {"value": "مرحبا", "correct": true},
+                {"value": "شكرا", "correct": false},
+                {"value": "مع السلامة", "correct": false},
+                {"value": "صباح الخير", "correct": false}
+            ],
+            "explanation": "'مرحبا' means hello in Arabic."
+        },
+        {
+            "id": 2,
+            "type": "true_false",
+            "question": "'كتاب' means 'pen' in Arabic.",
+            "choices": [
+                {"value": "true", "correct": false},
+                {"value": "false", "correct": true}
+            ],
+            "explanation": "'كتاب' means 'book', not 'pen'."
+        },
+        {
+            "id": 3,
+            "type": "fill_in_blank",
+            "question": "The Arabic word for water is ___.",
+            "correctAnswers": ["ماء"],
+            "explanation": "'ماء' means water in Arabic."
+        },
+        {
+            "id": 4,
+            "type": "matching",
+            "question": "Match the Arabic words with their English translations:",
+            "matches": [
+                {"left": "بيت", "right": "House"},
+                {"left": "سيارة", "right": "Car"},
+                {"left": "مدرسة", "right": "School"}
+            ],
+            "correctMatches": {"0": 0, "1": 1, "2": 2},
+            "explanation": "Correct matches: بيت-House, سيارة-Car, مدرسة-School."
+        }
+    ]
+}</code></pre>
+                                <button class="copy-btn" id="copyQuizJsonBtn">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Quiz Modal -->
+                    <div class="preview-modal" id="editQuizModal">
+                        <div class="preview-content">
+                            <div class="preview-header">
+                                <h2><i class="fas fa-edit"></i> Edit Quiz</h2>
+                                <button class="close-preview" id="closeEditQuizModalBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preview-body">
+                                <form id="editQuizForm">
+                                    <div class="form-group">
+                                        <label for="editQuizTitle">
+                                            <i class="fas fa-heading"></i> Quiz Title *
+                                        </label>
+                                        <input type="text" id="editQuizTitle" placeholder="Enter quiz title" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizDescription">
+                                            <i class="fas fa-align-left"></i> Description *
+                                        </label>
+                                        <textarea id="editQuizDescription" rows="2" placeholder="Enter quiz description"
+                                            required></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizLevel">
+                                            <i class="fas fa-chart-line"></i> Difficulty Level *
+                                        </label>
+                                        <select id="editQuizLevel" required>
+                                            <option value="">Select level</option>
+                                            <option value="beginner">Beginner</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="advanced">Advanced</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizType">
+                                            <i class="fas fa-tag"></i> Quiz Type *
+                                        </label>
+                                        <select id="editQuizType" required>
+                                            <option value="">Select type</option>
+                                            <option value="vocab">Vocabulary</option>
+                                            <option value="grammar">Grammar</option>
+                                            <option value="reading">Reading</option>
+                                            <option value="listening">Listening</option>
+                                            <option value="writing">Writing</option>
+                                            <option value="mixed">Mixed</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizAuthor">
+                                            <i class="fas fa-user"></i> Author Name (Optional)
+                                        </label>
+                                        <input type="text" id="editQuizAuthor" placeholder="Your name">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizQuestions">
+                                            <i class="fas fa-question-circle"></i> Quiz Questions (JSON) *
+                                        </label>
+                                        <textarea id="editQuizQuestions" rows="10"
+                                            placeholder='Enter quiz questions in JSON format' required></textarea>
+                                        <small>Format: Array of question objects with id, type, question, choices,
+                                            explanation</small>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-secondary" id="previewQuizBtn">
+                                            <i class="fas fa-eye"></i> Preview Quiz
+                                        </button>
+                                        <button type="button" class="btn-secondary" id="testQuizBtn">
+                                            <i class="fas fa-play"></i> Test Quiz
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="preview-footer">
+                                <button class="btn-secondary" id="closeEditQuizModalBtn2">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button type="submit" form="editQuizForm" class="btn-primary">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -541,6 +875,7 @@
 
     <script src="main.js"></script>
     <script src="customecss.js"></script>
+    <script src="creat-quiz.js"></script>
 
 
 </body>

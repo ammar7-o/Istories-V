@@ -348,7 +348,7 @@ function toggleTheme() {
 
 
 // Secondary color variables
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#f59e0b';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981';
 
 // Function to initialize secondary color selector
 function initSecondaryColorSelector() {

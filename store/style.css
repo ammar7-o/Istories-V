@@ -934,11 +934,13 @@ details {
 }
 
 details:hover {
-    background:
-        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-        var(--primary);
-    background-blend-mode: darken;
-    color: white;
+    background-color: rgb(160, 160, 160);
+
+}
+
+.dark-mode details:hover {
+    background-color: rgb(37, 37, 37);
+
 }
 
 details a:hover {

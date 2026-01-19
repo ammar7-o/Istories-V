@@ -71,7 +71,7 @@ window.quizData = {
             { left: "يقف", right: "To stand" },
             { left: "يسير", right: "To walk" }
           ],
-          correctMatches: {0: 0, 1: 1, 2: 2, 3: 3}, // left index: right index
+          correctMatches: { 0: 0, 1: 1, 2: 2, 3: 3 }, // left index: right index
           explanation: "يذهب = To go, يجلس = To sit, يقف = To stand, يسير = To walk"
         },
 
@@ -230,7 +230,7 @@ window.quizData = {
             { left: "Form IV (أفعل)", right: "Causative" },
             { left: "Form VII (انفعل)", right: "Reflexive/Passive" }
           ],
-          correctMatches: {0: 0, 1: 1, 2: 2, 3: 3},
+          correctMatches: { 0: 0, 1: 1, 2: 2, 3: 3 },
           explanation: "Form I = basic, Form II = causative/intensive, Form IV = causative, Form VII = reflexive/passive."
         },
 
@@ -347,7 +347,7 @@ window.quizData = {
             { left: "Three learning levels", right: "Suitable for all learners" },
             { left: "Daily reading recommendation", right: "Builds consistent practice" }
           ],
-          correctMatches: {0: 0, 1: 1, 2: 2, 3: 3},
+          correctMatches: { 0: 0, 1: 1, 2: 2, 3: 3 },
           explanation: "Each feature has a specific benefit for language learning."
         },
 
@@ -455,7 +455,7 @@ window.quizData = {
             { left: "Progress", right: "Improvement or development" },
             { left: "Structure", right: "The way something is organized" }
           ],
-          correctMatches: {0: 0, 1: 1, 2: 2, 3: 3},
+          correctMatches: { 0: 0, 1: 1, 2: 2, 3: 3 },
           explanation: "These words are important for understanding language learning concepts."
         },
 
@@ -590,7 +590,7 @@ window.quizData = {
             { left: "understand", right: "understanding" },
             { left: "practice", right: "practice" }
           ],
-          correctMatches: {0: 0, 1: 1, 2: 2, 3: 3},
+          correctMatches: { 0: 0, 1: 1, 2: 2, 3: 3 },
           explanation: "These are the -ing forms (gerunds) used in the story, except 'practice' which can be both verb and noun."
         },
 

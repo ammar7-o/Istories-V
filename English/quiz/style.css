@@ -1081,8 +1081,7 @@ footer {
     width: 100%;
     height: 100vh;
     margin: 0 auto;
-    padding: 0px 20%;
-    padding-top: 90px;
+    padding: 10% 20%;
     background: white;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
@@ -1592,13 +1591,13 @@ footer {
 }
 
 .results-header h2 {
-    color: #888888;
+    color: #999999;
     margin: 10px 0;
     font-size: 1.8rem;
 }
 
 .results-message {
-    color: #666;
+    color: #858585;
     font-size: 1.1rem;
     max-width: 500px;
     margin: 0 auto;
@@ -1615,7 +1614,7 @@ footer {
 }
 
 .results-container {
-    padding: 10px 20%;
+    padding: 10px 10px;
 }
 
 .quiz-selector {
@@ -1651,8 +1650,12 @@ footer {
 }
 
 .score-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     font-size: 1.2rem;
-    color: #333;
+    color: gray;
 }
 
 .score-details strong {
@@ -2519,7 +2522,211 @@ footer {
     background: #dc2626 !important;
     transform: translateY(-2px);
 }
+/* ===================drag and drop==================== */
+/* ===== Drag & Drop Question Styles ===== */
+.drag-drop-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+}
 
+.scrambled-words-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background: black;
+    border-radius: 10px;
+    min-height: 60px;
+}
+
+.scrambled-word {
+    padding: 12px 18px;
+    background: black;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    cursor: move;
+    user-select: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.scrambled-word:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.scrambled-word.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.sentence-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    min-height: 80px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.sentence-container.active-drop {
+    border-color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.05);
+    border-style: solid;
+}
+
+.sentence-slot {
+    padding: 12px 18px;
+    background: white;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    min-width: 80px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.sentence-slot.filled {
+    border: 2px solid var(--primary);
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.sentence-slot.empty {
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,0.05),
+        rgba(0,0,0,0.05) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+}
+
+.word-in-slot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: black;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    cursor: move;
+    user-select: none;
+}
+
+.word-in-slot .remove-btn {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 2px;
+    font-size: 14px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.word-in-slot .remove-btn:hover {
+    opacity: 1;
+}
+
+.drag-drop-hint {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.drag-drop-hint i {
+    margin-right: 8px;
+    color: var(--primary);
+}
+
+.drag-drop-feedback {
+    display: none;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
+
+.drag-drop-feedback.correct {
+    background: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
+    border-left: 4px solid #27ae60;
+}
+
+.drag-drop-feedback.incorrect {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+}
+
+/* Animation for correct placement */
+@keyframes correctPlacement {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.correct-place {
+    animation: correctPlacement 0.5s ease;
+    border-color: #27ae60 !important;
+    background: rgba(46, 204, 113, 0.15) !important;
+}
+
+/* Drag & Drop instructions */
+.drag-instructions {
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid #FFC107;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.drag-instructions i {
+    color: #FFC107;
+    font-size: 18px;
+}
+
+/* Reset button */
+.reset-drag-btn {
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.reset-drag-btn:hover {
+    background: var(--border-color);
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -2540,7 +2747,7 @@ footer {
     }
 
     .results-container {
-        padding: 10px 10px;
+        margin-top: 20px;
     }
 
     .header-actions {

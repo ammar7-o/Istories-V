@@ -498,7 +498,7 @@ function processStoryData(storyData, fileName) {
     let processedStories = [];
     let totalImported = 0;
     let skippedDuplicates = 0;
-    
+
     // Check if it's a single story or array of stories
     if (Array.isArray(storyData)) {
         // Multiple stories in an array
@@ -539,7 +539,7 @@ function processStoryData(storyData, fileName) {
         // Add all new stories to userStories array
         userStories.push(...processedStories);
         localStorage.setItem('userStories', JSON.stringify(userStories));
-        
+
         // Add all new stories to main stories array
         processedStories.forEach(story => {
             if (!stories.some(s => s.id === story.id)) {
@@ -583,8 +583,8 @@ function processSingleStory(storyData, fileName) {
     }
 
     // Check if story already exists (by title and content)
-    const existingStory = userStories.find(story => 
-        story.title === storyData.title && 
+    const existingStory = userStories.find(story =>
+        story.title === storyData.title &&
         JSON.stringify(story.content) === JSON.stringify(storyData.content)
     );
 
@@ -943,7 +943,7 @@ function showStoryPreview() {
     document.getElementById('previewTitle').textContent = title;
     document.getElementById('previewLevel').textContent = level;
     document.getElementById('previewLevel').className = `preview-level ${level}`;
-    
+
     // Update CEFR level if provided
     const previewCefr = document.getElementById('previewCefr');
     if (previewCefr) {
@@ -1180,7 +1180,7 @@ function exportUserStories() {
     try {
         // 1. Get user stories from localStorage
         const storedUserStories = JSON.parse(localStorage.getItem('userStories')) || [];
-        
+
         // 2. Check if there are any stories to export
         if (storedUserStories.length === 0) {
             alert('⚠️ No user stories found to export!');
@@ -1191,7 +1191,7 @@ function exportUserStories() {
         const formattedStories = storedUserStories.map(story => {
             // Get translations for this story
             const storyTranslations = userDictionaries[story.id] || {};
-            
+
             // Create base story object with all required fields
             const formattedStory = {
                 "title": story.title || "Untitled Story",
@@ -1203,12 +1203,12 @@ function exportUserStories() {
                 "uploadDate": story.uploadDate || new Date().toISOString(),
                 "wordCount": story.wordCount || 0
             };
-            
+
             // Add translations if they exist
             if (Object.keys(storyTranslations).length > 0) {
                 formattedStory.translations = storyTranslations;
             }
-            
+
             // Add optional fields ONLY if they exist in the original story
             if (story.levelcefr) formattedStory.levelcefr = story.levelcefr;
             if (story.sound) formattedStory.sound = story.sound;
@@ -1216,7 +1216,7 @@ function exportUserStories() {
             if (story.audio !== undefined) formattedStory.audio = story.audio;
             // Add any other optional fields that might exist
             if (story.id !== undefined) formattedStory.id = story.id;
-            
+
             return formattedStory;
         });
 
@@ -1227,40 +1227,40 @@ function exportUserStories() {
 
         // 5. Convert to JSON string with proper formatting (4 spaces indentation)
         const jsonString = JSON.stringify(exportData, null, 4);
-        
+
         // 6. Create a blob (file-like object)
-        const blob = new Blob([jsonString], { 
-            type: 'application/json' 
+        const blob = new Blob([jsonString], {
+            type: 'application/json'
         });
-        
+
         // 7. Create a temporary URL for the blob
         const url = URL.createObjectURL(blob);
-        
+
         // 8. Create an invisible download link
         const downloadLink = document.createElement('a');
         downloadLink.href = url;
-        
+
         // 9. Set the filename
         const date = new Date();
         const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
-        const timeString = date.getHours().toString().padStart(2, '0') + 
-                          date.getMinutes().toString().padStart(2, '0');
+        const timeString = date.getHours().toString().padStart(2, '0') +
+            date.getMinutes().toString().padStart(2, '0');
         downloadLink.download = `stories-export-${dateString}-${timeString}.json`;
-        
+
         // 10. Add link to page, click it, then remove it
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-        
+
         // 11. Clean up the temporary URL
         URL.revokeObjectURL(url);
-        
+
         // 12. Show success message
         console.log(`✅ Successfully exported ${storedUserStories.length} user stories`);
-        
+
         // Show notification
         showExportSuccess(storedUserStories.length, downloadLink.download);
-        
+
     } catch (error) {
         // 13. Handle any errors
         console.error('❌ Error exporting user stories:', error);
@@ -1312,12 +1312,165 @@ function deleteAllUserStories() {
         showNotification(`✅ All ${userStories.length} user stories deleted successfully!`, 'success');
 
         console.log('🗑️ All user stories deleted successfully');
-        
+
     } catch (error) {
         console.error('❌ Error deleting all user stories:', error);
         showNotification('❌ Failed to delete user stories. Please try again.', 'error');
     }
 }
+// Add this to your existing variables
+let jsonImportValidationTimer = null;
+
+// Add event listener in setupAddStoriesListeners() function:
+function setupAddStoriesListeners() {
+    // ... existing code ...
+
+    // Text import functionality
+    const jsonTextArea = document.getElementById('jsonTextArea');
+    const clearJsonBtn = document.getElementById('clearJsonBtn');
+    const importJsonBtn = document.getElementById('importJsonBtn');
+
+    if (jsonTextArea) {
+        jsonTextArea.addEventListener('input', validateJsonInput);
+    }
+
+    if (clearJsonBtn) {
+        clearJsonBtn.addEventListener('click', clearJsonTextArea);
+    }
+
+    if (importJsonBtn) {
+        importJsonBtn.addEventListener('click', importFromText);
+    }
+
+    // ... existing code ...
+}
+
+// Validate JSON input as user types
+function validateJsonInput() {
+    const textArea = document.getElementById('jsonTextArea');
+    const importBtn = document.getElementById('importJsonBtn');
+    const validationDiv = document.getElementById('jsonValidation');
+    const validationMessage = document.getElementById('validationMessage');
+
+    if (!textArea || textArea.value.trim() === '') {
+        validationDiv.style.display = 'none';
+        importBtn.disabled = true;
+        return;
+    }
+
+    // Debounce validation
+    clearTimeout(jsonImportValidationTimer);
+    jsonImportValidationTimer = setTimeout(() => {
+        try {
+            const jsonData = JSON.parse(textArea.value);
+
+            // Check if it's a valid story structure
+            if (validateStory(jsonData)) {
+                validationDiv.className = 'json-validation valid';
+                validationMessage.textContent = '✓ Valid story format';
+                importBtn.disabled = false;
+            } else if (Array.isArray(jsonData)) {
+                // Check if it's an array of stories
+                const validCount = jsonData.filter(validateStory).length;
+                if (validCount > 0) {
+                    validationDiv.className = 'json-validation valid';
+                    validationMessage.textContent = `✓ Valid format (${validCount} story${validCount !== 1 ? 's' : ''} found)`;
+                    importBtn.disabled = false;
+                } else {
+                    validationDiv.className = 'json-validation invalid';
+                    validationMessage.textContent = '✗ Array contains invalid stories';
+                    importBtn.disabled = true;
+                }
+            } else if (jsonData.stories && Array.isArray(jsonData.stories)) {
+                // Check if it's an object with stories array
+                const validCount = jsonData.stories.filter(validateStory).length;
+                if (validCount > 0) {
+                    validationDiv.className = 'json-validation valid';
+                    validationMessage.textContent = `✓ Valid format (${validCount} story${validCount !== 1 ? 's' : ''} found)`;
+                    importBtn.disabled = false;
+                } else {
+                    validationDiv.className = 'json-validation invalid';
+                    validationMessage.textContent = '✗ Invalid stories format';
+                    importBtn.disabled = true;
+                }
+            } else {
+                validationDiv.className = 'json-validation invalid';
+                validationMessage.textContent = '✗ Invalid story structure';
+                importBtn.disabled = true;
+            }
+        } catch (error) {
+            validationDiv.className = 'json-validation invalid';
+            validationMessage.textContent = `✗ Invalid JSON: ${error.message}`;
+            importBtn.disabled = true;
+        }
+
+        validationDiv.style.display = 'block';
+    }, 500); // 500ms debounce
+}
+
+// Clear text area
+function clearJsonTextArea() {
+    const textArea = document.getElementById('jsonTextArea');
+    const validationDiv = document.getElementById('jsonValidation');
+    const importBtn = document.getElementById('importJsonBtn');
+
+    if (textArea) {
+        textArea.value = '';
+        textArea.style.height = 'auto';
+    }
+
+    if (validationDiv) {
+        validationDiv.style.display = 'none';
+    }
+
+    if (importBtn) {
+        importBtn.disabled = true;
+    }
+
+    showNotification('Text area cleared', 'info');
+}
+
+// Import stories from text area
+function importFromText() {
+    const textArea = document.getElementById('jsonTextArea');
+    if (!textArea || textArea.value.trim() === '') {
+        showNotification('Please enter JSON text first', 'error');
+        return;
+    }
+
+    try {
+        const jsonData = JSON.parse(textArea.value);
+        const fileName = 'text_import_' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+
+        // Process the story data
+        processStoryData(jsonData, fileName);
+
+        // Clear text area after successful import
+        clearJsonTextArea();
+
+    } catch (error) {
+        showNotification(`Error parsing JSON: ${error.message}`, 'error');
+    }
+}
+
+// Add auto-resize for textarea (optional but nice)
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 400) + 'px';
+}
+
+// Add this to your initialization
+document.addEventListener('DOMContentLoaded', function () {
+    // ... existing code ...
+
+    // Add auto-resize to textarea
+    const jsonTextArea = document.getElementById('jsonTextArea');
+    if (jsonTextArea) {
+        jsonTextArea.addEventListener('input', function () {
+            autoResizeTextarea(this);
+        });
+    }
+});
 // Optional: Show a nice success notification
 function showExportSuccess(count, filename) {
     // Check if we already have a notification
@@ -1325,7 +1478,7 @@ function showExportSuccess(count, filename) {
     if (existingNotification) {
         existingNotification.remove();
     }
-    
+
     // Create notification element
     const notification = document.createElement('div');
     notification.id = 'export-notification';
@@ -1354,7 +1507,7 @@ function showExportSuccess(count, filename) {
             </div>
         </div>
     `;
-    
+
     // Add CSS animation
     const style = document.createElement('style');
     style.textContent = `
@@ -1381,9 +1534,9 @@ function showExportSuccess(count, filename) {
         }
     `;
     document.head.appendChild(style);
-    
+
     document.body.appendChild(notification);
-    
+
     // Remove notification after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease-out forwards';
