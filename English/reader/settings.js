@@ -601,7 +601,7 @@ function translateCurrentWord() {
         showTranslationInPopup(word, translation, targetLanguage);
     }).catch(error => {
         console.error('Translation error:', error);
-        showNotification('Failed to translate word', 'error');
+        // showNotification('Failed to translate word', 'error');
     }).finally(() => {
         // Reset all translate buttons
         translateButtons.forEach(btn => {
@@ -959,7 +959,7 @@ function playGoogleVoice(word, language = 'en') {
 
                 // Fallback: Try browser's native speech synthesis
                 if (useNativeSpeechSynthesis(text, language)) {
-                    showNotification(`Speaking "${text}" (native)`, 'info');
+                    showNotification(`No internet`, 'info');
                 } else {
                     showNotification('This function need Internet.', 'error');
                 }
@@ -997,34 +997,32 @@ function resetTTSButton() {
 }
 
 // Fallback: Use browser's native speech synthesis
-function useNativeSpeechSynthesis(text, language = 'en') {
-    if ('speechSynthesis' in window) {
-        // Cancel any ongoing speech
-        speechSynthesis.cancel();
+function useNativeSpeechSynthesis(text, language = 'en-US') {
+    if (!('speechSynthesis' in window)) return false;
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = language;
-        utterance.rate = 0.8;
-        utterance.pitch = 1;
-        utterance.volume = 1;
+    speechSynthesis.cancel();
 
-        // Get available voices
-        const voices = speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            // Try to find a voice matching the language
-            const voice = voices.find(v => v.lang.startsWith(language)) || voices[0];
-            utterance.voice = voice;
-        }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language;
+    utterance.rate = 0.95;
+    utterance.pitch = 1.05;
+    utterance.volume = 1;
 
-        speechSynthesis.speak(utterance);
-
-        utterance.onend = resetTTSButton;
-        utterance.onerror = resetTTSButton;
-
-        return true;
+    const voices = speechSynthesis.getVoices();
+    if (voices.length) {
+        utterance.voice =
+            voices.find(v => v.lang === language && v.name.includes('Google')) ||
+            voices.find(v => v.lang.startsWith(language.split('-')[0])) ||
+            voices[0];
     }
-    return false;
+
+    utterance.onend = resetTTSButton;
+    utterance.onerror = resetTTSButton;
+
+    speechSynthesis.speak(utterance);
+    return true;
 }
+
 
 // Add event listener to your TTS button
 // In the DOMContentLoaded event listener, change the language to 'en'

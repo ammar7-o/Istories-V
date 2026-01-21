@@ -27,7 +27,6 @@ const popupTranslation = document.getElementById('popupTranslation');
 const readingProgressBar = document.getElementById('readingProgressBar');
 const backToHome = document.getElementById('backToHome');
 const exportVocabularyBtn = document.getElementById('exportVocabulary');
-const vocabularyList = document.getElementById('vocabularyList');
 const navTabs = document.querySelectorAll('.nav-tab');
 const pages = document.querySelectorAll('.page');
 const googleSearchBtn = document.getElementById('googleSearchBtn');
@@ -37,7 +36,6 @@ const sound = document.getElementById("sound");
 const lvl = document.getElementById("lvl");
 const lvlcefr = document.getElementById("lvlcefr");
 const fontFamilySelect = document.getElementById('fontFamily'); // Add this line
-
 const googleTranslateBtn = document.getElementById('googleTranslateBtn');
 
 // ----------------------------------------------------
@@ -869,7 +867,7 @@ function showDictionary(word, element, isTextSelection = false) {
         wordElement = document.createElement('span');
         wordElement.textContent = originalWordText;
         wordElement.className = 'word';
-        
+
         // Try to find the clicked word element in the DOM
         const clickedElements = document.querySelectorAll('.word');
         clickedElements.forEach(el => {
@@ -987,7 +985,7 @@ function showDictionary(word, element, isTextSelection = false) {
     dictionaryPopup.style.top = `${rect.bottom + window.scrollY + 10}px`;
     dictionaryPopup.style.left = `${Math.max(10, rect.left + window.scrollX - 150)}px`;
     dictionaryPopup.style.display = 'block';
-    
+
     // Highlight the word element
     if (wordElement && wordElement.classList) {
         wordElement.classList.add('selected');
@@ -1004,12 +1002,12 @@ function hideDictionary() {
     dictionaryPopup.style.display = 'none';
     currentWordData = null;
 }
-
-document.addEventListener('click', (e) => {
-    if (dictionaryPopup && !dictionaryPopup.contains(e.target) && !e.target.classList.contains('word')) {
+document.addEventListener('pointerdown', (e) => {
+    if (!dictionaryPopup.contains(e.target)) {
         hideDictionary();
     }
 });
+
 
 // ----------------------------------------------------
 // 📖 وظائف المفردات والإحصائيات
@@ -1243,152 +1241,7 @@ function translateOnGoogle() {
 }
 
 
-// Render vocabulary list - compatible with both formats
-function renderVocabulary() {
-    if (!vocabularyList) return;
 
-    vocabularyList.innerHTML = '';
-
-    if (savedWords.length === 0) {
-        vocabularyList.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-light);">
-                <p>No words saved yet. Click on words in stories to add them to your vocabulary.</p>
-            </div>
-        `;
-        return;
-    }
-
-    // Create a copy to avoid mutating original array
-    const wordsToDisplay = [...savedWords];
-
-    // Sort by date (newest first) - if you want explicit sorting
-    wordsToDisplay.sort((a, b) => {
-        const dateA = new Date(a.addedDate || a.added || a.date || 0);
-        const dateB = new Date(b.addedDate || b.added || b.date || 0);
-        return dateB - dateA; // Newest first
-    });
-
-    wordsToDisplay.forEach((word, displayIndex) => {
-        const item = document.createElement('div');
-        item.className = 'vocabulary-item';
-
-        // Handle different field names from different sources
-        const displayWord = word.originalWord || word.word || '';
-        const translation = word.translation || '';
-        const story = word.story || '';
-
-        // Get the date with better fallback
-        const addedDate = getVocabularyDate(word);
-
-        // Check if translation exists
-        const hasTranslation = translation && translation !== displayWord;
-
-        // Check status
-        const status = word.status || 'saved';
-
-        // Check if from user story
-        const fromUserStory = word.fromUserStory || false;
-
-        const translationBadge = !hasTranslation
-            ? `<span class="no-translation-badge" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">No Translation</span>`
-            : '';
-
-        const masteredBadge = status === 'mastered'
-            ? `<span class="mastered-badge" style="background: rgb(13, 167, 116); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Mastered</span>`
-            : '';
-
-        const userStoryBadge = fromUserStory
-            ? `<span class="user-story-badge-small" style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Your Story</span>`
-            : '';
-
-        // Find the original index in savedWords array
-        const originalIndex = savedWords.findIndex(w =>
-            (w.word === word.word && w.translation === word.translation) ||
-            (w.originalWord === word.originalWord && w.translation === word.translation)
-        );
-
-        item.innerHTML = `
-            <div class="word-info">
-                <div class="word-main">
-                    <span class="word-text">${displayWord}</span>
-                    <span class="word-translation">${translation || 'No translation available'}</span>
-                    ${translationBadge}
-                    ${masteredBadge}
-                    ${userStoryBadge}
-                </div>
-                ${story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${story}</div>` : ''}
-                <div class="word-date" style="font-size: 0.7rem; color: var(--text-lighter); margin-top: 3px;">
-                    Added: ${formatDateForDisplay(addedDate)}
-                </div>
-            </div>
-            <div class="word-actions">
-                <button title="Mark as mastered" data-index="${originalIndex}">
-                    <i class="fas fa-check"></i>
-                </button>
-                <button title="Delete" data-index="${originalIndex}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-
-        vocabularyList.appendChild(item);
-    });
-
-    document.querySelectorAll('.word-actions button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            if (e.currentTarget.querySelector('.fa-check')) {
-                markAsMastered(index);
-            } else if (e.currentTarget.querySelector('.fa-trash')) {
-                deleteWord(index);
-            }
-        });
-    });
-}
-// Helper function to extract date from word object
-function getVocabularyDate(word) {
-    // Try all possible date field names in order of priority
-    if (word.addedDate) return word.addedDate;
-    if (word.dateAdded) return word.dateAdded;
-    if (word.added) return word.added;
-    if (word.date) return word.date;
-
-    // If no date field exists, create one
-    const newDate = new Date().toISOString();
-
-    // Update the word object with the new date
-    word.addedDate = newDate;
-
-    // Save back to localStorage if needed
-    setTimeout(() => {
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    }, 100);
-
-    return newDate;
-}
-
-// Format date for display - SIMPLER VERSION
-function formatDateForDisplay(dateString) {
-    if (!dateString) return 'Unknown date';
-
-    try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) {
-            // Try to extract just the date part from ISO string
-            const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
-            if (dateMatch) {
-                const simpleDate = new Date(dateMatch[1]);
-                if (!isNaN(simpleDate.getTime())) {
-                    return simpleDate.toLocaleDateString();
-                }
-            }
-            return 'Invalid date';
-        }
-        return date.toLocaleDateString();
-    } catch (error) {
-        return 'Date error';
-    }
-}
 
 // Save word to vocabulary
 function saveWord(word, translation, story = '', hasTranslation = true) {
@@ -1445,45 +1298,6 @@ function updateVocabularyStats() {
     if (readingStreak) readingStreak.textContent = streak;
 }
 
-function markAsMastered(index) {
-    if (index < 0 || index >= savedWords.length) return;
-
-    // Check if it's already mastered BEFORE changing it
-    const wasAlreadyMastered = savedWords[index].status === 'mastered';
-
-    // Save the word for notification
-    const word = savedWords[index].originalWord || savedWords[index].word;
-
-    // Mark as mastered
-    savedWords[index].status = 'mastered';
-    savedWords[index].masteredDate = new Date().toISOString();
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
-
-    updateVocabularyStats();
-    renderVocabulary();
-
-    // Only add XP if it wasn't already mastered
-    if (!wasAlreadyMastered) {
-        addXP(3, 'Mastering word');
-    } else {
-        // Already mastered, just show message without XP
-        showNotification(`"${word}" is already mastered!`, 'info');
-    }
-}
-
-// Delete word from vocabulary
-function deleteWord(index) {
-    if (index < 0 || index >= savedWords.length) return;
-
-    const word = savedWords[index].word;
-    savedWords.splice(index, 1);
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    renderVocabulary();
-    updateStats();
-
-    // Show deletion confirmation
-    showNotification(`"${word}" removed from vocabulary`);
-}
 // copy button
 const copyBtn = document.getElementById("copy");
 if (copyBtn) {
@@ -1577,80 +1391,43 @@ function flashCopyUI() {
     }, 1400);
 }
 
-function removeAll() {
-    if (savedWords.length === 0) {
-        showNotification('No words to remove!', 'info');
-        return;
-    }
 
-    const confirmed = window.confirm(`Are you sure you want to remove all ${savedWords.length} saved words? This action cannot be undone.`);
 
-    if (!confirmed) return;
 
-    localStorage.setItem('savedWords', JSON.stringify([]));
-    savedWords = [];
 
-    showNotification(`All saved words removed successfully!`, 'success');
 
-    renderVocabulary();
-    updateVocabularyStats();
+
+
+
+
+
+
+
+
+function setupMobileSelectionDetection() {
+    let lastSelectedText = '';
+
+    document.addEventListener('selectionchange', () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
+
+        const selectedText = selection.toString().trim();
+        if (!selectedText || selectedText.length > 90) return;
+
+        // منع التكرار
+        if (selectedText === lastSelectedText) return;
+        lastSelectedText = selectedText;
+
+        const range = selection.getRangeAt(0);
+
+        if (storyText && storyText.contains(range.commonAncestorContainer)) {
+            setTimeout(() => {
+                handleTextSelection(selectedText, selection);
+            }, 150);
+        }
+    });
 }
 
-function exportVocabulary() {
-    if (savedWords.length === 0) {
-        showNotification('No vocabulary to export!');
-        return;
-    }
-
-    const headers = ['Word', 'Original Word (if different)', 'Translation', 'Status', 'Story', 'Date Added', 'From User Story'];
-
-    const csvRows = [
-        headers.join(','),
-        ...savedWords.map(word => {
-            return [
-                `"${word.word || ''}"`,
-                `"${(word.originalWord || '').replace(/"/g, '""')}"`,
-                `"${(word.translation || '').replace(/"/g, '""')}"`,
-                `"${word.status || ''}"`,
-                `"${(word.story || '').replace(/"/g, '""')}"`,
-                `"${word.added ? new Date(word.added).toLocaleDateString('en-US') : ''}"`,
-                `"${word.fromUserStory ? 'Yes' : 'No'}"`
-            ].join(',');
-        })
-    ];
-
-    const csvString = csvRows.join('\n');
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-    link.setAttribute('download', `my_vocabulary_${formattedDate}.csv`);
-
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    showNotification(`Vocabulary exported successfully! (${savedWords.length} words)`);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-// Function to detect text selection
 // Function to detect text selection
 function setupTextSelectionDetection() {
     let selectionTimeout;
@@ -1659,7 +1436,7 @@ function setupTextSelectionDetection() {
     let mouseDownY = 0;
 
     // Track when mouse is pressed down
-    document.addEventListener('mousedown', function(e) {
+    document.addEventListener('mousedown', function (e) {
         mouseDownTime = Date.now();
         mouseDownX = e.clientX;
         mouseDownY = e.clientY;
@@ -1667,7 +1444,7 @@ function setupTextSelectionDetection() {
     });
 
     // Listen for text selection
-    document.addEventListener('mouseup', function(e) {
+    document.addEventListener('mouseup', function (e) {
         const mouseUpTime = Date.now();
         const mouseUpX = e.clientX;
         const mouseUpY = e.clientY;
@@ -1696,9 +1473,9 @@ function setupTextSelectionDetection() {
     });
 
     // Double-click detection (separate from drag selection)
-    document.addEventListener('dblclick', function(e) {
+    document.addEventListener('dblclick', function (e) {
         clearTimeout(selectionTimeout);
-        
+
         const selection = window.getSelection();
         const selectedText = selection.toString().trim();
 
@@ -1708,15 +1485,15 @@ function setupTextSelectionDetection() {
     });
 
     // Hide dictionary when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         // Only hide if clicking on non-word, non-popup elements
-        if (dictionaryPopup.style.display === 'block' && 
-            !dictionaryPopup.contains(e.target) && 
+        if (dictionaryPopup.style.display === 'block' &&
+            !dictionaryPopup.contains(e.target) &&
             !e.target.classList.contains('word') &&
             !e.target.closest('.word')) {
-            
+
             hideDictionary();
-            
+
             // Also clear any selection
             if (window.getSelection) {
                 window.getSelection().removeAllRanges();
@@ -1749,60 +1526,56 @@ function handleTextSelection(selectedText, selection) {
         // If no exact clickable word found, try to look it up in dictionary
         lookupAndShowSelectedWord(selectedText, rect);
     }
-    
+
     // DO NOT clear selection here - let user see what they selected
     // selection.removeAllRanges();
-    
+
     // Instead, add a visual highlight that fades out
     highlightSelection(selection);
-    
+
 }
 
-// Add visual highlight to selection
 function highlightSelection(selection) {
-    // Create a temporary highlight
     const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-    
-    const highlight = document.createElement('div');
-    highlight.className = 'text-selection-highlight';
-    highlight.style.cssText = `
-        position: absolute;
-        top: ${rect.top + window.scrollY}px;
-        left: ${rect.left + window.scrollX}px;
-        width: ${rect.width}px;
-        height: ${rect.height}px;
-        background-color: color-mix(in srgb, var(--primary) 30%, transparent 70%);
-        border-radius: 3px;
-        pointer-events: none;
-        z-index: 999;
-        transition: opacity 1s ease;
-    `;
-    
-    document.body.appendChild(highlight);
-    
-    // Fade out after 1.5 seconds
-    setTimeout(() => {
-        highlight.style.opacity = '0';
+    const rects = range.getClientRects();
+
+    [...rects].forEach(rect => {
+        const highlight = document.createElement('div');
+        highlight.className = 'text-selection-highlight';
+        highlight.style.cssText = `
+            position: absolute;
+            top: ${rect.top + window.scrollY}px;
+            left: ${rect.left + window.scrollX}px;
+            width: ${rect.width}px;
+            height: ${rect.height}px;
+            background-color: rgba(0, 123, 255, 0.05);
+            border-radius: 3px;
+            pointer-events: none;
+            z-index: 999;
+            transition: opacity 1s ease;
+        `;
+
+        document.body.appendChild(highlight);
+
         setTimeout(() => {
-            if (highlight.parentNode) {
-                document.body.removeChild(highlight);
-            }
-        }, 1000);
-    }, 1500);
+            highlight.style.opacity = '0';
+            setTimeout(() => highlight.remove(), 1000);
+        }, 1200);
+    });
 }
+
 
 // Lookup a selected word and show dictionary popup
 function lookupAndShowSelectedWord(word, rect) {
     const trimmedWord = word.trim();
-    
+
     // Try to find the word in dictionary
     const standardKey = getStandardKey(trimmedWord);
     const normalizedKey = getNormalizedKey(trimmedWord);
-    
+
     let wordData = null;
     let foundKey = null;
-    
+
     // Check main dictionary
     if (dictionary[standardKey]) {
         wordData = dictionary[standardKey];
@@ -1811,13 +1584,13 @@ function lookupAndShowSelectedWord(word, rect) {
         wordData = dictionary[normalizedKey];
         foundKey = normalizedKey;
     }
-    
+
     // Check custom dictionary
     if (!wordData) {
         const storyInfo = getStoryIdFromUrl();
         const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
         const customDictionary = userDictionaries[storyInfo.id];
-        
+
         if (customDictionary) {
             // Try to find in custom dictionary
             for (const [key, data] of Object.entries(customDictionary)) {
@@ -1829,7 +1602,7 @@ function lookupAndShowSelectedWord(word, rect) {
             }
         }
     }
-    
+
     // Show the dictionary popup
     showDictionary(foundKey || standardKey, trimmedWord, true);
 }
@@ -2107,7 +1880,6 @@ function setupEventListeners() {
     if (exportVocabularyBtn) exportVocabularyBtn.addEventListener('click', exportVocabulary);
     if (googleSearchBtn) googleSearchBtn.addEventListener('click', searchOnGoogle);
     if (listenWordBtn) listenWordBtn.addEventListener('click', listenToWord);
-    if (removebtn) removebtn.addEventListener("click", removeAll);
     if (googleTranslateBtn) googleTranslateBtn.addEventListener('click', translateOnGoogle);
 
     navTabs.forEach(tab => {
@@ -2278,7 +2050,14 @@ async function init() {
 
         // STEP 4: Setup text selection detection (NEW)
         console.log('Step 4: Setting up text selection detection...');
-        setupTextSelectionDetection();
+        const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        if (isMobile) {
+            setupMobileSelectionDetection();
+        } else {
+            setupTextSelectionDetection();
+        }
+
 
         // STEP 5: Setup event listeners
         console.log('Step 5: Setting up event listeners...');
@@ -2292,7 +2071,6 @@ async function init() {
 
         // Update stats and render vocabulary
         updateVocabularyStats();
-        renderVocabulary();
 
         // Restore reading position
         setTimeout(() => {
@@ -2302,7 +2080,7 @@ async function init() {
         // Auto lazy load images
         document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
 
-       
+
     } catch (error) {
         console.error('Error during initialization:', error);
         showNotification('Failed to initialize application', 'error');
