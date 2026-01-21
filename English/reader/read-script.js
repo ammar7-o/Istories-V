@@ -1015,73 +1015,190 @@ function showNotification(message, type = 'success') {
     }, 3000);
 }
 
-function saveCurrentWord() {
+// Add a flag to prevent multiple saves
+let isSavingWord = false;
+
+// Modified saveCurrentWord function to auto-translate using Google Translate
+async function saveCurrentWord() {
+    // Prevent multiple simultaneous saves
+    if (isSavingWord) {
+        console.log('Save already in progress');
+        return;
+    }
+    
     if (!currentWordData) {
         showNotification('No word selected', 'error');
         return;
     }
 
-    const { word, element, hasTranslation, wordData, isCustomTranslation } = currentWordData;
+    try {
+        isSavingWord = true;
+        
+        const { word, element, hasTranslation, wordData, isCustomTranslation } = currentWordData;
+        const originalWord = element.innerText.trim();
 
-    if (savedWords.some(w => w.word === word)) {
-        showNotification('Word already saved!', 'info');
-        return;
+        // Check if word already exists
+        if (savedWords.some(w => w.word === word || w.originalWord === originalWord)) {
+            showNotification('Word already saved!', 'info');
+            return;
+        }
+
+        const storyTitle = currentStory ? currentStory.title : 'Unknown Story';
+        const isUserStory = currentStory ? currentStory.isUserStory : false;
+
+        // Create new word object
+        const newWord = {
+            word: word,
+            originalWord: originalWord,
+            status: 'saved',
+            added: new Date().toISOString(),
+            nextReview: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            story: storyTitle,
+            hasTranslation: hasTranslation,
+            fromUserStory: isUserStory || false,
+            isCustomTranslation: isCustomTranslation || false
+        };
+
+        // If word has translation in dictionary, use it
+        if (hasTranslation && wordData) {
+            newWord.translation = wordData.translation;
+            newWord.definition = wordData.definition || "Check back later for definition";
+            newWord.example = wordData.example || "Check back later for example";
+            newWord.pos = wordData.pos || "unknown";
+            
+            // Save and show notification
+            saveWordToStorage(newWord, element);
+            
+        } else {
+            // Word has no translation - try to auto-translate using Google Translate
+            showNotification(`Translating "${originalWord}"...`, 'info');
+            
+            // Disable save button while translating
+            if (saveWordBtn) {
+                saveWordBtn.disabled = true;
+                saveWordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+            }
+            
+            try {
+                // Get the saved translation language from settings
+                const targetLanguage = getCurrentTranslationLanguage ? getCurrentTranslationLanguage() : 'ar';
+                
+                // Use Google Translate API
+                const googleTranslation = await translateWordWithGoogle(originalWord, targetLanguage);
+                
+                if (googleTranslation) {
+                    // Update word with Google translation
+                    newWord.translation = googleTranslation;
+                    newWord.definition = `Auto-translated using Google Translate (to ${getLanguageName ? getLanguageName(targetLanguage) : 'Arabic'})`;
+                    newWord.example = `Word from "${storyTitle}"`;
+                    newWord.pos = "auto_translated";
+                    newWord.autoTranslated = true;
+                    newWord.translationSource = 'google_translate';
+                    newWord.targetLanguage = targetLanguage;
+                    
+                    // Save and show notification
+                    saveWordToStorage(newWord, element);
+                    
+                } else {
+                    // Google translation failed
+                    newWord.translation = "Translation unavailable";
+                    newWord.definition = "Could not auto-translate this word";
+                    newWord.example = "Word from story";
+                    newWord.pos = "unknown";
+                    
+                    // Save anyway (without translation)
+                    saveWordToStorage(newWord, element);
+                    showNotification(`"${originalWord}" saved (no translation available)`, 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Auto-translation error:', error);
+                
+                // Save word without translation
+                newWord.translation = "Translation failed";
+                newWord.definition = "Auto-translation failed. Try manual translation.";
+                newWord.example = "Word from story";
+                newWord.pos = "unknown";
+                newWord.translationError = error.message;
+                
+                saveWordToStorage(newWord, element);
+                showNotification(`"${originalWord}" saved (translation failed)`, 'error');
+                
+            } finally {
+                // Re-enable save button
+                if (saveWordBtn) {
+                    saveWordBtn.disabled = false;
+                    const isSaved = savedWords.some(w => w.word === word || w.originalWord === originalWord);
+                    saveWordBtn.innerHTML = isSaved ? 
+                        '<i class="fas fa-check"></i> Already Saved' : 
+                        '<i class="fas fa-bookmark"></i> Save Word';
+                    saveWordBtn.disabled = isSaved;
+                }
+            }
+        }
+        
+    } finally {
+        isSavingWord = false;
     }
+}
 
-    const storyTitle = currentStory ? currentStory.title : 'Unknown Story';
-    const isUserStory = currentStory ? currentStory.isUserStory : false;
-
-    const newWord = {
-        word: word,
-        originalWord: element.innerText,
-        status: 'saved',
-        added: new Date().toISOString(),
-        nextReview: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        story: storyTitle,
-        hasTranslation: hasTranslation,
-        fromUserStory: isUserStory || false,
-        isCustomTranslation: isCustomTranslation || false
-    };
-
-    if (hasTranslation && wordData) {
-        newWord.translation = wordData.translation;
-        newWord.definition = wordData.definition || "Check back later for definition";
-        newWord.example = wordData.example || "Check back later for example";
-        newWord.pos = wordData.pos || "unknown";
-    } else {
-        newWord.translation = "No translation available";
-        newWord.definition = "This word is not yet in our dictionary";
-        newWord.example = "We're working on adding more words to our database";
-        newWord.pos = "unknown";
-    }
-
-    savedWords.push(newWord);
+// Helper function to save word to storage
+function saveWordToStorage(wordObject, element) {
+    savedWords.push(wordObject);
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
-
+    
     hideDictionary();
-
+    
     if (element) {
         element.classList.add('saved');
         element.classList.remove('no-translation');
     }
-
+    
+    // Update UI if needed
     if (document.querySelector('.nav-tab.active[data-page="vocabulary"]')) {
         renderVocabulary();
         updateVocabularyStats();
     }
+}
 
-    const translationSource = isCustomTranslation ? "custom translation" : "dictionary";
-    const message = hasTranslation
-        ? `"${element.innerText}" saved to vocabulary from "${storyTitle}" (${translationSource})!`
-        : `"${element.innerText}" saved to vocabulary from "${storyTitle}" (translation will be added later)`;
-
-    // showNotification(message, hasTranslation ? 'success' : 'warning');
+// Function to translate word using Google Translate API
+async function translateWordWithGoogle(word, targetLang = 'ar') {
+    try {
+        // Google Translate API endpoint
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(word)}`;
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Parse the response (Google returns nested arrays)
+        if (data && data[0] && data[0][0] && data[0][0][0]) {
+            return data[0][0][0];
+        } else {
+            throw new Error('Invalid translation response');
+        }
+        
+    } catch (error) {
+        console.error('Google Translate error:', error);
+        return null;
+    }
 }
 
 function translateOnGoogle() {
     if (!currentWordData || !currentWordData.element) return;
+    
     const wordToTranslate = currentWordData.element.innerText.trim();
-    const translateUrl = `https://translate.google.com/?sl=auto&tl=ar&text=${encodeURIComponent(wordToTranslate)}&op=translate`;
+    
+    // Get the saved translation language from localStorage
+    const savedLanguage = localStorage.getItem('defaultTranslateLanguage') || 'ar';
+    
+    // Use the saved language instead of hardcoded 'ar'
+    const translateUrl = `https://translate.google.com/?sl=auto&tl=${savedLanguage}&text=${encodeURIComponent(wordToTranslate)}&op=translate`;
+    
     window.open(translateUrl, '_blank');
 }
 
@@ -1496,12 +1613,29 @@ function applyTheme() {
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
         themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        
+        // In dark mode, we need to re-apply colors with !important
+        if (window.selectedColor) {
+            applyPrimaryColor(window.selectedColor);
+        }
+        if (window.selectedSecondaryColor) {
+            applySecondaryColor(window.selectedSecondaryColor);
+        }
     } else {
         document.body.classList.remove('dark-mode');
         themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        
+        // In light mode, also re-apply colors
+        if (window.selectedColor) {
+            applyPrimaryColor(window.selectedColor);
+        }
+        if (window.selectedSecondaryColor) {
+            applySecondaryColor(window.selectedSecondaryColor);
+        }
     }
+    
+    console.log('Theme applied:', theme, 'Colors:', window.selectedColor, window.selectedSecondaryColor);
 }
-
 function adjustFontSize(change) {
     fontSize += change;
     fontSize = Math.max(1, Math.min(2, fontSize));
@@ -1686,27 +1820,39 @@ function cleanup() {
 // 🎯 إعداد Event Listeners
 // ----------------------------------------------------
 function setupEventListeners() {
+    // Remove existing listeners first to prevent duplicates
+    if (saveWordBtn) {
+        saveWordBtn.replaceWith(saveWordBtn.cloneNode(true));
+        // Get fresh reference
+        const freshSaveBtn = document.getElementById('saveWordBtn');
+        
+        freshSaveBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Call the save function
+            await saveCurrentWord();
+            
+            // Add XP
+            addXP(3, 'Saving word');
+        });
+    }
+    
+    // Other event listeners...
     if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
     if (fontSmaller) fontSmaller.addEventListener('click', () => adjustFontSize(-0.1));
     if (fontNormal) fontNormal.addEventListener('click', resetFontSize);
     if (fontLarger) fontLarger.addEventListener('click', () => adjustFontSize(0.1));
     if (lineSpacingBtn) lineSpacingBtn.addEventListener('click', toggleLineSpacing);
     if (listenBtn) listenBtn.addEventListener('click', toggleAudio);
-
+    
     // Font family listener
     if (fontFamilySelect) {
         fontFamilySelect.addEventListener('change', function () {
             changeFontFamily(this.value);
         });
     }
-
-    if (saveWordBtn) {
-        saveWordBtn.addEventListener('click', function () {
-            saveCurrentWord(); // Your existing save function
-            addXP(3); // Add XP
-        });
-    }
-
+    
     if (closePopup) closePopup.addEventListener('click', hideDictionary);
     if (modalOverlay) modalOverlay.addEventListener('click', hideDictionary);
     if (backToHome) backToHome.addEventListener('click', () => window.location.href = '../index.html');
@@ -1715,13 +1861,13 @@ function setupEventListeners() {
     if (listenWordBtn) listenWordBtn.addEventListener('click', listenToWord);
     if (removebtn) removebtn.addEventListener("click", removeAll);
     if (googleTranslateBtn) googleTranslateBtn.addEventListener('click', translateOnGoogle);
-
+    
     navTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             switchPage(tab.dataset.page);
         });
     });
-
+    
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             hideDictionary();
@@ -1730,19 +1876,18 @@ function setupEventListeners() {
             }
         }
     });
-
+    
     window.addEventListener('scroll', saveReadingPosition);
     window.addEventListener('beforeunload', saveReadingPosition);
-
+    
     window.addEventListener('beforeunload', () => {
         if (isAudioPlaying && 'speechSynthesis' in window) {
             speechSynthesis.cancel();
         }
     });
-
+    
     window.addEventListener('beforeunload', cleanup);
 }
-
 // ----------------------------------------------------
 // 🎨 إضافة CSS animations
 // ----------------------------------------------------
@@ -1844,30 +1989,51 @@ function applyFontFamily() {
 }
 async function init() {
     try {
-
-        // STEP 1: Apply saved theme FIRST (this sets dark/light mode)
+        // STEP 0: Set global color variables
+        window.selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
+        window.selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981';
+        
+        // ====== NEW STEP: Load custom CSS FIRST ======
+        console.log('Step 0.5: Loading custom CSS...');
+        const savedCSS = localStorage.getItem('customCSS') || '';
+        if (savedCSS.trim()) {
+            applyCustomCSS(savedCSS);
+            console.log('Custom CSS loaded from localStorage');
+        }
+        // ============================================
+        
+        // STEP 1: Apply saved theme FIRST
         console.log('Step 1: Applying theme...');
         applyTheme();
 
-        // STEP 2: Apply saved primary color immediately
-        console.log('Step 2: Applying saved color:', selectedColor);
-        if (selectedColor) {
-            // Apply immediately without delay
-            applyPrimaryColor(selectedColor);
+        // STEP 2: Apply saved colors immediately
+        console.log('Step 2: Applying saved colors...');
+        console.log('Primary color:', window.selectedColor);
+        console.log('Secondary color:', window.selectedSecondaryColor);
+        
+        if (window.selectedColor) {
+            applyPrimaryColor(window.selectedColor);
+        }
+        if (window.selectedSecondaryColor) {
+            applySecondaryColor(window.selectedSecondaryColor);
         }
 
-        // STEP 3: Initialize color selector (this sets up click handlers)
-        console.log('Step 3: Initializing color selector...');
-        // Add a small delay to ensure DOM is fully loaded
+        // STEP 3: Initialize color selectors
+        console.log('Step 3: Initializing color selectors...');
+        // Wait for color selector script to be loaded
         setTimeout(() => {
-            initColorSelector();
-        }, 50);
-
-        // Setup event listeners after DOM is ready
-        setTimeout(() => {
-            setupEventListeners();
+            if (window.initColorSelector && window.initSecondaryColorSelector) {
+                initColorSelector();
+                initSecondaryColorSelector();
+            }
         }, 100);
-        applyFontFamily()
+
+        // Setup event listeners - ONLY ONCE
+        console.log('Step 4: Setting up event listeners...');
+        setupEventListeners();
+        
+        applyFontFamily();
+        
         // Load story
         await loadStory();
 
@@ -1875,11 +2041,12 @@ async function init() {
         updateVocabularyStats();
         renderVocabulary();
 
-        // Restore reading position after a short delay
+        // Restore reading position
         setTimeout(() => {
             restoreReadingPosition();
         }, 200);
-        // Auto lazy load ALL images
+        
+        // Auto lazy load images
         document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
 
     } catch (error) {

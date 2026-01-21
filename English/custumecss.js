@@ -32,11 +32,24 @@ function applyCustomCSS(css) {
         // Create new style element
         const styleElement = document.createElement('style');
         styleElement.id = 'custom-css-style';
-        styleElement.textContent = css;
+        
+        // Automatically add !important to ALL CSS properties
+        let processedCSS = css;
+        
+        // Pattern to match ALL CSS declarations without !important
+        // This matches: property: value (without !important)
+        const cssDeclarationPattern = /([a-zA-Z\-]+)\s*:\s*([^;!}]+)(?![!important])/gi;
+        
+        processedCSS = processedCSS.replace(cssDeclarationPattern, '$1: $2 !important');
+        
+        styleElement.textContent = processedCSS;
+        
+        // Insert at the END of head to override other styles
         document.head.appendChild(styleElement);
+        
+        console.log('Custom CSS applied with !important on all properties');
     }
 }
-
 // Preview CSS without saving
 function previewCustomCSS() {
     const css = customCSSInput.value.trim();

@@ -1,7 +1,5 @@
 /* Base Variables */
 :root {
-    --primary: #4f46e5;
-    --primary-dark: #4338ca;
     --secondary: #10b981;
     --accent: #f59e0b;
     --text: #1f2937;
@@ -14,9 +12,9 @@
     --radius-sm: 8px;
 }
 
-.dark-mode {
 
-    --primary-dark: #4f46e5;
+.dark-mode {
+    --secondary-light: var(--js-secondary-light, #34d399) !important;
     --accent: #f59e0b;
     --text: #f9fafb;
     --text-light: #d1d5db;
@@ -25,6 +23,7 @@
     --border: #374151;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
+
 
 /* Reset & Base */
 * {
@@ -204,12 +203,6 @@ header {
 }
 
 
-/* With custom colors */
-.title {}
-
-/* Dark mode specific */
-.dark-mode .title {}
-
 .header-actions {
     display: flex;
     align-items: center;
@@ -340,7 +333,7 @@ header {
 
 #storyTitle {
     font-size: 2.2rem;
-    color: var(--primary);
+    color: var(--primary) !important;
     margin: 0;
     flex-grow: 1;
 }

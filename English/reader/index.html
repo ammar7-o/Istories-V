@@ -15,7 +15,21 @@
     <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
-
+    <!-- Google Translate Widget -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'ar,en,fr,es,de,ru,zh-CN,ja,ko,pt,it',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false,
+                gaTrack: true,
+                gaId: 'UA-XXXXX-X'
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
 
 
@@ -204,7 +218,29 @@
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
-
+                <!-- Add this in the settings section, maybe in Appearance or create new Translation section -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Default Translation Language</span>
+                        <span class="setting-desc">Choose language for word translations</span>
+                    </div>
+                    <select id="defaultTranslateLanguage" class="language-select">
+                        <option value="ar">Arabic (العربية)</option>
+                        <option value="fr">French (Français)</option>
+                        <option value="es">Spanish (Español)</option>
+                        <option value="de">German (Deutsch)</option>
+                        <option value="ru">Russian (Русский)</option>
+                        <option value="zh-CN">Chinese (中文)</option>
+                        <option value="ja">Japanese (日本語)</option>
+                        <option value="ko">Korean (한국어)</option>
+                        <option value="pt">Portuguese (Português)</option>
+                        <option value="it">Italian (Italiano)</option>
+                        <option value="hi">Hindi (हिन्दी)</option>
+                        <option value="tr">Turkish (Türkçe)</option>
+                        <option value="fa">Persian (فارسی)</option>
+                        <option value="ur">Urdu (اردو)</option>
+                    </select>
+                </div>
             </div>
 
             <!-- قسم البيانات -->
@@ -353,41 +389,58 @@
     </main>
 
 
-    <div class="dictionary-popup" id="dictionaryPopup">
-        <div class="dictionary-header">
+   <div class="dictionary-popup" id="dictionaryPopup">
+    <div class="dictionary-header">
+        <div class="dictionary-word-container" style="display: flex; align-items: center; gap: 10px;">
             <div class="dictionary-word" style="margin-right: 10px;" id="popupWord">Word</div>
-
-
-
-
-
-            <button class="close-popup" id="closePopup">
-                <i class="fas fa-times"></i>
+            
+            <!-- TTS Button Added Here -->
+            <button id="googleTTSBtn" class="tts-button" title="Speak this word" style="
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            ">
+                <i class="fas fa-volume-up"></i>
             </button>
+        </div>
 
-        </div>
-        <div class="dictionary-pos" style="display: none;" id="popupPos">noun</div>
-        <div class="dictionary-definition" style="display: none;" id="popupDefinition">Definition will appear here</div>
-        <div class="dictionary-example" style="display: none;" id="popupExample">Example sentence will appear here</div>
-        <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">Translation will appear here
-        </div>
-        <div class="dictionary-actions">
-            <button class="save-word" id="saveWordBtn">
-                <i class="fas fa-bookmark"></i> Save Word
+        <button class="close-popup" id="closePopup">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="dictionary-pos" style="display: none;" id="popupPos">noun</div>
+    <div class="dictionary-definition" style="display: none;" id="popupDefinition">Definition will appear here</div>
+    <div class="dictionary-example" style="display: none;" id="popupExample">Example sentence will appear here</div>
+    
+    <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">
+        Translation will appear here
+    </div>
+    
+    <div class="dictionary-actions">
+        <button class="save-word" id="saveWordBtn">
+            <i class="fas fa-bookmark"></i> Save Word
+        </button>
+        
+        <div class="dictionary-actions-buttom">
+            <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
+                <i class="fab fa-google"></i>
             </button>
-            <div class="dictionary-actions-buttom">
-                <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
-                    <i class="fab fa-google"></i>
-                </button>
-                <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
-                    <i class="fas fa-language"></i>
-                </button>
-            </div>
-
-
-
+            <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
+                <i class="fas fa-language"></i>
+            </button>
         </div>
     </div>
+</div>
 
 
     <div class="modal-overlay" id="modalOverlay"></div>
@@ -440,8 +493,9 @@
     <script>
         var idStory = 1;
     </script>
-    <script src="thems.js"></script>
     <script type="module" src="read-script.js"></script>
+
+    <script src="thems.js"></script>
     <script src="settings.js"></script>
 </body>
 
