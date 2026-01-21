@@ -443,8 +443,7 @@ function initTranslationSettings() {
         updateOpenDictionaryTranslation();
     });
 
-    // Add translation status indicator
-    addTranslationStatusIndicator();
+
 
     console.log('Translation settings initialized with language:', savedLanguage);
 }
@@ -471,35 +470,8 @@ function getLanguageName(code) {
     return languages[code] || code.toUpperCase();
 }
 
-// Add translation status indicator next to select
-function addTranslationStatusIndicator() {
-    const languageSelect = document.getElementById('defaultTranslateLanguage');
-    if (!languageSelect) return;
 
-    // Create status indicator
-    const statusSpan = document.createElement('span');
-    statusSpan.className = 'translation-status active';
-    statusSpan.innerHTML = `<i class="fas fa-check-circle"></i> Active`;
-    statusSpan.id = 'translationStatus';
 
-    // Insert after select
-    languageSelect.parentNode.insertBefore(statusSpan, languageSelect.nextSibling);
-
-    // Update status text
-    updateTranslationStatus();
-}
-
-// Update translation status display
-function updateTranslationStatus() {
-    const statusElement = document.getElementById('translationStatus');
-    if (!statusElement) return;
-
-    const currentLanguage = localStorage.getItem('defaultTranslateLanguage') || 'ar';
-    const languageName = getLanguageName(currentLanguage);
-
-    statusElement.innerHTML = `<i class="fas fa-language"></i> ${languageName}`;
-    statusElement.title = `Words will be translated to ${languageName}`;
-}
 
 // Get the current translation language
 function getCurrentTranslationLanguage() {
@@ -665,8 +637,7 @@ function updateOpenDictionaryTranslation() {
         }
     }
 
-    // Update status
-    updateTranslationStatus();
+
 }
 
 // Auto-translate word when dictionary opens
@@ -698,7 +669,7 @@ function addAutoTranslateToggle() {
         <div class="setting-item">
             <div class="setting-info">
                 <span class="setting-label">Auto-translate Words</span>
-                <span class="setting-desc">Automatically translate words when dictionary opens</span>
+                <span class="setting-desc">Automatically translate words when dictionary opens. Need Internet</span>
             </div>
             <label class="switch">
                 <input type="checkbox" id="autoTranslateToggle">
@@ -712,7 +683,13 @@ function addAutoTranslateToggle() {
     if (languageSelect && languageSelect.parentNode) {
         languageSelect.parentNode.parentNode.insertAdjacentHTML('afterend', toggleHTML);
 
-        // Load saved preference
+        // Set default to TRUE (enabled)
+        // Only set if not already saved by user
+        if (localStorage.getItem('autoTranslateEnabled') === null) {
+            localStorage.setItem('autoTranslateEnabled', 'true');
+        }
+
+        // Load saved preference (or default)
         const autoTranslateEnabled = localStorage.getItem('autoTranslateEnabled') === 'true';
         document.getElementById('autoTranslateToggle').checked = autoTranslateEnabled;
 
@@ -811,7 +788,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (mutation.target.id === 'dictionaryPopup' &&
                 mutation.target.style.display === 'block') {
                 // Dictionary opened
-                updateTranslationStatus();
+
 
                 // Only auto-translate if not already triggered
                 if (!autoTranslateTriggered) {
@@ -857,6 +834,7 @@ translationAnimationStyle.textContent = `
         display: inline-block;
         width: 50px;
         height: 24px;
+        margin-left: 14px;
     }
     
     .switch input {
@@ -938,9 +916,9 @@ function playGoogleVoice(word, language = 'en') {
         showNotification('No word to speak', 'error');
         return;
     }
-    
+
     const text = word.trim();
-    
+
     // Show loading indicator
     const ttsBtn = document.getElementById('googleTTSBtn');
     if (ttsBtn) {
@@ -950,56 +928,55 @@ function playGoogleVoice(word, language = 'en') {
         }
         ttsBtn.disabled = true;
     }
-    
+
     try {
         // Original Google TTS URL
         const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
-        
+
         // Use a CORS proxy to bypass restrictions
         // Option 1: cors-anywhere (requires temporary access for localhost)
         // const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        
+
         // Option 2: corsproxy.io (more reliable)
         const proxyUrl = 'https://corsproxy.io/?';
-        
+
         // Option 3: allorigins.win
         // const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        
+
         // Construct the proxied URL
         const proxiedUrl = proxyUrl + encodeURIComponent(googleTTSUrl);
-        
+
         // Create audio element and play
         const audio = new Audio(proxiedUrl);
-        
+
         // Play the audio
         audio.play()
             .then(() => {
                 console.log(`Playing TTS for: ${text} in ${language}`);
-                showNotification(`Speaking "${text}"`, 'info');
             })
             .catch(error => {
                 console.error('TTS play failed:', error);
-                
+
                 // Fallback: Try browser's native speech synthesis
                 if (useNativeSpeechSynthesis(text, language)) {
                     showNotification(`Speaking "${text}" (native)`, 'info');
                 } else {
-                    showNotification('Could not play audio. Try again.', 'error');
+                    showNotification('This function need Internet.', 'error');
                 }
             });
-        
+
         // Reset button when audio ends
         audio.onended = () => {
             resetTTSButton();
         };
-        
+
         // Reset button on error
         audio.onerror = () => {
             console.error('Audio element error');
             resetTTSButton();
             showNotification('TTS playback failed', 'error');
         };
-        
+
     } catch (error) {
         console.error('TTS error:', error);
         showNotification('Failed to play audio', 'error');
@@ -1024,13 +1001,13 @@ function useNativeSpeechSynthesis(text, language = 'en') {
     if ('speechSynthesis' in window) {
         // Cancel any ongoing speech
         speechSynthesis.cancel();
-        
+
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = language;
         utterance.rate = 0.8;
         utterance.pitch = 1;
         utterance.volume = 1;
-        
+
         // Get available voices
         const voices = speechSynthesis.getVoices();
         if (voices.length > 0) {
@@ -1038,38 +1015,31 @@ function useNativeSpeechSynthesis(text, language = 'en') {
             const voice = voices.find(v => v.lang.startsWith(language)) || voices[0];
             utterance.voice = voice;
         }
-        
+
         speechSynthesis.speak(utterance);
-        
+
         utterance.onend = resetTTSButton;
         utterance.onerror = resetTTSButton;
-        
+
         return true;
     }
     return false;
 }
 
 // Add event listener to your TTS button
-document.addEventListener('DOMContentLoaded', function() {
+// In the DOMContentLoaded event listener, change the language to 'en'
+document.addEventListener('DOMContentLoaded', function () {
     const ttsBtn = document.getElementById('googleTTSBtn');
     if (ttsBtn) {
-        ttsBtn.addEventListener('click', function() {
+        ttsBtn.addEventListener('click', function () {
             const popupWord = document.getElementById('popupWord');
             if (popupWord) {
                 // Get the word text
                 const wordText = popupWord.textContent || popupWord.innerText;
-                
-                // Determine language
-                let language = 'en'; // Default to English
-                
-                // Try to get language from translation settings
-                if (typeof getCurrentTranslationLanguage === 'function') {
-                    language = getCurrentTranslationLanguage();
-                } else if (currentWordData && currentWordData.wordData) {
-                    // Try to get from word data
-                    language = currentWordData.wordData.language || 'en';
-                }
-                
+
+                // ALWAYS use English for TTS when reading English words
+                const language = 'en'; // Force English
+
                 // Call the TTS function
                 playGoogleVoice(wordText, language);
             }

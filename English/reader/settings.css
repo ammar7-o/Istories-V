@@ -820,7 +820,9 @@ select {
         transform: translateY(0);
     }
 }
-
+.language-select{
+    width: 150px;
+}
 /* Spinner animation for re-translate button */
 .fa-spinner.fa-spin {
     animation: spin 1s linear infinite;
@@ -862,21 +864,8 @@ select {
     transform: none !important;
 }
 
-.tts-btn {
-    background: none;
-    border: none;
-    color: var(--primary);
-    cursor: pointer;
-    font-size: 14px;
-    padding: 4px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-}
 
-.tts-btn:hover {
-    background: rgba(var(--primary-rgb), 0.1);
-    transform: scale(1.1);
-}
+
 
 /* Spinner animation */
 @keyframes spin {

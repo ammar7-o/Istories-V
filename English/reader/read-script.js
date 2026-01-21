@@ -23,9 +23,6 @@ const saveWordBtn = document.getElementById('saveWordBtn');
 const closePopup = document.getElementById('closePopup');
 const modalOverlay = document.getElementById('modalOverlay');
 const popupWord = document.getElementById('popupWord');
-const popupPos = document.getElementById('popupPos');
-const popupDefinition = document.getElementById('popupDefinition');
-const popupExample = document.getElementById('popupExample');
 const popupTranslation = document.getElementById('popupTranslation');
 const readingProgressBar = document.getElementById('readingProgressBar');
 const backToHome = document.getElementById('backToHome');
@@ -852,7 +849,8 @@ function validateWordData(wordData) {
 
 // Show dictionary popup
 // Update the showDictionary function to properly merge custom translations
-function showDictionary(word, element) {
+// Show dictionary popup - updated to handle both clicks and text selection
+function showDictionary(word, element, isTextSelection = false) {
     if (!word) return;
 
     // First, check if we have user translations for this story
@@ -861,6 +859,29 @@ function showDictionary(word, element) {
     const customDictionary = userDictionaries[storyInfo.id];
 
     let wordData = null;
+    let originalWordText = '';
+    let wordElement = null;
+
+    // Handle different input types
+    if (isTextSelection) {
+        // Called from text selection
+        originalWordText = word;
+        wordElement = document.createElement('span');
+        wordElement.textContent = originalWordText;
+        wordElement.className = 'word';
+        
+        // Try to find the clicked word element in the DOM
+        const clickedElements = document.querySelectorAll('.word');
+        clickedElements.forEach(el => {
+            if (el.textContent.trim() === originalWordText.trim()) {
+                wordElement = el;
+            }
+        });
+    } else {
+        // Called from word click
+        originalWordText = element.innerText;
+        wordElement = element;
+    }
 
     // Check custom dictionary first (if it exists)
     if (customDictionary) {
@@ -906,7 +927,7 @@ function showDictionary(word, element) {
         wordData = dictionary[word] || dictionary[getNormalizedKey(word)];
     }
 
-    popupWord.textContent = element.innerText;
+    popupWord.textContent = originalWordText;
 
     if (listenWordBtn) {
         listenWordBtn.style.display = 'speechSynthesis' in window ? 'inline-block' : 'none';
@@ -914,16 +935,13 @@ function showDictionary(word, element) {
 
     if (wordData) {
         popupTranslation.textContent = wordData.translation;
-        popupPos.style.display = 'none';
-        popupDefinition.style.display = 'none';
-        popupExample.style.display = 'none';
 
         // Add source indicator if it's a custom translation
         if (wordData.source === 'user_story') {
             popupTranslation.innerHTML += ' <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;"><i class="fas fa-user-edit"></i> Custom</span>';
         }
 
-        const isSaved = savedWords.some(w => w.word === word);
+        const isSaved = savedWords.some(w => w.word === word || w.originalWord === originalWordText);
         saveWordBtn.innerHTML = isSaved
             ? '<i class="fas fa-check"></i> Already Saved'
             : '<i class="fas fa-bookmark"></i> Save Word';
@@ -932,9 +950,6 @@ function showDictionary(word, element) {
         saveWordBtn.classList.remove('no-translation-btn');
     } else {
         popupTranslation.textContent = "لا توجد ترجمة متاحة";
-        popupPos.style.display = 'none';
-        popupDefinition.style.display = 'none';
-        popupExample.style.display = 'none';
 
         saveWordBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save Word (No Translation)';
         saveWordBtn.disabled = false;
@@ -947,16 +962,41 @@ function showDictionary(word, element) {
 
     currentWordData = {
         word: word,
-        element: element,
+        element: wordElement,
         hasTranslation: !!wordData,
         wordData: wordData,
         isCustomTranslation: wordData?.source === 'user_story'
     };
 
-    const rect = element.getBoundingClientRect();
+    // Position the popup based on selection or click
+    let rect;
+    if (isTextSelection) {
+        // Get selection position
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            rect = selection.getRangeAt(0).getBoundingClientRect();
+        } else {
+            // Fallback to cursor position
+            rect = { bottom: window.innerHeight / 2, left: window.innerWidth / 2 };
+        }
+    } else {
+        // Get clicked element position
+        rect = wordElement.getBoundingClientRect();
+    }
+
     dictionaryPopup.style.top = `${rect.bottom + window.scrollY + 10}px`;
     dictionaryPopup.style.left = `${Math.max(10, rect.left + window.scrollX - 150)}px`;
     dictionaryPopup.style.display = 'block';
+    
+    // Highlight the word element
+    if (wordElement && wordElement.classList) {
+        wordElement.classList.add('selected');
+        setTimeout(() => {
+            if (wordElement.classList) {
+                wordElement.classList.remove('selected');
+            }
+        }, 1000);
+    }
 }
 
 // Hide dictionary popup
@@ -1025,7 +1065,7 @@ async function saveCurrentWord() {
         console.log('Save already in progress');
         return;
     }
-    
+
     if (!currentWordData) {
         showNotification('No word selected', 'error');
         return;
@@ -1033,7 +1073,7 @@ async function saveCurrentWord() {
 
     try {
         isSavingWord = true;
-        
+
         const { word, element, hasTranslation, wordData, isCustomTranslation } = currentWordData;
         const originalWord = element.innerText.trim();
 
@@ -1065,27 +1105,27 @@ async function saveCurrentWord() {
             newWord.definition = wordData.definition || "Check back later for definition";
             newWord.example = wordData.example || "Check back later for example";
             newWord.pos = wordData.pos || "unknown";
-            
+
             // Save and show notification
             saveWordToStorage(newWord, element);
-            
+
         } else {
             // Word has no translation - try to auto-translate using Google Translate
             showNotification(`Translating "${originalWord}"...`, 'info');
-            
+
             // Disable save button while translating
             if (saveWordBtn) {
                 saveWordBtn.disabled = true;
                 saveWordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
             }
-            
+
             try {
                 // Get the saved translation language from settings
                 const targetLanguage = getCurrentTranslationLanguage ? getCurrentTranslationLanguage() : 'ar';
-                
+
                 // Use Google Translate API
                 const googleTranslation = await translateWordWithGoogle(originalWord, targetLanguage);
-                
+
                 if (googleTranslation) {
                     // Update word with Google translation
                     newWord.translation = googleTranslation;
@@ -1095,48 +1135,48 @@ async function saveCurrentWord() {
                     newWord.autoTranslated = true;
                     newWord.translationSource = 'google_translate';
                     newWord.targetLanguage = targetLanguage;
-                    
+
                     // Save and show notification
                     saveWordToStorage(newWord, element);
-                    
+
                 } else {
                     // Google translation failed
                     newWord.translation = "Translation unavailable";
                     newWord.definition = "Could not auto-translate this word";
                     newWord.example = "Word from story";
                     newWord.pos = "unknown";
-                    
+
                     // Save anyway (without translation)
                     saveWordToStorage(newWord, element);
                     showNotification(`"${originalWord}" saved (no translation available)`, 'warning');
                 }
-                
+
             } catch (error) {
                 console.error('Auto-translation error:', error);
-                
+
                 // Save word without translation
                 newWord.translation = "Translation failed";
                 newWord.definition = "Auto-translation failed. Try manual translation.";
                 newWord.example = "Word from story";
                 newWord.pos = "unknown";
                 newWord.translationError = error.message;
-                
+
                 saveWordToStorage(newWord, element);
                 showNotification(`"${originalWord}" saved (translation failed)`, 'error');
-                
+
             } finally {
                 // Re-enable save button
                 if (saveWordBtn) {
                     saveWordBtn.disabled = false;
                     const isSaved = savedWords.some(w => w.word === word || w.originalWord === originalWord);
-                    saveWordBtn.innerHTML = isSaved ? 
-                        '<i class="fas fa-check"></i> Already Saved' : 
+                    saveWordBtn.innerHTML = isSaved ?
+                        '<i class="fas fa-check"></i> Already Saved' :
                         '<i class="fas fa-bookmark"></i> Save Word';
                     saveWordBtn.disabled = isSaved;
                 }
             }
         }
-        
+
     } finally {
         isSavingWord = false;
     }
@@ -1146,14 +1186,14 @@ async function saveCurrentWord() {
 function saveWordToStorage(wordObject, element) {
     savedWords.push(wordObject);
     localStorage.setItem('savedWords', JSON.stringify(savedWords));
-    
+
     hideDictionary();
-    
+
     if (element) {
         element.classList.add('saved');
         element.classList.remove('no-translation');
     }
-    
+
     // Update UI if needed
     if (document.querySelector('.nav-tab.active[data-page="vocabulary"]')) {
         renderVocabulary();
@@ -1166,22 +1206,22 @@ async function translateWordWithGoogle(word, targetLang = 'ar') {
     try {
         // Google Translate API endpoint
         const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(word)}`;
-        
+
         const response = await fetch(url);
-        
+
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Parse the response (Google returns nested arrays)
         if (data && data[0] && data[0][0] && data[0][0][0]) {
             return data[0][0][0];
         } else {
             throw new Error('Invalid translation response');
         }
-        
+
     } catch (error) {
         console.error('Google Translate error:', error);
         return null;
@@ -1190,15 +1230,15 @@ async function translateWordWithGoogle(word, targetLang = 'ar') {
 
 function translateOnGoogle() {
     if (!currentWordData || !currentWordData.element) return;
-    
+
     const wordToTranslate = currentWordData.element.innerText.trim();
-    
+
     // Get the saved translation language from localStorage
     const savedLanguage = localStorage.getItem('defaultTranslateLanguage') || 'ar';
-    
+
     // Use the saved language instead of hardcoded 'ar'
     const translateUrl = `https://translate.google.com/?sl=auto&tl=${savedLanguage}&text=${encodeURIComponent(wordToTranslate)}&op=translate`;
-    
+
     window.open(translateUrl, '_blank');
 }
 
@@ -1599,6 +1639,214 @@ function exportVocabulary() {
     showNotification(`Vocabulary exported successfully! (${savedWords.length} words)`);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+// Function to detect text selection
+// Function to detect text selection
+function setupTextSelectionDetection() {
+    let selectionTimeout;
+    let mouseDownTime = 0;
+    let mouseDownX = 0;
+    let mouseDownY = 0;
+
+    // Track when mouse is pressed down
+    document.addEventListener('mousedown', function(e) {
+        mouseDownTime = Date.now();
+        mouseDownX = e.clientX;
+        mouseDownY = e.clientY;
+        clearTimeout(selectionTimeout);
+    });
+
+    // Listen for text selection
+    document.addEventListener('mouseup', function(e) {
+        const mouseUpTime = Date.now();
+        const mouseUpX = e.clientX;
+        const mouseUpY = e.clientY;
+        const timeDiff = mouseUpTime - mouseDownTime;
+        const distance = Math.sqrt(Math.pow(mouseUpX - mouseDownX, 2) + Math.pow(mouseUpY - mouseDownY, 2));
+
+        // Get the selected text
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+
+        // Only proceed if:
+        // 1. There's actually selected text
+        // 2. It's a short selection (likely a word)
+        // 3. User dragged mouse (not just clicked)
+        if (selectedText && selectedText.length < 90 && selectedText.length > 0) {
+            if (timeDiff > 100 || distance > 5) { // User dragged, not clicked
+                // Check if selection is within story text
+                if (storyText && storyText.contains(selection.anchorNode)) {
+                    // Wait a bit to see if it's a double-click
+                    selectionTimeout = setTimeout(() => {
+                        handleTextSelection(selectedText, selection);
+                    }, 200);
+                }
+            }
+        }
+    });
+
+    // Double-click detection (separate from drag selection)
+    document.addEventListener('dblclick', function(e) {
+        clearTimeout(selectionTimeout);
+        
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+
+        if (selectedText && storyText && storyText.contains(e.target)) {
+            handleTextSelection(selectedText, selection);
+        }
+    });
+
+    // Hide dictionary when clicking outside
+    document.addEventListener('click', function(e) {
+        // Only hide if clicking on non-word, non-popup elements
+        if (dictionaryPopup.style.display === 'block' && 
+            !dictionaryPopup.contains(e.target) && 
+            !e.target.classList.contains('word') &&
+            !e.target.closest('.word')) {
+            
+            hideDictionary();
+            
+            // Also clear any selection
+            if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            }
+        }
+    });
+}
+// Handle text selection and show dictionary
+function handleTextSelection(selectedText, selection) {
+    // Get the exact position of the selection
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    // Check if the word exists in our clickable words
+    const allWords = document.querySelectorAll('.word');
+    let foundWordElement = null;
+
+    // First, try to find an exact match among clickable words
+    allWords.forEach(word => {
+        if (word.textContent.trim() === selectedText) {
+            foundWordElement = word;
+        }
+    });
+
+    if (foundWordElement) {
+        // Use the existing word's data
+        const dataWord = foundWordElement.dataset.word;
+        showDictionary(dataWord, foundWordElement, true);
+    } else {
+        // If no exact clickable word found, try to look it up in dictionary
+        lookupAndShowSelectedWord(selectedText, rect);
+    }
+    
+    // DO NOT clear selection here - let user see what they selected
+    // selection.removeAllRanges();
+    
+    // Instead, add a visual highlight that fades out
+    highlightSelection(selection);
+    
+}
+
+// Add visual highlight to selection
+function highlightSelection(selection) {
+    // Create a temporary highlight
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    
+    const highlight = document.createElement('div');
+    highlight.className = 'text-selection-highlight';
+    highlight.style.cssText = `
+        position: absolute;
+        top: ${rect.top + window.scrollY}px;
+        left: ${rect.left + window.scrollX}px;
+        width: ${rect.width}px;
+        height: ${rect.height}px;
+        background-color: color-mix(in srgb, var(--primary) 30%, transparent 70%);
+        border-radius: 3px;
+        pointer-events: none;
+        z-index: 999;
+        transition: opacity 1s ease;
+    `;
+    
+    document.body.appendChild(highlight);
+    
+    // Fade out after 1.5 seconds
+    setTimeout(() => {
+        highlight.style.opacity = '0';
+        setTimeout(() => {
+            if (highlight.parentNode) {
+                document.body.removeChild(highlight);
+            }
+        }, 1000);
+    }, 1500);
+}
+
+// Lookup a selected word and show dictionary popup
+function lookupAndShowSelectedWord(word, rect) {
+    const trimmedWord = word.trim();
+    
+    // Try to find the word in dictionary
+    const standardKey = getStandardKey(trimmedWord);
+    const normalizedKey = getNormalizedKey(trimmedWord);
+    
+    let wordData = null;
+    let foundKey = null;
+    
+    // Check main dictionary
+    if (dictionary[standardKey]) {
+        wordData = dictionary[standardKey];
+        foundKey = standardKey;
+    } else if (dictionary[normalizedKey]) {
+        wordData = dictionary[normalizedKey];
+        foundKey = normalizedKey;
+    }
+    
+    // Check custom dictionary
+    if (!wordData) {
+        const storyInfo = getStoryIdFromUrl();
+        const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+        const customDictionary = userDictionaries[storyInfo.id];
+        
+        if (customDictionary) {
+            // Try to find in custom dictionary
+            for (const [key, data] of Object.entries(customDictionary)) {
+                if (getStandardKey(key) === standardKey || getNormalizedKey(key) === normalizedKey) {
+                    wordData = typeof data === 'string' ? { translation: data } : data;
+                    foundKey = key;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Show the dictionary popup
+    showDictionary(foundKey || standardKey, trimmedWord, true);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ----------------------------------------------------
 // 🎨 وظائف التخصيص
 // ----------------------------------------------------
@@ -1613,7 +1861,7 @@ function applyTheme() {
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
         themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        
+
         // In dark mode, we need to re-apply colors with !important
         if (window.selectedColor) {
             applyPrimaryColor(window.selectedColor);
@@ -1624,7 +1872,7 @@ function applyTheme() {
     } else {
         document.body.classList.remove('dark-mode');
         themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        
+
         // In light mode, also re-apply colors
         if (window.selectedColor) {
             applyPrimaryColor(window.selectedColor);
@@ -1633,7 +1881,7 @@ function applyTheme() {
             applySecondaryColor(window.selectedSecondaryColor);
         }
     }
-    
+
     console.log('Theme applied:', theme, 'Colors:', window.selectedColor, window.selectedSecondaryColor);
 }
 function adjustFontSize(change) {
@@ -1825,19 +2073,19 @@ function setupEventListeners() {
         saveWordBtn.replaceWith(saveWordBtn.cloneNode(true));
         // Get fresh reference
         const freshSaveBtn = document.getElementById('saveWordBtn');
-        
-        freshSaveBtn.addEventListener('click', async function(e) {
+
+        freshSaveBtn.addEventListener('click', async function (e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             // Call the save function
             await saveCurrentWord();
-            
+
             // Add XP
             addXP(3, 'Saving word');
         });
     }
-    
+
     // Other event listeners...
     if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
     if (fontSmaller) fontSmaller.addEventListener('click', () => adjustFontSize(-0.1));
@@ -1845,14 +2093,14 @@ function setupEventListeners() {
     if (fontLarger) fontLarger.addEventListener('click', () => adjustFontSize(0.1));
     if (lineSpacingBtn) lineSpacingBtn.addEventListener('click', toggleLineSpacing);
     if (listenBtn) listenBtn.addEventListener('click', toggleAudio);
-    
+
     // Font family listener
     if (fontFamilySelect) {
         fontFamilySelect.addEventListener('change', function () {
             changeFontFamily(this.value);
         });
     }
-    
+
     if (closePopup) closePopup.addEventListener('click', hideDictionary);
     if (modalOverlay) modalOverlay.addEventListener('click', hideDictionary);
     if (backToHome) backToHome.addEventListener('click', () => window.location.href = '../index.html');
@@ -1861,13 +2109,13 @@ function setupEventListeners() {
     if (listenWordBtn) listenWordBtn.addEventListener('click', listenToWord);
     if (removebtn) removebtn.addEventListener("click", removeAll);
     if (googleTranslateBtn) googleTranslateBtn.addEventListener('click', translateOnGoogle);
-    
+
     navTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             switchPage(tab.dataset.page);
         });
     });
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             hideDictionary();
@@ -1876,16 +2124,16 @@ function setupEventListeners() {
             }
         }
     });
-    
+
     window.addEventListener('scroll', saveReadingPosition);
     window.addEventListener('beforeunload', saveReadingPosition);
-    
+
     window.addEventListener('beforeunload', () => {
         if (isAudioPlaying && 'speechSynthesis' in window) {
             speechSynthesis.cancel();
         }
     });
-    
+
     window.addEventListener('beforeunload', cleanup);
 }
 // ----------------------------------------------------
@@ -1992,7 +2240,7 @@ async function init() {
         // STEP 0: Set global color variables
         window.selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
         window.selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981';
-        
+
         // ====== NEW STEP: Load custom CSS FIRST ======
         console.log('Step 0.5: Loading custom CSS...');
         const savedCSS = localStorage.getItem('customCSS') || '';
@@ -2001,7 +2249,7 @@ async function init() {
             console.log('Custom CSS loaded from localStorage');
         }
         // ============================================
-        
+
         // STEP 1: Apply saved theme FIRST
         console.log('Step 1: Applying theme...');
         applyTheme();
@@ -2010,7 +2258,7 @@ async function init() {
         console.log('Step 2: Applying saved colors...');
         console.log('Primary color:', window.selectedColor);
         console.log('Secondary color:', window.selectedSecondaryColor);
-        
+
         if (window.selectedColor) {
             applyPrimaryColor(window.selectedColor);
         }
@@ -2028,12 +2276,17 @@ async function init() {
             }
         }, 100);
 
-        // Setup event listeners - ONLY ONCE
-        console.log('Step 4: Setting up event listeners...');
+        // STEP 4: Setup text selection detection (NEW)
+        console.log('Step 4: Setting up text selection detection...');
+        setupTextSelectionDetection();
+
+        // STEP 5: Setup event listeners
+        console.log('Step 5: Setting up event listeners...');
         setupEventListeners();
-        
+
+        // Apply saved font family
         applyFontFamily();
-        
+
         // Load story
         await loadStory();
 
@@ -2045,14 +2298,14 @@ async function init() {
         setTimeout(() => {
             restoreReadingPosition();
         }, 200);
-        
+
         // Auto lazy load images
         document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
 
+       
     } catch (error) {
         console.error('Error during initialization:', error);
         showNotification('Failed to initialize application', 'error');
     }
 }
-
 document.addEventListener('DOMContentLoaded', init);

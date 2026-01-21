@@ -20,19 +20,30 @@ function loadCustomCSS() {
     applyCustomCSS(savedCSS);
 }
 
-// Apply custom CSS to page
 function applyCustomCSS(css) {
-    // Remove existing custom style element
     const existingStyle = document.getElementById('custom-css-style');
     if (existingStyle) {
         existingStyle.remove();
     }
 
     if (css.trim()) {
-        // Create new style element
         const styleElement = document.createElement('style');
         styleElement.id = 'custom-css-style';
-        styleElement.textContent = css;
+
+        // Add !important to all CSS declarations except those that already have it
+        let processedCSS = css.replace(
+            /([^{]+)\{([^}]+)\}/g,  // Match CSS rules
+            function(match, selector, properties) {
+                // Add !important to each property that doesn't already have it
+                properties = properties.replace(
+                    /([a-zA-Z-]+)\s*:\s*([^;!}]+)(?![!important])/gi,
+                    '$1: $2 !important'
+                );
+                return selector + '{' + properties + '}';
+            }
+        );
+
+        styleElement.textContent = processedCSS;
         document.head.appendChild(styleElement);
     }
 }
