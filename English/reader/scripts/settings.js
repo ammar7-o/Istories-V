@@ -513,12 +513,6 @@ function showNotification(message, type = 'success') {
 
 
 
-
-
-
-
-
-
 // ========= PERSISTENT TRANSLATION LANGUAGE SETTINGS =========
 
 // Initialize translation language settings

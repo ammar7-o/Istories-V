@@ -848,8 +848,180 @@ nav a.active {
     transform: translateY(0);
 }
 
+#flashcardSpeechBtn{
+    padding: 10px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+}
+/* Speech Toggle Button Styles */
+.speech-toggle {
+    width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    border: none;
+    background-color: #ddd;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    user-select: none;
+}
 
+.speech-toggle.active {
+    background-color: var(--secondary);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
 
+.speech-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.speech-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Toggle handle (the circle that moves) */
+.speech-toggle i {
+    position: absolute;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    color: #666;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+/* When toggle is active (speech enabled) */
+.speech-toggle.active i {
+    left: 33px;
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Volume icon */
+.speech-toggle i::before {
+    content: "\f6a8"; /* fa-volume-mute */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.speech-toggle.active i::before {
+    content: "\f028"; /* fa-volume-up */
+}
+
+/* Setting item alignment */
+.setting-item .speech-toggle {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Dark mode styles */
+.dark-mode .speech-toggle {
+    background-color: #4b5563;
+}
+
+.dark-mode .speech-toggle i {
+    background: #9ca3af;
+    color: #1f2937;
+}
+
+.dark-mode .speech-toggle.active {
+    background-color: var(--primary);
+}
+
+.dark-mode .speech-toggle.active i {
+    background: white;
+    color: var(--primary);
+}
+
+/* Focus state for accessibility */
+.speech-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Disabled state */
+.speech-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.speech-toggle:disabled:hover {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for toggle state change */
+@keyframes toggleBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.speech-toggle.active i {
+    animation: toggleBounce 0.3s ease;
+}
+
+/* Tooltip on hover */
+.speech-toggle::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.speech-toggle:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 5px);
+}
+
+.dark-mode .speech-toggle::after {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .speech-toggle {
+        width: 56px;
+        height: 28px;
+    }
+    
+    .speech-toggle i {
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+    }
+    
+    .speech-toggle.active i {
+        left: 31px;
+    }
+}
 /* Responsive design */
 @media (max-width: 480px) {
 

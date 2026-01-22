@@ -32,6 +32,7 @@ const themeToggle = document.getElementById('themeToggle');
 // App state
 let currentPage = 'home';
 let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let speechEnabled = localStorage.getItem('speechEnabled') !== 'false'; // Default enabled (true)
 
 // Color settings
 let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
@@ -570,6 +571,11 @@ function loadCard(index) {
     // Reset card to front side
     flashcard.classList.remove('flipped');
     updateProgress();
+
+    // Add speech button after card loads
+    setTimeout(() => {
+        addSpeechButtonToCard();
+    }, 50);
 }
 
 function showNoCardsMessage() {
@@ -628,10 +634,17 @@ function updateFlashcardStats() {
 }
 
 function setupFlashcardListeners() {
-    // Flip card
+    // Flip card - Improved click handling
     if (flashcard) {
         flashcard.addEventListener('click', function (e) {
-            if (e.target.closest('button')) return;
+            // Don't flip if clicking on any button element
+            if (e.target.tagName === 'BUTTON' || 
+                e.target.closest('button') || 
+                e.target.closest('.flashcard-speech-btn') ||
+                e.target.classList.contains('fa-volume-up') ||
+                e.target.classList.contains('fa-spinner')) {
+                return;
+            }
             if (sessionCards.length === 0) return;
 
             flashcard.classList.toggle('flipped');
@@ -875,6 +888,260 @@ function addXP(amount, reason = '') {
 
     console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
 }
+// ==============speach ==========================
+// Initialize speech
+function initSpeech() {
+    // Setup speech toggle
+    setupSpeechToggle();
+}
+
+// Setup speech toggle button
+function setupSpeechToggle() {
+    const speechToggle = document.getElementById('speechToggle');
+    if (!speechToggle) return;
+
+    // Set initial state
+    updateSpeechToggle();
+
+    // Add click event
+    speechToggle.addEventListener('click', toggleSpeech);
+}
+
+
+// Update speech toggle button
+function updateSpeechToggle() {
+    const speechToggle = document.getElementById('speechToggle');
+    if (!speechToggle) return;
+
+    const icon = speechToggle.querySelector('i');
+    if (speechEnabled) {
+        speechToggle.classList.add('active');
+        if (icon) icon.className = 'fas fa-volume-up';
+    } else {
+        speechToggle.classList.remove('active');
+        if (icon) icon.className = 'fas fa-volume-mute';
+    }
+}
+
+
+// Toggle speech on/off
+function toggleSpeech() {
+    speechEnabled = !speechEnabled;
+
+    // Save to localStorage
+    localStorage.setItem('speechEnabled', speechEnabled);
+
+    // Update UI
+    updateSpeechToggle();
+
+    // Show notification
+    showNotification(speechEnabled ?
+        'Text-to-speech enabled' :
+        'Text-to-speech disabled'
+    );
+
+    // Update flashcard if on that page
+    if (currentPage === 'home') {
+        addSpeechButtonToCard();
+    }
+}
+function resetTTSButton() {
+    const ttsBtn = document.getElementById('flashcardSpeechBtn');
+    if (ttsBtn) {
+        const icon = ttsBtn.querySelector('i');
+        if (icon) {
+            icon.className = 'fas fa-volume-up';
+        }
+        ttsBtn.disabled = false;
+    }
+}
+
+function useNativeSpeechSynthesis(text, language = 'en-US') {
+    if (!('speechSynthesis' in window)) return false;
+
+    speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language;
+    utterance.rate = 0.95;
+    utterance.pitch = 1.05;
+    utterance.volume = 1;
+
+    const voices = speechSynthesis.getVoices();
+    if (voices.length) {
+        utterance.voice =
+            voices.find(v => v.lang === language && v.name.includes('Google')) ||
+            voices.find(v => v.lang.startsWith(language.split('-')[0])) ||
+            voices[0];
+    }
+
+    utterance.onend = resetTTSButton;
+    utterance.onerror = resetTTSButton;
+
+    speechSynthesis.speak(utterance);
+    return true;
+}
+// Load available voices
+function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            voices = window.speechSynthesis.getVoices();
+            console.log('Voices loaded:', voices.length);
+        };
+    }
+}
+function playGoogleVoice(word, language = 'en') {
+    if (!word || word.trim() === '') {
+        showNotification('No word to speak', 'error');
+        return;
+    }
+
+    const text = word.trim();
+
+    // Show loading indicator - LOOK FOR FLASHCARD BUTTON
+    const ttsBtn = document.getElementById('flashcardSpeechBtn');
+    if (ttsBtn) {
+        const icon = ttsBtn.querySelector('i');
+        if (icon) {
+            icon.className = 'fas fa-spinner fa-spin';
+        }
+        ttsBtn.disabled = true;
+    }
+
+    try {
+        // Original Google TTS URL
+        const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
+
+        // Use a CORS proxy to bypass restrictions
+        const proxyUrl = 'https://corsproxy.io/?';
+
+        // Construct the proxied URL
+        const proxiedUrl = proxyUrl + encodeURIComponent(googleTTSUrl);
+
+        // Create audio element and play
+        const audio = new Audio(proxiedUrl);
+
+        // Play the audio
+        audio.play()
+            .then(() => {
+                console.log(`Playing TTS for: ${text} in ${language}`);
+            })
+            .catch(error => {
+                console.error('TTS play failed:', error);
+
+                // Fallback: Try browser's native speech synthesis
+                if (useNativeSpeechSynthesis(text, language)) {
+                    showNotification(`Using offline voice`, 'info');
+                } else {
+                    showNotification('This function needs Internet.', 'error');
+                }
+            });
+
+        // Reset button when audio ends
+        audio.onended = () => {
+            resetTTSButton();
+        };
+
+        // Reset button on error
+        audio.onerror = () => {
+            console.error('Audio element error');
+            resetTTSButton();
+            showNotification('TTS playback failed', 'error');
+        };
+
+    } catch (error) {
+        console.error('TTS error:', error);
+        showNotification('Failed to play audio', 'error');
+        resetTTSButton();
+    }
+}
+// Speak text
+function speakText(text) {
+    if (!speechEnabled || !text || !window.speechSynthesis) return;
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en'; // Default to English
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    // Try to find a native English voice
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = voices.find(voice =>
+        voice.lang.startsWith('en') ||
+        voice.name.toLowerCase().includes('english')
+    );
+    if (englishVoice) {
+        utterance.voice = englishVoice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+}
+
+// Speak current flashcard word
+function speakCurrentCard() {
+    if (!speechEnabled) return;
+
+    const currentCard = sessionCards[currentCardIndex];
+    if (currentCard && currentCard.word) {
+        playGoogleVoice(currentCard.word, currentCard.language || 'en');
+    }
+}
+
+
+// Add speech button to flashcard
+// Add speech button to flashcard
+function addSpeechButtonToCard() {
+    // Remove existing button
+    const existingBtn = document.getElementById('flashcardSpeechBtn');
+    if (existingBtn) existingBtn.remove();
+
+    // Add button if speech is enabled
+    if (speechEnabled && sessionCards.length > 0) {
+        const speechBtn = document.createElement('button');
+        speechBtn.className = 'flashcard-speech-btn';
+        speechBtn.id = 'flashcardSpeechBtn';
+        speechBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        speechBtn.title = 'Speak word';
+        
+        // Add click event
+        speechBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            speakCurrentCard();
+        });
+
+        // Add to flashcard container (outside the card faces)
+        const flashcardContainer = document.querySelector('.flashcard-container');
+        if (flashcardContainer) {
+            flashcardContainer.style.position = 'relative';
+            flashcardContainer.appendChild(speechBtn);
+            
+            // Position the button relative to the flashcard
+            const flashcard = document.querySelector('.flashcard');
+            if (flashcard) {
+                const cardRect = flashcard.getBoundingClientRect();
+                const containerRect = flashcardContainer.getBoundingClientRect();
+                
+                // Position button at top-right of the card
+                speechBtn.style.position = 'absolute';
+                speechBtn.style.top = '15px';
+                speechBtn.style.right = '15px';
+                speechBtn.style.zIndex = '1000';
+            }
+        }
+
+        // Auto-speak new card
+        if (currentCardIndex < sessionCards.length) {
+            setTimeout(() => speakCurrentCard(), 300);
+        }
+    }
+}
 // =============== INITIALIZATION ===============
 function init() {
     console.log('App initialization started...');
@@ -908,7 +1175,7 @@ function init() {
     if (typeof initFlashcards === 'function') {
         initFlashcards();
     }
-
+    initSpeech();
     console.log('App initialization complete!');
     console.log('Current localStorage theme:', localStorage.getItem('theme'));
     console.log('Current localStorage primary color:', localStorage.getItem('selectedColor'));
