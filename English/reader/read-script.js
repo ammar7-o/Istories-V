@@ -1395,39 +1395,6 @@ function flashCopyUI() {
 
 
 
-
-
-
-
-
-
-
-
-
-function setupMobileSelectionDetection() {
-    let lastSelectedText = '';
-
-    document.addEventListener('selectionchange', () => {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount === 0) return;
-
-        const selectedText = selection.toString().trim();
-        if (!selectedText || selectedText.length > 90) return;
-
-        // منع التكرار
-        if (selectedText === lastSelectedText) return;
-        lastSelectedText = selectedText;
-
-        const range = selection.getRangeAt(0);
-
-        if (storyText && storyText.contains(range.commonAncestorContainer)) {
-            setTimeout(() => {
-                handleTextSelection(selectedText, selection);
-            }, 150);
-        }
-    });
-}
-
 // Function to detect text selection
 function setupTextSelectionDetection() {
     let selectionTimeout;
@@ -1606,16 +1573,6 @@ function lookupAndShowSelectedWord(word, rect) {
     // Show the dictionary popup
     showDictionary(foundKey || standardKey, trimmedWord, true);
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2048,15 +2005,11 @@ async function init() {
             }
         }, 100);
 
-        // STEP 4: Setup text selection detection (NEW)
-        console.log('Step 4: Setting up text selection detection...');
-        const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+       
 
-        if (isMobile) {
-            setupMobileSelectionDetection();
-        } else {
+        
             setupTextSelectionDetection();
-        }
+        
 
 
         // STEP 5: Setup event listeners
