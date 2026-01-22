@@ -7,8 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IStories Reader</title>
     <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
-    <link rel="stylesheet" href="read-style.css">
-    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/settings.css">
+    <link rel="stylesheet" href="styles/fonts.css">
+
     <link rel="icon" type="image/png" href="../../icon.png">
     <meta property="og:title" content="Istories - Reader">
     <meta property="og:description" content="Learn Languages Through Interactive Stories.">
@@ -188,6 +190,11 @@
                         <option value="'Courier New'">Courier New</option>
                         <option value="Trebuchet MS">Trebuchet MS</option>
                         <option value="'Open Sans'">Open Sans</option>
+                        <option value="'BradleyHand'">BradleyHand</option>
+                        <option value="'Caveat'">Caveat</option>
+                        <option value="'PatrickHandSC'">PatrickHandSC</option>
+
+
                     </select>
                 </div>
                 <div class="setting-item">
@@ -348,13 +355,13 @@
     </main>
 
 
-   <div class="dictionary-popup" id="dictionaryPopup">
-    <div class="dictionary-header">
-        <div class="dictionary-word-container" style="display: flex; align-items: center; gap: 10px;">
-            <div class="dictionary-word" style="margin-right: 10px;" id="popupWord">Word</div>
-            
-            <!-- TTS Button Added Here -->
-            <button id="googleTTSBtn" class="tts-button" title="Speak this word" style="
+    <div class="dictionary-popup" id="dictionaryPopup">
+        <div class="dictionary-header">
+            <div class="dictionary-word-container" style="display: flex; align-items: center; gap: 10px;">
+                <div class="dictionary-word" style="margin-right: 10px;" id="popupWord">Word</div>
+
+                <!-- TTS Button Added Here -->
+                <button id="googleTTSBtn" class="tts-button" title="Speak this word" style="
                 background: var(--primary);
                 color: white;
                 border: none;
@@ -369,38 +376,38 @@
                 transition: all 0.2s ease;
                 padding: 10px;
             ">
-                <i class="fas fa-volume-up"></i>
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+
+            <button class="close-popup" id="closePopup">
+                <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <button class="close-popup" id="closePopup">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    
-    <!-- <div class="dictionary-pos" style="display: none;" id="popupPos">noun</div>
+        <!-- <div class="dictionary-pos" style="display: none;" id="popupPos">noun</div>
     <div class="dictionary-definition" style="display: none;" id="popupDefinition">Definition will appear here</div>
     <div class="dictionary-example" style="display: none;" id="popupExample">Example sentence will appear here</div> -->
-    
-    <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">
-        Translation will appear here
-    </div>
-    
-    <div class="dictionary-actions">
-        <button class="save-word" id="saveWordBtn">
-            <i class="fas fa-bookmark"></i> Save Word
-        </button>
-        
-        <div class="dictionary-actions-buttom">
-            <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
-                <i class="fab fa-google"></i>
+
+        <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">
+            Translation will appear here
+        </div>
+
+        <div class="dictionary-actions">
+            <button class="save-word" id="saveWordBtn">
+                <i class="fas fa-bookmark"></i> Save Word
             </button>
-            <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
-                <i class="fas fa-language"></i>
-            </button>
+
+            <div class="dictionary-actions-buttom">
+                <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
+                    <i class="fas fa-language"></i>
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
 
     <div class="modal-overlay" id="modalOverlay"></div>
@@ -453,10 +460,9 @@
     <script>
         var idStory = 1;
     </script>
-    <script type="module" src="read-script.js"></script>
-
-    <script src="thems.js"></script>
-    <script src="settings.js"></script>
+    <script type="module" src="scripts/main.js"></script>
+    <script src="scripts/thems.js"></script>
+    <script src="scripts/settings.js"></script>
 
 </body>
 

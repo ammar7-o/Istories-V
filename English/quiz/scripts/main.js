@@ -1840,6 +1840,7 @@ function previewQuiz(quizId) {
     });
 }
 
+
 // ========= Add Scroll to Top Button ==========
 function addScrollToTopButton() {
     const button = document.createElement('button');
@@ -2124,7 +2125,7 @@ function displayFilteredStories(filteredStories, query) {
         // Get story history if available
         const storyHistory = quizHistory[`story-${story.id}`] || {};
         const hasHistory = storyHistory.lastReadDate !== undefined;
-        
+
         // Format last read date if available
         let lastReadDate = '';
         if (hasHistory && storyHistory.lastReadDate) {
@@ -2176,9 +2177,9 @@ function displayFilteredStories(filteredStories, query) {
                             </div>
                         </div>
                         ${lastReadDate ?
-                            `<p class="last-read-date"><i class="far fa-calendar"></i> Last read: ${lastReadDate}</p>` :
-                            ''
-                        }
+                    `<p class="last-read-date"><i class="far fa-calendar"></i> Last read: ${lastReadDate}</p>` :
+                    ''
+                }
                     </div>
                 ` : `
                     <div class="story-progress-section">
