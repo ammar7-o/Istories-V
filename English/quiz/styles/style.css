@@ -1130,6 +1130,7 @@ footer {
     padding: 15px;
     display: flex;
     align-items: center;
+    position: relative;
 
 }
 
@@ -1238,12 +1239,7 @@ footer {
     background-color: #000000;
 }
 
-.preview-header {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: start;
-    gap: 7px;
-}
+
 
 .close-preview {
     font-size: 20px;
@@ -2548,14 +2544,21 @@ footer {
     gap: 10px;
     margin-bottom: 25px;
     padding: 15px;
-    background: black;
+    background: rgb(196, 196, 196);
+    color: black;
     border-radius: 10px;
     min-height: 60px;
 }
 
+.dark-mode .scrambled-words-container {
+    background: black;
+    color: white;
+}
+
 .scrambled-word {
     padding: 12px 18px;
-    background: black;
+    background: rgb(173, 173, 173);
+    color: black;
     border: 2px solid var(--primary);
     border-radius: 8px;
     cursor: move;
@@ -2565,6 +2568,11 @@ footer {
     color: var(--text-color);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease;
+}
+
+.dark-mode .scrambled-word {
+    background: black;
+    color: white;
 }
 
 .scrambled-word:hover {
@@ -2627,11 +2635,17 @@ footer {
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: black;
+    background: rgb(173, 173, 173);
+    color: black;
     border: 2px solid var(--primary);
     border-radius: 8px;
     cursor: move;
     user-select: none;
+}
+
+.dark-mode .word-in-slot {
+    background: black;
+    color: white;
 }
 
 .word-in-slot .remove-btn {
@@ -2743,7 +2757,13 @@ footer {
 .reset-drag-btn:hover {
     background: var(--border-color);
 }
-
+.user-quiz-card .user-quiz-badge {
+    position: absolute;
+    font-size: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 /* Responsive Design */
 @media (max-width: 768px) {
     .settings-page {

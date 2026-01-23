@@ -543,28 +543,64 @@ function applyTheme() {
 // ========= Quiz Functions ==========
 
 
-// Also update the renderQuizzes function to call this
-function renderQuizzes() {
+// Render quizzes grid with both regular and user quizzes
+function renderQuizzes(level = 'all') {
     if (!storiesGrid) return;
 
     storiesGrid.innerHTML = '';
     storiesGrid.classList.add('quizzes-grid');
 
-    if (quizzes.length === 0) {
+    // Combine regular quizzes with user quizzes
+    const allQuizzes = [...quizzes];
+
+    // Add user quizzes that aren't already in the main array
+    userQuizzes.forEach(userQuiz => {
+        const exists = allQuizzes.some(q => q.id === userQuiz.id);
+        if (!exists) {
+            allQuizzes.push({
+                ...userQuiz,
+                isUserQuiz: true // Mark as user quiz
+            });
+        }
+    });
+
+    // Filter by level if specified
+    let filteredQuizzes;
+    if (level === 'all') {
+        filteredQuizzes = allQuizzes;
+    } else if (level === 'user') {
+        // Show only user quizzes
+        filteredQuizzes = allQuizzes.filter(quiz => quiz.isUserQuiz || quiz.isUserStory);
+    } else {
+        // Filter by level
+        filteredQuizzes = allQuizzes.filter(quiz => quiz.level === level);
+    }
+
+    if (filteredQuizzes.length === 0) {
         storiesGrid.innerHTML = `
             <div class="no-quizzes-message">
                 <i class="fas fa-brain fa-3x"></i>
                 <h3>No quizzes available</h3>
-                <p>Check back soon for new quizzes!</p>
+                <p>${level === 'user' ? 'Create your first quiz in the "Add Quizzes" section!' : 'Check back soon for new quizzes!'}</p>
+                ${level === 'user' ?
+                `<button class="btn btn-primary" onclick="switchPage('addquiz')" style="margin-top: 15px;">
+                        <i class="fas fa-plus"></i> Create Quiz
+                    </button>` : ''
+            }
             </div>
         `;
         return;
     }
 
-    quizzes.forEach(quiz => {
+    filteredQuizzes.forEach(quiz => {
         const quizCard = document.createElement('div');
         quizCard.className = 'quiz-card';
         quizCard.dataset.quizId = quiz.id;
+
+        // Add user quiz indicator
+        if (quiz.isUserQuiz) {
+            quizCard.classList.add('user-quiz-card');
+        }
 
         const questionCount = quiz.questions ? quiz.questions.length : 0;
         const timeEstimate = Math.ceil(questionCount * 0.5);
@@ -587,6 +623,28 @@ function renderQuizzes() {
             });
         }
 
+        // Format creation date
+        let createdDate = '';
+        if (quiz.createdAt) {
+            const date = new Date(quiz.createdAt);
+            createdDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        } else if (quiz.uploadDate) {
+            const date = new Date(quiz.uploadDate);
+            createdDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // User quiz badge
+        const userQuizBadge = quiz.isUserQuiz ?
+            `<div class="user-quiz-badge" title="User-created quiz">
+                <i class="fas fa-user-edit"></i>
+            </div>` : '';
+
         quizCard.innerHTML = `
             <div class="quiz-header">
                 <div class="quiz-icon">
@@ -595,6 +653,7 @@ function renderQuizzes() {
                 <div class="quiz-info">
                     <span class="quiz-level ${quiz.level}">${quiz.level.charAt(0).toUpperCase() + quiz.level.slice(1)}</span>
                     <span class="quiz-type">${quiz.type}</span>
+                    ${userQuizBadge}
                 </div>
             </div>
             
@@ -610,6 +669,18 @@ function renderQuizzes() {
                 ''
             }
                 </div>
+                
+                ${quiz.author ? `
+                    <div class="quiz-author">
+                        <i class="fas fa-user"></i> ${quiz.author}
+                    </div>
+                ` : ''}
+                
+                ${createdDate ? `
+                    <div class="quiz-date">
+                        <i class="far fa-calendar-alt"></i> Created: ${createdDate}
+                    </div>
+                ` : ''}
                 
                 ${hasHistory ? `
                     <div class="quiz-progress-section">
@@ -645,8 +716,96 @@ function renderQuizzes() {
                 <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
                     <i class="fas fa-eye"></i> Preview
                 </button>
+                ${quiz.isUserQuiz ? `
+                  
+                ` : ''}
             </div>
         `;
+
+        // Add event listeners
+        const startBtn = quizCard.querySelector('.quiz-start-btn');
+        const previewBtn = quizCard.querySelector('.quiz-preview-btn');
+
+        startBtn.addEventListener('click', () => startQuiz(quiz.id));
+        previewBtn.addEventListener('click', () => previewQuiz(quiz.id));
+
+        storiesGrid.appendChild(quizCard);
+    });
+}
+
+// Function to edit user quiz from home page
+function openEditQuizModalFromHome(quizId) {
+    // Find the quiz in user quizzes
+    const quizIndex = userQuizzes.findIndex(q => q.id === quizId);
+    if (quizIndex !== -1) {
+        // Switch to add quiz page
+        switchPage('addquiz');
+
+        // Open edit modal after a short delay
+        setTimeout(() => {
+            openEditQuizModal(quizIndex);
+        }, 300);
+    } else {
+        showNotification('Quiz not found for editing.', 'error');
+    }
+}
+
+// Also update the filterQuizzesByLevel function:
+function filterQuizzesByLevel(level) {
+    if (level === 'all') {
+        renderQuizzes();
+        return;
+    }
+
+    // Get all quizzes (regular + user)
+    const allQuizzes = [...quizzes];
+    userQuizzes.forEach(userQuiz => {
+        const exists = allQuizzes.some(q => q.id === userQuiz.id);
+        if (!exists) {
+            allQuizzes.push({
+                ...userQuiz,
+                isUserQuiz: true
+            });
+        }
+    });
+
+    const filteredQuizzes = allQuizzes.filter(quiz => quiz.level === level);
+
+    if (!storiesGrid) return;
+    storiesGrid.innerHTML = '';
+
+    if (filteredQuizzes.length === 0) {
+        storiesGrid.innerHTML = `
+            <div class="no-quizzes-message">
+                <i class="fas fa-brain fa-3x"></i>
+                <h3>No ${level} quizzes available</h3>
+                <p>Try a different level or check back soon!</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Use the same rendering logic from renderQuizzes
+    filteredQuizzes.forEach(quiz => {
+        const quizCard = document.createElement('div');
+        quizCard.className = 'quiz-card';
+        quizCard.dataset.quizId = quiz.id;
+
+        if (quiz.isUserQuiz) {
+            quizCard.classList.add('user-quiz-card');
+        }
+
+        const questionCount = quiz.questions ? quiz.questions.length : 0;
+        const timeEstimate = Math.ceil(questionCount * 0.5);
+
+        const history = quizHistory[quiz.id];
+        const hasHistory = history && history.lastScore !== undefined;
+        const lastScore = hasHistory ? history.lastScore : null;
+        const bestScore = hasHistory ? history.bestScore : null;
+        const attempts = hasHistory ? history.attempts : 0;
+
+        // ... rest of the quiz card HTML from renderQuizzes ...
+        // [Copy the same HTML generation logic from renderQuizzes]
 
         // Add event listeners
         const startBtn = quizCard.querySelector('.quiz-start-btn');
@@ -796,31 +955,44 @@ function generateDragDropHTML(question, index) {
     }
 
     return `
-        <div class="drag-drop-container">
+        <div class="drag-drop-container mobile-drag-drop">
             <div class="drag-instructions">
                 <i class="fas fa-arrows-alt"></i>
-                <span>Drag words from the top area into the sentence area below to form a correct sentence.</span>
+                <span>${isMobileDevice() ?
+            'Tap and hold words, then drag to the sentence area.' :
+            'Drag words from the top area into the sentence area below to form a correct sentence.'}
+                </span>
             </div>
             
-            <div class="scrambled-words-container" id="scrambledWords_${index}">
+            <div class="scrambled-words-container touch-droppable" id="scrambledWords_${index}">
                 ${scrambledWords.map((word, i) => `
-                    <div class="scrambled-word" draggable="true" data-word="${word}" data-index="${i}">
+                    <div class="scrambled-word touch-draggable" 
+                         draggable="true" 
+                         data-word="${word}" 
+                         data-index="${i}"
+                         data-question-index="${index}">
                         ${word}
+                        ${isMobileDevice() ? '<span class="touch-hint">👆</span>' : ''}
                     </div>
                 `).join('')}
             </div>
             
-            <div class="sentence-container" id="sentenceContainer_${index}">
+            <div class="sentence-container touch-droppable" id="sentenceContainer_${index}">
                 ${userAnswer.length > 0 ?
             userAnswer.map(word => `
-                        <div class="word-in-slot" draggable="true" data-word="${word}">
+                        <div class="word-in-slot touch-draggable" 
+                             draggable="true" 
+                             data-word="${word}"
+                             data-question-index="${index}">
                             <span>${word}</span>
                             <button type="button" class="remove-btn" onclick="removeFromSentence(${index}, '${word}')">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
                     `).join('') :
-            '<div class="sentence-slot empty" style="width: 100%; text-align: center; color: var(--text-muted);">Drop words here to build your sentence</div>'
+            `<div class="sentence-slot empty" style="width: 100%; text-align: center; color: var(--text-muted);">
+                ${isMobileDevice() ? 'Drop words here' : 'Drop words here to build your sentence'}
+            </div>`
         }
             </div>
             
@@ -831,17 +1003,88 @@ function generateDragDropHTML(question, index) {
                 </div>
             ` : ''}
             
-            <button type="button" class="reset-drag-btn" onclick="resetDragDropQuestion(${index})">
+            <div class="mobile-actions" style="${isMobileDevice() ? 'display: flex; gap: 10px; margin-top: 15px;' : 'display: none;'}">
+                <button type="button" class="mobile-tap-btn" onclick="showWordSelection(${index})">
+                    <i class="fas fa-hand-pointer"></i> Tap to Add
+                </button>
+                <button type="button" class="reset-drag-btn" onclick="resetDragDropQuestion(${index})">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+            
+            <button type="button" class="reset-drag-btn desktop-only" onclick="resetDragDropQuestion(${index})">
                 <i class="fas fa-redo"></i> Reset Words
             </button>
             
             <div class="drag-drop-feedback" id="feedback_${index}"></div>
             
-            <!-- Hidden input to store the answer -->
             <input type="hidden" id="dragDropAnswer_${index}" value="${JSON.stringify(userAnswer)}">
         </div>
     `;
 }
+// Alternative method for mobile: word selection
+function showWordSelection(questionIndex) {
+    const question = currentQuiz.questions[questionIndex];
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+    const userAnswer = userAnswers[questionIndex] || [];
+
+    // Create modal for word selection
+    const modal = document.createElement('div');
+    modal.className = 'word-selection-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        padding: 20px;
+    `;
+
+    const availableWords = question.scrambledWords.filter(word =>
+        !userAnswer.includes(word)
+    );
+
+    modal.innerHTML = `
+        <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: var(--primary);">Select a Word</h3>
+                <button onclick="this.closest('.word-selection-modal').remove()" 
+                        style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">
+                    &times;
+                </button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
+                ${availableWords.map(word => `
+                    <button onclick="addToSentence(${questionIndex}, '${word}'); this.closest('.word-selection-modal').remove()"
+                            style="padding: 15px; background: var(--primary-light); border: 2px solid var(--primary); 
+                                   border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; color: var(--text);">
+                        ${word}
+                    </button>
+                `).join('')}
+            </div>
+            
+            ${availableWords.length === 0 ? `
+                <p style="text-align: center; color: #666; padding: 20px;">
+                    All words are already in the sentence!
+                </p>
+            ` : ''}
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+// Helper function to detect mobile devices
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 // Generate HTML for multiple choice questions
 function generateMultipleChoiceHTML(question, index) {
     const isSelected = userAnswers[index] ? true : false;
@@ -975,14 +1218,15 @@ function addQuestionTypeEventListeners(type, index) {
             });
             break;
 
-        case 'drag_drop':  // NEW
+        case 'drag_drop':
             setTimeout(() => {
-                initDragDrop(index);
+                // Initialize both touch and mouse events
+                initTouchDragDrop(index);
             }, 100);
             break;
-
     }
 }
+
 
 // Update the displayQuestion function to remove explanations entirely:
 function displayQuestion(index) {
@@ -1201,88 +1445,79 @@ function submitQuiz() {
     // Display results
     showResults();
 }
-// Initialize drag & drop functionality
-function initDragDrop(questionIndex) {
+// Initialize touch-friendly drag & drop
+function initTouchDragDrop(questionIndex) {
     const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
     const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
-    const feedbackDiv = document.getElementById(`feedback_${questionIndex}`);
 
     if (!scrambledContainer || !sentenceContainer) return;
 
-    // Get all draggable words
-    const draggables = document.querySelectorAll(`#scrambledWords_${questionIndex} .scrambled-word, #sentenceContainer_${questionIndex} .word-in-slot`);
+    // Get all word elements
+    const scrambledWords = scrambledContainer.querySelectorAll('.scrambled-word');
+    const sentenceWords = sentenceContainer.querySelectorAll('.word-in-slot');
+
+    // Add touch events to all words
+    addTouchEvents(scrambledWords, 'scrambled', questionIndex);
+    addTouchEvents(sentenceWords, 'sentence', questionIndex);
+
+    // Make containers droppable for touch
+    makeDroppable(sentenceContainer, questionIndex, 'sentence');
+    makeDroppable(scrambledContainer, questionIndex, 'scrambled');
+
+    // Also keep mouse events for desktop
+    initMouseDragDrop(questionIndex);
+}
+// Initialize mouse-based drag & drop (for desktop)
+function initMouseDragDrop(questionIndex) {
+    const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+
+    if (!scrambledContainer || !sentenceContainer) return;
+
+    // Get all draggable words for mouse
+    const draggables = document.querySelectorAll(
+        `#scrambledWords_${questionIndex} .scrambled-word, 
+         #sentenceContainer_${questionIndex} .word-in-slot`
+    );
 
     draggables.forEach(draggable => {
         draggable.addEventListener('dragstart', handleDragStart);
         draggable.addEventListener('dragend', handleDragEnd);
     });
 
-    // Sentence container drop zone
+    // Mouse events for containers
     sentenceContainer.addEventListener('dragover', handleDragOver);
     sentenceContainer.addEventListener('dragleave', handleDragLeave);
-    sentenceContainer.addEventListener('drop', (e) => handleDrop(e, questionIndex, 'sentence'));
+    sentenceContainer.addEventListener('drop', (e) => handleMouseDrop(e, questionIndex, 'sentence'));
 
-    // Scrambled words container drop zone (for moving back)
     scrambledContainer.addEventListener('dragover', handleDragOver);
     scrambledContainer.addEventListener('dragleave', handleDragLeave);
-    scrambledContainer.addEventListener('drop', (e) => handleDrop(e, questionIndex, 'scrambled'));
-
-    // Store the current state
-    updateDragDropAnswer(questionIndex);
-}
-// Drag & Drop event handlers
-function handleDragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.dataset.word || e.target.textContent);
-    e.target.classList.add('dragging');
-
-    // Visual feedback
-    if (e.target.classList.contains('scrambled-word')) {
-        e.dataTransfer.setData('source', 'scrambled');
-    } else if (e.target.classList.contains('word-in-slot')) {
-        e.dataTransfer.setData('source', 'sentence');
-    }
+    scrambledContainer.addEventListener('drop', (e) => handleMouseDrop(e, questionIndex, 'scrambled'));
 }
 
+// Add touch events to elements
+function addTouchEvents(elements, sourceType, questionIndex) {
+    elements.forEach(element => {
+        // Remove any existing listeners to prevent duplicates
+        element.removeEventListener('touchstart', handleTouchStart);
+        element.removeEventListener('touchend', handleTouchEnd);
+        element.removeEventListener('touchmove', handleTouchMove);
 
-function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
+        // Add touch events
+        element.addEventListener('touchstart', (e) => handleTouchStart(e, sourceType, questionIndex));
+        element.addEventListener('touchend', (e) => handleTouchEnd(e, sourceType, questionIndex));
+        element.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+        // Store source type in element
+        element.dataset.sourceType = sourceType;
+    });
 }
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.currentTarget.classList.add('active-drop');
-}
-
-function handleDragLeave(e) {
-    e.currentTarget.classList.remove('active-drop');
-}
-
-function handleDrop(e, questionIndex, targetArea) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('active-drop');
-
-    const word = e.dataTransfer.getData('text/plain');
-    const sourceArea = e.dataTransfer.getData('source');
-
-    // If dragging from scrambled to sentence
-    if (sourceArea === 'scrambled' && targetArea === 'sentence') {
-        addToSentence(questionIndex, word);
-    }
-    // If dragging from sentence to scrambled (removing)
-    else if (sourceArea === 'sentence' && targetArea === 'scrambled') {
-        removeFromSentence(questionIndex, word);
-    }
-    // If reordering within sentence (not implemented in basic version)
-    // You could add this for advanced functionality
-
-    updateDragDropAnswer(questionIndex);
-}
-// Add word to sentence
+// Add to sentence function
 function addToSentence(questionIndex, word) {
     const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
     const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
 
-    // Remove from scrambled words
+    // Remove from scrambled words if it exists there
     const scrambledWord = scrambledContainer.querySelector(`[data-word="${word}"]`);
     if (scrambledWord) {
         scrambledWord.remove();
@@ -1290,9 +1525,10 @@ function addToSentence(questionIndex, word) {
 
     // Add to sentence
     const wordElement = document.createElement('div');
-    wordElement.className = 'word-in-slot';
+    wordElement.className = 'word-in-slot touch-draggable';
     wordElement.draggable = true;
     wordElement.dataset.word = word;
+    wordElement.dataset.questionIndex = questionIndex;
     wordElement.innerHTML = `
         <span>${word}</span>
         <button type="button" class="remove-btn" onclick="removeFromSentence(${questionIndex}, '${word}')">
@@ -1308,22 +1544,18 @@ function addToSentence(questionIndex, word) {
 
     sentenceContainer.appendChild(wordElement);
 
-    // Add drag events to new element
+    // Add events to new element
+    addTouchEvents([wordElement], 'sentence', questionIndex);
+
+    // Also add mouse events for desktop
     wordElement.addEventListener('dragstart', handleDragStart);
     wordElement.addEventListener('dragend', handleDragEnd);
-
-    // Provide visual feedback
-    wordElement.classList.add('correct-place');
-    setTimeout(() => {
-        wordElement.classList.remove('correct-place');
-    }, 500);
 
     // Update answer
     updateDragDropAnswer(questionIndex);
 }
 
-
-// Remove word from sentence
+// Remove from sentence function
 function removeFromSentence(questionIndex, word) {
     const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
     const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
@@ -1336,14 +1568,16 @@ function removeFromSentence(questionIndex, word) {
 
     // Add back to scrambled words
     const scrambledWord = document.createElement('div');
-    scrambledWord.className = 'scrambled-word';
+    scrambledWord.className = 'scrambled-word touch-draggable';
     scrambledWord.draggable = true;
     scrambledWord.dataset.word = word;
+    scrambledWord.dataset.questionIndex = questionIndex;
     scrambledWord.textContent = word;
 
     scrambledContainer.appendChild(scrambledWord);
 
-    // Add drag events
+    // Add events
+    addTouchEvents([scrambledWord], 'scrambled', questionIndex);
     scrambledWord.addEventListener('dragstart', handleDragStart);
     scrambledWord.addEventListener('dragend', handleDragEnd);
 
@@ -1352,12 +1586,30 @@ function removeFromSentence(questionIndex, word) {
         const placeholder = document.createElement('div');
         placeholder.className = 'sentence-slot empty';
         placeholder.style.cssText = 'width: 100%; text-align: center; color: var(--text-muted);';
-        placeholder.textContent = 'Drop words here to build your sentence';
+        placeholder.textContent = isMobileDevice() ? 'Drop words here' : 'Drop words here to build your sentence';
         sentenceContainer.appendChild(placeholder);
     }
 
     // Update answer
     updateDragDropAnswer(questionIndex);
+}
+
+// Update drag & drop answer
+function updateDragDropAnswer(questionIndex) {
+    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
+    const answerInput = document.getElementById(`dragDropAnswer_${questionIndex}`);
+
+    if (!sentenceContainer || !answerInput) return;
+
+    // Get current words in sentence
+    const wordElements = sentenceContainer.querySelectorAll('.word-in-slot');
+    const currentAnswer = Array.from(wordElements).map(el => el.dataset.word);
+
+    // Store in userAnswers
+    userAnswers[questionIndex] = currentAnswer;
+
+    // Update hidden input
+    answerInput.value = JSON.stringify(currentAnswer);
 }
 
 // Reset drag & drop question
@@ -1375,23 +1627,195 @@ function resetDragDropQuestion(questionIndex) {
     showNotification('Words have been reset. Try again!', 'info');
 }
 
-// Update the hidden answer field
-function updateDragDropAnswer(questionIndex) {
-    const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
-    const answerInput = document.getElementById(`dragDropAnswer_${questionIndex}`);
-
-    if (!sentenceContainer || !answerInput) return;
-
-    // Get current words in sentence
-    const wordElements = sentenceContainer.querySelectorAll('.word-in-slot');
-    const currentAnswer = Array.from(wordElements).map(el => el.dataset.word);
-
-    // Store in userAnswers
-    userAnswers[questionIndex] = currentAnswer;
-
-    // Update hidden input
-    answerInput.value = JSON.stringify(currentAnswer);
+// Handle drag start for mouse events
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.dataset.word || e.target.textContent);
+    e.dataTransfer.setData('source', e.target.classList.contains('scrambled-word') ? 'scrambled' : 'sentence');
+    e.target.classList.add('dragging');
 }
+
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('active-drop');
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('active-drop');
+}
+// Make container droppable for touch
+function makeDroppable(container, questionIndex, targetType) {
+    container.removeEventListener('touchend', handleContainerTouchEnd);
+    container.addEventListener('touchend', (e) => handleContainerTouchEnd(e, questionIndex, targetType));
+
+    // Add visual feedback for mobile
+    container.style.minHeight = '60px';
+    container.style.transition = 'background-color 0.2s';
+}
+
+// Touch event handlers
+let activeTouchElement = null;
+let touchStartX = 0;
+let touchStartY = 0;
+
+function handleTouchStart(e, sourceType, questionIndex) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+
+    activeTouchElement = e.target.closest('.scrambled-word, .word-in-slot');
+    if (!activeTouchElement) return;
+
+    // Add visual feedback
+    activeTouchElement.classList.add('dragging', 'touch-dragging');
+
+    // Store data
+    activeTouchElement.dataset.sourceType = sourceType;
+    activeTouchElement.dataset.questionIndex = questionIndex;
+
+    // Create a floating clone for visual feedback
+    createTouchClone(activeTouchElement, touch.clientX, touch.clientY);
+}
+
+function handleTouchMove(e) {
+    if (!activeTouchElement) return;
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    moveTouchClone(touch.clientX, touch.clientY);
+}
+
+function handleTouchEnd(e, sourceType, questionIndex) {
+    if (!activeTouchElement) return;
+
+    const touch = e.changedTouches[0];
+    const endX = touch.clientX;
+    const endY = touch.clientY;
+
+    // Remove visual feedback
+    activeTouchElement.classList.remove('dragging', 'touch-dragging');
+
+    // Remove touch clone
+    removeTouchClone();
+
+    // Check if we dropped on a container
+    const elementsAtPoint = document.elementsFromPoint(endX, endY);
+    const targetContainer = elementsAtPoint.find(el =>
+        el.id && (el.id.includes('scrambledWords_') || el.id.includes('sentenceContainer_'))
+    );
+
+    if (targetContainer) {
+        const word = activeTouchElement.dataset.word || activeTouchElement.textContent;
+        const targetType = targetContainer.id.includes('scrambledWords') ? 'scrambled' : 'sentence';
+
+        // If moving from scrambled to sentence
+        if (sourceType === 'scrambled' && targetType === 'sentence') {
+            addToSentence(questionIndex, word);
+        }
+        // If moving from sentence to scrambled
+        else if (sourceType === 'sentence' && targetType === 'scrambled') {
+            removeFromSentence(questionIndex, word);
+        }
+    }
+
+    activeTouchElement = null;
+}
+
+function handleContainerTouchEnd(e, questionIndex, targetType) {
+    if (!activeTouchElement) return;
+
+    const touch = e.changedTouches[0];
+    const word = activeTouchElement.dataset.word || activeTouchElement.textContent;
+    const sourceType = activeTouchElement.dataset.sourceType;
+
+    // Handle the drop
+    if (sourceType === 'scrambled' && targetType === 'sentence') {
+        addToSentence(questionIndex, word);
+    } else if (sourceType === 'sentence' && targetType === 'scrambled') {
+        removeFromSentence(questionIndex, word);
+    }
+
+    // Clean up
+    activeTouchElement.classList.remove('dragging', 'touch-dragging');
+    removeTouchClone();
+    activeTouchElement = null;
+}
+
+// Mouse drop handler (updated)
+function handleMouseDrop(e, questionIndex, targetArea) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('active-drop');
+
+    const word = e.dataTransfer.getData('text/plain');
+    const sourceArea = e.dataTransfer.getData('source');
+
+    if (sourceArea === 'scrambled' && targetArea === 'sentence') {
+        addToSentence(questionIndex, word);
+    } else if (sourceArea === 'sentence' && targetArea === 'scrambled') {
+        removeFromSentence(questionIndex, word);
+    }
+
+    updateDragDropAnswer(questionIndex);
+}
+
+// Touch clone functions for visual feedback
+function createTouchClone(element, x, y) {
+    removeTouchClone(); // Remove any existing clone
+
+    const clone = element.cloneNode(true);
+    clone.id = 'touch-drag-clone';
+    clone.style.cssText = `
+        position: fixed;
+        left: ${x - 30}px;
+        top: ${y - 30}px;
+        width: 60px;
+        height: 60px;
+        background: var(--primary);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0.9;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        font-weight: bold;
+        font-size: 14px;
+        text-align: center;
+        padding: 5px;
+    `;
+
+    document.body.appendChild(clone);
+}
+
+function moveTouchClone(x, y) {
+    const clone = document.getElementById('touch-drag-clone');
+    if (clone) {
+        clone.style.left = `${x - 30}px`;
+        clone.style.top = `${y - 30}px`;
+    }
+}
+
+function removeTouchClone() {
+    const clone = document.getElementById('touch-drag-clone');
+    if (clone) {
+        clone.remove();
+    }
+}
+
+
+
+
+
+
 // Helper function to save quiz results
 function saveQuizResult(quizId, score, totalQuestions) {
     const percentage = Math.round((score / totalQuestions) * 100);
@@ -1736,9 +2160,29 @@ function checkUserHasAnswered(userAnswer, questionType) {
             return userAnswer !== undefined && userAnswer !== null;
     }
 }
-function previewQuiz(quizId) {
-    const quiz = quizzes.find(q => q.id === quizId);
-    if (!quiz) return;
+// Update the previewQuiz function to handle both quizId and quiz object
+function previewQuiz(quizIdOrQuiz) {
+    let quiz;
+    let quizId;
+
+    // Check if parameter is a quiz object or quiz ID
+    if (typeof quizIdOrQuiz === 'object') {
+        quiz = quizIdOrQuiz;
+        quizId = quiz.id;
+    } else {
+        quizId = quizIdOrQuiz;
+        quiz = quizzes.find(q => q.id === quizId);
+
+        // If not found in main quizzes, check user quizzes
+        if (!quiz) {
+            quiz = userQuizzes.find(q => q.id === quizId);
+        }
+    }
+
+    if (!quiz) {
+        showNotification('Quiz not found!', 'error');
+        return;
+    }
 
     const history = quizHistory[quizId];
     const hasHistory = history && history.lastScore !== undefined;
@@ -1758,63 +2202,135 @@ function previewQuiz(quizId) {
         justify-content: center;
         z-index: 2000;
         padding: 20px;
+        backdrop-filter: blur(5px);
     `;
 
     const previewContent = `
-        <div class="preview-content">
-            <div class="preview-header">
-                <h2 style="color: var(--primary); margin: 0;">${quiz.title}</h2>
+        <div class="preview-content" style="background: var(--bg); padding: 30px; border-radius: 12px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div class="preview-header" style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas ${getQuizIcon(quiz.type)}"></i>
+                    ${quiz.title}
+                </h2>
                 <button class="close-preview" style="background: none; border: none; font-size: 30px; cursor: pointer; color: #666;">&times;</button>
             </div>
             
             <div style="margin-bottom: 20px;">
-                <p><strong>Description:</strong> ${quiz.description || 'No description'}</p>
-                <p><strong>Level:</strong> ${quiz.level}</p>
-                <p><strong>Type:</strong> ${quiz.type}</p>
-                <p><strong>Questions:</strong> ${quiz.questions.length}</p>
+                <p><strong>Description:</strong> ${quiz.description || 'No description provided'}</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+                    <span class="quiz-level ${quiz.level}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                        ${quiz.level.charAt(0).toUpperCase() + quiz.level.slice(1)}
+                    </span>
+                    <span style="padding: 4px 12px; background: var(--border); border-radius: 20px; font-size: 0.8rem;">
+                        ${quiz.type.charAt(0).toUpperCase() + quiz.type.slice(1)}
+                    </span>
+                    ${quiz.isUserQuiz ? `
+                        <span style="padding: 4px 12px; background: var(--primary); color: white; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-user-edit"></i> Your Quiz
+                        </span>
+                    ` : ''}
+                </div>
+                <p><strong>Questions:</strong> ${quiz.questions ? quiz.questions.length : 0}</p>
+                
+                ${quiz.author ? `<p><strong>Author:</strong> ${quiz.author}</p>` : ''}
                 
                 ${hasHistory ? `
-                    <div class="history-grade-preview">
-                        <p><strong>Your Progress:</strong></p>
-                        <p><i class="fas fa-chart-line"></i> Last Score: <strong>${history.lastScore}%</strong></p>
+                    <div class="history-grade-preview" style="margin-top: 15px; padding: 15px; background: var(--bg-secondary); border-radius: 8px;">
+                        <p style="margin: 0 0 10px 0; font-weight: 600;">Your Progress:</p>
+                        <p style="margin: 5px 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-chart-line" style="color: var(--primary);"></i> 
+                            Last Score: <strong>${history.lastScore}%</strong>
+                        </p>
                         ${history.bestScore !== history.lastScore ?
-                `<p><i class="fas fa-trophy"></i> Best Score: <strong>${history.bestScore}%</strong></p>` :
+                `<p style="margin: 5px 0; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-trophy" style="color: #FFD700;"></i> 
+                                Best Score: <strong>${history.bestScore}%</strong>
+                            </p>` :
                 ''
             }
-                        <p><i class="fas fa-redo"></i> Attempts: <strong>${history.attempts}</strong></p>
+                        <p style="margin: 5px 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-redo" style="color: var(--text-light);"></i> 
+                            Attempts: <strong>${history.attempts}</strong>
+                        </p>
                     </div>
                 ` : `
-                    <div class="history-grade-preview"">
-                        <p><i class="far fa-star"></i> <strong>Not attempted yet</strong></p>
-                        <p style="font-size: 0.9rem; color: #666;">Start this quiz to track your progress!</p>
+                    <div class="history-grade-preview" style="margin-top: 15px; padding: 15px; background: var(--bg-secondary); border-radius: 8px;">
+                        <p style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="far fa-star" style="color: var(--text-light);"></i> 
+                            <strong>Not attempted yet</strong>
+                        </p>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: var(--text-light);">
+                            Start this quiz to track your progress!
+                        </p>
                     </div>
                 `}
             </div>
             
             <div>
-                <h3 style="color: var(--primary); margin-bottom: 15px;">Sample Questions:</h3>
-                ${quiz.questions.slice(0, 3).map((q, i) => `
-                    <div class=".cqa">
-                        <p><strong>Q${i + 1}:</strong> ${q.question}</p>
+                <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-eye"></i> Sample Questions:
+                </h3>
+                ${quiz.questions ? quiz.questions.slice(0, 3).map((q, i) => `
+                    <div class="cqa" style="margin-bottom: 15px; padding: 15px; background: var(--bg-secondary); border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0;">
+                        <p style="margin: 0 0 10px 0; font-weight: 600;">Q${i + 1}: ${q.question}</p>
                         ${q.type === 'multiple_choice' ? `
                             <div style="margin-top: 10px;">
-                                ${q.choices.slice(0, 2).map((choice, j) => `
-                                    <div .response-quiz">
+                                ${q.choices ? q.choices.slice(0, 3).map((choice, j) => `
+                                    <div class="response-quiz" style="margin: 5px 0; padding: 8px 12px; background: ${choice.correct ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: 6px; border-left: 3px solid ${choice.correct ? '#10b981' : '#ef4444'};">
                                         ${String.fromCharCode(65 + j)}. ${choice.value}
-                                        ${choice.correct ? ' ✓' : ''}
+                                        ${choice.correct ? ' <i class="fas fa-check" style="color: #10b981;"></i>' : ''}
                                     </div>
-                                `).join('')}
+                                `).join('') : '<p style="color: var(--text-light); font-style: italic;">No choices available</p>'}
                             </div>
-                        ` : ''}
+                        ` : q.type === 'true_false' ? `
+                            <div style="margin-top: 10px;">
+                                <div style="display: flex; gap: 10px;">
+                                    <span style="padding: 8px 12px; background: ${q.choices && q.choices[0] && q.choices[0].correct ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: 6px; border: 1px solid ${q.choices && q.choices[0] && q.choices[0].correct ? '#10b981' : '#ef4444'}; color: ${q.choices && q.choices[0] && q.choices[0].correct ? '#10b981' : '#ef4444'};">
+                                        True ${q.choices && q.choices[0] && q.choices[0].correct ? ' <i class="fas fa-check"></i>' : ''}
+                                    </span>
+                                    <span style="padding: 8px 12px; background: ${q.choices && q.choices[1] && q.choices[1].correct ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: 6px; border: 1px solid ${q.choices && q.choices[1] && q.choices[1].correct ? '#10b981' : '#ef4444'}; color: ${q.choices && q.choices[1] && q.choices[1].correct ? '#10b981' : '#ef4444'};">
+                                        False ${q.choices && q.choices[1] && q.choices[1].correct ? ' <i class="fas fa-check"></i>' : ''}
+                                    </span>
+                                </div>
+                            </div>
+                        ` : q.type === 'fill_in_blank' ? `
+                            <div style="margin-top: 10px;">
+                                <p style="font-style: italic; color: var(--text-light);">
+                                    Fill in the blank question
+                                </p>
+                                ${q.correctAnswers ? `
+                                    <p style="margin-top: 5px; font-size: 0.9rem;">
+                                        <strong>Correct answer:</strong> ${q.correctAnswers[0]}
+                                    </p>
+                                ` : ''}
+                            </div>
+                        ` : q.type === 'drag_drop' ? `
+                            <div style="margin-top: 10px;">
+                                <p style="font-style: italic; color: var(--text-light);">
+                                    Drag & Drop question
+                                </p>
+                                ${q.scrambledWords ? `
+                                    <p style="margin-top: 5px; font-size: 0.9rem;">
+                                        <strong>Words:</strong> ${q.scrambledWords.join(', ')}
+                                    </p>
+                                ` : ''}
+                            </div>
+                        ` : `
+                            <div style="margin-top: 10px;">
+                                <p style="font-style: italic; color: var(--text-light);">
+                                    ${q.type.replace('_', ' ').charAt(0).toUpperCase() + q.type.replace('_', ' ').slice(1)} question
+                                </p>
+                            </div>
+                        `}
                     </div>
-                `).join('')}
+                `).join('') : '<p style="color: var(--text-light); font-style: italic;">No questions available</p>'}
             </div>
             
             <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button class="start-from-preview" style="flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <button class="start-from-preview" style="flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
                 </button>
-                <button class="close-btn" style="flex: 1; padding: 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <button class="close-btn" style="flex: 1; padding: 12px; background: var(--border); color: var(--text); border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
                     Close
                 </button>
             </div>
@@ -1839,7 +2355,6 @@ function previewQuiz(quizId) {
         }
     });
 }
-
 
 // ========= Add Scroll to Top Button ==========
 function addScrollToTopButton() {
