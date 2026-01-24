@@ -330,7 +330,7 @@
 
 /* Info Cards */
 .info-card {
-
+    
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 20px;
@@ -604,7 +604,6 @@
 .json-validation i {
     font-size: 16px;
 }
-
 .code-container pre {
     margin: 0;
     padding: 16px;
@@ -664,8 +663,6 @@
     max-width: 100%;
     max-height: calc(100vh - 32px);
     overflow-y: auto;
-    position: absolute;
-    margin-top: 50px;
 }
 
 .preview-header {
@@ -674,10 +671,8 @@
     align-items: center;
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-color);
-    position: fixed;
-    width: 100%;
+    position: sticky;
     top: 0;
-    right: 0;
     background: var(--card-bg);
     z-index: 1;
 }
@@ -1115,6 +1110,23 @@
     justify-content: space-between;
     font-size: 0.8rem;
     color: var(--text-light);
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .btn-primary {

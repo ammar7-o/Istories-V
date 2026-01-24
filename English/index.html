@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Istories</title>
     <link rel="stylesheet" href="../font-awesome/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="addStories.css">
+    <link rel="stylesheet" href="main/style.css">
+    <link rel="stylesheet" href="main/addStories.css">
 
     <link rel="icon" type="image/png" href="../icon.png">
     <meta property="og:title" content="Istories">
@@ -169,6 +169,16 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Show User Stories</span>
+                        <span class="setting-desc">Display Stories created by users</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="showUserStoriesToggle">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
 
@@ -948,13 +958,13 @@ Enter one dictionary path per line"></textarea>
         </div>
         <div class="custom-css-body">
             <div class="css-actions">
-                <button class=" btn-2 btn-secondary" id="previewCSS">
+                <button class=" btn-2 btn-secondary-2" id="previewCSS">
                     <i class="fas fa-eye"></i> Preview
                 </button>
                 <button class=" btn-2 btn-primary-2" id="saveCustomCSS">
                     <i class="fas fa-save"></i> Save CSS
                 </button>
-                <button class=" btn-2 btn-danger" id="clearCustomCSS">
+                <button class=" btn-2 btn-danger-2" id="clearCustomCSS">
                     <i class="fas fa-trash"></i> Clear
                 </button>
             </div>
@@ -1000,6 +1010,17 @@ Enter one dictionary path per line"></textarea>
         window.storiesLoaded = false;
         window.storiesData = [];
 
+        // Function to save selected stories file to localStorage
+        function saveSelectedStoriesFile(filename) {
+            localStorage.setItem('selectedStoriesFile', filename);
+            console.log('Saved stories file selection:', filename);
+        }
+
+        // Function to load saved stories file
+        function loadSavedStoriesFile() {
+            return localStorage.getItem('selectedStoriesFile') || 'stories/stories.json'; // Default file
+        }
+
         // Function to initialize app after stories are loaded
         function initAppAfterStoriesLoad() {
             if (window.storiesLoaded) {
@@ -1032,6 +1053,10 @@ Enter one dictionary path per line"></textarea>
                 console.log('Stories loaded successfully');
                 console.log('Stories data:', window.storiesData);
                 window.storiesLoaded = true;
+
+                // Save the selected file
+                saveSelectedStoriesFile(filename);
+
                 // Initialize app
                 initAppAfterStoriesLoad();
             };
@@ -1053,6 +1078,10 @@ Enter one dictionary path per line"></textarea>
                     ]
                 };
                 window.storiesLoaded = true;
+
+                // Save the selected file (even if error, user chose it)
+                saveSelectedStoriesFile(filename);
+
                 // Initialize app with fallback
                 initAppAfterStoriesLoad();
             };
@@ -1067,19 +1096,51 @@ Enter one dictionary path per line"></textarea>
             loadStoriesFile(selectedFile);
         });
 
-        // Load initial stories based on default selection
-        const initialFile = document.getElementById('Select').value;
-        loadStoriesFile(initialFile);
+        // Load initial stories - check for saved selection first
+        function loadInitialStories() {
+            // Check if we have a saved stories file selection
+            const savedFile = loadSavedStoriesFile();
+
+            // Set the select element to show the saved file
+            const selectElement = document.getElementById('Select');
+            if (selectElement) {
+                // Check if the saved file exists as an option
+                let optionExists = false;
+                for (let option of selectElement.options) {
+                    if (option.value === savedFile) {
+                        optionExists = true;
+                        break;
+                    }
+                }
+
+                if (optionExists) {
+                    selectElement.value = savedFile;
+                    console.log('Using saved stories file:', savedFile);
+                    loadStoriesFile(savedFile);
+                } else {
+                    // Use default/selected option
+                    const initialFile = selectElement.value;
+                    console.log('Saved file not found, using:', initialFile);
+                    loadStoriesFile(initialFile);
+                }
+            } else {
+                // Fallback if select element doesn't exist
+                loadStoriesFile('stories/stories.json');
+            }
+        }
+
+        // Load initial stories when page loads
+        loadInitialStories();
     </script>
     <!-- stories -->
     <!-- <script src="database/main.js"></script>
     <script src="database/more.js"></script> -->
 
     <!-- <script src="Dictionarys/main.js"></script> -->
-    <script src="other.js"></script>
-    <script src="main.js"></script>
-    <script src="addstories.js"></script>
-    <script src="custumecss.js"></script>
+    <script src="main/other.js"></script>
+    <script src="main/main.js"></script>
+    <script src="main/addstories.js"></script>
+    <script src="main/custumecss.js"></script>
 
 
 </body>

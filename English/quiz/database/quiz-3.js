@@ -23,7 +23,7 @@ window.quizData = {
                     type: "drag_drop",
                     question: "Arrange the words to form a correct Arabic sentence:",
                     scrambledWords: ["الولد", "يأكل", "التفاحة", "في", "المدرسة"],
-                    correctOrder: [1, 2, 5, 3, 4], // "الولد يأكل التفاحة في المدرسة"
+                    correctOrder: [1, 2, 3, 4, 5], // "الولد يأكل التفاحة في المدرسة"
                     hint: "Subject + verb + object + preposition + place",
                     explanation: "The correct sentence is: 'الولد يأكل التفاحة في المدرسة' (The boy eats the apple at school)."
                 },
@@ -205,12 +205,12 @@ window.quizData = {
                     type: "matching",
                     question: "Match the Arabic words with their English translations:",
                     matches: [
-                        { left: "قلم", right: "Pen" },
+                        { left: "قلم", right: "Teacher" },
                         { left: "ورقة", right: "Paper" },
                         { left: "طالب", right: "Student" },
-                        { left: "معلم", right: "Teacher" }
+                        { left: "معلم", right: "Pen" }
                     ],
-                    correctMatches: {0: 0, 1: 1, 2: 2, 3: 3},
+                    correctMatches: {0: 3, 1: 1, 2: 2, 3: 0},
                     explanation: "قلم = pen, ورقة = paper, طالب = student, معلم = teacher."
                 },
                 

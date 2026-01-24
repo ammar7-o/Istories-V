@@ -976,6 +976,10 @@ select:disabled {
     min-width: 100px !important;
 }
 
+.primary-btn {
+    background-color: var(--primary);
+    color: white;
+}
 
 .btn-primary {
     background: var(--primary);
@@ -1155,7 +1159,7 @@ footer {
 .short-answer-input {
     background-color: white;
     color: black;
-    min-width: 200px;
+    width: 100%;
     font-size: 1.6em;
     padding: 5px;
 }
@@ -1172,12 +1176,17 @@ footer {
 .fill-blank-input {
     background-color: white;
     color: black;
-    min-width: 200px;
-    font-size: 1.2em;
+    min-width: 100px;
+    max-width: 200px;
+    overflow-x: scroll;
+    font-size: 1.1em;
     padding: 5px;
 
 }
-
+.match-select{
+    max-width: 100%;
+    overflow: hidden;
+}
 .dark-mode .fill-blank-input {
     background-color: #000000;
     color: white;
@@ -2401,7 +2410,6 @@ footer {
     justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
-
     z-index: 90000;
 }
 
@@ -2757,6 +2765,7 @@ footer {
 .reset-drag-btn:hover {
     background: var(--border-color);
 }
+
 .user-quiz-card .user-quiz-badge {
     position: absolute;
     font-size: 20px;
@@ -2764,6 +2773,165 @@ footer {
     top: 50%;
     transform: translateY(-50%);
 }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.word-translation-persistent {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Switch styling for auto-translate toggle */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-left: 14px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--primary);
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* Translation button styles */
+.retranslate-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.retranslate-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.retranslate-btn:active {
+    transform: translateY(0);
+}
+
+.retranslate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes highlight {
+    0% {
+        background: transparent;
+    }
+
+    50% {
+        background: rgba(var(--secondary-rgb, 16, 185, 129), 0.2);
+    }
+
+    100% {
+        background: transparent;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .setting-item .toggle-switch {
+        width: 50px;
+        height: 26px;
+    }
+
+    .setting-item .toggle-slider:before {
+        height: 20px;
+        width: 20px;
+    }
+
+    .setting-item input:checked+.toggle-slider:before {
+        transform: translateX(24px);
+    }
+}
+
+@media (max-width: 480px) {
+    .setting-item {
+        padding: 10px 0;
+    }
+
+    .setting-item .toggle-switch {
+        width: 46px;
+        height: 24px;
+        margin-left: 8px;
+    }
+
+    .setting-item .toggle-slider:before {
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+    }
+
+    .setting-item input:checked+.toggle-slider:before {
+        transform: translateX(22px);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .settings-page {

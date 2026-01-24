@@ -158,6 +158,17 @@
                         </div>
                     </div>
                 </div>
+              
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Show User Quizzes</span>
+                        <span class="setting-desc">Display quizzes created by users</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="showUserQuizzesToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
             <!-- قسم التخصيص المتقدم -->
             <div class="settings-section">
@@ -236,6 +247,8 @@
                     <button class="level-btn" data-level="beginner">Beginner</button>
                     <button class="level-btn" data-level="intermediate">Intermediate</button>
                     <button class="level-btn" data-level="advanced">Advanced</button>
+                    <button class="level-btn" data-level="user">User</button>
+
                 </div>
 
                 <div class="stories-grid" id="storiesGrid">
@@ -677,7 +690,7 @@
                 <button class="btn btn-secondary" id="previewCSS">
                     <i class="fas fa-eye"></i> Preview
                 </button>
-                <button class="btn btn-primary" id="saveCustomCSS">
+                <button class="btn primary-btn" id="saveCustomCSS">
                     <i class="fas fa-save"></i> Save CSS
                 </button>
                 <button class="btn btn-danger" id="clearCustomCSS">

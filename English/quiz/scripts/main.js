@@ -1,7 +1,8 @@
 // ========= App State Variables ==========
 let currentPage = 'home';
 let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
-
+// Add to your App State Variables section:
+let showUserQuizzes = localStorage.getItem('showUserQuizzes') !== 'false'; // Default: true
 // Add Stories variables (ADDED)
 let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
 let userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
@@ -66,11 +67,20 @@ function scrollToTop() {
 }
 
 // Initialize the app
+// Initialize the app
 function init() {
     console.log('App initialization started...');
 
     // Auto lazy load ALL images
     document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
+
+    // STEP 1: Load showUserQuizzes setting
+    console.log('Step 1: Loading user quizzes setting...');
+    const savedSetting = localStorage.getItem('showUserQuizzes');
+    if (savedSetting !== null) {
+        showUserQuizzes = savedSetting === 'true';
+        console.log('User quizzes setting loaded:', showUserQuizzes);
+    }
 
     // Load quizzes from external file
     if (typeof window.quizData !== 'undefined') {
@@ -152,36 +162,64 @@ function init() {
         userDictionaries = {};
     }
 
-    // STEP 1: Apply saved theme FIRST
-    console.log('Step 1: Applying theme...');
+    // STEP 2: Apply saved theme FIRST
+    console.log('Step 2: Applying theme...');
     applyTheme();
 
-    // STEP 2: Apply saved primary color immediately
-    console.log('Step 2: Applying saved color:', selectedColor);
+    // STEP 3: Apply saved primary color immediately
+    console.log('Step 3: Applying saved color:', selectedColor);
     if (selectedColor) {
         applyPrimaryColor(selectedColor);
     }
 
-    // STEP 3: Initialize color selector
-    console.log('Step 3: Initializing color selector...');
+    // STEP 4: Initialize color selector
+    console.log('Step 4: Initializing color selector...');
     setTimeout(() => {
         initColorSelector();
     }, 50);
 
-    // STEP 4: Setup search
-    console.log('Step 4: Setting up search...');
+    // STEP 5: Setup search
+    console.log('Step 5: Setting up search...');
     setupSearch();
 
-    // STEP 5: Set up navigation and event listeners
-    console.log('Step 5: Setting up navigation and event listeners...');
+    // STEP 6: Set up navigation and event listeners
+    console.log('Step 6: Setting up navigation and event listeners...');
     setupNavToggle();
     setupEventListeners();
     setupSettings();
 
-    // STEP 6: Add scroll to top button
+    // STEP 7: Initialize user quizzes setting toggle
+    console.log('Step 7: Initializing user quizzes setting...');
+    initUserQuizzesSetting();
+
+    // STEP 8: Initialize secondary color selector
+    console.log('Step 8: Initializing secondary color selector...');
+    setTimeout(() => {
+        initSecondaryColorSelector();
+    }, 100);
+
+    // STEP 9: Add scroll to top button
+    console.log('Step 9: Adding scroll to top button...');
     addScrollToTopButton();
 
+    // STEP 10: Force apply colors one more time to ensure they're set
+    console.log('Step 10: Final color application...');
+    setTimeout(() => {
+        if (selectedColor) {
+            applyPrimaryColor(selectedColor);
+        }
+        if (selectedSecondaryColor) {
+            applySecondaryColor(selectedSecondaryColor);
+        }
+    }, 150);
+
     console.log('App initialization complete!');
+    console.log('Current settings:', {
+        theme: localStorage.getItem('theme'),
+        primaryColor: selectedColor,
+        secondaryColor: selectedSecondaryColor,
+        showUserQuizzes: showUserQuizzes
+    });
 }
 
 // Function to initialize color selector
@@ -543,34 +581,41 @@ function applyTheme() {
 // ========= Quiz Functions ==========
 
 
-// Render quizzes grid with both regular and user quizzes
+// Updated renderQuizzes function with showUserQuizzes setting
 function renderQuizzes(level = 'all') {
     if (!storiesGrid) return;
 
     storiesGrid.innerHTML = '';
     storiesGrid.classList.add('quizzes-grid');
 
-    // Combine regular quizzes with user quizzes
-    const allQuizzes = [...quizzes];
+    // Start with regular quizzes
+    let allQuizzes = [...quizzes];
 
-    // Add user quizzes that aren't already in the main array
-    userQuizzes.forEach(userQuiz => {
-        const exists = allQuizzes.some(q => q.id === userQuiz.id);
-        if (!exists) {
-            allQuizzes.push({
-                ...userQuiz,
-                isUserQuiz: true // Mark as user quiz
-            });
-        }
-    });
+    // Add user quizzes only if setting is enabled
+    if (showUserQuizzes) {
+        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+        userQuizzes.forEach(userQuiz => {
+            const exists = allQuizzes.some(q => q.id === userQuiz.id);
+            if (!exists) {
+                allQuizzes.push({
+                    ...userQuiz,
+                    isUserQuiz: true
+                });
+            }
+        });
+    }
 
     // Filter by level if specified
     let filteredQuizzes;
     if (level === 'all') {
         filteredQuizzes = allQuizzes;
     } else if (level === 'user') {
-        // Show only user quizzes
-        filteredQuizzes = allQuizzes.filter(quiz => quiz.isUserQuiz || quiz.isUserStory);
+        // Show only user quizzes (if enabled)
+        if (showUserQuizzes) {
+            filteredQuizzes = allQuizzes.filter(quiz => quiz.isUserQuiz);
+        } else {
+            filteredQuizzes = [];
+        }
     } else {
         // Filter by level
         filteredQuizzes = allQuizzes.filter(quiz => quiz.level === level);
@@ -580,9 +625,13 @@ function renderQuizzes(level = 'all') {
         storiesGrid.innerHTML = `
             <div class="no-quizzes-message">
                 <i class="fas fa-brain fa-3x"></i>
-                <h3>No quizzes available</h3>
-                <p>${level === 'user' ? 'Create your first quiz in the "Add Quizzes" section!' : 'Check back soon for new quizzes!'}</p>
-                ${level === 'user' ?
+                <h3>No ${level === 'user' ? 'user' : level} quizzes available</h3>
+                <p>${level === 'user' && !showUserQuizzes ?
+                'User quizzes are currently disabled in settings' :
+                level === 'user' ?
+                    'Create your first quiz in the "Add Quizzes" section!' :
+                    'Check back soon for new quizzes!'}</p>
+                ${level === 'user' && showUserQuizzes ?
                 `<button class="btn btn-primary" onclick="switchPage('addquiz')" style="margin-top: 15px;">
                         <i class="fas fa-plus"></i> Create Quiz
                     </button>` : ''
@@ -716,9 +765,6 @@ function renderQuizzes(level = 'all') {
                 <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
                     <i class="fas fa-eye"></i> Preview
                 </button>
-                ${quiz.isUserQuiz ? `
-                  
-                ` : ''}
             </div>
         `;
 
@@ -733,64 +779,75 @@ function renderQuizzes(level = 'all') {
     });
 }
 
-// Function to edit user quiz from home page
-function openEditQuizModalFromHome(quizId) {
-    // Find the quiz in user quizzes
-    const quizIndex = userQuizzes.findIndex(q => q.id === quizId);
-    if (quizIndex !== -1) {
-        // Switch to add quiz page
-        switchPage('addquiz');
 
-        // Open edit modal after a short delay
-        setTimeout(() => {
-            openEditQuizModal(quizIndex);
-        }, 300);
-    } else {
-        showNotification('Quiz not found for editing.', 'error');
-    }
-}
 
-// Also update the filterQuizzesByLevel function:
+
+
+// Updated filterQuizzesByLevel function with showUserQuizzes setting
 function filterQuizzesByLevel(level) {
-    if (level === 'all') {
-        renderQuizzes();
-        return;
+    if (!storiesGrid) return;
+
+    storiesGrid.innerHTML = '';
+    storiesGrid.classList.add('quizzes-grid');
+
+    // Start with regular quizzes
+    let filteredQuizzes = [...quizzes];
+
+    // Add user quizzes only if setting is enabled
+    if (showUserQuizzes) {
+        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+        userQuizzes.forEach(userQuiz => {
+            const exists = filteredQuizzes.some(q => q.id === userQuiz.id);
+            if (!exists) {
+                filteredQuizzes.push({
+                    ...userQuiz,
+                    isUserQuiz: true
+                });
+            }
+        });
     }
 
-    // Get all quizzes (regular + user)
-    const allQuizzes = [...quizzes];
-    userQuizzes.forEach(userQuiz => {
-        const exists = allQuizzes.some(q => q.id === userQuiz.id);
-        if (!exists) {
-            allQuizzes.push({
-                ...userQuiz,
-                isUserQuiz: true
-            });
+    // Apply level filtering
+    if (level === 'all') {
+        // Keep all quizzes (already have them)
+    } else if (level === 'user') {
+        // Show only user quizzes (if enabled)
+        if (showUserQuizzes) {
+            filteredQuizzes = filteredQuizzes.filter(quiz => quiz.isUserQuiz);
+        } else {
+            filteredQuizzes = [];
         }
-    });
-
-    const filteredQuizzes = allQuizzes.filter(quiz => quiz.level === level);
-
-    if (!storiesGrid) return;
-    storiesGrid.innerHTML = '';
+    } else {
+        // Filter by regular level
+        filteredQuizzes = filteredQuizzes.filter(quiz => quiz.level === level);
+    }
 
     if (filteredQuizzes.length === 0) {
         storiesGrid.innerHTML = `
             <div class="no-quizzes-message">
                 <i class="fas fa-brain fa-3x"></i>
-                <h3>No ${level} quizzes available</h3>
-                <p>Try a different level or check back soon!</p>
+                <h3>No ${level === 'user' ? 'user' : level} quizzes available</h3>
+                <p>${level === 'user' && !showUserQuizzes ?
+                'User quizzes are currently disabled in settings' :
+                level === 'user' ?
+                    'Create your first quiz in the "Add Quizzes" section!' :
+                    'Try a different level or check back soon!'}</p>
+                ${level === 'user' && showUserQuizzes ?
+                `<button class="btn btn-primary" onclick="switchPage('addquiz')" style="margin-top: 15px;">
+                        <i class="fas fa-plus"></i> Create Quiz
+                    </button>` : ''
+            }
             </div>
         `;
         return;
     }
 
-    // Use the same rendering logic from renderQuizzes
     filteredQuizzes.forEach(quiz => {
         const quizCard = document.createElement('div');
         quizCard.className = 'quiz-card';
         quizCard.dataset.quizId = quiz.id;
 
+        // Add user quiz indicator class
         if (quiz.isUserQuiz) {
             quizCard.classList.add('user-quiz-card');
         }
@@ -798,16 +855,120 @@ function filterQuizzesByLevel(level) {
         const questionCount = quiz.questions ? quiz.questions.length : 0;
         const timeEstimate = Math.ceil(questionCount * 0.5);
 
+        // Get quiz history
         const history = quizHistory[quiz.id];
         const hasHistory = history && history.lastScore !== undefined;
         const lastScore = hasHistory ? history.lastScore : null;
         const bestScore = hasHistory ? history.bestScore : null;
         const attempts = hasHistory ? history.attempts : 0;
 
-        // ... rest of the quiz card HTML from renderQuizzes ...
-        // [Copy the same HTML generation logic from renderQuizzes]
+        // Format date for last attempt
+        let lastAttemptDate = '';
+        if (hasHistory && history.lastDate) {
+            const date = new Date(history.lastDate);
+            lastAttemptDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
 
-        // Add event listeners
+        // Format creation date
+        let createdDate = '';
+        if (quiz.createdAt) {
+            const date = new Date(quiz.createdAt);
+            createdDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        } else if (quiz.uploadDate) {
+            const date = new Date(quiz.uploadDate);
+            createdDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // User quiz badge - only show if user quizzes are enabled
+        const userQuizBadge = (quiz.isUserQuiz && showUserQuizzes) ?
+            `<div class="user-quiz-badge" title="User-created quiz">
+                <i class="fas fa-user-edit"></i>
+            </div>` : '';
+
+        quizCard.innerHTML = `
+            <div class="quiz-header">
+                <div class="quiz-icon">
+                    <i class="fas ${getQuizIcon(quiz.type)}"></i>
+                </div>
+                <div class="quiz-info">
+                    <span class="quiz-level ${quiz.level}">${quiz.level.charAt(0).toUpperCase() + quiz.level.slice(1)}</span>
+                    <span class="quiz-type">${quiz.type}</span>
+                    ${userQuizBadge}
+                </div>
+            </div>
+            
+            <div class="quiz-content">
+                <h3 class="quiz-title">${quiz.title}</h3>
+                <p class="quiz-description">${quiz.description || 'Test your knowledge'}</p>
+                
+                <div class="quiz-meta">
+                    <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
+                    <span><i class="fas fa-clock"></i> ${timeEstimate} min</span>
+                    ${attempts > 0 ?
+                `<span><i class="fas fa-history"></i> ${attempts} attempt${attempts !== 1 ? 's' : ''}</span>` :
+                ''
+            }
+                </div>
+                
+                ${quiz.author ? `
+                    <div class="quiz-author">
+                        <i class="fas fa-user"></i> ${quiz.author}
+                    </div>
+                ` : ''}
+                
+                ${createdDate ? `
+                    <div class="quiz-date">
+                        <i class="far fa-calendar-alt"></i> Created: ${createdDate}
+                    </div>
+                ` : ''}
+                
+                ${hasHistory ? `
+                    <div class="quiz-progress-section">
+                        <div class="quiz-score-display">
+                            <div class="score-progress-bar">
+                                <div class="score-progress-fill" style="width: ${lastScore}%; 
+                                    background: ${getScoreColor(lastScore)};"></div>
+                            </div>
+                            <div class="score-details">
+                                <span class="last-score">Last: <strong>${lastScore}%</strong></span>
+                                ${bestScore !== lastScore ?
+                    `<span class="best-score">Best: <strong>${bestScore}%</strong></span>` :
+                    ''
+                }
+                            </div>
+                        </div>
+                        ${lastAttemptDate ?
+                    `<p class="last-attempt-date"><i class="far fa-calendar"></i> ${lastAttemptDate}</p>` :
+                    ''
+                }
+                    </div>
+                ` : `
+                    <div class="quiz-progress-section">
+                        <p class="no-attempts"><i class="far fa-star"></i> Not attempted yet</p>
+                    </div>
+                `}
+            </div>
+            
+            <div class="quiz-actions">
+                <button class="quiz-start-btn" data-quiz-id="${quiz.id}">
+                    <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
+                </button>
+                <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+            </div>
+        `;
+
         const startBtn = quizCard.querySelector('.quiz-start-btn');
         const previewBtn = quizCard.querySelector('.quiz-preview-btn');
 
@@ -817,6 +978,7 @@ function filterQuizzesByLevel(level) {
         storiesGrid.appendChild(quizCard);
     });
 }
+
 function getScoreColor(score) {
     if (score >= 80) return '#4CAF50'; // Green
     if (score >= 60) return '#FF9800'; // Orange
@@ -954,31 +1116,38 @@ function generateDragDropHTML(question, index) {
         scrambledWords = shuffleArray([...scrambledWords]);
     }
 
+    const isMobile = isMobileDevice();
+
     return `
         <div class="drag-drop-container mobile-drag-drop">
             <div class="drag-instructions">
                 <i class="fas fa-arrows-alt"></i>
-                <span>${isMobileDevice() ?
-            'Tap and hold words, then drag to the sentence area.' :
+                <span>${isMobile ?
+            '<strong>How to play:</strong> Tap and hold a word, then drag it to the sentence area. Use buttons below for easier control.' :
             'Drag words from the top area into the sentence area below to form a correct sentence.'}
                 </span>
             </div>
             
-            <div class="scrambled-words-container touch-droppable" id="scrambledWords_${index}">
-                ${scrambledWords.map((word, i) => `
-                    <div class="scrambled-word touch-draggable" 
-                         draggable="true" 
-                         data-word="${word}" 
-                         data-index="${i}"
-                         data-question-index="${index}">
-                        ${word}
-                        ${isMobileDevice() ? '<span class="touch-hint">👆</span>' : ''}
-                    </div>
-                `).join('')}
+            <div class="word-pool">
+                <h4><i class="fas fa-layer-group"></i> Available Words</h4>
+                <div class="scrambled-words-container touch-droppable" id="scrambledWords_${index}">
+                    ${scrambledWords.map((word, i) => `
+                        <div class="scrambled-word touch-draggable" 
+                             draggable="true" 
+                             data-word="${word}" 
+                             data-index="${i}"
+                             data-question-index="${index}">
+                            ${word}
+                            ${isMobile ? '<span class="touch-hint">👆</span>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
             </div>
             
-            <div class="sentence-container touch-droppable" id="sentenceContainer_${index}">
-                ${userAnswer.length > 0 ?
+            <div class="sentence-builder">
+                <h4><i class="fas fa-puzzle-piece"></i> Build Your Sentence</h4>
+                <div class="sentence-container touch-droppable" id="sentenceContainer_${index}">
+                    ${userAnswer.length > 0 ?
             userAnswer.map(word => `
                         <div class="word-in-slot touch-draggable" 
                              draggable="true" 
@@ -990,10 +1159,12 @@ function generateDragDropHTML(question, index) {
                             </button>
                         </div>
                     `).join('') :
-            `<div class="sentence-slot empty" style="width: 100%; text-align: center; color: var(--text-muted);">
-                ${isMobileDevice() ? 'Drop words here' : 'Drop words here to build your sentence'}
+            `<div class="sentence-slot empty">
+                <i class="fas fa-arrow-up"></i>
+                ${isMobile ? 'Drag or tap words here to start' : 'Drag words here to build your sentence'}
             </div>`
         }
+                </div>
             </div>
             
             ${question.hint ? `
@@ -1003,12 +1174,12 @@ function generateDragDropHTML(question, index) {
                 </div>
             ` : ''}
             
-            <div class="mobile-actions" style="${isMobileDevice() ? 'display: flex; gap: 10px; margin-top: 15px;' : 'display: none;'}">
+            <div class="mobile-actions" style="${isMobile ? 'display: flex;' : 'display: none;'}">
                 <button type="button" class="mobile-tap-btn" onclick="showWordSelection(${index})">
-                    <i class="fas fa-hand-pointer"></i> Tap to Add
+                    <i class="fas fa-hand-pointer"></i> Tap to Select Words
                 </button>
                 <button type="button" class="reset-drag-btn" onclick="resetDragDropQuestion(${index})">
-                    <i class="fas fa-redo"></i> Reset
+                    <i class="fas fa-redo"></i> Reset All
                 </button>
             </div>
             
@@ -1016,12 +1187,31 @@ function generateDragDropHTML(question, index) {
                 <i class="fas fa-redo"></i> Reset Words
             </button>
             
-            <div class="drag-drop-feedback" id="feedback_${index}"></div>
+            <div class="current-sentence">
+                <strong>Current sentence:</strong> 
+                <span id="currentSentence_${index}">${userAnswer.join(' ') || '(Empty)'}</span>
+            </div>
             
             <input type="hidden" id="dragDropAnswer_${index}" value="${JSON.stringify(userAnswer)}">
         </div>
     `;
 }
+// Function to update the current sentence display
+function updateCurrentSentenceDisplay(questionIndex) {
+    const displayElement = document.getElementById(`currentSentence_${questionIndex}`);
+    if (displayElement) {
+        const currentAnswer = userAnswers[questionIndex] || [];
+        displayElement.textContent = currentAnswer.join(' ') || '(Empty)';
+
+        // Add animation
+        displayElement.style.animation = 'none';
+        setTimeout(() => {
+            displayElement.style.animation = 'highlight 0.5s ease';
+        }, 10);
+    }
+}
+
+
 // Alternative method for mobile: word selection
 function showWordSelection(questionIndex) {
     const question = currentQuiz.questions[questionIndex];
@@ -1446,26 +1636,66 @@ function submitQuiz() {
     showResults();
 }
 // Initialize touch-friendly drag & drop
+// Initialize touch-friendly drag & drop with proper event handling
 function initTouchDragDrop(questionIndex) {
     const scrambledContainer = document.getElementById(`scrambledWords_${questionIndex}`);
     const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
 
     if (!scrambledContainer || !sentenceContainer) return;
 
-    // Get all word elements
-    const scrambledWords = scrambledContainer.querySelectorAll('.scrambled-word');
-    const sentenceWords = sentenceContainer.querySelectorAll('.word-in-slot');
+    // Clear any existing listeners first
+    scrambledContainer.querySelectorAll('.scrambled-word').forEach(el => {
+        el.removeEventListener('touchstart', handleTouchStart);
+        el.removeEventListener('touchend', handleTouchEnd);
+        el.removeEventListener('touchmove', handleTouchMove);
+    });
 
-    // Add touch events to all words
-    addTouchEvents(scrambledWords, 'scrambled', questionIndex);
-    addTouchEvents(sentenceWords, 'sentence', questionIndex);
+    sentenceContainer.querySelectorAll('.word-in-slot').forEach(el => {
+        el.removeEventListener('touchstart', handleTouchStart);
+        el.removeEventListener('touchend', handleTouchEnd);
+        el.removeEventListener('touchmove', handleTouchMove);
+    });
 
-    // Make containers droppable for touch
-    makeDroppable(sentenceContainer, questionIndex, 'sentence');
-    makeDroppable(scrambledContainer, questionIndex, 'scrambled');
+    // Add touch events
+    setTimeout(() => {
+        const allWords = document.querySelectorAll(
+            `#scrambledWords_${questionIndex} .scrambled-word, 
+             #sentenceContainer_${questionIndex} .word-in-slot`
+        );
 
-    // Also keep mouse events for desktop
-    initMouseDragDrop(questionIndex);
+        allWords.forEach(word => {
+            // Add touch events
+            word.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleTouchStart(e, word.classList.contains('scrambled-word') ? 'scrambled' : 'sentence', questionIndex);
+            }, { passive: false });
+
+            word.addEventListener('touchend', (e) => {
+                handleTouchEnd(e, word.classList.contains('scrambled-word') ? 'scrambled' : 'sentence', questionIndex);
+            });
+
+            word.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                handleTouchMove(e);
+            }, { passive: false });
+
+            // Also keep mouse events for hybrid devices
+            word.addEventListener('mousedown', (e) => {
+                if (!isMobileDevice()) {
+                    handleDragStart(e);
+                }
+            });
+        });
+
+        // Make containers droppable for touch
+        makeDroppable(sentenceContainer, questionIndex, 'sentence');
+        makeDroppable(scrambledContainer, questionIndex, 'scrambled');
+
+        // Also initialize mouse events for desktop
+        if (!isMobileDevice()) {
+            initMouseDragDrop(questionIndex);
+        }
+    }, 100);
 }
 // Initialize mouse-based drag & drop (for desktop)
 function initMouseDragDrop(questionIndex) {
@@ -1595,6 +1825,7 @@ function removeFromSentence(questionIndex, word) {
 }
 
 // Update drag & drop answer
+// Update drag & drop answer with animation
 function updateDragDropAnswer(questionIndex) {
     const sentenceContainer = document.getElementById(`sentenceContainer_${questionIndex}`);
     const answerInput = document.getElementById(`dragDropAnswer_${questionIndex}`);
@@ -1610,8 +1841,16 @@ function updateDragDropAnswer(questionIndex) {
 
     // Update hidden input
     answerInput.value = JSON.stringify(currentAnswer);
-}
 
+    // Update visual display
+    updateCurrentSentenceDisplay(questionIndex);
+
+    // Visual feedback
+    if (currentAnswer.length > 0) {
+        sentenceContainer.style.borderColor = 'var(--secondary)';
+        sentenceContainer.style.animation = 'pulse-border 1s ease';
+    }
+}
 // Reset drag & drop question
 function resetDragDropQuestion(questionIndex) {
     const question = currentQuiz.questions[questionIndex];
@@ -2116,7 +2355,30 @@ function showResults() {
 }
 
 
+// Function to save showUserQuizzes setting
+function saveShowUserQuizzesSetting(value) {
+    showUserQuizzes = value;
+    localStorage.setItem('showUserQuizzes', value);
 
+    // Refresh the current view
+    refreshCurrentView();
+}
+
+// Function to refresh the current view based on settings
+function refreshCurrentView() {
+    const selectElement = document.getElementById('Select');
+    const isQuizMode = selectElement && selectElement.value.includes('quiz');
+    const activeLevelBtn = document.querySelector('.level-btn.active');
+    const currentLevel = activeLevelBtn ? activeLevelBtn.dataset.level : 'all';
+
+    if (isQuizMode) {
+        filterQuizzesByLevel(currentLevel);
+    } else {
+        renderStories();
+    }
+
+    showNotification(`User quizzes ${showUserQuizzes ? 'enabled' : 'disabled'}`, 'success');
+}
 function backToQuizzes() {
     // Reset review mode
     isReviewMode = false;
@@ -2456,9 +2718,17 @@ function performSearch() {
         if (levelBtns.length > 0) {
             levelBtns[0].classList.add('active');
         }
+    } else {
+        // If search is cleared, show quizzes based on current level
+        const activeLevelBtn = document.querySelector('.level-btn.active');
+        const currentLevel = activeLevelBtn ? activeLevelBtn.dataset.level : 'all';
+        filterQuizzesByLevel(currentLevel);
     }
 }
 
+// Updated filterQuizzesBySearch function with showUserQuizzes setting
+
+// Updated filterQuizzesBySearch function with proper showUserQuizzes checking
 function filterQuizzesBySearch(query) {
     if (!query || query.trim() === '') {
         renderQuizzes();
@@ -2466,13 +2736,33 @@ function filterQuizzesBySearch(query) {
     }
 
     query = query.toLowerCase().trim();
-    const filteredQuizzes = quizzes.filter(quiz => {
+
+    // Start with regular quizzes only
+    let filteredQuizzes = [...quizzes];
+
+    // Add user quizzes only if setting is enabled
+    if (showUserQuizzes) {
+        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+        userQuizzes.forEach(userQuiz => {
+            const exists = filteredQuizzes.some(q => q.id === userQuiz.id);
+            if (!exists) {
+                filteredQuizzes.push({
+                    ...userQuiz,
+                    isUserQuiz: true
+                });
+            }
+        });
+    }
+
+    // Now filter by search query
+    filteredQuizzes = filteredQuizzes.filter(quiz => {
         const titleMatch = quiz.title.toLowerCase().includes(query);
         const descriptionMatch = quiz.description?.toLowerCase().includes(query) || false;
         const levelMatch = quiz.level.toLowerCase().includes(query);
         const typeMatch = quiz.type.toLowerCase().includes(query);
+        const authorMatch = quiz.author?.toLowerCase().includes(query) || false;
 
-        return titleMatch || descriptionMatch || levelMatch || typeMatch;
+        return titleMatch || descriptionMatch || levelMatch || typeMatch || authorMatch;
     });
 
     displayFilteredQuizzes(filteredQuizzes, query);
@@ -2481,13 +2771,16 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
     if (!storiesGrid) return;
 
     storiesGrid.innerHTML = '';
+    storiesGrid.classList.add('quizzes-grid');
 
     if (filteredQuizzes.length === 0) {
         storiesGrid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search fa-2x"></i>
                 <h3>No quizzes found for "${query}"</h3>
-                <p>Try different keywords or browse all quizzes</p>
+                <p>${query && showUserQuizzes ?
+                'Try different keywords or browse all quizzes' :
+                'User quizzes are currently disabled in settings'}</p>
             </div>
         `;
         return;
@@ -2498,10 +2791,15 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
         quizCard.className = 'quiz-card';
         quizCard.dataset.quizId = quiz.id;
 
+        // Add user quiz indicator only if user quizzes are enabled
+        if (quiz.isUserQuiz && showUserQuizzes) {
+            quizCard.classList.add('user-quiz-card');
+        }
+
         const questionCount = quiz.questions ? quiz.questions.length : 0;
         const timeEstimate = Math.ceil(questionCount * 0.5);
 
-        // Get quiz history (moved inside the forEach loop)
+        // Get quiz history
         const history = quizHistory[quiz.id];
         const hasHistory = history && history.lastScore !== undefined;
         const lastScore = hasHistory ? history.lastScore : null;
@@ -2519,8 +2817,33 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
             });
         }
 
+        // Format creation date
+        let createdDate = '';
+        if (quiz.createdAt) {
+            const date = new Date(quiz.createdAt);
+            createdDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        } else if (quiz.uploadDate) {
+            const date = new Date(quiz.uploadDate);
+            createdDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // User quiz badge - only show if user quizzes are enabled
+        const userQuizBadge = (quiz.isUserQuiz && showUserQuizzes) ?
+            `<div class="user-quiz-badge" title="User-created quiz">
+                <i class="fas fa-user-edit"></i>
+            </div>` : '';
+
         // Highlight search matches in title
         const highlightedTitle = highlightSearchMatch(quiz.title, query);
+        // Also highlight in description if needed
+        const highlightedDescription = quiz.description ?
+            highlightSearchMatch(quiz.description, query) : 'Test your knowledge';
 
         quizCard.innerHTML = `
             <div class="quiz-header">
@@ -2530,12 +2853,13 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
                 <div class="quiz-info">
                     <span class="quiz-level ${quiz.level}">${quiz.level.charAt(0).toUpperCase() + quiz.level.slice(1)}</span>
                     <span class="quiz-type">${quiz.type}</span>
+                    ${userQuizBadge}
                 </div>
             </div>
             
             <div class="quiz-content">
                 <h3 class="quiz-title">${highlightedTitle}</h3>
-                <p class="quiz-description">${quiz.description || 'Test your knowledge'}</p>
+                <p class="quiz-description">${highlightedDescription}</p>
                 
                 <div class="quiz-meta">
                     <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
@@ -2545,6 +2869,18 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
                 ''
             }
                 </div>
+                
+                ${quiz.author ? `
+                    <div class="quiz-author">
+                        <i class="fas fa-user"></i> ${quiz.author}
+                    </div>
+                ` : ''}
+                
+                ${createdDate ? `
+                    <div class="quiz-date">
+                        <i class="far fa-calendar-alt"></i> Created: ${createdDate}
+                    </div>
+                ` : ''}
                 
                 ${hasHistory ? `
                     <div class="quiz-progress-section">
@@ -2615,114 +2951,6 @@ function filterStoriesBySearch(query) {
     });
 }
 
-function displayFilteredStories(filteredStories, query) {
-    if (!storiesGrid) return;
-
-    storiesGrid.innerHTML = '';
-
-    if (filteredStories.length === 0) {
-        storiesGrid.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-search fa-2x"></i>
-                <h3>No stories found for "${query}"</h3>
-                <p>Try different keywords or browse all stories</p>
-            </div>
-        `;
-        return;
-    }
-
-    filteredStories.forEach(story => {
-        const storyCard = document.createElement('div');
-        storyCard.className = 'story-card';
-        storyCard.dataset.storyTitle = story.title;
-        storyCard.dataset.storyId = story.id || story.title.toLowerCase().replace(/\s+/g, '-');
-
-        // Get story history if available
-        const storyHistory = quizHistory[`story-${story.id}`] || {};
-        const hasHistory = storyHistory.lastReadDate !== undefined;
-
-        // Format last read date if available
-        let lastReadDate = '';
-        if (hasHistory && storyHistory.lastReadDate) {
-            const date = new Date(storyHistory.lastReadDate);
-            lastReadDate = date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        }
-
-        // Highlight search matches
-        const highlightedTitle = highlightSearchMatch(story.title, query);
-        const wordCount = story.wordCount || 'N/A';
-        const readTime = Math.ceil((wordCount !== 'N/A' ? wordCount : 100) / 200);
-
-        storyCard.innerHTML = `
-            <div class="story-header">
-                <div class="story-icon">
-                    ${renderStoryCover(story)}
-                </div>
-                <div class="story-info">
-                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                    ${story.category ? `<span class="story-category">${story.category}</span>` : ''}
-                </div>
-            </div>
-            
-            <div class="story-content">
-                <h3 class="story-title">${highlightedTitle}</h3>
-                <p class="story-description">${story.description || 'Read this interesting story to improve your language skills.'}</p>
-                
-                <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${wordCount} words</span>
-                    <span><i class="fas fa-clock"></i> ${readTime} min read</span>
-                    ${story.chapters ? `<span><i class="fas fa-book"></i> ${story.chapters} chapters</span>` : ''}
-                </div>
-                
-                ${hasHistory ? `
-                    <div class="story-progress-section">
-                        <div class="story-progress-display">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${storyHistory.completionPercentage || 0}%; 
-                                    background: ${storyHistory.completionPercentage >= 100 ? '#4CAF50' : '#FF9800'};"></div>
-                            </div>
-                            <div class="progress-details">
-                                <span class="completion-rate">
-                                    <i class="fas fa-percentage"></i> ${storyHistory.completionPercentage || 0}% complete
-                                </span>
-                            </div>
-                        </div>
-                        ${lastReadDate ?
-                    `<p class="last-read-date"><i class="far fa-calendar"></i> Last read: ${lastReadDate}</p>` :
-                    ''
-                }
-                    </div>
-                ` : `
-                    <div class="story-progress-section">
-                        <p class="no-history"><i class="far fa-star"></i> Not read yet</p>
-                    </div>
-                `}
-            </div>
-            
-            <div class="story-actions">
-                <button class="story-read-btn" data-story-id="${story.id || story.title.toLowerCase().replace(/\s+/g, '-')}">
-                    <i class="fas fa-book-open"></i> Read Story
-                </button>
-                <button class="story-preview-btn" data-story-id="${story.id || story.title.toLowerCase().replace(/\s+/g, '-')}">
-                    <i class="fas fa-eye"></i> Preview
-                </button>
-            </div>
-        `;
-
-        // Add event listeners
-        const readBtn = storyCard.querySelector('.story-read-btn');
-        const previewBtn = storyCard.querySelector('.story-preview-btn');
-
-        readBtn.addEventListener('click', () => readStory(story.id || story.title));
-        previewBtn.addEventListener('click', () => previewStory(story.id || story.title));
-
-        storiesGrid.appendChild(storyCard);
-    });
-}
 
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -2902,128 +3130,62 @@ function setupEventListeners() {
     }
 }
 
-function filterQuizzesByLevel(level) {
-    if (level === 'all') {
-        renderQuizzes();
-        return;
-    }
 
-    const filteredQuizzes = quizzes.filter(quiz => quiz.level === level);
 
-    if (!storiesGrid) return;
-    storiesGrid.innerHTML = '';
+// Function to save showUserQuizzes setting
+function saveShowUserQuizzesSetting(value) {
+    showUserQuizzes = value;
+    localStorage.setItem('showUserQuizzes', value);
 
-    if (filteredQuizzes.length === 0) {
-        storiesGrid.innerHTML = `
-            <div class="no-quizzes-message">
-                <i class="fas fa-brain fa-3x"></i>
-                <h3>No ${level} quizzes available</h3>
-                <p>Try a different level or check back soon!</p>
-            </div>
-        `;
-        return;
-    }
+    // Refresh the current view
+    refreshCurrentView();
 
-    filteredQuizzes.forEach(quiz => {
-        const quizCard = document.createElement('div');
-        quizCard.className = 'quiz-card';
-        quizCard.dataset.quizId = quiz.id;
+    showNotification(`User quizzes ${value ? 'enabled' : 'disabled'}`, 'success');
+}
+// Function to refresh the current view based on settings
+// Function to refresh the current view based on settings
+function refreshCurrentView() {
+    const selectElement = document.getElementById('Select');
+    const isQuizMode = selectElement && selectElement.value.includes('quiz');
+    const activeLevelBtn = document.querySelector('.level-btn.active');
+    const currentLevel = activeLevelBtn ? activeLevelBtn.dataset.level : 'all';
 
-        const questionCount = quiz.questions ? quiz.questions.length : 0;
-        const timeEstimate = Math.ceil(questionCount * 0.5);
+    // Get current search query
+    const currentSearch = searchInput ? searchInput.value.trim() : '';
 
-        // Get quiz history (add this part)
-        const history = quizHistory[quiz.id];
-        const hasHistory = history && history.lastScore !== undefined;
-        const lastScore = hasHistory ? history.lastScore : null;
-        const bestScore = hasHistory ? history.bestScore : null;
-        const attempts = hasHistory ? history.attempts : 0;
-
-        // Format date for last attempt
-        let lastAttemptDate = '';
-        if (hasHistory && history.lastDate) {
-            const date = new Date(history.lastDate);
-            lastAttemptDate = date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
+    if (isQuizMode) {
+        if (currentSearch) {
+            // If there's a search query, perform search
+            filterQuizzesBySearch(currentSearch);
+        } else {
+            // Otherwise filter by level
+            filterQuizzesByLevel(currentLevel);
         }
+    } else {
+        renderStories();
+    }
 
-        quizCard.innerHTML = `
-            <div class="quiz-header">
-                <div class="quiz-icon">
-                    <i class="fas ${getQuizIcon(quiz.type)}"></i>
-                </div>
-                <div class="quiz-info">
-                    <span class="quiz-level ${quiz.level}">${quiz.level.charAt(0).toUpperCase() + quiz.level.slice(1)}</span>
-                    <span class="quiz-type">${quiz.type}</span>
-                </div>
-            </div>
-            
-            <div class="quiz-content">
-                <h3 class="quiz-title">${quiz.title}</h3>
-                <p class="quiz-description">${quiz.description || 'Test your knowledge'}</p>
-                
-                <div class="quiz-meta">
-                    <span><i class="fas fa-question-circle"></i> ${questionCount} questions</span>
-                    <span><i class="fas fa-clock"></i> ${timeEstimate} min</span>
-                    ${attempts > 0 ?
-                `<span><i class="fas fa-history"></i> ${attempts} attempt${attempts !== 1 ? 's' : ''}</span>` :
-                ''
-            }
-                </div>
-                
-                ${hasHistory ? `
-                    <div class="quiz-progress-section">
-                        <div class="quiz-score-display">
-                            <div class="score-progress-bar">
-                                <div class="score-progress-fill" style="width: ${lastScore}%; 
-                                    background: ${getScoreColor(lastScore)};"></div>
-                            </div>
-                            <div class="score-details">
-                                <span class="last-score">Last: <strong>${lastScore}%</strong></span>
-                                ${bestScore !== lastScore ?
-                    `<span class="best-score">Best: <strong>${bestScore}%</strong></span>` :
-                    ''
-                }
-                            </div>
-                        </div>
-                        ${lastAttemptDate ?
-                    `<p class="last-attempt-date"><i class="far fa-calendar"></i> ${lastAttemptDate}</p>` :
-                    ''
-                }
-                    </div>
-                ` : `
-                    <div class="quiz-progress-section">
-                        <p class="no-attempts"><i class="far fa-star"></i> Not attempted yet</p>
-                    </div>
-                `}
-            </div>
-            
-            <div class="quiz-actions">
-                <button class="quiz-start-btn" data-quiz-id="${quiz.id}">
-                    <i class="fas fa-play"></i> ${hasHistory ? 'Retry Quiz' : 'Start Quiz'}
-                </button>
-                <button class="quiz-preview-btn" data-quiz-id="${quiz.id}">
-                    <i class="fas fa-eye"></i> Preview
-                </button>
-            </div>
-        `;
+    showNotification(`User quizzes ${showUserQuizzes ? 'enabled' : 'disabled'}`, 'success');
+}
+// Function to initialize user quizzes setting toggle
+function initUserQuizzesSetting() {
+    const toggleSwitch = document.getElementById('showUserQuizzesToggle');
 
-        const startBtn = quizCard.querySelector('.quiz-start-btn');
-        const previewBtn = quizCard.querySelector('.quiz-preview-btn');
+    if (!toggleSwitch) {
+        console.log('Toggle switch not found, creating dynamically...');
+        // Create toggle dynamically if not in HTML
+        createToggleSwitch();
+        return;
+    }
 
-        startBtn.addEventListener('click', () => startQuiz(quiz.id));
-        previewBtn.addEventListener('click', () => previewQuiz(quiz.id));
+    // Set initial state
+    toggleSwitch.checked = showUserQuizzes;
 
-        storiesGrid.appendChild(quizCard);
+    // Add event listener
+    toggleSwitch.addEventListener('change', function () {
+        saveShowUserQuizzesSetting(this.checked);
     });
 }
-
-
-
-
 
 // ========= Refresh Function ==========
 function Refresh() {
