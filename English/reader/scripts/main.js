@@ -8,6 +8,14 @@ let fontFamily = localStorage.getItem('fontFamily') || 'sans-serif'; // Add this
 let currentStory = null;
 let currentWordData = null;
 let dictionary = {};
+// Global variables for paragraph translation
+let paragraphTranslationEnabled = false;
+let translationSettings = {
+    autoDetectLanguage: true,
+    targetLanguage: 'ar',
+    showBothLanguages: false,
+    translationProvider: 'google' // 'google' or 'deepl' or 'libretranslate'
+};
 
 // DOM elements
 const storyTitle = document.getElementById('storyTitle');
@@ -517,36 +525,231 @@ async function loadStory() {
 // ----------------------------------------------------
 // 🧭 وظائف حفظ واستعادة موقع القراءة
 // ----------------------------------------------------
-
 function saveReadingPosition() {
     if (currentStory && window.scrollY > 0) {
+        const storyInfo = getStoryIdFromUrl();
+
+        // Get existing reading history
+        let readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
+
+        // Create a unique story key using title + author (if available)
+        // This is more reliable than just using ID
+        const storyKey = createStoryKey(currentStory);
+
+        // Create position data
         const positionData = {
             id: currentStory.id,
+            storyId: storyInfo.id,
+            storyKey: storyKey, // Add storyKey
+            isUserStory: storyInfo.isUserStory,
+            storyTitle: currentStory.title || 'Unknown Story',
+            storyAuthor: currentStory.author || '', // Save author too
             scrollPosition: window.scrollY,
-            isUserStory: currentStory.isUserStory || false
+            timestamp: new Date().toISOString(),
+            totalHeight: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+            percentage: Math.round((window.scrollY / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100)
         };
-        localStorage.setItem('readingPosition', JSON.stringify(positionData));
+
+        // Check if this story already exists in history using storyKey
+        const existingIndex = readingHistory.findIndex(item =>
+            item.storyKey === storyKey
+        );
+
+        if (existingIndex !== -1) {
+            // Update existing entry
+            readingHistory[existingIndex] = positionData;
+        } else {
+            // Add new entry at the beginning
+            readingHistory.unshift(positionData);
+
+            // Keep only the last 50 stories
+            if (readingHistory.length > 50) {
+                readingHistory = readingHistory.slice(0, 50);
+            }
+        }
+
+        // Sort by timestamp (most recent first) before saving
+        readingHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // Save to localStorage
+        localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
+
+        // Also save current position for immediate restoration
+        localStorage.setItem('readingPosition', JSON.stringify({
+            id: currentStory.id,
+            storyId: storyInfo.id,
+            storyKey: storyKey,
+            isUserStory: storyInfo.isUserStory,
+            scrollPosition: window.scrollY
+        }));
+
+        console.log(`Saved reading position for "${currentStory.title}" (Key: ${storyKey}): ${positionData.percentage}%`);
     }
 }
 
-function restoreReadingPosition() {
-    const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
-    const storyInfo = getStoryIdFromUrl();
+// Helper function to create a unique story key
+function createStoryKey(story) {
+    if (!story) return 'unknown';
 
-    if (savedPosition &&
-        savedPosition.id == storyInfo.id &&
-        savedPosition.isUserStory === storyInfo.isUserStory) {
+    // Create a key using title + author (if available)
+    // Remove special characters and normalize
+    const titlePart = (story.title || '').toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, '_')
+        .substring(0, 50);
 
-        const checkContentLoaded = () => {
-            if (document.readyState === 'complete' && storyText.innerHTML && !storyText.innerHTML.includes('loading')) {
-                window.scrollTo(0, savedPosition.scrollPosition);
-                console.log(`Restored scroll position for story ${storyInfo.id} to ${savedPosition.scrollPosition}px.`);
-            } else {
-                setTimeout(checkContentLoaded, 100);
-            }
-        };
-        checkContentLoaded();
+    const authorPart = (story.author || '').toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, '_')
+        .substring(0, 20);
+
+    // Combine title and author
+    if (authorPart) {
+        return `${titlePart}_${authorPart}`;
     }
+
+    // If no author, add story type
+    const type = story.isUserStory ? 'user' : 'regular';
+    return `${titlePart}_${type}`;
+}
+function restoreReadingPosition() {
+    // Wait until currentStory is set
+    if (!currentStory) {
+        console.log('Current story not loaded yet, waiting 200ms...');
+        setTimeout(restoreReadingPosition, 200);
+        return;
+    }
+
+    const storyKey = createStoryKey(currentStory);
+    console.log(`Looking for reading position for "${currentStory.title}" (Key: ${storyKey})`);
+
+    // Check if story content is loaded
+    if (!storyText || storyText.innerHTML.includes('loading')) {
+        console.log('Story content not fully loaded, waiting 200ms...');
+        setTimeout(restoreReadingPosition, 200);
+        return;
+    }
+
+    // First try to restore from immediate position
+    const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
+    if (savedPosition && savedPosition.storyKey === storyKey) {
+        console.log(`Found immediate position: ${savedPosition.scrollPosition}px`);
+
+        // Wait a bit more to ensure DOM is completely ready
+        setTimeout(() => {
+            window.scrollTo(0, savedPosition.scrollPosition);
+            console.log(`Restored immediate position for "${currentStory.title}" to ${savedPosition.scrollPosition}px.`);
+        }, 300);
+        return;
+    }
+
+    // If no immediate position, check reading history
+    const readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
+
+    // Find entry for current story using storyKey
+    const historyEntry = readingHistory.find(item => item.storyKey === storyKey);
+
+    if (historyEntry) {
+        console.log(`Found history entry: ${historyEntry.scrollPosition}px (${historyEntry.percentage}%)`);
+
+        // Wait for DOM to be fully ready
+        setTimeout(() => {
+            window.scrollTo(0, historyEntry.scrollPosition);
+            console.log(`Restored from history for "${currentStory.title}" to ${historyEntry.scrollPosition}px (${historyEntry.percentage}%).`);
+
+            // Show notification if it's been a while
+            const lastRead = new Date(historyEntry.timestamp);
+            const daysAgo = Math.floor((new Date() - lastRead) / (1000 * 60 * 60 * 24));
+            if (daysAgo > 0) {
+                showNotification(`Continuing "${currentStory.title}" from ${daysAgo} day${daysAgo > 1 ? 's' : ''} ago (${historyEntry.percentage}%)`, 'info');
+            }
+        }, 300);
+    } else {
+        console.log(`No reading history found for "${currentStory.title}" (Key: ${storyKey})`);
+    }
+}
+function getStoryReadingPosition(storyId, isUserStory = false) {
+    const readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
+
+    // Try to find by storyKey first, then fallback to old method
+    const currentKey = createStoryKey(currentStory);
+    const entryByKey = readingHistory.find(item => item.storyKey === currentKey);
+
+    if (entryByKey) {
+        return entryByKey;
+    }
+
+    // Fallback to old method
+    return readingHistory.find(item =>
+        item.storyId == storyId &&
+        item.isUserStory === isUserStory
+    );
+}
+
+function getAllReadingHistory() {
+    let readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
+
+    // Sort by most recent first
+    readingHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    // Return only last 17 for display purposes, but keep more in storage
+    return readingHistory.slice(0, 17);
+}
+function clearStoryReadingPosition(storyId, isUserStory = false) {
+    let readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
+
+    // Get current story key
+    const currentKey = createStoryKey(currentStory);
+
+    // Remove by storyKey
+    readingHistory = readingHistory.filter(item => item.storyKey !== currentKey);
+
+    localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
+
+    // Also clear immediate position if it matches
+    const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
+    if (savedPosition && savedPosition.storyKey === currentKey) {
+        localStorage.removeItem('readingPosition');
+    }
+
+    console.log(`Cleared reading position for "${currentStory?.title}"`);
+}
+
+// Clear all reading history
+function clearAllReadingHistory() {
+    localStorage.removeItem('readingHistory');
+    localStorage.removeItem('readingPosition');
+    showNotification('All reading history cleared', 'success');
+}
+
+// Get reading progress for a story
+function getStoryProgress(storyId, isUserStory = false) {
+    const entry = getStoryReadingPosition(storyId, isUserStory);
+    if (entry) {
+        return {
+            percentage: entry.percentage,
+            timestamp: entry.timestamp,
+            position: entry.scrollPosition,
+            storyTitle: entry.storyTitle
+        };
+    }
+    return null;
+}
+
+// Update reading position on scroll (debounced)
+let scrollTimeout;
+function setupReadingPositionTracker() {
+    window.addEventListener('scroll', function () {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            if (currentStory && window.scrollY > 100) { // Only save if scrolled past 100px
+                saveReadingPosition();
+            }
+        }, 1000); // Save after 1 second of no scrolling
+    });
+
+    // Also save when leaving the page
+    window.addEventListener('beforeunload', saveReadingPosition);
 }
 
 // ----------------------------------------------------
@@ -591,6 +794,7 @@ function getFallbackStory(storyId) {
 }
 function displayStory(story) {
     storyTitle.textContent = story.title;
+    currentStory = story; // Make sure currentStory is set
 
     if (story.author && story.author.trim() !== "") {
         const badge = document.createElement('span');
@@ -613,24 +817,19 @@ function displayStory(story) {
     if (sound) {
         if (story.sound && story.sound.trim() !== "") {
             sound.src = story.sound;
-            sound.style.display = "block";      // إظهار الصوت
+            sound.style.display = "block";
         } else {
             sound.removeAttribute("src");
-            sound.style.display = "none";       // إخفاؤه إذا لا توجد قراءة
+            sound.style.display = "none";
         }
     }
 
     // Display difficulty level
     if (lvl && story.level) {
-        const level = story.level.toLowerCase(); // normalize value
-
-        // Capitalize first letter for display
+        const level = story.level.toLowerCase();
         lvl.textContent = level.charAt(0).toUpperCase() + level.slice(1);
-
-        // Remove old level classes (important)
         lvl.classList.remove('beginner', 'intermediate', 'advanced');
 
-        // Add class based on level
         if (level === 'beginner') {
             lvl.classList.add('beginner');
         } else if (level === 'intermediate') {
@@ -640,19 +839,13 @@ function displayStory(story) {
         }
     }
 
-    // Display CEFR level - FIXED
+    // Display CEFR level
     if (lvlcefr && story.levelcefr && story.levelcefr.trim() !== "") {
-        // Remove any old CEFR classes
         lvlcefr.classList.remove('A1', 'A2', 'B1', 'B2', 'C1', 'C2');
-
-        // Set text content
         lvlcefr.textContent = story.levelcefr.toUpperCase();
-
-        // Add appropriate CEFR class for styling
         const cefrLevel = story.levelcefr.toUpperCase();
         lvlcefr.classList.add(cefrLevel);
     } else if (lvlcefr) {
-        // If no CEFR level, hide the element
         lvlcefr.style.display = 'none';
     }
 
@@ -667,6 +860,17 @@ function displayStory(story) {
 
     setupWordInteractions();
     updateReadingProgress();
+
+    // ADD THIS LINE - Add translation buttons if enabled
+    if (localStorage.getItem('paragraphTranslationEnabled') === 'true') {
+        setTimeout(() => {
+            if (typeof window.addTranslationButtons === 'function') {
+                window.addTranslationButtons();
+            }
+        }, 500);
+    }
+
+    // DON'T call restoreReadingPosition here - it will be called after everything is ready
 }
 /**
  * Function makeWordsClickable(htmlString, options = {})
@@ -1462,111 +1666,6 @@ function setupTextSelectionDetection() {
         }
     });
 }
-// Handle text selection and show dictionary
-function handleTextSelection(selectedText, selection) {
-    // Get the exact position of the selection
-    const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-
-    // Check if the word exists in our clickable words
-    const allWords = document.querySelectorAll('.word');
-    let foundWordElement = null;
-
-    // First, try to find an exact match among clickable words
-    allWords.forEach(word => {
-        if (word.textContent.trim() === selectedText) {
-            foundWordElement = word;
-        }
-    });
-
-    if (foundWordElement) {
-        // Use the existing word's data
-        const dataWord = foundWordElement.dataset.word;
-        showDictionary(dataWord, foundWordElement, true);
-    } else {
-        // If no exact clickable word found, try to look it up in dictionary
-        lookupAndShowSelectedWord(selectedText, rect);
-    }
-
-    // DO NOT clear selection here - let user see what they selected
-    // selection.removeAllRanges();
-
-    // Instead, add a visual highlight that fades out
-    highlightSelection(selection);
-
-}
-
-function highlightSelection(selection) {
-    const range = selection.getRangeAt(0);
-    const rects = range.getClientRects();
-
-    [...rects].forEach(rect => {
-        const highlight = document.createElement('div');
-        highlight.className = 'text-selection-highlight';
-        highlight.style.cssText = `
-            position: absolute;
-            top: ${rect.top + window.scrollY}px;
-            left: ${rect.left + window.scrollX}px;
-            width: ${rect.width}px;
-            height: ${rect.height}px;
-            background-color: rgba(0, 123, 255, 0.05);
-            border-radius: 3px;
-            pointer-events: none;
-            z-index: 999;
-            transition: opacity 1s ease;
-        `;
-
-        document.body.appendChild(highlight);
-
-        setTimeout(() => {
-            highlight.style.opacity = '0';
-            setTimeout(() => highlight.remove(), 1000);
-        }, 1200);
-    });
-}
-
-
-// Lookup a selected word and show dictionary popup
-function lookupAndShowSelectedWord(word, rect) {
-    const trimmedWord = word.trim();
-
-    // Try to find the word in dictionary
-    const standardKey = getStandardKey(trimmedWord);
-    const normalizedKey = getNormalizedKey(trimmedWord);
-
-    let wordData = null;
-    let foundKey = null;
-
-    // Check main dictionary
-    if (dictionary[standardKey]) {
-        wordData = dictionary[standardKey];
-        foundKey = standardKey;
-    } else if (dictionary[normalizedKey]) {
-        wordData = dictionary[normalizedKey];
-        foundKey = normalizedKey;
-    }
-
-    // Check custom dictionary
-    if (!wordData) {
-        const storyInfo = getStoryIdFromUrl();
-        const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
-        const customDictionary = userDictionaries[storyInfo.id];
-
-        if (customDictionary) {
-            // Try to find in custom dictionary
-            for (const [key, data] of Object.entries(customDictionary)) {
-                if (getStandardKey(key) === standardKey || getNormalizedKey(key) === normalizedKey) {
-                    wordData = typeof data === 'string' ? { translation: data } : data;
-                    foundKey = key;
-                    break;
-                }
-            }
-        }
-    }
-
-    // Show the dictionary popup
-    showDictionary(foundKey || standardKey, trimmedWord, true);
-}
 
 
 
@@ -1964,15 +2063,6 @@ async function init() {
         window.selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
         window.selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#10b981';
 
-        // ====== NEW STEP: Load custom CSS FIRST ======
-        console.log('Step 0.5: Loading custom CSS...');
-        const savedCSS = localStorage.getItem('customCSS') || '';
-        if (savedCSS.trim()) {
-            applyCustomCSS(savedCSS);
-            console.log('Custom CSS loaded from localStorage');
-        }
-        // ============================================
-
         // STEP 1: Apply saved theme FIRST
         console.log('Step 1: Applying theme...');
         applyTheme();
@@ -1988,10 +2078,11 @@ async function init() {
         if (window.selectedSecondaryColor) {
             applySecondaryColor(window.selectedSecondaryColor);
         }
-        loadFontSettings()
+
+        loadFontSettings();
+
         // STEP 3: Initialize color selectors
         console.log('Step 3: Initializing color selectors...');
-        // Wait for color selector script to be loaded
         setTimeout(() => {
             if (window.initColorSelector && window.initSecondaryColorSelector) {
                 initColorSelector();
@@ -1999,12 +2090,10 @@ async function init() {
             }
         }, 100);
 
-
-
-
+        // STEP 4: Setup text selection and reading position tracker
+        console.log('Step 4: Setting up text selection and reading position tracker...');
         setupTextSelectionDetection();
-
-
+        setupReadingPositionTracker();
 
         // STEP 5: Setup event listeners
         console.log('Step 5: Setting up event listeners...');
@@ -2015,18 +2104,21 @@ async function init() {
 
         // Load story
         await loadStory();
+        // RESTORE WILL BE CALLED FROM loadStory() - DON'T CALL IT HERE
 
         // Update stats and render vocabulary
         updateVocabularyStats();
 
-        // Restore reading position
-        setTimeout(() => {
-            restoreReadingPosition();
-        }, 200);
-
         // Auto lazy load images
         document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
 
+        // FINAL STEP: Apply custom CSS
+        console.log('Final Step: Applying custom CSS...');
+        const savedCSS = localStorage.getItem('customCSS') || '';
+        if (savedCSS.trim()) {
+            applyCustomCSS(savedCSS);
+            console.log('Custom CSS loaded from localStorage');
+        }
 
     } catch (error) {
         console.error('Error during initialization:', error);

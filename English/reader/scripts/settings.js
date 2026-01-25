@@ -1141,3 +1141,419 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+// =========== PARAGRAPH TRANSLATION =========================
+
+// Initialize paragraph translation system
+function initParagraphTranslation() {
+    // Load saved setting
+    const saved = localStorage.getItem('paragraphTranslationEnabled');
+    paragraphTranslationEnabled = saved === 'true';
+
+    // Setup toggle
+    const toggle = document.getElementById('paragraphTranslationToggle');
+    if (toggle) {
+        toggle.checked = paragraphTranslationEnabled;
+
+        toggle.addEventListener('change', function (e) {
+            paragraphTranslationEnabled = e.target.checked;
+            localStorage.setItem('paragraphTranslationEnabled', paragraphTranslationEnabled);
+
+            if (paragraphTranslationEnabled) {
+                addTranslationButtons();
+                showNotification('Paragraph translation enabled', 'success');
+            } else {
+                removeTranslationButtons();
+                showNotification('Paragraph translation disabled', 'info');
+            }
+        });
+    }
+
+    // Apply on load if enabled
+    if (paragraphTranslationEnabled) {
+        setTimeout(addTranslationButtons, 1000);
+    }
+}
+
+// Add translation buttons to all paragraphs
+function addTranslationButtons() {
+    const paragraphs = document.querySelectorAll('.paragraph');
+
+    paragraphs.forEach((paragraph, index) => {
+        // Check if buttons already exist
+        if (paragraph.querySelector('.paragraph-buttons')) return;
+
+        // Get paragraph text
+        const text = paragraph.textContent.trim();
+
+        // Create button container
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'paragraph-buttons';
+        buttonContainer.style.cssText = `
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        `;
+
+        // Create AI Translate button
+        const aiButton = document.createElement('button');
+        aiButton.className = 'ai-translate-btn';
+        aiButton.innerHTML = '<i class="fas fa-robot"></i> AI Translate';
+        aiButton.style.cssText = `
+            padding: 6px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        `;
+        aiButton.onclick = () => translateWithAI(text, index, paragraph);
+
+        // Create Google Translate button
+        const googleButton = document.createElement('button');
+        googleButton.className = 'google-translate-btn';
+        googleButton.innerHTML = '<i class="fab fa-google"></i> Google Translate';
+        googleButton.style.cssText = `
+            padding: 6px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        `;
+        googleButton.onclick = () => translateWithGoogle(text, index);
+
+        // Append everything
+        buttonContainer.appendChild(aiButton);
+        buttonContainer.appendChild(googleButton);
+        paragraph.appendChild(buttonContainer);
+
+        // Add hover effect
+        paragraph.addEventListener('mouseenter', () => {
+            buttonContainer.style.opacity = '1';
+        });
+        paragraph.addEventListener('mouseleave', () => {
+            buttonContainer.style.opacity = '0.7';
+        });
+    });
+
+    console.log(`Added translation buttons to ${paragraphs.length} paragraphs`);
+}
+
+// Remove all translation buttons
+function removeTranslationButtons() {
+    document.querySelectorAll('.paragraph-buttons').forEach(el => el.remove());
+    document.querySelectorAll('.translate-result').forEach(el => el.remove());
+}
+
+// Translate with AI (in-app)
+async function translateWithAI(text, index, paragraphElement) {
+    const resultId = `translate-result-${index}`;
+
+    // Close all other translation results first
+    closeOtherTranslations(resultId);
+
+    let resultDiv = document.getElementById(resultId);
+
+    // If result already exists and is visible, close it (toggle behavior)
+    if (resultDiv && resultDiv.style.display !== 'none') {
+        resultDiv.style.display = 'none';
+        showNotification('Translation closed', 'info');
+        return;
+    }
+
+    if (!resultDiv) {
+        // Create result container if it doesn't exist
+        resultDiv = document.createElement('div');
+        resultDiv.className = 'translate-result';
+        resultDiv.id = resultId;
+        resultDiv.style.cssText = `
+            margin-top: 10px;
+            padding: 12px;
+            background: var(--background-light);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+            animation: fadeIn 0.3s ease;
+        `;
+        paragraphElement.parentNode.insertBefore(resultDiv, paragraphElement.nextSibling);
+    }
+
+    // Show loading
+    resultDiv.innerHTML = '<div style="text-align: center; color: #666;"><i class="fas fa-spinner fa-spin"></i> Translating...</div>';
+    resultDiv.style.display = 'block';
+
+    try {
+        // Get saved language
+        const targetLang = localStorage.getItem('defaultTranslateLanguage') || 'ar';
+
+        // Use Google Translate API
+        const translation = await translateTextWithGoogleAPI(text, targetLang);
+
+        // RTL languages
+        const rtlLanguages = ['ar', 'ar-SA', 'ar-EG', 'fa', 'ur', 'he', 'yi', 'dv'];
+        const shouldBeRTL = rtlLanguages.includes(targetLang);
+
+        // Create translation HTML with RTL support
+        const translationHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <strong style="color: var(--primary);">
+                    <i class="fas fa-language"></i> Translation (AI)
+                </strong>
+                <button onclick="closeTranslation(${index})" 
+                        style="background: none; border: none; color: #999; cursor: pointer; font-size: 0.8em;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="line-height: 1.5; color: var(--text); font-size: 0.8em; 
+                       ${shouldBeRTL ? 'direction: rtl; text-align: right;' : ''}">
+                ${translation}
+            </div>
+            <div style="margin-top: 8px; font-size: 0.8rem; color: var(--text-light);
+                       ${shouldBeRTL ? 'direction: rtl; text-align: right;' : ''}">
+                <i class="fas fa-info-circle"></i> Translated to ${getLanguageName(targetLang)}
+            </div>
+        `;
+
+        resultDiv.innerHTML = translationHTML;
+
+        // Apply RTL styles to the entire container if needed
+        if (shouldBeRTL) {
+            resultDiv.style.direction = 'rtl';
+            resultDiv.style.textAlign = 'right';
+        } else {
+            resultDiv.style.direction = 'ltr';
+            resultDiv.style.textAlign = 'left';
+        }
+
+        showNotification('Paragraph translated successfully', 'success');
+
+        // Add click listener to close when clicking on another paragraph
+        setupAutoCloseListeners(resultDiv, index);
+
+    } catch (error) {
+        console.error('Translation error:', error);
+        resultDiv.innerHTML = `
+            <div style="color: #dc3545;">
+                <i class="fas fa-exclamation-triangle"></i> Translation failed. Please try again or use Google Translate.
+            </div>
+        `;
+        showNotification('Translation failed', 'error');
+    }
+}
+
+// Close all other translation results
+function closeOtherTranslations(currentId) {
+    document.querySelectorAll('.translate-result').forEach(result => {
+        if (result.id !== currentId && result.style.display !== 'none') {
+            result.style.display = 'none';
+        }
+    });
+}
+
+// Close specific translation
+function closeTranslation(index) {
+    const resultDiv = document.getElementById(`translate-result-${index}`);
+    if (resultDiv) {
+        resultDiv.style.display = 'none';
+    }
+}
+
+// Set up auto-close when clicking on another paragraph
+function setupAutoCloseListeners(resultDiv, currentIndex) {
+    const closeListener = function (e) {
+        // Don't close if clicking on the close button or inside the translation
+        if (resultDiv.contains(e.target) ||
+            e.target.closest('.translate-result') ||
+            e.target.classList.contains('fa-times')) {
+            return;
+        }
+
+        // Check if clicking on another paragraph's translate button
+        const clickedButton = e.target.closest('.ai-translate-btn');
+        if (clickedButton) {
+            // Find which paragraph was clicked
+            const paragraphs = document.querySelectorAll('.paragraph');
+            paragraphs.forEach((paragraph, index) => {
+                if (paragraph.contains(clickedButton) && index !== currentIndex) {
+                    // Clicked on a different paragraph's translate button
+                    resultDiv.style.display = 'none';
+                }
+            });
+        }
+    };
+
+    // Add the listener
+    document.addEventListener('click', closeListener);
+
+    // Remove listener after 30 seconds or when translation is closed
+    setTimeout(() => {
+        document.removeEventListener('click', closeListener);
+    }, 30000);
+
+    // Also remove listener when translation is closed
+    const observer = new MutationObserver(() => {
+        if (resultDiv.style.display === 'none') {
+            document.removeEventListener('click', closeListener);
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(resultDiv, { attributes: true, attributeFilter: ['style'] });
+}
+// Translate with Google (open in new tab)
+function translateWithGoogle(text, index) {
+    const targetLang = localStorage.getItem('defaultTranslateLanguage') || 'ar';
+    const url = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodeURIComponent(text)}&op=translate`;
+    window.open(url, '_blank');
+
+    showNotification('Opening Google Translate...', 'info');
+}
+
+// Helper function to translate text
+async function translateTextWithGoogleAPI(text, targetLang) {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Translation failed');
+
+    const data = await response.json();
+    if (data && data[0]) {
+        return data[0].map(item => item[0]).join('');
+    }
+    throw new Error('No translation found');
+}
+
+// Helper function to get language name
+function getLanguageName(code) {
+    const languages = {
+        'ar': 'Arabic',
+        'fr': 'French',
+        'es': 'Spanish',
+        'de': 'German',
+        'ru': 'Russian',
+        'zh-CN': 'Chinese',
+        'ja': 'Japanese',
+        'ko': 'Korean',
+        'pt': 'Portuguese',
+        'it': 'Italian',
+        'hi': 'Hindi',
+        'tr': 'Turkish',
+        'fa': 'Persian',
+        'ur': 'Urdu',
+        'en': 'English'
+    };
+    return languages[code] || code;
+}
+
+// Add CSS styles for paragraph translation
+const paragraphTranslationCSS = `
+    .paragraph-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--border);
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    .paragraph:hover .paragraph-buttons {
+        opacity: 1;
+    }
+    
+    .ai-translate-btn {
+        padding: 6px 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .ai-translate-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .google-translate-btn {
+        padding: 6px 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .google-translate-btn:hover {
+        background: var(--primary);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .translate-result {
+        margin-top: 10px;
+        padding: 12px;
+        background: var(--background-light);
+        border-radius: 6px;
+        border-left: 3px solid var(--primary);
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+
+// Add CSS to document
+const paragraphStyle = document.createElement('style');
+paragraphStyle.textContent = paragraphTranslationCSS;
+document.head.appendChild(paragraphStyle);
+
+// Call init when DOM is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize paragraph translation
+    initParagraphTranslation();
+});
+
+// Also re-apply buttons when story loads (for main.js)
+window.addEventListener('load', function () {
+    if (paragraphTranslationEnabled) {
+        setTimeout(addTranslationButtons, 1500);
+    }
+});

@@ -22,3 +22,11 @@
     font-weight: normal;
     font-style: normal;
 }
+@font-face {
+    font-family: 'Pnu';
+    /* The name you will use in CSS */
+    src: url('../../../fonts/PNU-Bold.ttf') format('truetype');
+    /* Path to your font */
+    font-weight: normal;
+    font-style: normal;
+}
