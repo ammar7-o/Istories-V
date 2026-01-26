@@ -163,10 +163,44 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Show voice button</span>
+                        <span class="setting-desc">Display voice buuton for listen to words</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="listenToWord">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
 
 
+            <!-- قسم التخصيص المتقدم -->
+            <div class="settings-section">
+                <h3><i class="fas fa-code"></i> Advanced Customization</h3>
 
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Custom CSS</span>
+                        <span class="setting-desc">Add your own CSS styles</span>
+                    </div>
+                    <button class="danger-btn" id="showCustomCSS">
+                        <i class="fas fa-code"></i> Edit Custom CSS
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Reset All Settings</span>
+                        <span class="setting-desc">Restore default settings</span>
+                    </div>
+                    <button class=" btn-danger" id="resetAllSettings">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
 
             <!-- قسم التطبيق -->
             <div class="settings-section">
@@ -254,7 +288,49 @@
         </div>
     </main>
 
+    <!-- Custom CSS Modal (add at bottom of settings page) -->
+    <div class="custom-css-modal" id="customCSSModal">
+        <div class="custom-css-header">
+            <h3><i class="fas fa-code"></i> Custom CSS Editor</h3>
+            <button class="close-modal" id="closeCustomCSS">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="custom-css-body">
+            <div class="css-actions">
+                <button class=" btn-2 btn-secondary-2" id="previewCSS">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class=" btn-2 btn-primary-2" id="saveCustomCSS">
+                    <i class="fas fa-save"></i> Save CSS
+                </button>
+                <button class=" btn-2 btn-danger-2" id="clearCustomCSS">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+            <div class="css-editor-header">
+                <div class="css-examples">
+                    <small>Examples:</small>
+                    <code>.story-text { color: #333; }</code>
+                    <code>.word:hover { background: yellow; }</code>
+                    <code>body { font-size: 18px; }</code>
+                </div>
+            </div>
+            <textarea id="customCSSInput" placeholder="Enter your custom CSS here... Example: 
+.story-card:has(.user-story-badge) {
+    display: none;
+}
 
+" rows="15"></textarea>
+
+
+
+            <div class="css-info">
+                <small><i class="fas fa-info-circle"></i> Your CSS will be applied to the entire application.
+                    Use with caution.</small>
+            </div>
+        </div>
+    </div>
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -273,6 +349,7 @@
 
 
     <script src="main.js"></script>
+    <script src="costumecss.js"></script>
 
 
 

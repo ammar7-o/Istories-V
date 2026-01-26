@@ -298,7 +298,7 @@ function openStoryInNewPage(storyId) {
         showNotification('Story not found!');
     }
 }
-// Function to render cover images
+// Function to render cover images with fallback to book icon
 function renderStoryCover(story) {
     if (!story.cover) {
         // Default book icon if no cover specified
@@ -308,7 +308,19 @@ function renderStoryCover(story) {
     if (story.coverType === 'emoji') {
         return `<div class="story-emoji">${story.cover}</div>`;
     } else if (story.coverType === 'image') {
-        return `<img src="${story.cover}" alt="${story.title}" class="story-image">`;
+        // Create image with error handling
+        return `
+                <img 
+                    src="${story.cover}" 
+                    alt="${story.title}" 
+                    class="story-image"
+                    loading="lazy"
+                    onerror="this.onerror=null; this.style.display='none'; this.parentElement.querySelector('.fallback-icon').style.display='block';"
+                >
+                <div class="fallback-icon" style="display: none;">
+                    <i class="fas fa-book"></i>
+                </div>
+        `;
     } else if (story.coverType === 'icon') {
         return `<i class="${story.cover}"></i>`;
     } else {
@@ -316,6 +328,7 @@ function renderStoryCover(story) {
         return `<div class="story-emoji">${story.cover}</div>`;
     }
 }
+
 
 
 // Render stories grid with clickable cards

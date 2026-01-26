@@ -1349,7 +1349,7 @@ async function translateWithAI(text, index, paragraphElement) {
             resultDiv.style.textAlign = 'left';
         }
 
-        showNotification('Paragraph translated successfully', 'success');
+        // showNotification('Paragraph translated successfully', 'success');
 
         // Add click listener to close when clicking on another paragraph
         setupAutoCloseListeners(resultDiv, index);

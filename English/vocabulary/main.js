@@ -15,6 +15,7 @@ const vocabularyList = document.getElementById('vocabularyList');
 // App state
 let currentPage = 'home';
 let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let showVoiceButtons = localStorage.getItem('showVoiceButtons') !== 'false'; // Default: true
 
 // Color settings
 let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
@@ -492,7 +493,7 @@ function importVocabulary() {
                     const existsInCurrent = currentWords.some(existingWord =>
                         existingWord.word.toLowerCase() === newWord.word.toLowerCase()
                     );
-                    
+
                     // Check if word already exists in merged words (for duplicates in import file)
                     const existsInMerged = mergedWords.some(mergedWord =>
                         mergedWord.word.toLowerCase() === newWord.word.toLowerCase()
@@ -521,7 +522,7 @@ function importVocabulary() {
                     const wasImported = mergedWords.some(mergedWord =>
                         mergedWord.word.toLowerCase() === existingWord.word.toLowerCase()
                     );
-                    
+
                     if (!wasImported) {
                         mergedWords.push(existingWord);
                     }
@@ -529,7 +530,7 @@ function importVocabulary() {
 
                 // Save back to localStorage
                 localStorage.setItem('savedWords', JSON.stringify(mergedWords));
-                
+
                 // Update the global savedWords array
                 savedWords = mergedWords;
 
@@ -549,7 +550,7 @@ function importVocabulary() {
                 }
 
                 console.log('Import successful. New total:', mergedWords.length);
-              
+
             } catch (error) {
                 console.error('Import error:', error);
                 const errorMsg = `Import failed: ${error.message}`;
@@ -1057,7 +1058,7 @@ function setupSettings() {
 
 // ============== VOCABULARY FUNCTIONS =================
 
-// Render vocabulary list - compatible with both formats
+// Update your renderVocabulary function to include voice buttons
 function renderVocabulary() {
     if (!vocabularyList) return;
 
@@ -1075,7 +1076,7 @@ function renderVocabulary() {
     // Create a copy to avoid mutating original array
     const wordsToDisplay = [...savedWords];
 
-    // Sort by date (newest first) - if you want explicit sorting
+    // Sort by date (newest first)
     wordsToDisplay.sort((a, b) => {
         const dateA = new Date(a.addedDate || a.added || a.date || 0);
         const dateB = new Date(b.addedDate || b.added || b.date || 0);
@@ -1136,18 +1137,22 @@ function renderVocabulary() {
                 </div>
             </div>
             <div class="word-actions">
-                <button title="Mark as mastered" data-index="${originalIndex}">
-                    <i class="fas fa-check"></i>
-                </button>
                 <button title="Delete" data-index="${originalIndex}">
                     <i class="fas fa-trash"></i>
+                </button>
+                <button title="Mark as mastered" data-index="${originalIndex}">
+                    <i class="fas fa-check"></i>
                 </button>
             </div>
         `;
 
         vocabularyList.appendChild(item);
+
+        // Add voice button if setting is enabled
+        addVoiceButtonToVocabularyItem(item, displayWord, translation);
     });
 
+    // Add event listeners for delete and mark as mastered buttons
     document.querySelectorAll('.word-actions button').forEach(button => {
         button.addEventListener('click', (e) => {
             const index = parseInt(e.currentTarget.dataset.index);
@@ -1456,7 +1461,294 @@ function addXP(amount, reason = '') {
 
     console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
 }
+// =============voice ==========================
+// Initialize voice button setting
+function initVoiceButtonSetting() {
+    const toggleSwitch = document.getElementById('listenToWord');
+    if (!toggleSwitch) return;
 
+    // Set initial state
+    toggleSwitch.checked = showVoiceButtons;
+
+    // Add event listener
+    toggleSwitch.addEventListener('change', function () {
+        saveVoiceButtonSetting(this.checked);
+    });
+}
+
+// Save voice button setting
+function saveVoiceButtonSetting(value) {
+    showVoiceButtons = value;
+    localStorage.setItem('showVoiceButtons', value);
+
+    // Update the vocabulary list to show/hide voice buttons
+    renderVocabulary();
+
+    showNotification(`Voice buttons ${value ? 'enabled' : 'disabled'}`, 'success');
+}
+
+// Add voice button to vocabulary items
+function addVoiceButtonToVocabularyItem(item, word, translation) {
+    if (!showVoiceButtons) return;
+
+    // Create voice button
+    const voiceBtn = document.createElement('button');
+    voiceBtn.className = 'vocabulary-voice-btn';
+    voiceBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    voiceBtn.title = 'Listen to pronunciation';
+
+    // Add click event
+    voiceBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        speakVocabularyWord(word, translation);
+    });
+
+    // Add to word actions
+    const wordActions = item.querySelector('.word-actions');
+    if (wordActions) {
+        // Insert voice button before other buttons
+        wordActions.insertBefore(voiceBtn, wordActions.firstChild);
+    }
+}
+
+// Speak vocabulary word
+function speakVocabularyWord(word, translation) {
+    if (!word) return;
+
+    // Try to speak the word in its original language
+    // Determine language based on the word
+    let language = 'en'; // Default to English
+
+    // Check if the word contains Arabic characters
+    const arabicRegex = /[\u0600-\u06FF]/;
+    if (arabicRegex.test(word)) {
+        language = 'ar';
+    } else if (arabicRegex.test(translation)) {
+        // If translation is Arabic, speak the word in English
+        language = 'en';
+    } else {
+        // For non-Arabic words, try to detect language
+        // Check for French characters/accents
+        const frenchRegex = /[éèêëàâäôöûüçœæ]/i;
+        if (frenchRegex.test(word)) {
+            language = 'fr';
+        } else if (/^[a-zA-Z\s]+$/.test(word)) {
+            // Only English/French characters
+            language = 'en';
+        }
+    }
+
+    // Speak the word
+    playGoogleVoice(word, language);
+}
+// =============== SPEECH FUNCTIONALITY ===============
+function playGoogleVoice(word, language = 'en') {
+    if (!word || word.trim() === '') {
+        showNotification('No word to speak', 'error');
+        return;
+    }
+
+    const text = word.trim();
+
+    // Get the clicked button (we'll pass it as a parameter)
+    // But first, let's store the clicked button
+    const clickedButton = event.target.closest('.vocabulary-voice-btn') ||
+        event.target.querySelector('.vocabulary-voice-btn');
+
+    // Show loading indicator ONLY on the clicked button
+    if (clickedButton) {
+        const icon = clickedButton.querySelector('i');
+        if (icon) {
+            icon.className = 'fas fa-spinner fa-spin';
+        }
+        clickedButton.disabled = true;
+    }
+
+    try {
+        // Original Google TTS URL
+        const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
+
+        // Use a CORS proxy to bypass restrictions
+        const proxyUrl = 'https://corsproxy.io/?';
+        const proxiedUrl = proxyUrl + encodeURIComponent(googleTTSUrl);
+
+        // Create audio element and play
+        const audio = new Audio(proxiedUrl);
+
+        // Play the audio
+        audio.play()
+            .then(() => {
+                console.log(`Playing TTS for: ${text} in ${language}`);
+            })
+            .catch(error => {
+                console.error('TTS play failed:', error);
+                // Fallback to native speech synthesis
+                useNativeSpeechSynthesis(text, language, clickedButton);
+            });
+
+        // Reset the clicked button when audio ends
+        audio.onended = () => {
+            if (clickedButton) {
+                resetSingleVoiceButton(clickedButton);
+            }
+        };
+
+        // Reset button on error
+        audio.onerror = () => {
+            console.error('Audio element error');
+            if (clickedButton) {
+                resetSingleVoiceButton(clickedButton);
+            }
+            useNativeSpeechSynthesis(text, language, clickedButton);
+        };
+
+    } catch (error) {
+        console.error('TTS error:', error);
+        if (clickedButton) {
+            resetSingleVoiceButton(clickedButton);
+        }
+        useNativeSpeechSynthesis(text, language, clickedButton);
+    }
+}
+
+function useNativeSpeechSynthesis(text, language = 'en-US', clickedButton) {
+    if (!('speechSynthesis' in window)) {
+        showNotification('Speech synthesis not supported', 'error');
+        if (clickedButton) {
+            resetSingleVoiceButton(clickedButton);
+        }
+        return false;
+    }
+
+    speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language;
+    utterance.rate = 0.95;
+    utterance.pitch = 1.05;
+    utterance.volume = 1;
+
+    // Get available voices
+    const voices = speechSynthesis.getVoices();
+
+    if (voices.length > 0) {
+        // Try to find a voice for the language
+        let preferredVoice = voices.find(v => v.lang === language);
+
+        if (!preferredVoice) {
+            // Try to find any voice that starts with the language code
+            const langPrefix = language.split('-')[0];
+            preferredVoice = voices.find(v => v.lang.startsWith(langPrefix));
+        }
+
+        if (preferredVoice) {
+            utterance.voice = preferredVoice;
+        }
+    }
+
+    // Reset the clicked button when speech ends
+    utterance.onend = () => {
+        if (clickedButton) {
+            resetSingleVoiceButton(clickedButton);
+        }
+    };
+
+    utterance.onerror = () => {
+        if (clickedButton) {
+            resetSingleVoiceButton(clickedButton);
+        }
+    };
+
+    speechSynthesis.speak(utterance);
+    return true;
+}
+
+// Reset only the specific button
+function resetSingleVoiceButton(button) {
+    const icon = button.querySelector('i');
+    if (icon) {
+        icon.className = 'fas fa-volume-up';
+    }
+    button.disabled = false;
+}
+
+// Reset all voice buttons (for backward compatibility)
+function resetVoiceButtons() {
+    const voiceBtns = document.querySelectorAll('.vocabulary-voice-btn');
+    voiceBtns.forEach(btn => {
+        resetSingleVoiceButton(btn);
+    });
+}
+
+
+// Load available voices
+function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            voices = window.speechSynthesis.getVoices();
+            console.log('Voices loaded:', voices.length);
+        };
+    }
+}
+
+// Also add these CSS styles for the voice button
+const voiceButtonCSS = document.createElement('style');
+voiceButtonCSS.textContent = `
+.vocabulary-voice-btn {
+    background: var(--secondary);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.vocabulary-voice-btn:hover {
+    background: var(--secondary-dark);
+    transform: scale(1.1);
+}
+
+.vocabulary-voice-btn:active {
+    transform: scale(0.95);
+}
+
+.vocabulary-voice-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vocabulary-voice-btn i {
+    font-size: 14px;
+}
+
+
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+`;
+
+// Add the CSS to the document head
+document.head.appendChild(voiceButtonCSS);
+
+// Call loadVoices on initialization
+window.addEventListener('load', loadVoices);
 // =============== INITIALIZATION ===============
 function init() {
     console.log('App initialization started...');
@@ -1465,27 +1757,30 @@ function init() {
     applyTheme();
 
     // Apply saved colors
-    applyPrimaryColor(selectedColor);
-    applySecondaryColor(selectedSecondaryColor);
-
-    // Set up navigation
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            switchPage(link.dataset.page);
-        });
-    });
-
-    // Set up settings
-    setupSettings();
+    if (selectedColor) {
+        applyPrimaryColor(selectedColor);
+    }
+    if (selectedSecondaryColor) {
+        applySecondaryColor(selectedSecondaryColor);
+    }
 
     // Set up navigation menu toggle
     setupNavToggle();
 
+    // Set up settings
+    setupSettings();
+
+    // Initialize voice button setting
+    initVoiceButtonSetting();
+
     // Initialize color selectors
     setTimeout(() => {
-        initColorSelector();
-        initSecondaryColorSelector();
+        if (document.querySelector('.color-option')) {
+            initColorSelector();
+        }
+        if (document.querySelector('.secondary-color')) {
+            initSecondaryColorSelector();
+        }
     }, 50);
 
     // Initialize vocabulary search
@@ -1493,13 +1788,33 @@ function init() {
         initVocabularySearch();
     }, 100);
 
-    // Render vocabulary if on vocabulary page
-    if (currentPage === 'home' && typeof renderVocabulary === 'function') {
-        renderVocabulary();
-        updateStats();
+    // Initialize refresh app button
+    const refreshBtn = document.getElementById('refresh-app');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function () {
+            location.reload();
+        });
     }
 
-    console.log('App initialization complete!');
+    // Initialize vocabulary actions buttons
+    const exportBtn = document.getElementById('exportBtn');
+    const removeAllBtn = document.querySelector('.v-btn:nth-child(3)'); // The "Remove all" button
+
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportVocabulary);
+    }
+
+    if (removeAllBtn) {
+        removeAllBtn.addEventListener('click', removeAll);
+    }
+
+    // Render vocabulary list
+    renderVocabulary();
+
+    // Update statistics
+    updateStats();
+
+    console.log('Vocabulary page initialization complete!');
 }
 
 // Initialize the app when DOM is loaded

@@ -1095,7 +1095,6 @@ function speakCurrentCard() {
 
 
 // Add speech button to flashcard
-// Add speech button to flashcard
 function addSpeechButtonToCard() {
     // Remove existing button
     const existingBtn = document.getElementById('flashcardSpeechBtn');

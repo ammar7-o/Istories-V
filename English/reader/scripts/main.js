@@ -242,25 +242,25 @@ function addTranslationBadge() {
     const badge = document.createElement('div');
     badge.className = 'translation-badge';
     badge.innerHTML = `
-        <i class="fas fa-user-edit"></i> Custom Translations Available
-    `;
+            <i class="fas fa-user-edit"></i> Custom Translations Available
+        `;
     badge.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: var(--primary);
-        color: white;
-        padding: 10px 15px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        z-index: 999;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        animation: slideIn 0.3s ease;
-    `;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+        `;
 
     document.body.appendChild(badge);
 
@@ -527,229 +527,33 @@ async function loadStory() {
 // ----------------------------------------------------
 function saveReadingPosition() {
     if (currentStory && window.scrollY > 0) {
-        const storyInfo = getStoryIdFromUrl();
-
-        // Get existing reading history
-        let readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
-
-        // Create a unique story key using title + author (if available)
-        // This is more reliable than just using ID
-        const storyKey = createStoryKey(currentStory);
-
-        // Create position data
         const positionData = {
             id: currentStory.id,
-            storyId: storyInfo.id,
-            storyKey: storyKey, // Add storyKey
-            isUserStory: storyInfo.isUserStory,
-            storyTitle: currentStory.title || 'Unknown Story',
-            storyAuthor: currentStory.author || '', // Save author too
             scrollPosition: window.scrollY,
-            timestamp: new Date().toISOString(),
-            totalHeight: document.documentElement.scrollHeight - document.documentElement.clientHeight,
-            percentage: Math.round((window.scrollY / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100)
+            isUserStory: currentStory.isUserStory || false
         };
-
-        // Check if this story already exists in history using storyKey
-        const existingIndex = readingHistory.findIndex(item =>
-            item.storyKey === storyKey
-        );
-
-        if (existingIndex !== -1) {
-            // Update existing entry
-            readingHistory[existingIndex] = positionData;
-        } else {
-            // Add new entry at the beginning
-            readingHistory.unshift(positionData);
-
-            // Keep only the last 50 stories
-            if (readingHistory.length > 50) {
-                readingHistory = readingHistory.slice(0, 50);
-            }
-        }
-
-        // Sort by timestamp (most recent first) before saving
-        readingHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        // Save to localStorage
-        localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
-
-        // Also save current position for immediate restoration
-        localStorage.setItem('readingPosition', JSON.stringify({
-            id: currentStory.id,
-            storyId: storyInfo.id,
-            storyKey: storyKey,
-            isUserStory: storyInfo.isUserStory,
-            scrollPosition: window.scrollY
-        }));
-
-        console.log(`Saved reading position for "${currentStory.title}" (Key: ${storyKey}): ${positionData.percentage}%`);
+        localStorage.setItem('readingPosition', JSON.stringify(positionData));
     }
 }
 
-// Helper function to create a unique story key
-function createStoryKey(story) {
-    if (!story) return 'unknown';
-
-    // Create a key using title + author (if available)
-    // Remove special characters and normalize
-    const titlePart = (story.title || '').toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, '_')
-        .substring(0, 50);
-
-    const authorPart = (story.author || '').toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, '_')
-        .substring(0, 20);
-
-    // Combine title and author
-    if (authorPart) {
-        return `${titlePart}_${authorPart}`;
-    }
-
-    // If no author, add story type
-    const type = story.isUserStory ? 'user' : 'regular';
-    return `${titlePart}_${type}`;
-}
 function restoreReadingPosition() {
-    // Wait until currentStory is set
-    if (!currentStory) {
-        console.log('Current story not loaded yet, waiting 200ms...');
-        setTimeout(restoreReadingPosition, 200);
-        return;
-    }
-
-    const storyKey = createStoryKey(currentStory);
-    console.log(`Looking for reading position for "${currentStory.title}" (Key: ${storyKey})`);
-
-    // Check if story content is loaded
-    if (!storyText || storyText.innerHTML.includes('loading')) {
-        console.log('Story content not fully loaded, waiting 200ms...');
-        setTimeout(restoreReadingPosition, 200);
-        return;
-    }
-
-    // First try to restore from immediate position
     const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
-    if (savedPosition && savedPosition.storyKey === storyKey) {
-        console.log(`Found immediate position: ${savedPosition.scrollPosition}px`);
+    const storyInfo = getStoryIdFromUrl();
 
-        // Wait a bit more to ensure DOM is completely ready
-        setTimeout(() => {
-            window.scrollTo(0, savedPosition.scrollPosition);
-            console.log(`Restored immediate position for "${currentStory.title}" to ${savedPosition.scrollPosition}px.`);
-        }, 300);
-        return;
-    }
+    if (savedPosition &&
+        savedPosition.id == storyInfo.id &&
+        savedPosition.isUserStory === storyInfo.isUserStory) {
 
-    // If no immediate position, check reading history
-    const readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
-
-    // Find entry for current story using storyKey
-    const historyEntry = readingHistory.find(item => item.storyKey === storyKey);
-
-    if (historyEntry) {
-        console.log(`Found history entry: ${historyEntry.scrollPosition}px (${historyEntry.percentage}%)`);
-
-        // Wait for DOM to be fully ready
-        setTimeout(() => {
-            window.scrollTo(0, historyEntry.scrollPosition);
-            console.log(`Restored from history for "${currentStory.title}" to ${historyEntry.scrollPosition}px (${historyEntry.percentage}%).`);
-
-            // Show notification if it's been a while
-            const lastRead = new Date(historyEntry.timestamp);
-            const daysAgo = Math.floor((new Date() - lastRead) / (1000 * 60 * 60 * 24));
-            if (daysAgo > 0) {
-                showNotification(`Continuing "${currentStory.title}" from ${daysAgo} day${daysAgo > 1 ? 's' : ''} ago (${historyEntry.percentage}%)`, 'info');
+        const checkContentLoaded = () => {
+            if (document.readyState === 'complete' && storyText.innerHTML && !storyText.innerHTML.includes('loading')) {
+                window.scrollTo(0, savedPosition.scrollPosition);
+                console.log(`Restored scroll position for story ${storyInfo.id} to ${savedPosition.scrollPosition}px.`);
+            } else {
+                setTimeout(checkContentLoaded, 100);
             }
-        }, 300);
-    } else {
-        console.log(`No reading history found for "${currentStory.title}" (Key: ${storyKey})`);
-    }
-}
-function getStoryReadingPosition(storyId, isUserStory = false) {
-    const readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
-
-    // Try to find by storyKey first, then fallback to old method
-    const currentKey = createStoryKey(currentStory);
-    const entryByKey = readingHistory.find(item => item.storyKey === currentKey);
-
-    if (entryByKey) {
-        return entryByKey;
-    }
-
-    // Fallback to old method
-    return readingHistory.find(item =>
-        item.storyId == storyId &&
-        item.isUserStory === isUserStory
-    );
-}
-
-function getAllReadingHistory() {
-    let readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
-
-    // Sort by most recent first
-    readingHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-    // Return only last 17 for display purposes, but keep more in storage
-    return readingHistory.slice(0, 17);
-}
-function clearStoryReadingPosition(storyId, isUserStory = false) {
-    let readingHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
-
-    // Get current story key
-    const currentKey = createStoryKey(currentStory);
-
-    // Remove by storyKey
-    readingHistory = readingHistory.filter(item => item.storyKey !== currentKey);
-
-    localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
-
-    // Also clear immediate position if it matches
-    const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
-    if (savedPosition && savedPosition.storyKey === currentKey) {
-        localStorage.removeItem('readingPosition');
-    }
-
-    console.log(`Cleared reading position for "${currentStory?.title}"`);
-}
-
-// Clear all reading history
-function clearAllReadingHistory() {
-    localStorage.removeItem('readingHistory');
-    localStorage.removeItem('readingPosition');
-    showNotification('All reading history cleared', 'success');
-}
-
-// Get reading progress for a story
-function getStoryProgress(storyId, isUserStory = false) {
-    const entry = getStoryReadingPosition(storyId, isUserStory);
-    if (entry) {
-        return {
-            percentage: entry.percentage,
-            timestamp: entry.timestamp,
-            position: entry.scrollPosition,
-            storyTitle: entry.storyTitle
         };
+        checkContentLoaded();
     }
-    return null;
-}
-
-// Update reading position on scroll (debounced)
-let scrollTimeout;
-function setupReadingPositionTracker() {
-    window.addEventListener('scroll', function () {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            if (currentStory && window.scrollY > 100) { // Only save if scrolled past 100px
-                saveReadingPosition();
-            }
-        }, 1000); // Save after 1 second of no scrolling
-    });
-
-    // Also save when leaving the page
-    window.addEventListener('beforeunload', saveReadingPosition);
 }
 
 // ----------------------------------------------------
@@ -801,15 +605,15 @@ function displayStory(story) {
         badge.className = 'user-story-badge';
         badge.innerHTML = `<i class="fas fa-user"></i> ${story.author}`;
         badge.style.cssText = `
-            display: inline-block;
-            margin-left: 10px;
-            background: var(--primary);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        `;
+                display: inline-block;
+                margin-left: 10px;
+                background: var(--primary);
+                color: white;
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            `;
         storyTitle.appendChild(badge);
     }
 
@@ -870,7 +674,6 @@ function displayStory(story) {
         }, 500);
     }
 
-    // DON'T call restoreReadingPosition here - it will be called after everything is ready
 }
 /**
  * Function makeWordsClickable(htmlString, options = {})
@@ -1224,20 +1027,20 @@ function showNotification(message, type = 'success') {
     };
 
     notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${colors[type] || colors.success};
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        font-weight: 500;
-        animation: slideIn 0.3s ease;
-        max-width: 400px;
-        word-wrap: break-word;
-    `;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type] || colors.success};
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+            word-wrap: break-word;
+        `;
 
     document.body.appendChild(notification);
 
@@ -1964,83 +1767,83 @@ function setupEventListeners() {
 
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .word.saved {
-        animation: fadeIn 0.3s ease;
-    }
-    .no-translation-btn {
-        opacity: 0.7;
-    }
-    .no-translation-btn:hover {
-        opacity: 1;
-    }
-    button.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    .loading {
-        animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    .user-story-badge {
-        display: inline-block;
-        background: var(--primary);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        margin-left: 10px;
-        vertical-align: middle;
-    }
-    .user-story-badge i {
-        margin-right: 5px;
-    }
-    .user-story-badge-small {
-        display: inline-block;
-        background: var(--primary);
-        color: white;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        margin-left: 8px;
-        vertical-align: middle;
-    }
-    .word.from-user-story {
-        border-left: 3px solid var(--primary);
-    }
-    .translation-badge {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: var(--primary);
-        color: white;
-        padding: 10px 15px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        z-index: 999;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        animation: slideIn 0.3s ease;
-    }
-`;
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .word.saved {
+            animation: fadeIn 0.3s ease;
+        }
+        .no-translation-btn {
+            opacity: 0.7;
+        }
+        .no-translation-btn:hover {
+            opacity: 1;
+        }
+        button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .user-story-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .user-story-badge i {
+            margin-right: 5px;
+        }
+        .user-story-badge-small {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .word.from-user-story {
+            border-left: 3px solid var(--primary);
+        }
+        .translation-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+        }
+    `;
 document.head.appendChild(style);
 
 // ----------------------------------------------------
@@ -2090,11 +1893,6 @@ async function init() {
             }
         }, 100);
 
-        // STEP 4: Setup text selection and reading position tracker
-        console.log('Step 4: Setting up text selection and reading position tracker...');
-        setupTextSelectionDetection();
-        setupReadingPositionTracker();
-
         // STEP 5: Setup event listeners
         console.log('Step 5: Setting up event listeners...');
         setupEventListeners();
@@ -2104,11 +1902,14 @@ async function init() {
 
         // Load story
         await loadStory();
-        // RESTORE WILL BE CALLED FROM loadStory() - DON'T CALL IT HERE
+        // Wait a bit for DOM to fully render, then restore position
+
 
         // Update stats and render vocabulary
         updateVocabularyStats();
-
+        setTimeout(() => {
+            restoreReadingPosition();
+        }, 200);
         // Auto lazy load images
         document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
 
