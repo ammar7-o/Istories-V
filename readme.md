@@ -7,7 +7,8 @@
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/badge/Author-Ammar_Chacal-orange" alt="Author: Ammar Chacal">
 </div>
-  <img align="center" width="200px" src="icon.png" alt="Status: Active">
+<div align="center">  <img align="center" width="200px" src="icon.png" alt="Status: Active">
+</div>
 
 ## 📖 Overview | نظرة عامة
 **IStories** is a comprehensive language learning platform that combines interactive stories, vocabulary management, quizzes, and content creation tools to provide an engaging and effective language learning experience.
