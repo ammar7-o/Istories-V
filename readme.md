@@ -3,10 +3,11 @@
 
 <div align="center">
   <img src="https://img.shields.io/badge/Status-Active-success" alt="Status: Active">
-  <img src="https://img.shields.io/badge/Version-2.0-blue" alt="Version: 2.0">
+  <img src="https://img.shields.io/badge/Version-2.0-blue" alt="Version: 3.7.0">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/badge/Author-Ammar_Chacal-orange" alt="Author: Ammar Chacal">
 </div>
+  <img align="center" width="200px" src="icon.png" alt="Status: Active">
 
 ## 📖 Overview | نظرة عامة
 **IStories** is a comprehensive language learning platform that combines interactive stories, vocabulary management, quizzes, and content creation tools to provide an engaging and effective language learning experience.
@@ -162,7 +163,6 @@
 - **Answer Explanations**
 - **Review Mode** after completion
 - **User-created Quizzes**
-- **Timer Support**
 - **Progress Visualization**
 - **Level-based Quiz Filtering**
 
@@ -181,7 +181,6 @@
 - **شرح الإجابات**
 - **وضع المراجعة** بعد الانتهاء
 - **اختبارات من إنشاء المستخدمين**
-- **دعم المؤقت الزمني**
 - **تصور تقدم الاختبار**
 - **تصفية الاختبارات حسب المستوى**
 
@@ -366,29 +365,6 @@
 </tr>
 </table>
 
-## 🛠️ Project Structure | هيكلية المشروع
-
-```
-IStories/
-├── index.html                  # Main Dashboard
-├── English/                    # English Interface
-│   ├── index.html             # Story Library
-│   ├── vocabulary/            # Vocabulary Manager
-│   ├── reader/               # Interactive Reader
-│   └── quiz/                 # Quiz System
-├── database/                  # Story Database
-│   ├── main.js               # Main stories
-│   ├── stories1.js           # Additional stories
-│   ├── stories2.js           # More stories
-│   └── romance.js            # Genre-specific stories
-├── dictionarys/              # Dictionary Files
-│   ├── main.json            # Main dictionary
-│   └── user/               # User dictionaries
-├── styles/                   # CSS Stylesheets
-├── images/                   # Images & Assets
-├── js/                       # JavaScript Modules
-└── add-stories.html          # Story Creation Interface
-```
 
 ## 🔧 Installation & Usage | التثبيت والاستخدام
 
@@ -535,9 +511,6 @@ npx serve
 ### **Technical Improvements**
 - **PWA** (Progressive Web App) implementation
 - **Service Workers** for offline functionality
-- **IndexedDB** for larger storage
-- **WebSocket** for real-time collaboration
-- **REST API** for external integrations
 
 </td>
 <td>
@@ -557,9 +530,6 @@ npx serve
 ### **تحسينات تقنية**
 - **تطبيق PWA** (تطبيق ويب تقدمي)
 - **Service Workers** للوظائف دون اتصال
-- **IndexedDB** لتخزين أكبر
-- **WebSocket** للتعاون الفوري
-- **واجهة برمجة تطبيقات REST** للتكاملات الخارجية
 
 </td>
 </tr>
@@ -581,11 +551,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 هذا المشروع مرخص تحت رخصة MIT - انظر ملف [LICENSE](LICENSE) للتفاصيل.
 
-## 🙏 Acknowledgments | الشكر والتقدير
-
-Special thanks to all language learners and educators who provided feedback during development. This project is dedicated to everyone passionate about language learning and cultural exchange.
-
-شكر خاص لجميع متعلمي اللغات والمعلمين الذين قدموا ملاحظات أثناء التطوير. هذا المشروع مخصص لكل من يهتم بتعلم اللغات وتبادل الثقافات.
 
 ---
 
@@ -594,7 +559,6 @@ Special thanks to all language learners and educators who provided feedback duri
 **IStories - Learn Languages Through Stories**  
 **منصة IStories - تعلم اللغات من خلال القصص**
 
-[🏠 Home | الرئيسية](#) • [📚 Stories | القصص](#) • [🗂️ Vocabulary | المفردات](#) • [🧠 Quizzes | الاختبارات](#)
 
 *Made with ❤️ by Ammar Chacal*  
 *من صنع ❤️ عمار شقل*

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+
+    <!-- Primary Meta Tags -->
+    <title>IStories Reader - Interactive Language Learning Stories</title>
+    <meta name="title" content="IStories Reader - Interactive Language Learning Stories">
+    <meta name="description"
+        content="Read interactive stories with instant word translations, audio pronunciation, and vocabulary building. Learn English through engaging stories with clickable word definitions.">
+    <meta name="keywords"
+        content="language learning, English stories, interactive reading, vocabulary builder, word translation, audio pronunciation, learn English online, reading comprehension">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" content="https://ammar7-o.github.io/Istories-V/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+    <meta property="og:title" content="IStories - Interactive Language Learning Stories">
+    <meta property="og:description"
+        content="Learn Languages Through Interactive Stories with instant word translations and audio pronunciation.">
+    <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="IStories Logo - Interactive language learning platform">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="IStories">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://ammar7-o.github.io/Istories-V/">
+    <meta name="twitter:title" content="IStories Reader - Interactive Language Learning">
+    <meta name="twitter:description"
+        content="Read stories with clickable word translations, audio pronunciation, and vocabulary building features.">
+    <meta name="twitter:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+    <meta name="twitter:image:alt" content="IStories interactive reading platform">
+    <meta name="twitter:creator" content="@yourtwitterhandle">
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Author & Copyright -->
+    <meta name="author" content="Ammar Chacal">
+    <meta name="copyright" content="© 2024 IStories. All rights reserved.">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="msapplication-TileColor" content="#4f46e5">
+
+    <!-- Language & Region -->
+    <meta name="language" content="English">
+    <meta name="geo.region" content="US">
+    <meta name="geo.placename" content="Internet">
+
+    <!-- Mobile Web App Capable -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="IStories">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- App Links -->
+    <meta property="al:web:url" content="https://ammar7-o.github.io/Istories-V/">
+    <meta property="al:ios:url" content="istories://">
+    <meta property="al:android:url" content="istories://">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "IStories Reader",
+        "url": "https://ammar7-o.github.io/Istories-V/",
+        "description": "Interactive language learning platform with stories, word translations, and vocabulary building",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Ammar Chacal"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "IStories",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://ammar7-o.github.io/Istories-V/icon.png"
+            }
+        },
+        "audience": {
+            "@type": "PeopleAudience",
+            "suggestedMinAge": "12",
+            "suggestedMaxAge": "100",
+            "geographicArea": {
+                "@type": "Country",
+                "name": "Worldwide"
+            }
+        },
+        "featureList": [
+            "Interactive stories",
+            "Instant word translations",
+            "Audio pronunciation",
+            "Vocabulary builder",
+            "Progress tracking",
+            "Custom story upload"
+        ]
+    }
+    </script>
+
+    <!-- Additional Schema for Educational Content -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "IStories Language Learning",
+        "description": "Interactive stories for English language learning with vocabulary building features",
+        "educationalLevel": ["Beginner", "Intermediate", "Advanced"],
+        "learningResourceType": "Interactive reading platform",
+        "inLanguage": ["en", "ar", "fr", "es", "de"],
+        "timeRequired": "PT10M",
+        "typicalAgeRange": "12-100",
+        "competencyRequired": "Basic reading skills"
+    }
+    </script>
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/png" href="../../icon.png" sizes="32x32">
+    <link rel="icon" type="image/svg+xml" href="../../icon.svg">
+    <link rel="apple-touch-icon" href="../../icon.png" sizes="180x180">
+    <link rel="mask-icon" href="../../icon.svg" color="#4f46e5">
+
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="../../manifest.json">
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="IStories Updates" href="../../rss.xml">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/settings.css">
+    <link rel="stylesheet" href="styles/fonts.css">
+
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://translate.google.com">
+    <link rel="preconnect" href="https://translate.googleapis.com">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="styles/main.css" as="style">
+    <link rel="preload" href="../../font-awesome/css/all.min.css" as="style">
+
+    <!-- Google Translate Widget -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'ar,en,fr,es,de,ru,zh-CN,ja,ko,pt,it',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false,
+                gaTrack: true,
+                gaId: 'UA-XXXXX-X'
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer async></script>
+
+    <!-- Google Analytics (Optional) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-XXXXX-X');
+    </script>
+</head>
+
+
+<body>
+    <div class="reading-progress">
+        <div class="reading-progress-bar" id="readingProgressBar"></div>
+    </div>
+
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="../../index.html" class="logo">
+                    <img src="../../icon.svg" alt="">
+                    <span>IStories</span>
+                </a>
+                <div class="header-actions">
+
+                    <div class="settings-container">
+                        <button class="settings-btn" id="settings-button">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </header>
+    <div class="settings-page" id="settings-page">
+        <div class="settings-header">
+            <h2><i class="fas fa-cog"></i> Settings</h2>
+            <button class="close-settings" id="close-settings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="settings-content">
+            <!-- قسم المظهر -->
+            <div class="settings-section">
+                <h3><i class="fas fa-palette"></i> Appearance</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Theme</span>
+                        <span class="setting-desc">Light or Dark mode</span>
+                    </div>
+                    <!--theme btn-->
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+
+                <!-- Color Selector -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Accent Color</span>
+                        <span class="setting-desc">Choose your primary color</span>
+                    </div>
+                    <div class="color-selector">
+                        <div class="color-options">
+                            <!-- Default Colors -->
+                            <div class="color-option active" data-color="#4a6cf7" style="background-color: #4a6cf7;"
+                                title="Blue">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#7c4dff" style="background-color: #7c4dff;"
+                                title="Purple">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#009688" style="background-color: #009688;"
+                                title="Teal">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <!-- Custom Color Picker -->
+                            <div class="color-option custom-color" title="Custom Color">
+                                <i class="fas fa-palette"></i>
+                                <input type="color" id="customColorPicker" class="custom-color-input">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Secondary Color Setting -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Secondary Color</span>
+                        <span class="setting-desc">Choose your Secondary color</span>
+                    </div>
+                    <div class="color-selector secondary-selector">
+                        <div class="color-options">
+                            <!-- Default Secondary Colors -->
+                            <div class="secondary-color active" data-color="#10b981" style="background-color:  #10b981;"
+                                title="teal">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#ec4899" style="background-color: #ec4899;"
+                                title="Pink">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#b90000" style="background-color: #b90000;"
+                                title="red">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#8b5cf6" style="background-color: #8b5cf6;"
+                                title="Violet">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#f97316" style="background-color: #f97316;"
+                                title="Orange">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <!-- Custom Secondary Color Picker -->
+                            <div class="color-option secondary-color custom-color" title="Custom Secondary Color">
+                                <i class="fas fa-palette"></i>
+                                <input type="color" id="customSecondaryColorPicker" class="custom-color-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم القراءة -->
+            <div class="settings-section">
+                <h3><i class="fas fa-book-reader"></i> Reading</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Font Size</span>
+                        <span class="setting-desc">Adjust text size</span>
+                    </div>
+                    <div class="font-size-controls">
+                        <button class="control-btn" id="fontSmaller" title="Decrease font size">
+                            <i class="fas fa-minus"></i> <span>A-</span>
+                        </button>
+                        <button class="control-btn active" id="fontNormal" title="Reset font size">
+                            <i class="fas fa-text-height"></i> <span>A</span>
+                        </button>
+                        <button class="control-btn" id="fontLarger" title="Increase font size">
+                            <i class="fas fa-plus"></i> <span>A+</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">font family</span>
+                        <span class="setting-desc">change the font</span>
+                    </div>
+                    <!-- Update your select element with more font options -->
+                    <select name="" id="fontFamily">
+                        <option value="sans-serif">Sans-serif (Default)</option>
+                        <option value="serif">Serif</option>
+                        <option value="monospace">Monospace</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="'Courier New'">Courier New</option>
+                        <option value="Trebuchet MS">Trebuchet MS</option>
+                        <option value="'Open Sans'">Open Sans</option>
+                        <option value="'BradleyHand'">BradleyHand</option>
+                        <option value="'Caveat'">Caveat</option>
+                        <option value="'PatrickHandSC'">PatrickHandSC</option>
+                        <option value="'Pnu'">pnu</option>
+
+
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Line Spacing</span>
+                        <span class="setting-desc">Adjust space between lines</span>
+                    </div>
+                    <button class="control-btn" id="lineSpacing" title="Toggle line spacing">
+                        <i class="fas fa-arrows-alt-v"></i> <span>Spacing</span>
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Text-to-Speech</span>
+                        <span class="setting-desc">Listen to stories</span>
+                    </div>
+                    <button class="tts-btn" id="tts-toggle">
+                        <i class="fas fa-volume-up"></i> Enable
+                    </button>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Copy Story</span>
+                        <span class="setting-desc">You can copy the story text</span>
+                    </div>
+                    <button id="copy" class="control-btn" title="copy story">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <!-- Add this in the settings section, maybe in Appearance or create new Translation section -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Default Translation Language</span>
+                        <span class="setting-desc">Choose language for word translations</span>
+                    </div>
+                    <select id="defaultTranslateLanguage" class="language-select">
+                        <option value="ar">Arabic (العربية)</option>
+                        <option value="fr">French (Français)</option>
+                        <option value="es">Spanish (Español)</option>
+                        <option value="de">German (Deutsch)</option>
+                        <option value="ru">Russian (Русский)</option>
+                        <option value="zh-CN">Chinese (中文)</option>
+                        <option value="ja">Japanese (日本語)</option>
+                        <option value="ko">Korean (한국어)</option>
+                        <option value="pt">Portuguese (Português)</option>
+                        <option value="it">Italian (Italiano)</option>
+                        <option value="hi">Hindi (हिन्दी)</option>
+                        <option value="tr">Turkish (Türkçe)</option>
+                        <option value="fa">Persian (فارسی)</option>
+                        <option value="ur">Urdu (اردو)</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Paragraph Translation</span>
+                        <span class="setting-desc">Enable paragraph-level translation tools</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="paragraphTranslationToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- قسم البيانات -->
+            <div class="settings-section">
+
+
+
+            </div>
+            <!-- Add this after the "About" section or wherever you prefer -->
+
+            <!-- قسم التخصيص المتقدم -->
+            <div class="settings-section">
+                <h3><i class="fas fa-code"></i> Advanced Customization</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Custom CSS</span>
+                        <span class="setting-desc">Add your own CSS styles</span>
+                    </div>
+                    <button class="btn btn-secondary" id="showCustomCSS">
+                        <i class="fas fa-code"></i> Edit Custom CSS
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Reset All Settings</span>
+                        <span class="setting-desc">Restore default settings</span>
+                    </div>
+                    <button class="btn btn-danger" id="resetAllSettings">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="css-modal-overlay" id="cssModalOverlay"></div>
+            <!-- قسم التطبيق -->
+            <div class="settings-section">
+                <h3><i class="fas fa-info-circle"></i> About</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Version</span>
+                        <span class="setting-desc">Story Reader 2.1.0</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Author</span>
+                        <span class="setting-desc">Ammar chacal</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Refresh App</span>
+                        <span class="setting-desc">Reload all data</span>
+                    </div>
+                    <button onclick="Refresh()" class="control-btn" id="refresh-app">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-overlay" class="settings-overlay"></div>
+    <main class="main-content">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-page="story">Read Story</button>
+                <!-- <button class="nav-tab" data-page="">Vocabulary</button> -->
+            </div>
+
+
+            <div id="storyPage" class="page active">
+                <div class="story-header">
+                    <!-- <button class="back-button" id="backToHome">
+                        <i class="fas fa-arrow-left"></i> Back to Stories
+                    </button> -->
+                    <h2 class="title" id="storyTitle">Loading Story...</h2>
+                    <div class="level-section">
+                        <span id="lvl"></span>
+                        <span id="lvlcefr"></span>
+                    </div>
+                </div>
+
+
+                <div class="reading-controls">
+                    <button class="back-button" id="backToHome">
+                        <i class="fas fa-arrow-left"></i>Exit
+                    </button>
+                    <audio controls id="sound" src="" controls></audio>
+                </div>
+
+
+                <div class="story-text-container">
+                    <div class="story-text" id="storyText">
+                        Loading story content...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+
+    <div class="dictionary-popup" id="dictionaryPopup">
+        <div class="dictionary-header">
+            <div class="dictionary-word-container" style="display: flex; align-items: center; gap: 10px;">
+                <div class="dictionary-word" style="margin-right: 10px;" id="popupWord">Word</div>
+
+                <!-- TTS Button Added Here -->
+                <button id="googleTTSBtn" class="tts-button" title="Speak this word" style="
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.2s ease;
+                padding: 10px;
+            ">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+
+            <button class="close-popup" id="closePopup">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- <div class="dictionary-pos" style="display: none;" id="popupPos">noun</div>
+    <div class="dictionary-definition" style="display: none;" id="popupDefinition">Definition will appear here</div>
+    <div class="dictionary-example" style="display: none;" id="popupExample">Example sentence will appear here</div> -->
+
+        <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">
+            Translation will appear here
+        </div>
+
+        <div class="dictionary-actions">
+            <button class="save-word" id="saveWordBtn">
+                <i class="fas fa-bookmark"></i> Save Word
+            </button>
+
+            <div class="dictionary-actions-buttom">
+                <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
+                    <i class="fas fa-language"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- Custom CSS Modal (add at bottom of settings page) -->
+    <div class="custom-css-modal" id="customCSSModal">
+        <div class="custom-css-header">
+            <h3><i class="fas fa-code"></i> Custom CSS Editor</h3>
+            <button class="close-modal" id="closeCustomCSS">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="custom-css-body">
+            <div class="css-actions">
+                <button class="btn btn-secondary" id="previewCSS">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class="btn btn-primary" id="saveCustomCSS">
+                    <i class="fas fa-save"></i> Save CSS
+                </button>
+                <button class="btn btn-danger" id="clearCustomCSS">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+            <div class="css-editor-header">
+                <div class="css-examples">
+                    <small>Examples:</small>
+                    <code>.story-text { color: #333; }</code>
+                    <code>.word:hover { background: yellow; }</code>
+                    <code>body { font-size: 18px; }</code>
+                </div>
+            </div>
+            <textarea id="customCSSInput" placeholder="Enter your custom CSS here... Example: 
+.word {
+    border-bottom: 2px dotted #4a6cf7;
+}
+
+.vocabulary-item {
+    background: #f8f9fa;
+}" rows="15"></textarea>
+
+
+
+            <div class="css-info">
+                <small><i class="fas fa-info-circle"></i> Your CSS will be applied to the entire application.
+                    Use with caution.</small>
+            </div>
+        </div>
+    </div>
+    <script>
+        var idStory = 1;
+    </script>
+    <script type="module" src="scripts/main.js"></script>
+    <script src="scripts/thems.js"></script>
+    <script src="scripts/settings.js"></script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,1127 @@
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --secondary: #10b981;
+    --text: #1f2937;
+    --text-light: #6b7280;
+    --bg: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border: #e5e7eb;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius: 8px;
+    --radius-sm: 8px;
+}
+
+.dark-mode {
+    --text: #f9fafb;
+    --text-light: #d1d5db;
+    --bg: #111827;
+    --bg-secondary: #1f2937;
+    --border: #374151;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+
+html {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+/* Header Styles */
+header {
+    background-color: var(--bg);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    user-select: none;
+    position: fixed;
+    width: 100vw;
+
+}
+
+.logo img {
+    width: 2.5rem;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: black;
+    text-decoration: none;
+}
+
+.dark-mode .logo {
+    color: white;
+
+}
+
+.logo i {
+    font-size: 1.8rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    position: relative;
+    gap: 25px;
+}
+
+.nav-link {
+    color: black;
+    width: 100%;
+
+
+}
+
+/* Footer */
+footer {
+    background: var(--bg-secondary);
+    padding: 30px 0;
+    margin-top: 50px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dark-mode .nav-link {
+    color: white;
+    width: 100%;
+
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+}
+
+nav a:hover,
+nav a.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.header-actions {
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.left {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 55%;
+}
+
+.theme-toggle {
+    background: none;
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        var(--primary);
+    background-blend-mode: darken;
+    color: white;
+    border-color: var(--primary);
+}
+
+
+
+/* Main Content Styles */
+.main-content {
+    min-height: calc(100vh - 140px);
+    width: 100%;
+    padding: 30px 0;
+}
+
+.page {
+    display: none;
+    margin-top: 6.2rem;
+}
+
+.page.active {
+    display: block;
+}
+
+#flashcards {
+    user-select: none;
+}
+
+/* Flashcard Page Styles */
+.flashcards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.flashcard-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.flashcard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Flashcard Container */
+.flashcard-container {
+    max-width: 600px;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+
+
+
+.dark-mode .no-results {
+    color: #9ca3af;
+}
+
+
+.settings-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-btn:hover {
+    background-color: #69696991;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* صفحة الإعدادات */
+.settings-page {
+    position: absolute;
+    position: fixed;
+    /* keep it above content */
+    top: 0;
+    right: -400px;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: right 0.4s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-page.open {
+    right: 0;
+}
+
+.settings-page.active {
+    right: 0;
+}
+
+.settings-header {
+    padding: 20px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-settings {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.close-settings:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.settings-content {
+    padding: 20px;
+    flex: 1;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+}
+
+.settings-section h3 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.setting-desc {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* عناصر التحكم */
+.toggle-switch {
+    width: 50px;
+    height: 26px;
+    background: #ccc;
+    border-radius: 13px;
+    position: relative;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.toggle-switch.active {
+    background: var(--primary);
+}
+
+.toggle-slider {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+}
+
+.toggle-switch.active .toggle-slider {
+    transform: translateX(24px);
+}
+
+.font-size-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.font-btn {
+    padding: 6px 12px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.font-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.toggle-btn,
+.action-btn,
+.danger-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 50px;
+    justify-content: center;
+}
+
+
+.toggle-btn {
+    background: var(--secondary);
+    color: white;
+}
+
+.action-btn {
+    color: white;
+}
+
+.danger-btn {
+    background: var(--danger);
+    color: white;
+}
+
+.toggle-btn:hover,
+.action-btn:hover,
+.danger-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    background-color: var(--primary);
+}
+
+/* طبقة التعتيم خلف الإعدادات */
+.settings-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.808);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.settings-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Dark Mode للاعدادات */
+.dark-mode .settings-page {
+    background: #1f2937;
+}
+
+.dark-mode .settings-section h3 {
+    color: #60a5fa;
+    border-bottom-color: #374151;
+}
+
+.dark-mode .setting-item {
+    border-bottom-color: #374151;
+}
+
+.dark-mode .font-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.flashcard {
+    height: 400px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.flashcard.flipped {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+    background: rgb(0, 34, 73);
+    color: white;
+}
+
+.flashcard-content {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+#flashcardWord {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+#flashcardTranslation {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.flashcard-context {
+    font-style: italic;
+    color: var(--text-light);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.flashcard-details {
+    text-align: left;
+    width: 100%;
+}
+
+
+
+.flashcard-story {
+    font-size: 1rem;
+    opacity: 0.8;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1rem;
+}
+
+.flashcard-hint {
+    position: absolute;
+    bottom: 1rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Flashcard Actions */
+.flashcard-actions {
+    display: flex;
+    overflow-x: scroll;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.card-btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.card-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.card-again {
+    background: #ef4444;
+    color: white;
+}
+
+.card-hard {
+    background: #f59e0b;
+    color: white;
+}
+
+.card-good {
+    background: #10b981;
+    color: white;
+}
+
+.card-easy {
+    background: #3b82f6;
+    color: white;
+}
+
+.card-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Progress Bar */
+.progress-container {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+#home {
+    user-select: none;
+}
+
+/* Homepage Styles */
+.hero {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+    margin-top: 5rem;
+
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 25px;
+}
+
+.cta-button {
+    background-color: white;
+    color: var(--primary);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+
+.stat-card {
+    background: var(--bg);
+    padding: 25px;
+    border-radius: var(--radius);
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* ============ TOGGLE NAVIGATION MENU ============ */
+
+/* Base more menu (hidden by default) */
+.more {
+    width: 250px;
+    max-width: 280px;
+    padding: 20px;
+    background-color: white;
+    position: absolute;
+    top: 50px;
+    right: 0px;
+    z-index: 1000;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    color: white;
+    font-family: inherit;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+
+.dark-mode .more {
+    background-color: black;
+}
+
+/* When menu is open */
+.more.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+
+.hero-btns {
+    display: flex;
+    gap: 7px;
+}
+
+.v-btn {
+    max-height: 45px;
+}
+
+.btn-secondary,
+.btn-primary {
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+}
+
+.btn-secondary {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+#flashcardSpeechBtn{
+    padding: 10px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+}
+/* Speech Toggle Button Styles */
+.speech-toggle {
+    width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    border: none;
+    background-color: #ddd;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    user-select: none;
+}
+
+.speech-toggle.active {
+    background-color: var(--secondary);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.speech-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.speech-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Toggle handle (the circle that moves) */
+.speech-toggle i {
+    position: absolute;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    color: #666;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+/* When toggle is active (speech enabled) */
+.speech-toggle.active i {
+    left: 33px;
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Volume icon */
+.speech-toggle i::before {
+    content: "\f6a8"; /* fa-volume-mute */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.speech-toggle.active i::before {
+    content: "\f028"; /* fa-volume-up */
+}
+
+/* Setting item alignment */
+.setting-item .speech-toggle {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Dark mode styles */
+.dark-mode .speech-toggle {
+    background-color: #4b5563;
+}
+
+.dark-mode .speech-toggle i {
+    background: #9ca3af;
+    color: #1f2937;
+}
+
+.dark-mode .speech-toggle.active {
+    background-color: var(--primary);
+}
+
+.dark-mode .speech-toggle.active i {
+    background: white;
+    color: var(--primary);
+}
+
+/* Focus state for accessibility */
+.speech-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Disabled state */
+.speech-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.speech-toggle:disabled:hover {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for toggle state change */
+@keyframes toggleBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.speech-toggle.active i {
+    animation: toggleBounce 0.3s ease;
+}
+
+/* Tooltip on hover */
+.speech-toggle::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.speech-toggle:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 5px);
+}
+
+.dark-mode .speech-toggle::after {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .speech-toggle {
+        width: 56px;
+        height: 28px;
+    }
+    
+    .speech-toggle i {
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+    }
+    
+    .speech-toggle.active i {
+        left: 31px;
+    }
+}
+/* Responsive design */
+@media (max-width: 480px) {
+
+
+
+    .stat-item i {
+        font-size: 20px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+
+
+    .btn-secondary,
+    .btn-primary {
+        padding: 14px 24px;
+        font-size: 15px;
+    }
+}
+
+
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .settings-page {
+        width: 100%;
+        height: 100vh;
+        right: -100%;
+    }
+
+    .flashcards-header {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+
+
+    .modal-body {
+        padding: 0px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .hero {
+        margin-top: 7.3rem;
+    }
+
+    .hero-btns {
+        flex-direction: column;
+    }
+
+    .settings-header {
+        padding: 15px;
+    }
+
+    .settings-content {
+        padding: 15px;
+    }
+
+    .setting-item {
+
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+
+    .header-content {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .left {
+        width: 100%;
+    }
+
+    nav ul {
+        gap: 15px;
+    }
+
+
+
+    .footer-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+
+    .btn-secondary,
+    .btn-primary {
+        width: 100%;
+        justify-content: center;
+        padding: 16px 28px;
+    }
+}

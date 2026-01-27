@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Istories Download stories</title>
+    <link rel="stylesheet" href="../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="icon" type="image/png" href="../icon.png?v=2">
+    <meta property="og:title" content="Istories">
+    <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+    <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+
+</head>
+
+<body>
+    <header id="top">
+        <div class="container">
+            <div class="header-content">
+                <div class="left">
+                    <a href="../index.html" class="logo">
+                        <img src="../icon.svg" alt="">
+                        <span>IStories</span>
+                    </a>
+                    <nav>
+                        <ul>
+                            <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-store"></i></a>
+                            </li>
+                            <li id="toggle-nav"><a title="more" id="toggle-nav"><i class="fas fa-bars"></i></a>
+                            </li>
+                            <div id="more" class="more">
+                                <li><a href="../English/index.html" class="nav-btn"><i class="fa-solid fa-home"></i>
+                                        Home</a>
+                                </li>
+                                <li><a class="nav-btn" href="../English/vocabulary/index.html"><i
+                                            class="fas fa-language"></i>
+                                        Vocabulary</a></li>
+
+                                <details>
+                                    <summary>Practice</summary>
+                                    <li><a href="../English//flashcard/index.html" class="nav-btn"><i
+                                                class="fa-solid fa-layer-group"></i> Flashcard</a>
+                                    </li>
+                                    <li><a href="../English//quiz/index.html" class="nav-btn"><i
+                                                class="fas fa-brain"></i> Quiz</a>
+                                    </li>
+
+                                </details>
+
+                            </div>
+
+
+                        </ul>
+                    </nav>
+                </div>
+                <div class="header-actions">
+                    <!--search bar-->
+                    <form id="search-form" class="search-form" action="#">
+                        <input class="search-input" placeholder="Search stories" type="text" id="storySearch">
+                        <button id="search-btn" type="submit" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    <div class="settings-container">
+                        <button class="settings-btn" id="settings-button">
+                            <i class="fas fa-cog"></i>
+                        </button>
+
+
+                    </div>
+                </div>
+            </div>
+    </header>
+
+    <div class="settings-page" id="settings-page">
+        <div class="settings-header">
+            <h2><i class="fas fa-cog"></i> Settings</h2>
+            <button class="close-settings" id="close-settings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="settings-content">
+            <!-- قسم المظهر -->
+            <div class="settings-section">
+                <h3><i class="fas fa-palette"></i> Appearance</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Theme</span>
+                        <span class="setting-desc">Light or Dark mode</span>
+                    </div>
+                    <!-- Theme toggle button -->
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+
+                <!-- Color Selector -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Accent Color</span>
+                        <span class="setting-desc">Choose your primary color</span>
+                    </div>
+                    <div class="color-selector">
+                        <div class="color-options">
+                            <!-- Default Colors -->
+                            <div class="color-option active" data-color="#4a6cf7" style="background-color: #4a6cf7;"
+                                title="Blue">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#7c4dff" style="background-color: #7c4dff;"
+                                title="Purple">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="color-option" data-color="#009688" style="background-color: #009688;"
+                                title="Teal">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <!-- Custom Color Picker -->
+                            <div class="color-option custom-color" title="Custom Color">
+                                <i class="fas fa-palette"></i>
+                                <input type="color" id="customColorPicker" class="custom-color-input">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Secondary Color Setting -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Secondary Color</span>
+                        <span class="setting-desc">Choose your Secondary color</span>
+                    </div>
+                    <div class="color-selector secondary-selector">
+                        <div class="color-options">
+                            <!-- Default Secondary Colors -->
+                            <div class="secondary-color active" data-color="#10b981" style="background-color:  #10b981;"
+                                title="teal">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#ec4899" style="background-color: #ec4899;"
+                                title="Pink">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#b90000" style="background-color: #b90000;"
+                                title="red">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#8b5cf6" style="background-color: #8b5cf6;"
+                                title="Violet">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="secondary-color" data-color="#f97316" style="background-color: #f97316;"
+                                title="Orange">
+                                <i class="fas fa-check"></i>
+                            </div>
+
+                            <!-- Custom Secondary Color Picker -->
+                            <div class="color-option secondary-color custom-color" title="Custom Secondary Color">
+                                <i class="fas fa-palette"></i>
+                                <input type="color" id="customSecondaryColorPicker" class="custom-color-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- قسم التطبيق -->
+            <div class="settings-section">
+                <h3><i class="fas fa-info-circle"></i> About</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Version</span>
+                        <span class="setting-desc">Story Reader 2.1.0</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Author</span>
+                        <span class="setting-desc">Ammar chacal</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Refresh App</span>
+                        <span class="setting-desc">Reload all data</span>
+                    </div>
+                    <button onclick="Refresh()" class="action-btn" id="refresh-app">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-overlay" class="settings-overlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Home Page -->
+            <div id="home" class="page active">
+                <section class="hero">
+                    <select name="" id="Select">
+                        <option value="stories.js">English-1</option>
+                        <option value="stories2.js">English-2</option>
+
+                    </select>
+                </section>
+
+
+                <div class="level-filter">
+                    <button class="level-btn active" data-level="all">All Levels</button>
+                    <button class="level-btn" data-level="beginner">Beginner</button>
+                    <button class="level-btn" data-level="intermediate">Intermediate</button>
+                    <button class="level-btn" data-level="advanced">Advanced</button>
+                </div>
+
+                <div class="stories-grid" id="storiesGrid">
+                    <!-- Stories will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <img src="../icon.svg" alt="">
+                    <span>IStories</span>
+                </div>
+                <div class="footer-links">
+                    <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variable to track if stories are loaded
+        window.storiesLoaded = false;
+        window.storiesData = [];
+
+        // Function to initialize app after stories are loaded
+        function initAppAfterStoriesLoad() {
+            if (window.storiesLoaded) {
+                init();
+            } else {
+                console.log('Waiting for stories to load...');
+                setTimeout(initAppAfterStoriesLoad, 100);
+            }
+        }
+
+        // Function to load stories based on selected file
+        function loadStoriesFile(filename) {
+            // Reset loaded state
+            window.storiesLoaded = false;
+
+            // Remove old script if exists
+            const oldScript = document.querySelector('script[data-stories="true"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            console.log(`Loading stories from: ${filename}`);
+
+            // Create and load new script
+            const s = document.createElement("script");
+            s.src = filename;
+            s.setAttribute('data-stories', 'true');
+
+            s.onload = function () {
+                console.log('Stories loaded successfully');
+                console.log('Stories data:', window.storiesData);
+                window.storiesLoaded = true;
+                // Initialize app
+                initAppAfterStoriesLoad();
+            };
+
+            s.onerror = function () {
+                console.error(`Failed to load ${filename}`);
+                // Use fallback stories
+                window.storiesData = {
+                    stories: [
+                        {
+                            id: 1,
+                            title: "The Mysterious Island",
+                            level: "beginner",
+                            cover: "🏝️",
+                            coverType: "emoji",
+                            wordCount: 350,
+                            content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+                        }
+                    ]
+                };
+                window.storiesLoaded = true;
+                // Initialize app with fallback
+                initAppAfterStoriesLoad();
+            };
+
+            document.head.appendChild(s);
+        }
+
+        // Add event listener to select element
+        document.getElementById('Select').addEventListener('change', function (e) {
+            const selectedFile = e.target.value;
+            console.log(`File changed to: ${selectedFile}`);
+            loadStoriesFile(selectedFile);
+        });
+
+        // Load initial stories based on default selection
+        const initialFile = document.getElementById('Select').value;
+        loadStoriesFile(initialFile);
+    </script>
+    <!-- <script src="stories.js"></script> -->
+
+    <script src="main.js"></script>
+
+
+</body>
+
+</html>

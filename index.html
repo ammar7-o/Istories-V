@@ -2,263 +2,433 @@
 <html lang="en">
 
 <head>
+  <!-- Basic Meta Tags -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Istories</title>
-  <link rel="stylesheet" href="font-awesome/css/all.min.css">
-  <link rel="icon" type="image/png" href="icon.png">
-  <link rel="manifest" href="manifest.json">
-  <meta property="og:title" content="Istories">
-  <meta name="theme-color" content="#007bff">
-  <meta property="og:description" content="Learn Languages Through Interactive Stories.">
-  <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+
+  <!-- Primary Meta Tags -->
+  <title>IStories Reader - Interactive Language Learning Stories</title>
+  <meta name="title" content="IStories  - Interactive Language Learning Stories">
+  <meta name="description"
+    content="Read interactive stories with instant word translations, audio pronunciation, and vocabulary building. Learn English through engaging stories with clickable word definitions.">
+  <meta name="keywords"
+    content="language learning, English stories, interactive reading, vocabulary builder, word translation, audio pronunciation, learn English online, reading comprehension">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" content="https://ammar7-o.github.io/Istories-V/">
+
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+  <meta property="og:title" content="IStories - Interactive Language Learning Stories">
+  <meta property="og:description"
+    content="Learn Languages Through Interactive Stories with instant word translations and audio pronunciation.">
+  <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="IStories Logo - Interactive language learning platform">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="IStories">
 
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-dark: #4338ca;
-      --secondary: #10b981;
-      --secondary-dark: #0da271;
-      --text: #1f2937;
-      --text-light: #6b7280;
-      --bg: #ffffff;
-      --bg-secondary: #f9fafb;
-      --border: #e5e7eb;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --radius: 8px;
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://ammar7-o.github.io/Istories-V/">
+  <meta name="twitter:title" content="IStories Reader - Interactive Language Learning">
+  <meta name="twitter:description"
+    content="Read stories with clickable word translations, audio pronunciation, and vocabulary building features.">
+  <meta name="twitter:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+  <meta name="twitter:image:alt" content="IStories interactive reading platform">
+  <meta name="twitter:creator" content="@yourtwitterhandle">
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+  <!-- Author & Copyright -->
+  <meta name="author" content="Ammar Chacal">
+  <meta name="copyright" content="© 2024 IStories. All rights reserved.">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="msapplication-TileColor" content="#4f46e5">
+
+  <!-- Language & Region -->
+  <meta name="language" content="English">
+  <meta name="geo.region" content="US">
+  <meta name="geo.placename" content="Internet">
+
+  <!-- Mobile Web App Capable -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="IStories">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- App Links -->
+  <meta property="al:web:url" content="https://ammar7-o.github.io/Istories-V/">
+  <meta property="al:ios:url" content="istories://">
+  <meta property="al:android:url" content="istories://">
+
+  <!-- Structured Data / JSON-LD -->
+  <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "IStories Reader",
+        "url": "https://ammar7-o.github.io/Istories-V/",
+        "description": "Interactive language learning platform with stories, word translations, and vocabulary building",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Ammar Chacal"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "IStories",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://ammar7-o.github.io/Istories-V/icon.png"
+            }
+        },
+        "audience": {
+            "@type": "PeopleAudience",
+            "suggestedMinAge": "12",
+            "suggestedMaxAge": "100",
+            "geographicArea": {
+                "@type": "Country",
+                "name": "Worldwide"
+            }
+        },
+        "featureList": [
+            "Interactive stories",
+            "Instant word translations",
+            "Audio pronunciation",
+            "Vocabulary builder",
+            "Progress tracking",
+            "Custom story upload"
+        ]
     }
+    </script>
 
-    .dark-mode {
-      --primary-dark: #4f46e5;
-      --text: #f9fafb;
-      --text-light: #d1d5db;
-      --bg: #111827;
-      --bg-secondary: #1f2937;
-      --border: #374151;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  <!-- Additional Schema for Educational Content -->
+  <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "IStories Language Learning",
+        "description": "Interactive stories for English language learning with vocabulary building features",
+        "educationalLevel": ["Beginner", "Intermediate", "Advanced"],
+        "learningResourceType": "Interactive reading platform",
+        "inLanguage": ["en", "ar", "fr", "es", "de"],
+        "timeRequired": "PT10M",
+        "typicalAgeRange": "12-100",
+        "competencyRequired": "Basic reading skills"
     }
+    </script>
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      transition: background-color 0.3s, color 0.3s;
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/png" href="../../icon.png" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="../../icon.svg">
+  <link rel="apple-touch-icon" href="../../icon.png" sizes="180x180">
+  <link rel="mask-icon" href="../../icon.svg" color="#4f46e5">
+
+  <!-- Manifest for PWA -->
+  <link rel="manifest" href="../../manifest.json">
+
+  <!-- RSS Feed -->
+  <link rel="alternate" type="application/rss+xml" title="IStories Updates" href="../../rss.xml">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/settings.css">
+  <link rel="stylesheet" href="styles/fonts.css">
+
+  <!-- Preconnect to external domains for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://translate.google.com">
+  <link rel="preconnect" href="https://translate.googleapis.com">
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="styles/main.css" as="style">
+  <link rel="preload" href="../../font-awesome/css/all.min.css" as="style">
+
+  <!-- Google Translate Widget -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'ar,en,fr,es,de,ru,zh-CN,ja,ko,pt,it',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false,
+        gaTrack: true,
+        gaId: 'UA-XXXXX-X'
+      }, 'google_translate_element');
     }
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    defer async></script>
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* Header Styles */
-    header {
-      background-color: var(--bg);
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: black;
-    }
-
-    .dark-mode .logo {
-      color: white;
-    }
-
-    .logo img {
-      width: 2.5rem;
-    }
-
-    .logo i {
-      font-size: 1.8rem;
-    }
-
-    nav ul {
-      display: flex;
-      list-style: none;
-      gap: 25px;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 500;
-      padding: 8px 12px;
-      border-radius: var(--radius);
-    }
-
-    nav a:hover,
-    nav a.active {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .theme-toggle {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      color: var(--text);
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .theme-toggle:hover {
-      background-color: var(--bg-secondary);
-    }
-
-    .user-actions button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: var(--radius);
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .user-actions button:hover {
-      background-color: var(--primary-dark);
-    }
-
-    /* Main Content Styles */
-    .main-content {
-      min-height: calc(100vh - 140px);
-      padding: 30px 0;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    /* Homepage Styles */
-    .hero {
-      text-align: center;
-      padding: 40px 10px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      color: white;
-      border-radius: var(--radius);
-      margin-bottom: 40px;
-    }
-
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 0 auto 25px;
-    }
-
-    .cta-button {
-      background-color: white;
-      color: var(--primary);
-      border: none;
-      padding: 12px 30px;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-    }
-
-    .cta-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Footer */
-    footer {
-      background: var(--bg-secondary);
-      padding: 30px 0;
-      margin-top: 50px;
-    }
-
-    .footer-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 20px;
-    }
-
-    .footer-links a {
-      color: var(--text-light);
-      text-decoration: none;
-    }
-
-    .footer-links a:hover {
-      color: var(--primary);
-    }
-
-    /* Add CSS animations for notifications */
-    @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideOut {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-
-      to {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-    }
-  </style>
+  <!-- Google Analytics (Optional) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-XXXXX-X');
+  </script>
 </head>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --secondary: #10b981;
+    --secondary-dark: #0da271;
+    --text: #1f2937;
+    --text-light: #6b7280;
+    --bg: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border: #e5e7eb;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius: 8px;
+  }
+
+  .dark-mode {
+    --primary-dark: #4f46e5;
+    --text: #f9fafb;
+    --text-light: #d1d5db;
+    --bg: #111827;
+    --bg-secondary: #1f2937;
+    --border: #374151;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header Styles */
+  header {
+    background-color: var(--bg);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: black;
+  }
+
+  .dark-mode .logo {
+    color: white;
+  }
+
+  .logo img {
+    width: 2.5rem;
+  }
+
+  .logo i {
+    font-size: 1.8rem;
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+  }
+
+  nav a:hover,
+  nav a.active {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--bg-secondary);
+  }
+
+  .user-actions button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .user-actions button:hover {
+    background-color: var(--primary-dark);
+  }
+
+  /* Main Content Styles */
+  .main-content {
+    min-height: calc(100vh - 140px);
+    padding: 30px 0;
+  }
+
+  .page {
+    display: none;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  /* Homepage Styles */
+  .hero {
+    text-align: center;
+    padding: 40px 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 25px;
+  }
+
+  .cta-button {
+    background-color: white;
+    color: var(--primary);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--bg-secondary);
+    padding: 30px 0;
+    margin-top: 50px;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: var(--text-light);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    color: var(--primary);
+  }
+
+  /* Add CSS animations for notifications */
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+</style>
 
 <body>
   <header id="top">
@@ -290,7 +460,7 @@
           <p>Improve your language skills by reading engaging stories with instant translations, definitions,
             and audio support.</p>
           <button onclick="window.location.href='English/index.html'" class="cta-button">English</button>
-          <button onclick="window.location.href='french/index.html'" class="cta-button">French</button>
+          <button onclick="window.location.href='French/index.html'" class="cta-button">French</button>
         </section>
 
         <div class="stories-grid" id="storiesGrid">

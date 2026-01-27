@@ -1,0 +1,745 @@
+{
+  "clear": {
+    "translation": "صافية"
+  },
+  "nights": {
+    "translation": "ليالي"
+  },
+  "moon": {
+    "translation": "قمر"
+  },
+  "new": {
+    "translation": "جديد"
+  },
+  "filled": {
+    "translation": "مليئة"
+  },
+  "stars": {
+    "translation": "نجوم"
+  },
+  "old": {
+    "translation": "عجوز"
+  },
+  "manu": {
+    "translation": "مانو"
+  },
+  "would": {
+    "translation": "كان"
+  },
+  "take": {
+    "translation": "يأخذ"
+  },
+  "special": {
+    "translation": "خاصة"
+  },
+  "net": {
+    "translation": "شبكة"
+  },
+  "go": {
+    "translation": "يذهب"
+  },
+  "highest": {
+    "translation": "أعلى"
+  },
+  "cliff": {
+    "translation": "جرف"
+  },
+  "overlooking": {
+    "translation": "مطل على"
+  },
+  "ocean": {
+    "translation": "محيط"
+  },
+  "children": {
+    "translation": "أطفال"
+  },
+  "village": {
+    "translation": "قرية"
+  },
+  "called": {
+    "translation": "نادى"
+  },
+  "star": {
+    "translation": "نجم"
+  },
+  "fisher": {
+    "translation": "صياد"
+  },
+  "because": {
+    "translation": "لأنه"
+  },
+  "said": {
+    "translation": "قال"
+  },
+  "catching": {
+    "translation": "يصطاد"
+  },
+  "falling": {
+    "translation": "تساقط"
+  },
+  "most": {
+    "translation": "معظم"
+  },
+  "adults": {
+    "translation": "بالغين"
+  },
+  "thought": {
+    "translation": "اعتقدوا"
+  },
+  "just": {
+    "translation": "مجرد"
+  },
+  "funny": {
+    "translation": "مضحك"
+  },
+  "strange": {
+    "translation": "غريبة"
+  },
+  "habits": {
+    "translation": "عادات"
+  },
+  "but": {
+    "translation": "لكن"
+  },
+  "loved": {
+    "translation": "أحبوا"
+  },
+  "stories": {
+    "translation": "قصص"
+  },
+  "describe": {
+    "translation": "يصف"
+  },
+  "being": {
+    "translation": "كونها"
+  },
+  "made": {
+    "translation": "مصنوعة"
+  },
+  "light": {
+    "translation": "ضوء"
+  },
+  "dreams": {
+    "translation": "أحلام"
+  },
+  "each": {
+    "translation": "كل"
+  },
+  "different": {
+    "translation": "مختلف"
+  },
+  "lina": {
+    "translation": "لينا"
+  },
+  "eight": {
+    "translation": "ثمانية"
+  },
+  "years": {
+    "translation": "سنوات"
+  },
+  "curious": {
+    "translation": "فضولي"
+  },
+  "listener": {
+    "translation": "مستمع"
+  },
+  "noticed": {
+    "translation": "لاحظت"
+  },
+  "never": {
+    "translation": "أبدًا"
+  },
+  "actually": {
+    "translation": "فعليًا"
+  },
+  "showed": {
+    "translation": "أظهر"
+  },
+  "anyone": {
+    "translation": "أي أحد"
+  },
+  "too": {
+    "translation": "أيضًا"
+  },
+  "delicate": {
+    "translation": "حساسة"
+  },
+  "seen": {
+    "translation": "ترى"
+  },
+  "daylight": {
+    "translation": "ضوء النهار"
+  },
+  "magical": {
+    "translation": "سحري"
+  },
+  "people": {
+    "translation": "ناس"
+  },
+  "one": {
+    "translation": "واحد"
+  },
+  "night": {
+    "translation": "ليلة"
+  },
+  "decided": {
+    "translation": "قررت"
+  },
+  "follow": {
+    "translation": "تتبع"
+  },
+  "see": {
+    "translation": "ترى"
+  },
+  "really": {
+    "translation": "حقًا"
+  },
+  "hid": {
+    "translation": "اختبأت"
+  },
+  "behind": {
+    "translation": "خلف"
+  },
+  "rocks": {
+    "translation": "صخور"
+  },
+  "watched": {
+    "translation": "شاهدت"
+  },
+  "stood": {
+    "translation": "وقف"
+  },
+  "edge": {
+    "translation": "حافة"
+  },
+  "glowing": {
+    "translation": "متوهج"
+  },
+  "softly": {
+    "translation": "بهدوء"
+  },
+  "dark": {
+    "translation": "ظلام"
+  },
+  "throwing": {
+    "translation": "يرمي"
+  },
+  "sky": {
+    "translation": "سماء"
+  },
+  "expected": {
+    "translation": "توقعت"
+  },
+  "below": {
+    "translation": "أسفل"
+  },
+  "pulled": {
+    "translation": "سحب"
+  },
+  "back": {
+    "translation": "للخلف"
+  },
+  "points": {
+    "translation": "نقاط"
+  },
+  "gasped": {
+    "translation": "لهثت"
+  },
+  "loudly": {
+    "translation": "بصوت عال"
+  },
+  "turned": {
+    "translation": "التفت"
+  },
+  "toward": {
+    "translation": "نحو"
+  },
+  "hiding": {
+    "translation": "اختباء"
+  },
+  "place": {
+    "translation": "مكان"
+  },
+  "instead": {
+    "translation": "بدلاً من"
+  },
+  "angry": {
+    "translation": "غاضب"
+  },
+  "smiled": {
+    "translation": "ابتسم"
+  },
+  "invited": {
+    "translation": "دعا"
+  },
+  "come": {
+    "translation": "تعال"
+  },
+  "closer": {
+    "translation": "أقرب"
+  },
+  "amazed": {
+    "translation": "أذهلها"
+  },
+  "bioluminescent": {
+    "translation": "مضيء حيويًا"
+  },
+  "plankton": {
+    "translation": "عوالق"
+  },
+  "tiny": {
+    "translation": "صغيرة"
+  },
+  "creatures": {
+    "translation": "كائنات"
+  },
+  "blue-green": {
+    "translation": "أزرق-أخضر"
+  },
+  "looking": {
+    "translation": "تبدو"
+  },
+  "exactly": {
+    "translation": "تمامًا"
+  },
+  "captured": {
+    "translation": "محاصرة"
+  },
+  "explained": {
+    "translation": "شرح"
+  },
+  "microscopic": {
+    "translation": "مجهرية"
+  },
+  "organisms": {
+    "translation": "كائنات حية"
+  },
+  "real": {
+    "translation": "حقيقية"
+  },
+  "lit": {
+    "translation": "تضيء"
+  },
+  "disturbed": {
+    "translation": "مضطربة"
+  },
+  "creating": {
+    "translation": "خلق"
+  },
+  "beautiful": {
+    "translation": "جميلة"
+  },
+  "patterns": {
+    "translation": "أنماط"
+  },
+  "water": {
+    "translation": "ماء"
+  },
+  "centuries": {
+    "translation": "قرون"
+  },
+  "fishermen": {
+    "translation": "صيادين"
+  },
+  "phenomenon": {
+    "translation": "ظاهرة"
+  },
+  "find": {
+    "translation": "يجدوا"
+  },
+  "way": {
+    "translation": "طريق"
+  },
+  "home": {
+    "translation": "المنزل"
+  },
+  "discovered": {
+    "translation": "اكتشف"
+  },
+  "else": {
+    "translation": "آخر"
+  },
+  "studying": {
+    "translation": "دراسة"
+  },
+  "intensity": {
+    "translation": "شدة"
+  },
+  "glow": {
+    "translation": "توهج"
+  },
+  "predict": {
+    "translation": "يتنبأ"
+  },
+  "changes": {
+    "translation": "تغيرات"
+  },
+  "currents": {
+    "translation": "تيارات"
+  },
+  "temperature": {
+    "translation": "حرارة"
+  },
+  "helped": {
+    "translation": "ساعد"
+  },
+  "know": {
+    "translation": "يعرفوا"
+  },
+  "where": {
+    "translation": "أين"
+  },
+  "fish": {
+    "translation": "أسماك"
+  },
+  "storms": {
+    "translation": "عواصف"
+  },
+  "coming": {
+    "translation": "قادمة"
+  },
+  "monitoring": {
+    "translation": "مراقبة"
+  },
+  "health": {
+    "translation": "صحة"
+  },
+  "brightly": {
+    "translation": "بسطع"
+  },
+  "great": {
+    "translation": "كبيرة"
+  },
+  "numbers": {
+    "translation": "أعداد"
+  },
+  "healthy": {
+    "translation": "صحية"
+  },
+  "weak": {
+    "translation": "ضعيف"
+  },
+  "meant": {
+    "translation": "يعني"
+  },
+  "wrong": {
+    "translation": "خطأ"
+  },
+  "apprentice": {
+    "translation": "تلميذ"
+  },
+  "taught": {
+    "translation": "علمها"
+  },
+  "read": {
+    "translation": "تقرأ"
+  },
+  "messages": {
+    "translation": "رسائل"
+  },
+  "colors": {
+    "translation": "ألوان"
+  },
+  "indicated": {
+    "translation": "تشير"
+  },
+  "conditions": {
+    "translation": "ظروف"
+  },
+  "seasons": {
+    "translation": "فصول"
+  },
+  "certain": {
+    "translation": "معينة"
+  },
+  "types": {
+    "translation": "أنواع"
+  },
+  "disappeared": {
+    "translation": "اختفت"
+  },
+  "together": {
+    "translation": "معًا"
+  },
+  "created": {
+    "translation": "خلقوا"
+  },
+  "record": {
+    "translation": "سجل"
+  },
+  "observations": {
+    "translation": "ملاحظات"
+  },
+  "fishing": {
+    "translation": "صيد"
+  },
+  "community": {
+    "translation": "مجتمع"
+  },
+  "understand": {
+    "translation": "يفهموا"
+  },
+  "protect": {
+    "translation": "يحموا"
+  },
+  "marine": {
+    "translation": "بحري"
+  },
+  "environment": {
+    "translation": "بيئة"
+  },
+  "learned": {
+    "translation": "تعلموا"
+  },
+  "natural": {
+    "translation": "طبيعية"
+  },
+  "clues": {
+    "translation": "قرائن"
+  },
+  "relying": {
+    "translation": "اعتماد"
+  },
+  "modern": {
+    "translation": "حديثة"
+  },
+  "technology": {
+    "translation": "تكنولوجيا"
+  },
+  "realized": {
+    "translation": "أدركت"
+  },
+  "pretend": {
+    "translation": "مزيفة"
+  },
+  "knowledge": {
+    "translation": "معرفة"
+  },
+  "named": {
+    "translation": "سماها"
+  },
+  "guide": {
+    "translation": "توجيه"
+  },
+  "through": {
+    "translation": "خلال"
+  },
+  "times": {
+    "translation": "أوقات"
+  },
+  "grew": {
+    "translation": "كبر"
+  },
+  "climb": {
+    "translation": "يتسلق"
+  },
+  "continued": {
+    "translation": "استمرت"
+  },
+  "tradition": {
+    "translation": "تقليد"
+  },
+  "every": {
+    "translation": "كل"
+  },
+  "time": {
+    "translation": "مرة"
+  },
+  "remembered": {
+    "translation": "تذكرت"
+  },
+  "exists": {
+    "translation": "يوجد"
+  },
+  "real": {
+    "translation": "حقيقي"
+  },
+  "waiting": {
+    "translation": "ينتظر"
+  },
+  "discover": {
+    "translation": "تكتشف"
+  },
+  "on": {
+    "translation": "على"
+  },
+  "when": {
+    "translation": "عندما"
+  },
+  "the": {
+    "translation": "ال"
+  },
+  "was": {
+    "translation": "كان"
+  },
+  "and": {
+    "translation": "و"
+  },
+  "with": {
+    "translation": "مع"
+  },
+  "of": {
+    "translation": "من"
+  },
+  "he": {
+    "translation": "هو"
+  },
+  "him": {
+    "translation": "له"
+  },
+  "his": {
+    "translation": "خاصته"
+  },
+  "caught": {
+    "translation": "أمسك"
+  },
+  "about": {
+    "translation": "عن"
+  },
+  "them": {
+    "translation": "إياهم"
+  },
+  "as": {
+    "translation": "كما"
+  },
+  "manu's": {
+    "translation": "مانو"
+  },
+  "were": {
+    "translation": "كانوا"
+  },
+  "for": {
+    "translation": "من أجل"
+  },
+  "be": {
+    "translation": "يكون"
+  },
+  "to": {
+    "translation": "إلى"
+  },
+  "in": {
+    "translation": "في"
+  },
+  "she": {
+    "translation": "هي"
+  },
+  "that": {
+    "translation": "أن"
+  },
+  "what": {
+    "translation": "ما"
+  },
+  "into": {
+    "translation": "في"
+  },
+  "wasn't": {
+    "translation": "لم يكن"
+  },
+  "up": {
+    "translation": "لأعلى"
+  },
+  "glowed": {
+    "translation": "توهج"
+  },
+  "from": {
+    "translation": "من"
+  },
+  "saw": {
+    "translation": "رأت"
+  },
+  "these": {
+    "translation": "هذه"
+  },
+  "used": {
+    "translation": "استخدم"
+  },
+  "had": {
+    "translation": "كان لديه"
+  },
+  "their": {
+    "translation": "خاصتهم"
+  },
+  "they": {
+    "translation": "هم"
+  },
+  "something": {
+    "translation": "شيء"
+  },
+  "this": {
+    "translation": "هذا"
+  },
+  "by": {
+    "translation": "بواسطة"
+  },
+  "fishing'": {
+    "translation": "صيد'"
+  },
+  "'star": {
+    "translation": "'نجم"
+  },
+  "plankton's": {
+    "translation": "العوالق"
+  },
+  "became": {
+    "translation": "أصبحت"
+  },
+  "changed": {
+    "translation": "تغيرت"
+  },
+  "how": {
+    "translation": "كيف"
+  },
+  "only": {
+    "translation": "فقط"
+  },
+  "after": {
+    "translation": "بعد"
+  },
+  "like": {
+    "translation": "مثل"
+  },
+  "magic": {
+    "translation": "سحر"
+  },
+  "eyes": {
+    "translation": "عيون"
+  },
+  "world": {
+    "translation": "عالم"
+  },
+  "'stars'": {
+    "translation": "'نجوم'"
+  },
+
+  "man": {
+    "translation": "رجل"
+  },
+  "a": {
+    "translation": "أ"
+  },
+  "did": {
+    "translation": "فعل"
+  },
+  "at": {
+    "translation": "في"
+  },
+  "it": {
+    "translation": "ذلك"
+  },
+  "her": {
+    "translation": "لها"
+  },
+  "full": {
+    "translation": "مليئة"
+  },
+  "use": {
+    "translation": "يستخدم"
+  },
+  "if": {
+    "translation": "إذا"
+  },
+  "could": {
+    "translation": "يمكن"
+  }
+
+}
