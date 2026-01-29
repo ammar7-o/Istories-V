@@ -304,6 +304,7 @@
             <!-- Home Page -->
             <div id="home" class="page active">
                 <section class="hero">
+                    <div class="language">FR</div>
                     <div class="profile">
 
                         <!-- Photo -->
@@ -1010,13 +1011,13 @@ Enter one dictionary path per line"></textarea>
 
         // Function to save selected stories file to localStorage
         function saveSelectedStoriesFile(filename) {
-            localStorage.setItem('selectedStoriesFile', filename);
+            localStorage.setItem('selectedStoriesFilefr', filename);
             console.log('Saved stories file selection:', filename);
         }
 
         // Function to load saved stories file
         function loadSavedStoriesFile() {
-            return localStorage.getItem('selectedStoriesFile') || 'stories/stories.json'; // Default file
+            return localStorage.getItem('selectedStoriesFilefr') || 'stories/stories.json'; // Default file
         }
 
         // Function to initialize app after stories are loaded
@@ -1129,11 +1130,10 @@ Enter one dictionary path per line"></textarea>
 
         // Load initial stories when page loads
         loadInitialStories();
+
     </script>
    
 
-    <script src="localforage.min.js"></script>
-    <script src="database.js"></script>
 
     <script src="main/other.js"></script>
     <script src="main/main.js"></script>

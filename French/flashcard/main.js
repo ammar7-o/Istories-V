@@ -31,7 +31,7 @@ const themeToggle = document.getElementById('themeToggle');
 
 // App state
 let currentPage = 'home';
-let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
 let speechEnabled = localStorage.getItem('speechEnabled') !== 'false'; // Default enabled (true)
 
 // Color settings
@@ -740,7 +740,7 @@ function reviewCard(daysToAdd) {
         }
 
         // Save to localStorage
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
+        localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
         console.log('Saved word review to localStorage');
     }
 
@@ -791,7 +791,7 @@ function resetCardProgress() {
             delete word.mastered;
         });
 
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
+        localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
         console.log('Reset card progress in localStorage');
 
         loadFlashcards();
@@ -862,7 +862,7 @@ document.head.appendChild(style);
 // Add XP function
 function addXP(amount, reason = '') {
     // Get user stats from localStorage
-    let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+    let userStats = JSON.parse(localStorage.getItem('userStatsfr')) || {
         xp: 0,
         wordsLearned: 0,
         lvl: 1,
@@ -883,7 +883,7 @@ function addXP(amount, reason = '') {
     }
 
     // Save to localStorage
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 
 
     console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
@@ -993,7 +993,7 @@ function loadVoices() {
         };
     }
 }
-function playGoogleVoice(word, language = 'en') {
+function playGoogleVoice(word, language = 'fr') {
     if (!word || word.trim() === '') {
         showNotification('No word to speak', 'error');
         return;
@@ -1066,15 +1066,15 @@ function speakText(text) {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en'; // Default to English
+    utterance.lang = 'fr'; // Default to french
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
 
     // Try to find a native English voice
     const voices = window.speechSynthesis.getVoices();
     const englishVoice = voices.find(voice =>
-        voice.lang.startsWith('en') ||
-        voice.name.toLowerCase().includes('english')
+        voice.lang.startsWith('fr') ||
+        voice.name.toLowerCase().includes('french')
     );
     if (englishVoice) {
         utterance.voice = englishVoice;
@@ -1089,7 +1089,7 @@ function speakCurrentCard() {
 
     const currentCard = sessionCards[currentCardIndex];
     if (currentCard && currentCard.word) {
-        playGoogleVoice(currentCard.word, currentCard.language || 'en');
+        playGoogleVoice(currentCard.word, currentCard.language || 'fr');
     }
 }
 

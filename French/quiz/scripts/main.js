@@ -4,8 +4,7 @@ let selectedColor = localStorage.getItem('selectedColor') || '#4f46e5';
 // Add to your App State Variables section:
 let showUserQuizzes = localStorage.getItem('showUserQuizzes') !== 'false'; // Default: true
 // Add Stories variables (ADDED)
-let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-let userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+
 let currentEditIndex = -1; // For editing stories
 
 // Add Quiz variables
@@ -19,13 +18,12 @@ let quizzes = [];
 let isReviewMode = false;
 let showExplanations = {}; // Track which explanations are shown per question
 // Add quiz history storage
-let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
+let quizHistory = JSON.parse(localStorage.getItem('quizHistoryfr')) || {};
 
 // ========= DOM Elements ==========
 const pages = document.querySelectorAll('.page');
 const navLinks = document.querySelectorAll('.nav-link');
 const levelBtns = document.querySelectorAll('.level-btn');
-const storiesGrid = document.getElementById('storiesGrid');
 const toggleNav = document.getElementById("toggle-nav");
 const more = document.getElementById("more");
 const themeToggle = document.getElementById('themeToggle');
@@ -76,7 +74,7 @@ function init() {
 
     // STEP 1: Load showUserQuizzes setting
     console.log('Step 1: Loading user quizzes setting...');
-    const savedSetting = localStorage.getItem('showUserQuizzes');
+    const savedSetting = localStorage.getItem('showUserQuizzesfr');
     if (savedSetting !== null) {
         showUserQuizzes = savedSetting === 'true';
         console.log('User quizzes setting loaded:', showUserQuizzes);
@@ -139,28 +137,10 @@ function init() {
         const selectElement = document.getElementById('Select');
         if (selectElement && selectElement.value.includes('quiz')) {
             renderQuizzes();
-        } else {
-            renderStories();
-        }
+        }Z
     }
 
-    // Load user stories from localStorage
-    try {
-        const storedStories = localStorage.getItem('userStories');
-        const storedDictionaries = localStorage.getItem('userDictionaries');
-
-        if (storedStories) {
-            userStories = JSON.parse(storedStories);
-        }
-
-        if (storedDictionaries) {
-            userDictionaries = JSON.parse(storedDictionaries);
-        }
-    } catch (error) {
-        console.error('Error loading user stories:', error);
-        userStories = [];
-        userDictionaries = {};
-    }
+ 
 
     // STEP 2: Apply saved theme FIRST
     console.log('Step 2: Applying theme...');
@@ -593,7 +573,7 @@ function renderQuizzes(level = 'all') {
 
     // Add user quizzes only if setting is enabled
     if (showUserQuizzes) {
-        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzesfr')) || [];
         userQuizzes.forEach(userQuiz => {
             const exists = allQuizzes.some(q => q.id === userQuiz.id);
             if (!exists) {
@@ -795,7 +775,7 @@ function filterQuizzesByLevel(level) {
 
     // Add user quizzes only if setting is enabled
     if (showUserQuizzes) {
-        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzesfr')) || [];
         userQuizzes.forEach(userQuiz => {
             const exists = filteredQuizzes.some(q => q.id === userQuiz.id);
             if (!exists) {
@@ -2102,7 +2082,7 @@ function saveQuizResult(quizId, score, totalQuestions) {
     }
 
     // Save to localStorage
-    localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+    localStorage.setItem('quizHistoryfr', JSON.stringify(quizHistory));
 
     // Update quiz cards if they're visible
     updateQuizCardsWithScores();
@@ -2753,7 +2733,7 @@ function filterQuizzesBySearch(query) {
 
     // Add user quizzes only if setting is enabled
     if (showUserQuizzes) {
-        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+        const userQuizzes = JSON.parse(localStorage.getItem('userQuizzesfr')) || [];
         userQuizzes.forEach(userQuiz => {
             const exists = filteredQuizzes.some(q => q.id === userQuiz.id);
             if (!exists) {

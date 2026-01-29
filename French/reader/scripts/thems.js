@@ -19,20 +19,20 @@ const themeToggle = document.getElementById('themeToggle');
 // ========= MAIN INITIALIZATION =========
 function init() {
     console.log('App initialization started...');
-    
+
     // Apply theme first
     applyTheme();
-    
+
     // Apply colors
     applyPrimaryColor(selectedColor);
     applySecondaryColor(selectedSecondaryColor);
-    
+
     // Initialize color selectors
     setTimeout(() => {
         initColorSelector();
         initSecondaryColorSelector();
     }, 100);
-    
+
     console.log('App initialization complete!');
 }
 
@@ -148,7 +148,7 @@ function applyPrimaryColor(color) {
     const root = document.documentElement;
     root.style.setProperty('--primary', color);
     root.style.setProperty('--primary-dark', darkerColor);
-    
+
     console.log('Primary color applied:', color, 'Dark:', darkerColor);
 }
 
@@ -264,7 +264,7 @@ function applySecondaryColor(color) {
     root.style.setProperty('--secondary', color);
     root.style.setProperty('--secondary-dark', darkerColor);
     root.style.setProperty('--secondary-light', lighterColor);
-    
+
     console.log('Secondary color applied:', color, 'Dark:', darkerColor, 'Light:', lighterColor);
 }
 
@@ -275,7 +275,7 @@ function adjustColor(color, percent) {
         console.error('Invalid color format:', color);
         return color;
     }
-    
+
     try {
         const num = parseInt(color.replace('#', ''), 16);
         const amt = Math.round(2.55 * percent);
@@ -382,7 +382,7 @@ function applyTheme() {
     if (selectedSecondaryColor) {
         applySecondaryColor(selectedSecondaryColor);
     }
-    
+
     console.log('Theme applied:', savedTheme);
 }
 

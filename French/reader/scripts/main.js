@@ -1,5 +1,5 @@
 // App state
-let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
 let theme = localStorage.getItem('theme') || 'light';
 let fontSize = 1.2; // rem
 let lineHeight = 1.8;
@@ -112,7 +112,7 @@ function getAggressiveKey(word) {
 // Get user stories from localStorage
 function getUserStories() {
     try {
-        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
         return userStories;
     } catch (error) {
         console.error('Error loading user stories:', error);
@@ -188,7 +188,7 @@ async function loadDictionary(dictionaryPaths) {
 function loadUserTranslations(storyId) {
     try {
         // Get user dictionaries from localStorage
-        const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+        const userDictionaries = JSON.parse(localStorage.getItem('userDictionariesfr')) || {};
 
         // Check if this story has custom translations
         const customDictionary = userDictionaries[storyId];
@@ -532,12 +532,12 @@ function saveReadingPosition() {
             scrollPosition: window.scrollY,
             isUserStory: currentStory.isUserStory || false
         };
-        localStorage.setItem('readingPosition', JSON.stringify(positionData));
+        localStorage.setItem('readingPositionfr', JSON.stringify(positionData));
     }
 }
 
 function restoreReadingPosition() {
-    const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
+    const savedPosition = JSON.parse(localStorage.getItem('readingPositionfr'));
     const storyInfo = getStoryIdFromUrl();
 
     if (savedPosition &&
@@ -723,7 +723,7 @@ function makeWordsClickable(htmlString, options = {}) {
 
         // --- ج. البحث في القواميس المخصصة ---
         const storyInfo = getStoryIdFromUrl();
-        const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+        const userDictionaries = JSON.parse(localStorage.getItem('userDictionariesfr')) || {};
         const customDictionary = userDictionaries[storyInfo.id];
 
         if (customDictionary) {
@@ -858,7 +858,7 @@ function showDictionary(word, element, isTextSelection = false) {
 
     // First, check if we have user translations for this story
     const storyInfo = getStoryIdFromUrl();
-    const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+    const userDictionaries = JSON.parse(localStorage.getItem('userDictionariesfr')) || {};
     const customDictionary = userDictionaries[storyInfo.id];
 
     let wordData = null;
@@ -1184,7 +1184,7 @@ async function saveCurrentWord() {
 // Helper function to save word to storage
 function saveWordToStorage(wordObject, element) {
     savedWords.push(wordObject);
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
 
     hideDictionary();
 
@@ -1274,7 +1274,7 @@ function saveWord(word, translation, story = '', hasTranslation = true) {
         };
     }
 
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
     renderVocabulary();
     updateStats();
 
@@ -1575,7 +1575,7 @@ function switchPage(page) {
 }
 
 // User stats variables
-let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+let userStats = JSON.parse(localStorage.getItem('userStatsfr')) || {
     xp: 0,
     wordsLearned: 0,
     readingTime: 0, // in minutes
@@ -1596,7 +1596,7 @@ function addXP(amount, reason = '') {
     }
 
     // Save to localStorage
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 
     // Update display
     updateUserStatsDisplay();

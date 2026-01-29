@@ -14,7 +14,7 @@ const vocabularyList = document.getElementById('vocabularyList');
 
 // App state
 let currentPage = 'home';
-let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
 let showVoiceButtons = localStorage.getItem('showVoiceButtons') !== 'false'; // Default: true
 
 // Color settings
@@ -32,7 +32,7 @@ let isMenuOpen = false;
 let searchTimeout = null;
 
 // User stats variables
-let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+let userStats = JSON.parse(localStorage.getItem('userStatsfr')) || {
     xp: 0,
     wordsLearned: 0,
     readingTime: 0, // in minutes
@@ -480,7 +480,7 @@ function importVocabulary() {
                 }
 
                 // Get current words
-                const currentWords = JSON.parse(localStorage.getItem('savedWords') || '[]');
+                const currentWords = JSON.parse(localStorage.getItem('savedWordsfr') || '[]');
 
                 // IMPORTANT: Preserve original order from imported file
                 // Create a new array with imported words FIRST (to maintain their order)
@@ -529,7 +529,7 @@ function importVocabulary() {
                 });
 
                 // Save back to localStorage
-                localStorage.setItem('savedWords', JSON.stringify(mergedWords));
+                localStorage.setItem('savedWordsfr', JSON.stringify(mergedWords));
 
                 // Update the global savedWords array
                 savedWords = mergedWords;
@@ -1180,7 +1180,7 @@ function getVocabularyDate(word) {
 
     // Save back to localStorage if needed
     setTimeout(() => {
-        localStorage.setItem('savedWords', JSON.stringify(savedWords));
+        localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
     }, 100);
 
     return newDate;
@@ -1239,7 +1239,7 @@ function saveWord(word, translation, story = '', hasTranslation = true) {
         };
     }
 
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
     renderVocabulary();
     updateStats();
 
@@ -1276,7 +1276,7 @@ function markAsMastered(index) {
     // Mark as mastered
     savedWords[index].status = 'mastered';
     savedWords[index].masteredDate = new Date().toISOString();
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
 
     updateVocabularyStats();
     renderVocabulary();
@@ -1296,7 +1296,7 @@ function deleteWord(index) {
 
     const word = savedWords[index].word;
     savedWords.splice(index, 1);
-    localStorage.setItem('savedWords', JSON.stringify(savedWords));
+    localStorage.setItem('savedWordsfr', JSON.stringify(savedWords));
     renderVocabulary();
     updateStats();
 
@@ -1310,7 +1310,7 @@ function removeAll() {
     if (!confirmed) return; // user canceled
 
     // Clear localStorage
-    localStorage.setItem('savedWords', JSON.stringify([]));
+    localStorage.setItem('savedWordsfr', JSON.stringify([]));
 
     // Clear in-memory array
     savedWords = [];
@@ -1457,7 +1457,7 @@ function addXP(amount, reason = '') {
     }
 
     // Save to localStorage
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 
     console.log(`Added ${amount} XP${reason ? ' for: ' + reason : ''}`);
 }
@@ -1518,7 +1518,7 @@ function speakVocabularyWord(word, translation) {
 
     // Try to speak the word in its original language
     // Determine language based on the word
-    let language = 'en'; // Default to English
+    let language = 'fr'; // Default to English
 
     // Check if the word contains Arabic characters
     const arabicRegex = /[\u0600-\u06FF]/;
@@ -1526,7 +1526,7 @@ function speakVocabularyWord(word, translation) {
         language = 'ar';
     } else if (arabicRegex.test(translation)) {
         // If translation is Arabic, speak the word in English
-        language = 'en';
+        language = 'fr';
     } else {
         // For non-Arabic words, try to detect language
         // Check for French characters/accents
@@ -1535,7 +1535,7 @@ function speakVocabularyWord(word, translation) {
             language = 'fr';
         } else if (/^[a-zA-Z\s]+$/.test(word)) {
             // Only English/French characters
-            language = 'en';
+            language = 'fr';
         }
     }
 
@@ -1543,7 +1543,7 @@ function speakVocabularyWord(word, translation) {
     playGoogleVoice(word, language);
 }
 // =============== SPEECH FUNCTIONALITY ===============
-function playGoogleVoice(word, language = 'en') {
+function playGoogleVoice(word, language = 'fr') {
     if (!word || word.trim() === '') {
         showNotification('No word to speak', 'error');
         return;

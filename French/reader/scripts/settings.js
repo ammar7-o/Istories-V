@@ -385,11 +385,11 @@ function performFullReset() {
     localStorage.setItem('ttsEnabled', defaultSettings.ttsEnabled);
 
     // Remove reading position
-    localStorage.removeItem('readingPosition');
+    localStorage.removeItem('readingPositionfr');
 
     // Clear vocabulary if requested
     if (!keepVocabulary) {
-        localStorage.removeItem('savedWords');
+        localStorage.removeItem('savedWordsfr');
         savedWords = [];
         renderVocabulary();
         updateVocabularyStats();
@@ -1008,7 +1008,7 @@ document.head.appendChild(translationAnimationStyle);
 
 // =============google tts =================
 // Fixed TTS function with CORS proxy
-function playGoogleVoice(word, language = 'en') {
+function playGoogleVoice(word, language = 'fr') {
     if (!word || word.trim() === '') {
         showNotification('No word to speak', 'error');
         return;
@@ -1133,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const wordText = popupWord.textContent || popupWord.innerText;
 
                 // ALWAYS use English for TTS when reading English words
-                const language = 'en'; // Force English
+                const language = 'fr'; // Force french
 
                 // Call the TTS function
                 playGoogleVoice(wordText, language);
@@ -1557,3 +1557,87 @@ window.addEventListener('load', function () {
         setTimeout(addTranslationButtons, 1500);
     }
 });
+
+
+
+// =================no translation words ==================
+// Initialize "No Translated Words" toggle
+function initNoTranslatedWords() {
+    const noTranslatedWordsToggle = document.getElementById('NoTranslatedWords');
+    
+    if (!noTranslatedWordsToggle) {
+        console.warn('NoTranslatedWords toggle not found');
+        return;
+    }
+    
+    // Load saved preference from localStorage
+    const savedPreference = localStorage.getItem('noTranslatedWords');
+    if (savedPreference !== null) {
+        noTranslatedWords = savedPreference === 'true';
+        noTranslatedWordsToggle.checked = noTranslatedWords;
+    } else {
+        // If no preference is saved, use the default (false - show translations)
+        noTranslatedWords = false;
+        noTranslatedWordsToggle.checked = noTranslatedWords;
+        localStorage.setItem('noTranslatedWords', 'false');
+    }
+    
+    // Apply the CSS styling based on saved preference
+    applyNoTranslationCSS(noTranslatedWords);
+    
+    // Add event listener for toggle changes
+    noTranslatedWordsToggle.addEventListener('change', function() {
+        noTranslatedWords = this.checked;
+        
+        // Save preference to localStorage
+        localStorage.setItem('noTranslatedWords', noTranslatedWords);
+        
+        // Apply or remove the CSS styling
+        applyNoTranslationCSS(noTranslatedWords);
+        
+        // Show notification
+        showNotification(`Translation highlighting ${noTranslatedWords ? 'disabled' : 'enabled'}`, 'success');
+        
+        console.log('No Translated Words:', noTranslatedWords ? 'Enabled' : 'Disabled');
+    });
+    
+    console.log('No Translated Words initialized:', noTranslatedWords);
+}
+
+// Apply or remove the no-translation CSS styling
+function applyNoTranslationCSS(isEnabled) {
+    console.log('Applying no-translation CSS:', isEnabled);
+    
+    // Get existing custom CSS
+    let customCSS = localStorage.getItem('customCSS') || '';
+    
+    // Remove any existing no-translation CSS
+    customCSS = customCSS.replace(/\.word\.no-translation\s*\{[^}]*\}/g, '');
+    customCSS = customCSS.replace(/\.word\.no-translation\s*\{[^}]*\}/g, '');
+    
+    // Remove empty lines and trim
+    customCSS = customCSS.trim();
+    
+    if (isEnabled) {
+        // Add the no-translation CSS rule
+        const noTranslationCSS = `
+            .word.no-translation {
+                background: none !important;
+                border-bottom: none !important;
+            }
+        `;
+        
+        // Append to custom CSS
+        if (customCSS) {
+            customCSS += '\n\n' + noTranslationCSS;
+        } else {
+            customCSS = noTranslationCSS;
+        }
+    }
+    
+    // Save back to localStorage
+    localStorage.setItem('customCSS', customCSS);
+    
+    // Apply the CSS
+    applyCustomCSS(customCSS);
+}

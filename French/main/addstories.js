@@ -1,6 +1,6 @@
 // Add Stories Page functionality
-let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-let userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+let userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
+let userDictionaries = JSON.parse(localStorage.getItem('userDictionariesfr')) || {};
 let currentEditIndex = -1; // Track which story is being edited
 
 // Initialize Add Stories page
@@ -462,8 +462,8 @@ function handleEditStorySubmit(e) {
     }
 
     // Save to localStorage
-    localStorage.setItem('userStories', JSON.stringify(userStories));
-    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+    localStorage.setItem('userStoriesfr', JSON.stringify(userStories));
+    localStorage.setItem('userDictionariesfr', JSON.stringify(userDictionaries));
 
     // Update UI
     loadUserStories();
@@ -538,7 +538,7 @@ function processStoryData(storyData, fileName) {
     if (processedStories.length > 0) {
         // Add all new stories to userStories array
         userStories.push(...processedStories);
-        localStorage.setItem('userStories', JSON.stringify(userStories));
+        localStorage.setItem('userStoriesfr', JSON.stringify(userStories));
 
         // Add all new stories to main stories array
         processedStories.forEach(story => {
@@ -623,7 +623,7 @@ function processSingleStory(storyData, fileName) {
     // Save translations separately if they exist
     if (Object.keys(translations).length > 0) {
         userDictionaries[storyId] = translations;
-        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+        localStorage.setItem('userDictionariesfr', JSON.stringify(userDictionaries));
     }
 
     return { success: true, story: userStory };
@@ -644,7 +644,7 @@ function openUserStoryInReader(storyId) {
     const translations = userDictionaries[storyId] || {};
 
     // Store story data in localStorage for the reader
-    localStorage.setItem('currentReadingStory', JSON.stringify({
+    localStorage.setItem('currentReadingStoryfr', JSON.stringify({
         id: story.id,
         title: story.title,
         level: story.level,
@@ -684,8 +684,8 @@ function deleteUserStory(index) {
         delete userDictionaries[storyId];
 
         // Update localStorage
-        localStorage.setItem('userStories', JSON.stringify(userStories));
-        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+        localStorage.setItem('userStoriesfr', JSON.stringify(userStories));
+        localStorage.setItem('userDictionariesfr', JSON.stringify(userDictionaries));
 
         // Update UI
         loadUserStories();
@@ -1129,7 +1129,7 @@ function copyJsonExample() {
 document.addEventListener('DOMContentLoaded', function () {
     // Load user dictionaries
     try {
-        const storedDictionaries = localStorage.getItem('userDictionaries');
+        const storedDictionaries = localStorage.getItem('userDictionariesfr');
         if (storedDictionaries) {
             userDictionaries = JSON.parse(storedDictionaries);
         }
@@ -1179,7 +1179,7 @@ function switchPage(page) {
 function exportUserStories() {
     try {
         // 1. Get user stories from localStorage
-        const storedUserStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const storedUserStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
 
         // 2. Check if there are any stories to export
         if (storedUserStories.length === 0) {
@@ -1297,8 +1297,8 @@ function deleteAllUserStories() {
         userDictionaries = {};
 
         // 4. Update localStorage
-        localStorage.removeItem('userStories');
-        localStorage.removeItem('userDictionaries');
+        localStorage.removeItem('userStoriesfr');
+        localStorage.removeItem('userDictionariesfr');
 
         // 5. Update UI
         if (currentPage === 'home' || currentPage === 'addStories') {
@@ -1323,13 +1323,134 @@ let jsonImportValidationTimer = null;
 
 // Add event listener in setupAddStoriesListeners() function:
 function setupAddStoriesListeners() {
-    // ... existing code ...
+    // File upload elements
+    const browseBtn = document.getElementById('browseBtn');
+    const storyFileInput = document.getElementById('storyFileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const removeFileBtn = document.getElementById('removeFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    // Form elements
+    const storyForm = document.getElementById('storyForm');
+    const previewBtn = document.getElementById('previewBtn');
+    const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+    const loadExampleTranslationsBtn = document.getElementById('loadExampleTranslations');
+
+    // Preview modal elements
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+    const closePreview = document.getElementById('closePreview');
+    const saveFromPreviewBtn = document.getElementById('saveFromPreviewBtn');
+
+    // Edit modal elements
+    const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+    const closeEditModalBtn2 = document.getElementById('closeEditModalBtn2');
+    const editStoryForm = document.getElementById('editStoryForm');
+    const editStoryCoverType = document.getElementById('editStoryCoverType');
+    const editStoryModal = document.getElementById('editStoryModal');
+
+    // Export button
+    const exportStoriesBtn = document.getElementById('exportStoriesBtn');
 
     // Text import functionality
     const jsonTextArea = document.getElementById('jsonTextArea');
     const clearJsonBtn = document.getElementById('clearJsonBtn');
     const importJsonBtn = document.getElementById('importJsonBtn');
 
+    // File upload functionality
+    if (browseBtn && storyFileInput) {
+        browseBtn.addEventListener('click', () => storyFileInput.click());
+    }
+
+    if (storyFileInput) {
+        storyFileInput.addEventListener('change', handleFileSelect);
+    }
+
+    if (uploadArea) {
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleFileDrop);
+        uploadArea.addEventListener('click', () => storyFileInput.click());
+    }
+
+    if (removeFileBtn) {
+        removeFileBtn.addEventListener('click', clearSelectedFile);
+    }
+
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', uploadStoryFile);
+    }
+
+    // Form functionality
+    if (storyForm) {
+        storyForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    if (previewBtn) {
+        previewBtn.addEventListener('click', showStoryPreview);
+    }
+
+    if (downloadTemplateBtn) {
+        downloadTemplateBtn.addEventListener('click', downloadStoryTemplate);
+    }
+
+    if (copyJsonBtn) {
+        copyJsonBtn.addEventListener('click', copyJsonExample);
+    }
+
+    if (loadExampleTranslationsBtn) {
+        loadExampleTranslationsBtn.addEventListener('click', loadExampleTranslations);
+    }
+
+    // Preview modal functionality
+    if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', closePreviewModal);
+    }
+
+    if (closePreview) {
+        closePreview.addEventListener('click', closePreviewModal);
+    }
+
+    if (saveFromPreviewBtn) {
+        saveFromPreviewBtn.addEventListener('click', saveStoryFromPreview);
+    }
+
+    // Edit modal functionality - FIXED WITH DEBUGGING
+    if (closeEditModalBtn) {
+        console.log('Adding event listener to closeEditModalBtn'); // Debug
+        closeEditModalBtn.addEventListener('click', function(e) {
+            console.log('closeEditModalBtn clicked'); // Debug
+            closeEditModal();
+        });
+    } else {
+        console.error('closeEditModalBtn NOT FOUND!'); // Debug
+    }
+
+    if (closeEditModalBtn2) {
+        console.log('Adding event listener to closeEditModalBtn2'); // Debug
+        closeEditModalBtn2.addEventListener('click', function(e) {
+            console.log('closeEditModalBtn2 clicked'); // Debug
+            closeEditModal();
+        });
+    } else {
+        console.error('closeEditModalBtn2 NOT FOUND!'); // Debug
+    }
+
+    if (editStoryForm) {
+        editStoryForm.addEventListener('submit', handleEditStorySubmit);
+    }
+
+    if (editStoryCoverType) {
+        editStoryCoverType.addEventListener('change', updateEditCoverLabel);
+    }
+
+    // Export button functionality
+    if (exportStoriesBtn) {
+        exportStoriesBtn.addEventListener('click', exportUserStories);
+    }
+
+    // Text import functionality
     if (jsonTextArea) {
         jsonTextArea.addEventListener('input', validateJsonInput);
     }
@@ -1342,7 +1463,24 @@ function setupAddStoriesListeners() {
         importJsonBtn.addEventListener('click', importFromText);
     }
 
-    // ... existing code ...
+    // Close modals when clicking outside
+    const previewModal = document.getElementById('previewModal');
+    if (previewModal) {
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                closePreviewModal();
+            }
+        });
+    }
+
+    if (editStoryModal) {
+        editStoryModal.addEventListener('click', (e) => {
+            if (e.target === editStoryModal) {
+                console.log('Clicked outside edit modal, closing...'); // Debug
+                closeEditModal();
+            }
+        });
+    }
 }
 
 // Validate JSON input as user types

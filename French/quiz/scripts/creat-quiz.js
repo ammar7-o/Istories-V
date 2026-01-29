@@ -1,5 +1,5 @@
 // ========= Quiz Creation Variables ==========
-let userQuizzes = JSON.parse(localStorage.getItem('userQuizzes')) || [];
+let userQuizzes = JSON.parse(localStorage.getItem('userQuizzesfr')) || [];
 let currentEditQuizIndex = -1; // Track which quiz is being edited
 
 // ========= Quiz Creation Functions ==========
@@ -451,7 +451,7 @@ function handleEditQuizSubmit(e) {
     updateQuizInMainArray(userQuizzes[currentEditQuizIndex]);
 
     // Save to localStorage
-    localStorage.setItem('userQuizzes', JSON.stringify(userQuizzes));
+    localStorage.setItem('userQuizzesfr', JSON.stringify(userQuizzes));
 
     // Update UI
     loadUserQuizzes();
@@ -673,7 +673,7 @@ function processQuizData(quizData, fileName) {
     if (processedQuizzes.length > 0) {
         // Add to user quizzes
         userQuizzes.push(...processedQuizzes);
-        localStorage.setItem('userQuizzes', JSON.stringify(userQuizzes));
+        localStorage.setItem('userQuizzesfr', JSON.stringify(userQuizzes));
 
         // Add to main quizzes array
         processedQuizzes.forEach(quiz => {
@@ -681,7 +681,7 @@ function processQuizData(quizData, fileName) {
         });
 
         // Save quizzes to localStorage for persistence
-        localStorage.setItem('quizzes', JSON.stringify(quizzes));
+        localStorage.setItem('quizzesfr', JSON.stringify(quizzes));
     }
 
     // Update UI
@@ -758,11 +758,11 @@ function deleteUserQuiz(index) {
 
         // Remove from quiz history
         delete quizHistory[quizId];
-        localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        localStorage.setItem('quizHistoryfr', JSON.stringify(quizHistory));
 
         // Update localStorage
-        localStorage.setItem('userQuizzes', JSON.stringify(userQuizzes));
-        localStorage.setItem('quizzes', JSON.stringify(quizzes));
+        localStorage.setItem('userQuizzesfr', JSON.stringify(userQuizzes));
+        localStorage.setItem('quizzesfr', JSON.stringify(quizzes));
 
         // Update UI
         loadUserQuizzes();
@@ -1146,9 +1146,9 @@ function deleteAllUserQuizzes() {
         userQuizzes = [];
 
         // Update localStorage
-        localStorage.removeItem('userQuizzes');
-        localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
-        localStorage.setItem('quizzes', JSON.stringify(quizzes));
+        localStorage.removeItem('userQuizzesfr');
+        localStorage.setItem('quizHistoryfr', JSON.stringify(quizHistory));
+        localStorage.setItem('quizzesfr', JSON.stringify(quizzes));
 
         // Update UI
         loadUserQuizzes();
@@ -1185,7 +1185,7 @@ function loadUserQuizzesIntoMainArray() {
 document.addEventListener('DOMContentLoaded', function () {
     // Load user quizzes from localStorage
     try {
-        const storedQuizzes = localStorage.getItem('userQuizzes');
+        const storedQuizzes = localStorage.getItem('userQuizzesfr');
         if (storedQuizzes) {
             userQuizzes = JSON.parse(storedQuizzes);
         }

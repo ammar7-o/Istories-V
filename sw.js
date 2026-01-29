@@ -5,10 +5,20 @@ const ASSETS = [
   `${BASE}/`,
   `${BASE}/index.html`,
   `${BASE}/style.css`,
+  `${BASE}/icon.png`,
+  `${BASE}/icon-manifest.png`,
   `${BASE}/English/index.html`,
   `${BASE}/English/reader/index.html`,
-  `${BASE}/icon.png`,
-  `${BASE}/icon-manifest.png`
+  `${BASE}/English/database/main.js`,
+  `${BASE}/English/vocabulary/index.html`,
+  `${BASE}/English/flashcard/index.html`,
+  `${BASE}/French/index.html`,
+  `${BASE}/French/reader/index.html`,
+  `${BASE}/French/database/main.js`,
+  `${BASE}/French/vocabulary/index.html`,
+  `${BASE}/French/flashcard/index.html`,
+
+
 ];
 
 // INSTALL

@@ -1323,13 +1323,134 @@ let jsonImportValidationTimer = null;
 
 // Add event listener in setupAddStoriesListeners() function:
 function setupAddStoriesListeners() {
-    // ... existing code ...
+    // File upload elements
+    const browseBtn = document.getElementById('browseBtn');
+    const storyFileInput = document.getElementById('storyFileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const removeFileBtn = document.getElementById('removeFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    // Form elements
+    const storyForm = document.getElementById('storyForm');
+    const previewBtn = document.getElementById('previewBtn');
+    const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+    const loadExampleTranslationsBtn = document.getElementById('loadExampleTranslations');
+
+    // Preview modal elements
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+    const closePreview = document.getElementById('closePreview');
+    const saveFromPreviewBtn = document.getElementById('saveFromPreviewBtn');
+
+    // Edit modal elements
+    const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+    const closeEditModalBtn2 = document.getElementById('closeEditModalBtn2');
+    const editStoryForm = document.getElementById('editStoryForm');
+    const editStoryCoverType = document.getElementById('editStoryCoverType');
+    const editStoryModal = document.getElementById('editStoryModal');
+
+    // Export button
+    const exportStoriesBtn = document.getElementById('exportStoriesBtn');
 
     // Text import functionality
     const jsonTextArea = document.getElementById('jsonTextArea');
     const clearJsonBtn = document.getElementById('clearJsonBtn');
     const importJsonBtn = document.getElementById('importJsonBtn');
 
+    // File upload functionality
+    if (browseBtn && storyFileInput) {
+        browseBtn.addEventListener('click', () => storyFileInput.click());
+    }
+
+    if (storyFileInput) {
+        storyFileInput.addEventListener('change', handleFileSelect);
+    }
+
+    if (uploadArea) {
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleFileDrop);
+        uploadArea.addEventListener('click', () => storyFileInput.click());
+    }
+
+    if (removeFileBtn) {
+        removeFileBtn.addEventListener('click', clearSelectedFile);
+    }
+
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', uploadStoryFile);
+    }
+
+    // Form functionality
+    if (storyForm) {
+        storyForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    if (previewBtn) {
+        previewBtn.addEventListener('click', showStoryPreview);
+    }
+
+    if (downloadTemplateBtn) {
+        downloadTemplateBtn.addEventListener('click', downloadStoryTemplate);
+    }
+
+    if (copyJsonBtn) {
+        copyJsonBtn.addEventListener('click', copyJsonExample);
+    }
+
+    if (loadExampleTranslationsBtn) {
+        loadExampleTranslationsBtn.addEventListener('click', loadExampleTranslations);
+    }
+
+    // Preview modal functionality
+    if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', closePreviewModal);
+    }
+
+    if (closePreview) {
+        closePreview.addEventListener('click', closePreviewModal);
+    }
+
+    if (saveFromPreviewBtn) {
+        saveFromPreviewBtn.addEventListener('click', saveStoryFromPreview);
+    }
+
+    // Edit modal functionality - FIXED WITH DEBUGGING
+    if (closeEditModalBtn) {
+        console.log('Adding event listener to closeEditModalBtn'); // Debug
+        closeEditModalBtn.addEventListener('click', function(e) {
+            console.log('closeEditModalBtn clicked'); // Debug
+            closeEditModal();
+        });
+    } else {
+        console.error('closeEditModalBtn NOT FOUND!'); // Debug
+    }
+
+    if (closeEditModalBtn2) {
+        console.log('Adding event listener to closeEditModalBtn2'); // Debug
+        closeEditModalBtn2.addEventListener('click', function(e) {
+            console.log('closeEditModalBtn2 clicked'); // Debug
+            closeEditModal();
+        });
+    } else {
+        console.error('closeEditModalBtn2 NOT FOUND!'); // Debug
+    }
+
+    if (editStoryForm) {
+        editStoryForm.addEventListener('submit', handleEditStorySubmit);
+    }
+
+    if (editStoryCoverType) {
+        editStoryCoverType.addEventListener('change', updateEditCoverLabel);
+    }
+
+    // Export button functionality
+    if (exportStoriesBtn) {
+        exportStoriesBtn.addEventListener('click', exportUserStories);
+    }
+
+    // Text import functionality
     if (jsonTextArea) {
         jsonTextArea.addEventListener('input', validateJsonInput);
     }
@@ -1342,7 +1463,24 @@ function setupAddStoriesListeners() {
         importJsonBtn.addEventListener('click', importFromText);
     }
 
-    // ... existing code ...
+    // Close modals when clicking outside
+    const previewModal = document.getElementById('previewModal');
+    if (previewModal) {
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                closePreviewModal();
+            }
+        });
+    }
+
+    if (editStoryModal) {
+        editStoryModal.addEventListener('click', (e) => {
+            if (e.target === editStoryModal) {
+                console.log('Clicked outside edit modal, closing...'); // Debug
+                closeEditModal();
+            }
+        });
+    }
 }
 
 // Validate JSON input as user types

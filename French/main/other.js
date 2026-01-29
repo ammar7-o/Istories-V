@@ -78,7 +78,7 @@ function filterStoriesBySearch(query) {
 
         // Add user stories only if setting is enabled
         if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+            const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
             userStories.forEach(userStory => {
                 const exists = filteredStories.some(s => s.id === userStory.id);
                 if (!exists) {
@@ -100,7 +100,7 @@ function filterStoriesBySearch(query) {
 
     // Add user stories only if setting is enabled
     if (showUserStories) {
-        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
         userStories.forEach(userStory => {
             const exists = filteredStories.some(s => s.id === userStory.id);
             if (!exists) {
@@ -658,7 +658,7 @@ function init() {
     console.log('App initialization started...');
 
     // Load saved words
-    savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
 
     // Apply theme
     applyTheme();
@@ -736,7 +736,7 @@ function updateActiveColor(color, isSecondary = false) {
 // Get reading history from localStorage
 function getReadingHistory() {
     try {
-        const history = JSON.parse(localStorage.getItem('readingHistory')) || [];
+        const history = JSON.parse(localStorage.getItem('readingHistoryfr')) || [];
         return history.slice(0, 10); // Return only last 10 items
     } catch (error) {
         console.error('Error reading history:', error);
@@ -768,7 +768,7 @@ function addToReadingHistory(story) {
             history = history.slice(0, 10);
         }
 
-        localStorage.setItem('readingHistory', JSON.stringify(history));
+        localStorage.setItem('readingHistoryfr', JSON.stringify(history));
     } catch (error) {
         console.error('Error saving reading history:', error);
     }
@@ -920,7 +920,7 @@ function closeRecentStoriesModal() {
 // Clear reading history
 function clearReadingHistory() {
     if (confirm("Clear all reading history? This action cannot be undone.")) {
-        localStorage.removeItem('readingHistory');
+        localStorage.removeItem('readingHistoryfr');
         showNotification('Reading history cleared!');
         closeRecentStoriesModal();
     }
@@ -939,7 +939,7 @@ function openUserStoryFromHistory(storyId) {
         }
 
         // If not in memory, try to load from localStorage
-        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
         const userStory = userStories.find(s => s.id == storyId);
 
         if (userStory) {
@@ -957,7 +957,7 @@ function openUserStoryFromHistory(storyId) {
             // Remove from history
             let history = getReadingHistory();
             history = history.filter(item => item.id != storyId);
-            localStorage.setItem('readingHistory', JSON.stringify(history));
+            localStorage.setItem('readingHistoryfr', JSON.stringify(history));
 
             // Close modal and refresh
             closeRecentStoriesModal();
@@ -1160,7 +1160,7 @@ function showNotification(message, type = 'info') {
 
 //===================end profile settings===================
 // User stats variables
-let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+let userStats = JSON.parse(localStorage.getItem('userStatsfr')) || {
     xp: 0,
     wordsLearned: 0,
     lvl: 1, // Level starts at 1
@@ -1174,7 +1174,7 @@ function initUserStats() {
     console.log('Initializing user stats...');
 
     // Sync word count from savedWords on init
-    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    const savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
     userStats.wordsLearned = savedWords.length;
 
     // Calculate current level from total XP (CORRECT CALCULATION)
@@ -1187,7 +1187,7 @@ function initUserStats() {
     updateUserStatsDisplay();
 
     // Save initial stats if they don't exist
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 
     console.log('Initialized: Level', userStats.lvl, '| XP:', userStats.totalXP, '| Words:', userStats.wordsLearned);
 }
@@ -1230,7 +1230,7 @@ function updateStreak() {
     }
 
     // Save updated streak
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 }
 
 function addXP(amount, reason = '') {
@@ -1249,7 +1249,7 @@ function addXP(amount, reason = '') {
     }
 
     // Save to localStorage
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 
     // Update display
     updateUserStatsDisplay();
@@ -1259,7 +1259,7 @@ function addXP(amount, reason = '') {
 
 function addWordToStats() {
     // Get savedWords from localStorage
-    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    const savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
 
     // Update word count
     userStats.wordsLearned = savedWords.length;
@@ -1268,7 +1268,7 @@ function addWordToStats() {
     addXP(5, 'Learning new word');
 
     // Save to localStorage
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
 
     // Update display
     updateUserStatsDisplay();
@@ -1374,7 +1374,7 @@ function checkDailyBonus() {
 
 // Function to sync word count
 function syncWordCountFromStorage() {
-    const savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+    const savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
     const previousCount = userStats.wordsLearned;
     userStats.wordsLearned = savedWords.length;
 
@@ -1384,7 +1384,7 @@ function syncWordCountFromStorage() {
         addXP(newWords * 5, `Sync: ${newWords} new words found`);
     }
 
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+    localStorage.setItem('userStatsfr', JSON.stringify(userStats));
     updateUserStatsDisplay();
 
     console.log(`Synced word count: ${previousCount} → ${userStats.wordsLearned}`);

@@ -45,7 +45,7 @@ function scrollToTop() {
 function init() {
     console.log('App initialization started...');
     // Auto lazy load ALL images
-    document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
+    // document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
     // Wait for stories to be loaded from external file
     if (typeof window.storiesData !== 'undefined') {
         stories = window.storiesData.stories || window.storiesData;

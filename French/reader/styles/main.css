@@ -922,7 +922,11 @@ header {
     }
 
     .story-text-container {
-        padding: 20px 15px;
+        Padding: 0px;
+    }
+
+    .story-text-container .paragraph {
+        Padding: 0px;
     }
 
     .story-text {

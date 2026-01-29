@@ -6,7 +6,7 @@
 // App state
 let currentPage = 'home';
 let currentStory = null;
-let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+let savedWords = JSON.parse(localStorage.getItem('savedWordsfr')) || [];
 let fontSize = 1.2; // rem
 let lineHeight = 1.8;
 let stories = []; // Will be loaded from external file
@@ -45,7 +45,7 @@ function scrollToTop() {
 function init() {
     console.log('App initialization started...');
     // Auto lazy load ALL images
-    document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
+    // document.querySelectorAll('img').forEach(img => img.setAttribute('loading', 'lazy'));
     // Wait for stories to be loaded from external file
     if (typeof window.storiesData !== 'undefined') {
         stories = window.storiesData.stories || window.storiesData;
@@ -68,7 +68,7 @@ function init() {
 
     // Load user stories from localStorage
     try {
-        const storedUserStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const storedUserStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
         userStories = storedUserStories;
 
         // Add user stories to main stories array
@@ -259,7 +259,7 @@ function openStoryInNewPage(storyId) {
 
     // If not found in main stories, check user stories
     if (!story) {
-        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+        const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
         story = userStories.find(s => s.id == storyId);
 
         if (story && !stories.some(s => s.id == storyId)) {
@@ -345,7 +345,7 @@ function renderStories(level = 'all') {
 
         // Add user stories only if setting is enabled
         if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+            const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
             userStories.forEach(userStory => {
                 const exists = filteredStories.some(s => s.id === userStory.id);
                 if (!exists) {
@@ -359,7 +359,7 @@ function renderStories(level = 'all') {
     } else if (level === 'user') {
         // Show only user stories (if enabled)
         if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+            const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
             filteredStories = userStories.map(story => ({
                 ...story,
                 isUserStory: true
@@ -376,7 +376,7 @@ function renderStories(level = 'all') {
 
         // Add user stories of the same level if setting is enabled
         if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
+            const userStories = JSON.parse(localStorage.getItem('userStoriesfr')) || [];
             userStories.forEach(userStory => {
                 if (userStory.level === level) {
                     const exists = filteredStories.some(s => s.id === userStory.id);
