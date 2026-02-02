@@ -1006,6 +1006,8 @@ function playGoogleVoice(word, language = 'fr') {
     if (ttsBtn) {
         const icon = ttsBtn.querySelector('i');
         if (icon) {
+            // Store original icon class for restoration
+            icon.setAttribute('data-original-icon', icon.className);
             icon.className = 'fas fa-spinner fa-spin';
         }
         ttsBtn.disabled = true;
@@ -1015,19 +1017,17 @@ function playGoogleVoice(word, language = 'fr') {
         // Original Google TTS URL
         const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
 
-        // Use a CORS proxy to bypass restrictions
-        const proxyUrl = 'https://corsproxy.io/?';
-
-        // Construct the proxied URL
-        const proxiedUrl = proxyUrl + encodeURIComponent(googleTTSUrl);
+        // Use YOUR Cloudflare Worker proxy
+        const myProxyUrl = `https://muddy-sun-2d2f.zasmimaz.workers.dev/?url=${encodeURIComponent(googleTTSUrl)}`;
 
         // Create audio element and play
-        const audio = new Audio(proxiedUrl);
+        const audio = new Audio(myProxyUrl);
+        audio.crossOrigin = "anonymous"; // Important for CORS
 
         // Play the audio
         audio.play()
             .then(() => {
-                console.log(`Playing TTS for: ${text} in ${language}`);
+                console.log(`Playing TTS for: ${text} in ${language} via Cloudflare proxy`);
             })
             .catch(error => {
                 console.error('TTS play failed:', error);

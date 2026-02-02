@@ -1551,15 +1551,18 @@ function playGoogleVoice(word, language = 'fr') {
 
     const text = word.trim();
 
-    // Get the clicked button (we'll pass it as a parameter)
-    // But first, let's store the clicked button
-    const clickedButton = event.target.closest('.vocabulary-voice-btn') ||
-        event.target.querySelector('.vocabulary-voice-btn');
+    // Get the clicked button (using event parameter)
+    const clickedButton = event ? 
+        (event.target.closest('.vocabulary-voice-btn') || 
+         event.target.querySelector('.vocabulary-voice-btn')) : 
+        document.getElementById('googleTTSBtn');
 
     // Show loading indicator ONLY on the clicked button
     if (clickedButton) {
         const icon = clickedButton.querySelector('i');
         if (icon) {
+            // Store original icon class for restoration
+            icon.setAttribute('data-original-icon', icon.className);
             icon.className = 'fas fa-spinner fa-spin';
         }
         clickedButton.disabled = true;
@@ -1569,17 +1572,17 @@ function playGoogleVoice(word, language = 'fr') {
         // Original Google TTS URL
         const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
 
-        // Use a CORS proxy to bypass restrictions
-        const proxyUrl = 'https://corsproxy.io/?';
-        const proxiedUrl = proxyUrl + encodeURIComponent(googleTTSUrl);
+        // Use your Cloudflare Worker proxy
+        const myProxyUrl = `https://muddy-sun-2d2f.zasmimaz.workers.dev/?url=${encodeURIComponent(googleTTSUrl)}`;
 
-        // Create audio element and play
-        const audio = new Audio(proxiedUrl);
+        // Create audio element
+        const audio = new Audio(myProxyUrl);
+        audio.crossOrigin = "anonymous"; // Important for CORS
 
         // Play the audio
         audio.play()
             .then(() => {
-                console.log(`Playing TTS for: ${text} in ${language}`);
+                console.log(`Playing TTS for: ${text} in ${language} via Cloudflare proxy`);
             })
             .catch(error => {
                 console.error('TTS play failed:', error);
@@ -1596,15 +1599,16 @@ function playGoogleVoice(word, language = 'fr') {
 
         // Reset button on error
         audio.onerror = () => {
-            console.error('Audio element error');
+            console.error('Audio loading/playback error');
             if (clickedButton) {
                 resetSingleVoiceButton(clickedButton);
             }
+            // Fallback to native speech synthesis
             useNativeSpeechSynthesis(text, language, clickedButton);
         };
 
     } catch (error) {
-        console.error('TTS error:', error);
+        console.error('TTS setup error:', error);
         if (clickedButton) {
             resetSingleVoiceButton(clickedButton);
         }

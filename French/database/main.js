@@ -71,7 +71,7 @@ window.storiesData = {
             "title": "Un Jour au Parc",
             "level": "beginner",
             "levelcefr": "A2",
-            "cover": "https://images.unsplash.com/photo-1578632749014-ca77efd052eb?w=400",
+            "cover": "https://cdn.pixabay.com/photo/2015/10/04/15/58/dandelion-971265_960_720.jpg",
             "coverType": "image",
             "sound": "",
             "author": "Istories",

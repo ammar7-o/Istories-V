@@ -1,7 +1,7 @@
 
 let fontSize = 1.2; // rem
 let lineHeight = 1.8;
-
+let noTranslatedWords = false; // Add this line
 // settings
 const settingsButton = document.getElementById("settings-button");
 const settingsPage = document.getElementById("settings-page");
@@ -141,6 +141,7 @@ const clearCustomCSSBtn = document.getElementById('clearCustomCSS');
 const previewCSSBtn = document.getElementById('previewCSS');
 const resetAllSettingsBtn = document.getElementById('resetAllSettings');
 // Function to load all font settings
+// Function to load all font settings
 function loadFontSettings() {
     // Load font size
     const savedFontSize = localStorage.getItem('fontSize');
@@ -178,9 +179,14 @@ function loadFontSettings() {
         storyText.style.fontFamily = savedFontFamily;
     }
 
-    console.log('Font settings loaded:', { fontSize, lineHeight, savedFontFamily });
-}
+    // Load no translated words setting - ADD THIS
+    const savedNoTranslatedWords = localStorage.getItem('noTranslatedWords');
+    if (savedNoTranslatedWords !== null) {
+        noTranslatedWords = savedNoTranslatedWords === 'true';
+    }
 
+    console.log('Font settings loaded:', { fontSize, lineHeight, savedFontFamily, noTranslatedWords });
+}
 // Load saved custom CSS
 function loadCustomCSS() {
     const savedCSS = localStorage.getItem('customCSS') || '';
@@ -875,7 +881,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Setup event delegation for dynamic buttons
     setupEventDelegation();
-
+    initNoTranslatedWords();
     // Track if auto-translate has already been triggered
     let autoTranslateTriggered = false;
 
@@ -1009,77 +1015,41 @@ document.head.appendChild(translationAnimationStyle);
 // =============google tts =================
 // Fixed TTS function with CORS proxy
 function playGoogleVoice(word, language = 'fr') {
-    if (!word || word.trim() === '') {
-        showNotification('No word to speak', 'error');
-        return;
-    }
+    if (!word || word.trim() === '') return;
 
     const text = word.trim();
-
-    // Show loading indicator
     const ttsBtn = document.getElementById('googleTTSBtn');
+
     if (ttsBtn) {
         const icon = ttsBtn.querySelector('i');
-        if (icon) {
-            icon.className = 'fas fa-spinner fa-spin';
-        }
+        if (icon) icon.className = 'fas fa-spinner fa-spin';
         ttsBtn.disabled = true;
     }
 
-    try {
-        // Original Google TTS URL
-        const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
+    // رابط جوجل الصوتي الأصلي
+    const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob`;
 
-        // Use a CORS proxy to bypass restrictions
-        // Option 1: cors-anywhere (requires temporary access for localhost)
-        // const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    // استخدام الرابط الخاص بك الذي أنشأته على Cloudflare
+    const myProxyUrl = `https://muddy-sun-2d2f.zasmimaz.workers.dev/?url=${encodeURIComponent(googleTTSUrl)}`;
 
-        // Option 2: corsproxy.io (more reliable)
-        const proxyUrl = 'https://corsproxy.io/?';
+    const audio = new Audio();
+    audio.src = myProxyUrl;
+    audio.crossOrigin = "anonymous"; // ضروري لتجنب مشاكل الحماية
 
-        // Option 3: allorigins.win
-        // const proxyUrl = 'https://api.allorigins.win/raw?url=';
+    audio.play()
+        .then(() => {
+            console.log("تم تشغيل الصوت عبر الوكيل الخاص بك بنجاح");
+        })
+        .catch(error => {
+            console.error('حدث خطأ أثناء التشغيل:', error);
+            // محاولة النطق الداخلي كخيار احتياطي
+            useNativeSpeechSynthesis(text, language);
+        });
 
-        // Construct the proxied URL
-        const proxiedUrl = proxyUrl + encodeURIComponent(googleTTSUrl);
-
-        // Create audio element and play
-        const audio = new Audio(proxiedUrl);
-
-        // Play the audio
-        audio.play()
-            .then(() => {
-                console.log(`Playing TTS for: ${text} in ${language}`);
-            })
-            .catch(error => {
-                console.error('TTS play failed:', error);
-
-                // Fallback: Try browser's native speech synthesis
-                if (useNativeSpeechSynthesis(text, language)) {
-                    showNotification(`No internet`, 'info');
-                } else {
-                    showNotification('This function need Internet.', 'error');
-                }
-            });
-
-        // Reset button when audio ends
-        audio.onended = () => {
-            resetTTSButton();
-        };
-
-        // Reset button on error
-        audio.onerror = () => {
-            console.error('Audio element error');
-            resetTTSButton();
-            showNotification('TTS playback failed', 'error');
-        };
-
-    } catch (error) {
-        console.error('TTS error:', error);
-        showNotification('Failed to play audio', 'error');
-        resetTTSButton();
-    }
+    audio.onended = resetTTSButton;
+    audio.onerror = resetTTSButton;
 }
+
 
 // Helper function to reset TTS button
 function resetTTSButton() {
@@ -1094,7 +1064,7 @@ function resetTTSButton() {
 }
 
 // Fallback: Use browser's native speech synthesis
-function useNativeSpeechSynthesis(text, language = 'en-US') {
+function useNativeSpeechSynthesis(text, language = 'fr-FR') {
     if (!('speechSynthesis' in window)) return false;
 
     speechSynthesis.cancel();
@@ -1577,7 +1547,7 @@ function initNoTranslatedWords() {
         noTranslatedWordsToggle.checked = noTranslatedWords;
     } else {
         // If no preference is saved, use the default (false - show translations)
-        noTranslatedWords = false;
+        noTranslatedWords = true;
         noTranslatedWordsToggle.checked = noTranslatedWords;
         localStorage.setItem('noTranslatedWords', 'false');
     }
