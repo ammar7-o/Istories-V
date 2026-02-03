@@ -1,21 +1,85 @@
 {
   "name": "Istories - Learn Languages",
   "short_name": "Istories",
+  "id": "https://ammar7-o.github.io/Istories-V/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
- "icons": [
-  {
-    "src": "/icon-192.png",
-    "sizes": "192x192",
-    "type": "image/png"
+  "description": "Read interactive stories with instant word translations, audio pronunciation, and vocabulary building. Learn English through interactive stories with clickable word definitions.",
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "640x360",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "640x360",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "books"],
+  "shortcuts": [
+    {
+      "name": "Start Reading",
+      "short_name": "Read",
+      "description": "Jump directly to stories",
+      "url": "/stories",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/open",
+      "accept": {
+        "application/json": [".json"],
+        "text/plain": [".txt"]
+      }
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.istories.app",
+      "url": "https://play.google.com/store/apps/details?id=com.istories.app"
+    }
+  ],
+  "prefer_related_applications": false,
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["image/*", "text/*"]
+        }
+      ]
+    }
   },
-  {
-    "src": "/icon-512.png",
-    "sizes": "512x512",
-    "type": "image/png"
+  "note_taking": {
+    "template": "/templates/note.html",
+    "editable": true
   }
-]
-
 }
