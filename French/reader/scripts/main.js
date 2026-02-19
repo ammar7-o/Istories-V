@@ -282,6 +282,7 @@ async function getDatabaseFiles() {
     const defaultFiles = [
         '../database/main.js',
         '../database/more.js',
+        '../database/1bacsef.js',
         '../database/stories1.js',
         '../database/stories2.js',
         '../database/stories3.js',

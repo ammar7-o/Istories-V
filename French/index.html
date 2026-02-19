@@ -349,8 +349,10 @@
                             <i class="fas fa-history"></i> Recent Stories
                         </button>
                         <select name="" id="Select">
-                            <option value="database/main.js">English-1</option>
-                            <option value="database/more.js">English-2</option>
+                            <option value="database/main.js">french-1</option>
+                            <option value="database/more.js">french-2</option>
+                            <option value="database/1bacsef.js">1BACSEF</option>
+
 
                         </select>
                     </div>
@@ -1009,6 +1011,14 @@ Enter one dictionary path per line"></textarea>
         window.storiesLoaded = false;
         window.storiesData = [];
 
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
         // Function to save selected stories file to localStorage
         function saveSelectedStoriesFile(filename) {
             localStorage.setItem('selectedStoriesFilefr', filename);
@@ -1088,51 +1098,113 @@ Enter one dictionary path per line"></textarea>
             document.head.appendChild(s);
         }
 
+        // Function to set select element value based on filename
+        function setSelectValue(filename) {
+            const selectElement = document.getElementById('Select');
+            if (!selectElement) return false;
+
+            // Check if the filename exists as an option
+            for (let option of selectElement.options) {
+                if (option.value === filename) {
+                    selectElement.value = filename;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Function to validate and get stories file from URL or storage
+        function getStoriesFileToLoad() {
+            // First check URL parameter 'story' or 'file'
+            const urlStoryFile = getUrlParameter('story') || getUrlParameter('file');
+
+            if (urlStoryFile) {
+                console.log('Found story file in URL:', urlStoryFile);
+
+                // Try to set the select element to this value
+                const selectElement = document.getElementById('Select');
+                if (selectElement) {
+                    // Check if the URL file exists as an option
+                    let optionExists = false;
+                    for (let option of selectElement.options) {
+                        if (option.value === urlStoryFile) {
+                            optionExists = true;
+                            break;
+                        }
+                    }
+
+                    if (optionExists) {
+                        // URL parameter is valid, use it and save to localStorage
+                        selectElement.value = urlStoryFile;
+                        console.log('Using story file from URL:', urlStoryFile);
+                        return urlStoryFile;
+                    } else {
+                        console.warn(`URL story file "${urlStoryFile}" not found in options, checking if it's a valid path`);
+
+                        // Even if not in options, we can still try to load it if it's a valid path
+                        // But we won't change the select element
+                        return urlStoryFile;
+                    }
+                }
+            }
+
+            // If no URL parameter or invalid, check localStorage
+            const savedFile = loadSavedStoriesFile();
+            console.log('Using saved stories file:', savedFile);
+            return savedFile;
+        }
+
         // Add event listener to select element
         document.getElementById('Select').addEventListener('change', function (e) {
             const selectedFile = e.target.value;
             console.log(`File changed to: ${selectedFile}`);
+
+            // Update URL with the selected file without reloading the page
+            const url = new URL(window.location.href);
+            url.searchParams.set('story', selectedFile);
+            window.history.replaceState({}, '', url);
+
             loadStoriesFile(selectedFile);
         });
 
-        // Load initial stories - check for saved selection first
+        // Load initial stories - check URL first, then saved selection
         function loadInitialStories() {
-            // Check if we have a saved stories file selection
-            const savedFile = loadSavedStoriesFile();
+            const fileToLoad = getStoriesFileToLoad();
 
-            // Set the select element to show the saved file
-            const selectElement = document.getElementById('Select');
-            if (selectElement) {
-                // Check if the saved file exists as an option
-                let optionExists = false;
-                for (let option of selectElement.options) {
-                    if (option.value === savedFile) {
-                        optionExists = true;
-                        break;
-                    }
-                }
+            // Set the select element to show the loaded file (if it exists as an option)
+            setSelectValue(fileToLoad);
 
-                if (optionExists) {
-                    selectElement.value = savedFile;
-                    console.log('Using saved stories file:', savedFile);
-                    loadStoriesFile(savedFile);
-                } else {
-                    // Use default/selected option
-                    const initialFile = selectElement.value;
-                    console.log('Saved file not found, using:', initialFile);
-                    loadStoriesFile(initialFile);
-                }
-            } else {
-                // Fallback if select element doesn't exist
-                loadStoriesFile('stories/stories.json');
-            }
+            // Load the stories file
+            loadStoriesFile(fileToLoad);
         }
 
         // Load initial stories when page loads
         loadInitialStories();
 
+        // Optional: Add function to generate shareable links
+        function getShareableLink(storyFile) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('story', storyFile);
+            return url.toString();
+        }
+
+        // Optional: Add function to get current story file
+        function getCurrentStoryFile() {
+            return document.getElementById('Select').value;
+        }
+        // Add event listener to select element
+        document.getElementById('Select').addEventListener('change', function (e) {
+            const selectedFile = e.target.value;
+            console.log(`File changed to: ${selectedFile}`);
+
+            // Update URL with the selected file without reloading the page
+            const url = new URL(window.location.href);
+            url.searchParams.set('story', selectedFile);
+            window.history.replaceState({}, '', url);
+
+            loadStoriesFile(selectedFile);
+        });
     </script>
-   
 
 
     <script src="main/other.js"></script>

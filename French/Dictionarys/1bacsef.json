@@ -1,0 +1,653 @@
+{
+    "society": {
+        "translation": "مجتمع"
+    },
+    "discussion": {
+        "translation": "نقاش"
+    },
+    "polygamy": {
+        "translation": "تعدد الزوجات"
+    },
+    "causes": {
+        "translation": "أسباب"
+    },
+    "consequences": {
+        "translation": "عواقب"
+    },
+    "phenomenon": {
+        "translation": "ظاهرة"
+    },
+    "man": {
+        "translation": "رجل"
+    },
+    "wife": {
+        "translation": "زوجة"
+    },
+    "problems": {
+        "translation": "مشاكل"
+    },
+    "life": {
+        "translation": "حياة"
+    },
+    "children": {
+        "translation": "أطفال"
+    },
+    "solution": {
+        "translation": "حل"
+    },
+    "family": {
+        "translation": "عائلة"
+    },
+    "conflicts": {
+        "translation": "صراعات"
+    },
+    "divorce": {
+        "translation": "طلاق"
+    },
+    "money": {
+        "translation": "مال"
+    },
+    "needs": {
+        "translation": "احتياجات"
+    },
+    "clothing": {
+        "translation": "ملابس"
+    },
+    "food": {
+        "translation": "طعام"
+    },
+    "point of view": {
+        "translation": "وجهة نظر"
+    },
+    "responsible": {
+        "translation": "مسؤول"
+    },
+    "dans": {
+        "translation": "في"
+    },
+    "notre": {
+        "translation": "نحن"
+    },
+    "société": {
+        "translation": "مجتمع"
+    },
+    "il": {
+        "translation": "هناك"
+    },
+    "y": {
+        "translation": "يوجد"
+    },
+    "a": {
+        "translation": "هو"
+    },
+    "une": {
+        "translation": "واحدة"
+    },
+    "très": {
+        "translation": "جداً"
+    },
+    "intéressante": {
+        "translation": "مثيرة للاهتمام"
+    },
+    "sur": {
+        "translation": "حول"
+    },
+    "la": {
+        "translation": "الـ"
+    },
+    "polygamie": {
+        "translation": "تعدد الزوجات"
+    },
+    "alors": {
+        "translation": "إذاً"
+    },
+    "quelles": {
+        "translation": "ما هي"
+    },
+    "en": {
+        "translation": "من"
+    },
+    "sont": {
+        "translation": "هي"
+    },
+    "les": {
+        "translation": "الـ"
+    },
+    "sommes-nous": {
+        "translation": "هل نحن"
+    },
+    "pour": {
+        "translation": "مع"
+    },
+    "contre": {
+        "translation": "ضد"
+    },
+    "ou": {
+        "translation": "أو"
+    },
+    "phénomène": {
+        "translation": "ظاهرة"
+    },
+    "ce": {
+        "translation": "هذه"
+    },
+    "et": {
+        "translation": "و"
+    },
+    "premièrement": {
+        "translation": "أولاً"
+    },
+    "qui": {
+        "translation": "التي"
+    },
+    "problèmes": {
+        "translation": "مشاكل"
+    },
+    "certains": {
+        "translation": "بعض"
+    },
+    "hommes": {
+        "translation": "رجال"
+    },
+    "veulent": {
+        "translation": "يريدون"
+    },
+    "avoir": {
+        "translation": "الحصول على"
+    },
+    "plusieurs": {
+        "translation": "عدة"
+    },
+    "enfants": {
+        "translation": "أطفال"
+    },
+    "épouse": {
+        "translation": "زوجة"
+    },
+    "femme": {
+        "translation": "امرأة"
+    },
+    "l'homme": {
+        "translation": "الرجل"
+    },
+    "heureuse": {
+        "translation": "سعيدة"
+    },
+    "calme": {
+        "translation": "هادئة"
+    },
+    "devient": {
+        "translation": "تصبح"
+    },
+    "mener": {
+        "translation": "يقود/يعيش"
+    },
+    "autre": {
+        "translation": "أخرى"
+    },
+    "mauvais": {
+        "translation": "سيئة"
+    },
+    "conclusion": {
+        "translation": "ختاماً/في الختام"
+    },
+    "mon": {
+        "translation": "من"
+    },
+    "nécessite": {
+        "translation": "تتطلب"
+    },
+    "simplement": {
+        "translation": "ببساطة"
+    },
+    "homme": {
+        "translation": "رجل"
+    },
+    "responsable": {
+        "translation": "مسؤول"
+    },
+    "pense": {
+        "translation": "أعتقد"
+    },
+    "de": {
+        "translation": "من"
+    },
+    "point": {
+        "translation": "وجهة"
+    },
+    "que": {
+        "translation": "أن"
+    },
+    "un": {
+        "translation": "ظاهرة"
+    },
+    "n'est": {
+        "translation": "ليست"
+    },
+    "vêtements": {
+        "translation": "ملابس"
+    },
+    "nourriture": {
+        "translation": "طعام"
+    },
+    "subvenir": {
+        "translation": "تلبية"
+    },
+    "d'argent": {
+        "translation": "مال"
+    },
+    "assez": {
+        "translation": "كافٍ"
+    },
+    "familiale": {
+        "translation": "عائلية"
+    },
+    "plus": {
+        "translation": "أكثر"
+    },
+    "d'un": {
+        "translation": "من"
+    },
+    "côté": {
+        "translation": "جانب"
+    },
+    "perdent": {
+        "translation": "يفقدون"
+    },
+    "grande": {
+        "translation": "كبيرة"
+    },
+    "partie": {
+        "translation": "جزء"
+    },
+    "chaleur": {
+        "translation": "دفء"
+    },
+    "enfin": {
+        "translation": "أخيراً"
+    },
+    "prolongés": {
+        "translation": "مستمرة"
+    },
+    "entre": {
+        "translation": "بين"
+    },
+    "co-épouses": {
+        "translation": "الزوجات"
+    },
+    "causent": {
+        "translation": "تسبب"
+    },
+    "souvent": {
+        "translation": "غالباً"
+    },
+    "besoins": {
+        "translation": "احتياجات"
+    },
+    "aux": {
+        "translation": "للـ"
+    },
+    "doit": {
+        "translation": "يجب"
+    },
+    "etc": {
+        "translation": "إلخ"
+    },
+    "vue": {
+        "translation": "نظر"
+    },
+    "bon": {
+        "translation": "جيدة"
+    },
+    "ni": {
+        "translation": "لا"
+    },
+    "soi": {
+        "translation": "ذاتها"
+    },
+    "elle": {
+        "translation": "هي"
+    },
+    "je": {
+        "translation": "أنا"
+    },
+    "est": {
+        "translation": "هي"
+    },
+    "vie": {
+        "translation": "حياة"
+    },
+    "conflits": {
+        "translation": "صراعات"
+    },
+    "ensuite": {
+        "translation": "ثم"
+    },
+    "méchante": {
+        "translation": "سيئة الطباع"
+    },
+    "s'il": {
+        "translation": "إذا كان"
+    },
+    "concerne": {
+        "translation": "يتعلق"
+    },
+    "veut": {
+        "translation": "يريد"
+    },
+    "première": {
+        "translation": "الأولى"
+    },
+    "si": {
+        "translation": "إذا"
+    },
+    "recherche": {
+        "translation": "يبحث عن"
+    },
+    "donc": {
+        "translation": "لذا"
+    },
+    "avec": {
+        "translation": "مع"
+    },
+    "des": {
+        "translation": "الـ/بعض"
+    },
+    "eux": {
+        "translation": "لهم"
+    },
+    "le": {
+        "translation": "الـ"
+    },
+    "dans": {
+        "translation": "في"
+    },
+    "notre": {
+        "translation": "نحن/خاصتنا"
+    },
+    "société": {
+        "translation": "مجتمع"
+    },
+    "il y a": {
+        "translation": "يوجد / هناك"
+    },
+    "une": {
+        "translation": "واحدة"
+    },
+    "discussion": {
+        "translation": "نقاش"
+    },
+    "très": {
+        "translation": "جداً"
+    },
+    "intéressante": {
+        "translation": "مثيرة للاهتمام"
+    },
+    "sur": {
+        "translation": "حول / على"
+    },
+    "la": {
+        "translation": "الـ"
+    },
+    "superstition": {
+        "translation": "الشعوذة / الخرافة"
+    },
+    "alors": {
+        "translation": "إذاً"
+    },
+    "quelles": {
+        "translation": "ما هي"
+    },
+    "en": {
+        "translation": "منها"
+    },
+    "sont": {
+        "translation": "تكون / هي"
+    },
+    "les": {
+        "translation": "الـ"
+    },
+    "causes": {
+        "translation": "أسباب"
+    },
+    "et": {
+        "translation": "و"
+    },
+    "conséquences": {
+        "translation": "عواقب"
+    },
+    "sommes-nous": {
+        "translation": "هل نحن"
+    },
+    "pour": {
+        "translation": "مع"
+    },
+    "ou": {
+        "translation": "أو"
+    },
+    "contre": {
+        "translation": "ضد"
+    },
+    "ce": {
+        "translation": "هذا"
+    },
+    "phénomène": {
+        "translation": "ظاهرة"
+    },
+    "premièrement": {
+        "translation": "أولاً"
+    },
+    "concerne": {
+        "translation": "يتعلق بـ"
+    },
+    "l'homme": {
+        "translation": "الإنسان / الرجل"
+    },
+    "recourt": {
+        "translation": "يلجأ"
+    },
+    "à": {
+        "translation": "إلى"
+    },
+    "si": {
+        "translation": "إذا / لو"
+    },
+    "sa": {
+        "translation": "له / خاصته"
+    },
+    "vie": {
+        "translation": "حياة"
+    },
+    "est": {
+        "translation": "تكون / هي"
+    },
+    "pleine": {
+        "translation": "مليئة"
+    },
+    "de": {
+        "translation": "من / بـ"
+    },
+    "problèmes": {
+        "translation": "مشاكل"
+    },
+    "il": {
+        "translation": "هو"
+    },
+    "se sent": {
+        "translation": "يشعر"
+    },
+    "malheureux": {
+        "translation": "تعيس / حزين"
+    },
+    "donc": {
+        "translation": "لذا / بناءً عليه"
+    },
+    "recherche": {
+        "translation": "يبحث عن"
+    },
+    "des": {
+        "translation": "الـ / بعض"
+    },
+    "solutions": {
+        "translation": "حلول"
+    },
+    "magiques": {
+        "translation": "سحرية"
+    },
+    "mener": {
+        "translation": "عيش / قيادة"
+    },
+    "calme": {
+        "translation": "هادئة"
+    },
+    "réussie": {
+        "translation": "ناجحة"
+    },
+    "ensuite": {
+        "translation": "بعد ذلك / ثم"
+    },
+    "certains": {
+        "translation": "بعض"
+    },
+    "gens": {
+        "translation": "ناس"
+    },
+    "ignorent": {
+        "translation": "يجهلون"
+    },
+    "vérité": {
+        "translation": "الحقيقة"
+    },
+    "devient": {
+        "translation": "تصبح"
+    },
+    "un": {
+        "translation": "واحد"
+    },
+    "refuge": {
+        "translation": "ملجأ"
+    },
+    "pour eux": {
+        "translation": "بالنسبة لهم"
+    },
+    "côté": {
+        "translation": "جانب"
+    },
+    "personnes": {
+        "translation": "أشخاص"
+    },
+    "perdent": {
+        "translation": "يفقدون"
+    },
+    "grande": {
+        "translation": "كبيرة"
+    },
+    "partie": {
+        "translation": "جزء"
+    },
+    "leur": {
+        "translation": "خاصتهم"
+    },
+    "argent": {
+        "translation": "مال"
+    },
+    "raison": {
+        "translation": "عقل"
+    },
+    "plus": {
+        "translation": "أكثر"
+    },
+    "fausses": {
+        "translation": "خاطئة / زيفة"
+    },
+    "croyances": {
+        "translation": "معتقدات"
+    },
+    "causent": {
+        "translation": "تسبب"
+    },
+    "souvent": {
+        "translation": "غالباً"
+    },
+    "conflits": {
+        "translation": "صراعات"
+    },
+    "entre": {
+        "translation": "بين"
+    },
+    "membres": {
+        "translation": "أفراد / أعضاء"
+    },
+    "famille": {
+        "translation": "عائلة"
+    },
+    "enfin": {
+        "translation": "أخيراً"
+    },
+    "doit": {
+        "translation": "يجب"
+    },
+    "être": {
+        "translation": "يكون"
+    },
+    "conscient": {
+        "translation": "واعياً"
+    },
+    "que": {
+        "translation": "أن"
+    },
+    "ces": {
+        "translation": "هذه"
+    },
+    "pratiques": {
+        "translation": "ممارسات"
+    },
+    "ne règlent pas": {
+        "translation": "لا تحل"
+    },
+    "besoins": {
+        "translation": "احتياجات"
+    },
+    "réels": {
+        "translation": "حقيقية"
+    },
+    "conclusion": {
+        "translation": "خاتمة"
+    },
+    "mon": {
+        "translation": "خاصتي"
+    },
+    "point de vue": {
+        "translation": "وجهة نظر"
+    },
+    "je pense": {
+        "translation": "أعتقد"
+    },
+    "mauvais": {
+        "translation": "سيء"
+    },
+    "qui": {
+        "translation": "الذي"
+    },
+    "détruit": {
+        "translation": "يدمر"
+    },
+    "elle": {
+        "translation": "هي"
+    },
+    "nécessite": {
+        "translation": "تتطلب"
+    },
+    "simplement": {
+        "translation": "ببساطة"
+    },
+    "personne": {
+        "translation": "شخص"
+    },
+    "rationnelle": {
+        "translation": "عقلاني"
+    },
+    "éduquée": {
+        "translation": "مثقف / متعلم"
+    }
+}
