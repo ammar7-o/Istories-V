@@ -913,3 +913,79 @@ select {
         padding: 15px;
     }
 }
+
+@media print {
+
+    /* Remove space left by translate widget */
+    body {
+        top: 0 !important;
+        background-color: white;
+    }
+
+    .reading-progress {
+        background-color: transparent;
+    }
+
+    #readingProgressBar {
+        width: 100% !important;
+    }
+
+    #storyPage {
+        background-color: white;
+        color: black;
+    }
+
+    .story-text-container {
+        background-color: white;
+        color: black;
+    }
+
+    header {
+        background-color: white;
+
+
+    }
+
+    .header-content span {
+        color: black;
+    }
+
+
+    .main-content {
+        background-color: white;
+
+    }
+
+    .no-translation {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    .paragraph-buttons,
+    .notification,
+    .translate-result button,
+    .translation-lang,
+    #settings-overlay,
+    #settings-overlay,
+    .dictionary-popup,
+    .modal-overlay,
+    .custom-css-modal,
+    .nav-tabs,
+    .reading-controls,
+    #settings-page {
+        display: none !important;
+    }
+
+    .paragraph {
+        margin-bottom: 0em !important;
+    }
+
+    .translation-prg {
+        color: black !important;
+        font-size: 1em !important;
+    }
+
+
+
+
+}

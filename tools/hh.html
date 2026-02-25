@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dark Text Analyzer</title>
+
+<style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        max-width: 900px;
+        margin: auto;
+        padding: 25px;
+        background: #0e0e11;
+        color: #e4e4e4;
+        line-height: 1.6;
+    }
+
+    h2 {
+        text-align: center;
+        color: #66aaff;
+        font-size: 32px;
+        margin-bottom: 25px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 220px;
+        padding: 15px;
+        font-size: 17px;
+        background: #1a1a1e;
+        color: #f1f1f1;
+        border: 2px solid #2a2a30;
+        border-radius: 10px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    textarea:focus {
+        border-color: #66aaff;
+        box-shadow: 0 0 10px #0055ff55;
+    }
+
+    button {
+        margin-top: 12px;
+        padding: 12px 20px;
+        font-size: 16px;
+        background: #1f6bff;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 8px;
+        margin-right: 10px;
+        transition: 0.25s;
+    }
+
+    button:hover {
+        background: #0057d6;
+        transform: scale(1.05);
+    }
+
+    .result-box {
+        background: #16161a;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 30px;
+        border: 1px solid #26262f;
+        box-shadow: 0px 0px 10px #0005;
+    }
+
+    .stats p {
+        margin: 8px 0;
+        font-size: 18px;
+    }
+
+    .stat-label {
+        color: #66aaff;
+        font-weight: bold;
+    }
+
+    ul {
+        margin-top: 10px;
+        padding-left: 20px;
+    }
+
+    li {
+        margin: 4px 0;
+        font-size: 16px;
+        color: #cccccc;
+    }
+
+    hr {
+        border: none;
+        border-bottom: 1px solid #2a2a30;
+        margin: 20px 0;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>🔍 Text Analyzer</h2>
+
+<textarea id="textInput" placeholder="Write or paste your text here..."></textarea>
+
+<button onclick="analyzeText()">Analyze</button>
+<button onclick="downloadCSV()">Download CSV</button>
+
+<div class="result-box">
+    <h3 style="color:#66aaff;">Results</h3>
+    <div class="stats">
+        <p><span class="stat-label">Word Count:</span> <span id="wordCount">0</span></p>
+        <p><span class="stat-label">Unique Words:</span> <span id="uniqueCount">0</span></p>
+        <p><span class="stat-label">Sentence Count:</span> <span id="sentenceCount">0</span></p>
+        <p><span class="stat-label">Estimated Reading Time:</span> <span id="readTime">0</span> min</p>
+    </div>
+
+    <hr>
+
+    <h4 style="color:#66aaff;">Top Words</h4>
+    <ul id="topWords"></ul>
+</div>
+
+<script>
+let lastWordData = {};
+
+function analyzeText() {
+    const text = document.getElementById("textInput").value;
+
+    if (!text.trim()) {
+        alert("Please enter a text!");
+        return;
+    }
+
+    const words = text.toLowerCase()
+        .replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, "")
+        .split(/\s+/)
+        .filter(w => w);
+
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+
+    const frequency = {};
+    words.forEach(w => {
+        frequency[w] = (frequency[w] || 0) + 1;
+    });
+
+    lastWordData = frequency;
+
+    document.getElementById("wordCount").textContent = words.length;
+    document.getElementById("uniqueCount").textContent = Object.keys(frequency).length;
+    document.getElementById("sentenceCount").textContent = sentences.length;
+
+    const readMinutes = (words.length / 100).toFixed(2);
+    document.getElementById("readTime").textContent = readMinutes;
+
+    const topWordsList = Object.entries(frequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+    const ul = document.getElementById("topWords");
+    ul.innerHTML = "";
+    topWordsList.forEach(([word, count]) => {
+        const li = document.createElement("li");
+        li.textContent = `${word}: ${count}`;
+        ul.appendChild(li);
+    });
+}
+
+function downloadCSV() {
+    if (!Object.keys(lastWordData).length) {
+        alert("Analyze text first!");
+        return;
+    }
+
+    let csv = "word,count\n";
+    for (const [word, count] of Object.entries(lastWordData)) {
+        csv += `${word},${count}\n`;
+    }
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "word_frequency.csv";
+    a.click();
+}
+</script>
+
+</body>
+</html>

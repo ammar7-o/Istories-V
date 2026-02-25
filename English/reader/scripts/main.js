@@ -1304,7 +1304,16 @@ const copyBtn = document.getElementById("copy");
 if (copyBtn) {
     copyBtn.addEventListener("click", copyStoryFast);
 }
+// print buutons button
+const PrintBtn = document.querySelectorAll(".print");
 
+PrintBtn.forEach(btn => {
+    btn.addEventListener("click", printPage);
+});
+
+function printPage() {
+    window.print();
+}
 function copyStoryFast() {
     try {
         // 1) نحاول جمع النص المعروض فعلاً داخل العنصر storyText

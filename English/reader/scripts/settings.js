@@ -1298,11 +1298,11 @@ async function translateWithAI(text, index, paragraphElement) {
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div style="line-height: 1.5; color: var(--text); font-size: 0.8em; 
+            <div class="translation-prg" style="line-height: 1.5; color: var(--text); font-size: 0.8em; 
                        ${shouldBeRTL ? 'direction: rtl; text-align: right;' : ''}">
                 ${translation}
             </div>
-            <div style="margin-top: 8px; font-size: 0.8rem; color: var(--text-light);
+            <div class="translation-lang" style="margin-top: 8px; font-size: 0.8rem; color: var(--text-light);
                        ${shouldBeRTL ? 'direction: rtl; text-align: right;' : ''}">
                 <i class="fas fa-info-circle"></i> Translated to ${getLanguageName(targetLang)}
             </div>
