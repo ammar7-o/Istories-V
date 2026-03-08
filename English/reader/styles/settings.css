@@ -915,45 +915,39 @@ select {
 }
 
 @media print {
+    .file-upload-section {
+        display: none;
+    }
 
     /* Remove space left by translate widget */
     body {
         top: 0 !important;
         background-color: white;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    .reading-progress {
-        background-color: transparent;
-    }
-
-    #readingProgressBar {
-        width: 100% !important;
-    }
-
-    #storyPage {
-        background-color: white;
-        color: black;
-    }
-
-    .story-text-container {
-        background-color: white;
-        color: black;
+    /* Hide the entire reading progress bar completely */
+    .reading-progress,
+    #readingProgressBar,
+    .reading-progress-bar {
+        display: none !important;
+        height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
     }
 
     header {
         background-color: white;
-
-
     }
 
     .header-content span {
         color: black;
     }
 
-
     .main-content {
         background-color: white;
-
     }
 
     .no-translation {
@@ -961,23 +955,27 @@ select {
         border: none !important;
     }
 
+    /* Hide all unnecessary elements */
     .paragraph-buttons,
     .notification,
     .translate-result button,
     .translation-lang,
-    #settings-overlay,
     #settings-overlay,
     .dictionary-popup,
     .modal-overlay,
     .custom-css-modal,
     .nav-tabs,
     .reading-controls,
-    #settings-page {
+    #settings-page,
+    #readingProgressBar,
+    .reading-progress,
+    .settings-btn {
         display: none !important;
     }
 
     .paragraph {
         margin-bottom: 0em !important;
+        page-break-inside: avoid;
     }
 
     .translation-prg {
@@ -985,7 +983,107 @@ select {
         font-size: 1em !important;
     }
 
+    /* Ensure story takes full width */
+    #storyPage {
+        background-color: white;
+        color: black;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
 
+    .story-text-container {
+        background-color: white;
+        color: black;
+    }
 
+    /* Prevent page breaks inside paragraphs */
+    .word,
+    span {
+        page-break-inside: avoid;
+    }
 
+    /* Fix story-header causing blank page */
+    .story-header {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        padding: 0 0 10px 0 !important;
+        border-bottom: 1px solid #ccc !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-inside: avoid !important;
+        break-after: avoid !important;
+    }
+
+    /* Hide header buttons, keep only the title and badges */
+    .story-header .back-button,
+    .story-header .reading-controls,
+    .story-header [class*="btn"],
+    .story-header button {
+        display: none !important;
+    }
+
+    #storyTitle {
+        font-size: 1.6rem !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.3 !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        /* shrink to fit content, let badges sit beside if room */
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Badges container — sits inline with title if room, wraps below if not */
+    #lvl,
+    #lvlcefr {
+        display: inline-flex !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+        font-size: 0.7rem !important;
+        font-weight: 600 !important;
+        padding: 2px 8px !important;
+        letter-spacing: 0.4px !important;
+        text-transform: uppercase !important;
+        vertical-align: middle !important;
+        margin: 0 !important;
+
+    }
+
+    /* When the title is long and wraps, center the whole header row */
+    .story-header:has(#storyTitle:not(:only-child)) {
+        justify-content: flex-start !important;
+    }
+
+    /* If title overflows (is long), allow it to wrap and center badges below */
+    @supports (container-type: inline-size) {
+        .story-header {
+            container-type: inline-size;
+        }
+    }
+
+    /* Fallback: if title text is long, the flex-wrap will naturally
+       push badges to the next line — center them there */
+    .story-header {
+        justify-content: flex-start !important;
+    }
+
+    /* When badges wrap to new line, center them */
+    #lvl,
+    #lvlcefr {
+        margin-top: 0 !important;
+    }
+
+    /* Use a wrapper trick: if title takes full width badges go centered below */
+    .story-header>#storyTitle:first-child~#lvl,
+    .story-header>#storyTitle:first-child~#lvlcefr {
+        /* When they wrap to next line, align to start by default */
+        align-self: center !important;
+    }
 }

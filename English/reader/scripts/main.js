@@ -1475,7 +1475,120 @@ function applyTheme() {
 // ----------------------------------------------------
 // 🔊 وظائف الصوت
 // ----------------------------------------------------
+// Helper: count total words in story content array
+function countWords(contentArray) {
+    if (!Array.isArray(contentArray)) return 0;
+    return contentArray.reduce((total, paragraph) => {
+        const words = (paragraph || '').trim().split(/\s+/).filter(Boolean);
+        return total + words.length;
+    }, 0);
+}
 
+// Helper: extract unique words from story content array
+function extractStoryWords(contentArray) {
+    if (!Array.isArray(contentArray)) return [];
+    const wordPattern = /[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[''\-][A-Za-zÀ-ÖØ-öø-ÿ]+)*/g;
+    const seen = new Set();
+    const words = [];
+    contentArray.forEach(paragraph => {
+        const matches = (paragraph || '').match(wordPattern) || [];
+        matches.forEach(word => {
+            const key = word.toLowerCase();
+            if (!seen.has(key)) {
+                seen.add(key);
+                words.push(word);
+            }
+        });
+    });
+    return words;
+}
+
+// Download current story as JSON
+function downloadCurrentStory() {
+    if (!currentStory) {
+        showNotification('No story loaded to download', 'warning');
+        return;
+    }
+
+    try {
+        // Create a clean copy of the story for export
+        const storyForExport = {
+            id: currentStory.id || 'story_' + Date.now(),
+            title: currentStory.title || 'Untitled Story',
+            level: currentStory.level || 'intermediate',
+            levelcefr: currentStory.levelcefr || 'B1',
+            cover: currentStory.cover || '',
+            coverType: currentStory.coverType || 'image',
+            content: currentStory.content || [],
+            author: currentStory.author || 'Unknown',
+            wordCount: currentStory.wordCount || countWords(currentStory.content),
+            exportedDate: new Date().toISOString(),
+            exportedFrom: 'IStories',
+            version: '1.0',
+            source: currentStory.source || 'uploaded'
+        };
+
+        // Add sound if exists
+        if (currentStory.sound) {
+            storyForExport.sound = currentStory.sound;
+        }
+
+        // Add dictionaries if exists
+        if (currentStory.dictionaries && currentStory.dictionaries.length > 0) {
+            storyForExport.dictionaries = currentStory.dictionaries;
+        }
+
+        // Add translations if they exist in dictionary for this story
+        if (Object.keys(dictionary).length > 0) {
+            // Get translations for words in this story
+            const storyWords = extractStoryWords(currentStory.content);
+            const translations = {};
+
+            storyWords.forEach(word => {
+                const standardKey = getStandardKey(word);
+                if (dictionary[standardKey]) {
+                    translations[word] = {
+                        translation: dictionary[standardKey].translation || '',
+                        pos: dictionary[standardKey].pos || 'unknown',
+                        definition: dictionary[standardKey].definition || '',
+                        example: dictionary[standardKey].example || ''
+                    };
+                }
+            });
+
+            if (Object.keys(translations).length > 0) {
+                storyForExport.translations = translations;
+            }
+        }
+
+        // Convert to JSON string with pretty formatting
+        const jsonString = JSON.stringify(storyForExport, null, 2);
+
+        // Create filename from story title
+        const filename = `${storyForExport.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.json`;
+
+        // Create download link
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up
+        URL.revokeObjectURL(url);
+
+        showNotification(`Story downloaded as ${filename}`, 'success');
+
+    } catch (error) {
+        console.error('Error downloading story:', error);
+        showNotification('Error downloading story: ' + error.message, 'error');
+    }
+}
 function toggleAudio() {
     if (!currentStory) return;
 
@@ -1693,7 +1806,10 @@ function setupEventListeners() {
             switchPage(tab.dataset.page);
         });
     });
-
+    const downloadStoryBtn = document.querySelector('.download-story');
+    if (downloadStoryBtn) {
+        downloadStoryBtn.addEventListener('click', downloadCurrentStory);
+    }
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             hideDictionary();
