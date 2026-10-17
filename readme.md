@@ -3,7 +3,7 @@
 
 <div align="center">
   <img src="https://img.shields.io/badge/Status-Active-success" alt="Status: Active">
-  <img src="https://img.shields.io/badge/Version-2.0-blue" alt="Version: 3.7.0">
+  <img src="https://img.shields.io/badge/Version-3.0-blue" alt="Version: 3.7.0">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License: MIT">
   <img src="https://img.shields.io/badge/Author-Ammar_Chacal-orange" alt="Author: Ammar Chacal">
 </div>
