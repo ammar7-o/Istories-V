@@ -26,8 +26,8 @@ let currentVocabLang = 'all';
 let vocabLangSignature = null;
 
 // Color settings
-let selectedColor = localStorage.getItem('selectedColor') || '#243d34';
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#d38d70';
+let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
 
 // Navigation menu elements
 const toggleNav = document.getElementById("toggle-nav");

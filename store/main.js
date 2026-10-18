@@ -3,7 +3,7 @@
 let currentPage = 'home';
 let currentStory = null;
 let stories = []; // Will be loaded from external file
-let selectedColor = localStorage.getItem('selectedColor') || '#243d34';
+let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
 
 // Add Stories variables (ADDED)
 let userStories = JSON.parse(localStorage.getItem('userStories')) || [];
@@ -297,7 +297,7 @@ function toggleTheme() {
 
 
 // Secondary color variables
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#d38d70';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
 
 // Function to initialize secondary color selector
 function initSecondaryColorSelector() {

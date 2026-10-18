@@ -40,8 +40,8 @@ if (window.IStoriesStorage) IStoriesStorage.whenReady(function () {
 let speechEnabled = localStorage.getItem('speechEnabled') !== 'false'; // Default enabled (true)
 
 // Color settings
-let selectedColor = localStorage.getItem('selectedColor') || '#243d34';
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#d38d70';
+let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
 
 // Flashcard system variables
 let currentCards = [];

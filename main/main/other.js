@@ -219,7 +219,7 @@ const defaultColors = [
 ];
 
 // Load saved color or use default
-let selectedColor = localStorage.getItem('selectedColor') || '#243d34';
+let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
 
 // Function to initialize color selector
 //=========COLOR SELECTOR FUNCTIONS============
@@ -383,7 +383,7 @@ function toggleTheme() {
 
 
 // Secondary color variables
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#d38d70';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
 
 // Function to initialize secondary color selector
 function initSecondaryColorSelector() {

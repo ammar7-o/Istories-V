@@ -44,7 +44,7 @@ function istToastEnsureStyles() {
             pointer-events: none;
         }
         .ist-toast {
-            --ist-toast-accent: var(--primary, #243d34);
+            --ist-toast-accent: var(--primary, #09d9ba);
             position: relative;
             display: flex;
             align-items: flex-start;

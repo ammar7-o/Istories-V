@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV → Dictionary — IStories</title>
+    <title>Istories - tools Translator</title>
     <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
 
@@ -160,66 +160,17 @@
         .copy-btn:hover {
             background: #0b7dda;
         }
-
-        /* --- Mobile fixes (phones only; desktop unchanged) --- */
-        @media (max-width: 768px) {
-            /* Undo the double-nested .container so content uses the full width */
-            #home .container {
-                padding-left: 0;
-                padding-right: 0;
-            }
-
-            /* Language selectors: stack full-width instead of tiny side dropdowns */
-            .language-selectors {
-                gap: 12px;
-            }
-
-            .language-group {
-                flex-basis: 100%;
-                min-width: 0;
-            }
-
-            /* Full-width, readable (>=16px stops iOS auto-zoom on focus) fields */
-            .main-content select,
-            .main-content input[type="file"],
-            .main-content textarea {
-                width: 100%;
-                font-size: 16px;
-            }
-
-            /* Big, full-width, easy-to-tap primary buttons */
-            #translate-btn,
-            #stop-btn {
-                width: 100%;
-                min-height: 46px;
-                font-size: 16px;
-            }
-
-            .result-section h3 {
-                font-size: 18px;
-            }
-
-            .copy-btn {
-                margin-left: 0;
-            }
-
-            .result-section>div {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            h1 {
-                font-size: 26px;
-                margin-bottom: 20px;
-            }
-        }
     </style>
+
     <!-- Shared sidebar navigation (nav/sidebar.js) -->
-    <link rel="stylesheet" href="../../../main/nav/sidebar.css">
-    <script src="../../../main/nav/sidebar.js" defer></script>
-    <script src="../../../main/nav/common.js"></script>
-    <link rel="stylesheet" href="../../../main/nav/theme.css">
-    <link rel="stylesheet" href="../../../main/nav/header.css">
+    <link rel="stylesheet" href="../../main/nav/sidebar.css">
+    <!-- Large user data (userStories, savedWords, userDictionaries, …) is stored in IndexedDB via localForage; must load before page scripts. -->
+    <script src="../../main/nav/vendor/localforage.min.js"></script>
+    <script src="../../main/nav/storage.js"></script>
+    <script src="../../main/nav/sidebar.js" defer></script>
+    <script src="../../main/nav/common.js"></script>
+    <link rel="stylesheet" href="../../main/nav/theme.css">
+    <link rel="stylesheet" href="../../main/nav/header.css">
 </head>
 
 <body>
@@ -238,8 +189,14 @@
                 <span>CSV → Dictionary</span>
             </span>
             <div class="ist-header__spacer"></div>
+            <a class="ist-header__action" id="settings-button" href="../../main/settings/index.html" aria-label="Settings"
+                title="Settings">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </a>
         </div>
     </header>
+
+    <div id="settings-overlay" class="settings-overlay"></div>
 
     <main class="main-content">
         <div class="container">
@@ -340,7 +297,7 @@
             try {
                 // Use auto-detect if sourceLang is 'auto'
                 const sl = sourceLang === 'auto' ? 'auto' : sourceLang;
-                
+
                 const response = await fetch(
                     `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${targetLang}&dt=t&q=${encodeURIComponent(word)}`
                 );
@@ -543,7 +500,7 @@ d'accord
 l'hôpital
 l'école
 s'il vous plaît`;
-            
+
             // Auto-fill with example French words
             csvContentTextarea.value = `bonjour
 merci

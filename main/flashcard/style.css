@@ -13,9 +13,6 @@
 }
 
 .dark-mode {
-    --primary: #4f46e5;
-    --primary-dark: #4338ca;
-    --secondary: #10b981;
     --text: #f9fafb;
     --card-bg: #1f2937;
     --text-light: #d1d5db;

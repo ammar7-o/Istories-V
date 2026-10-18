@@ -15,7 +15,7 @@
     --ist-sidebar-fg: var(--text, #1f2233);
     --ist-sidebar-muted: var(--text-light, #6b7280);
     --ist-sidebar-border: var(--border, #e5e7eb);
-    --ist-sidebar-accent: var(--primary, #4f46e5);
+    --ist-sidebar-accent: var(--primary, #09d9ba);
     --ist-sidebar-z: 1000;
 }
 
@@ -307,9 +307,9 @@ body.dark-mode .ist-sidebar,
     border-radius: 999px;
     font-size: .78rem;
     font-weight: 600;
-    background: rgba(79, 70, 229, .14);
-    background: color-mix(in srgb, var(--primary, #4f46e5) 14%, transparent);
-    color: var(--primary, #4f46e5);
+    background: rgba(9, 217, 186, .14);
+    background: color-mix(in srgb, var(--primary, #09d9ba) 14%, transparent);
+    color: var(--primary, #09d9ba);
 }
 
 /* ==========================================================================

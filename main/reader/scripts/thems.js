@@ -11,8 +11,8 @@ const defaultColors = [
 ];
 
 // Load saved color or use default
-let selectedColor = localStorage.getItem('selectedColor') || '#243d34';
-let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#d38d70';
+let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
+let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
 let theme = localStorage.getItem('theme') || 'light';
 const themeToggle = document.getElementById('themeToggle');
 

@@ -16,7 +16,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v12';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 
 // Paths are resolved relative to the service-worker scope, so the same file

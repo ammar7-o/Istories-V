@@ -24,7 +24,6 @@
 }
 
 .dark-mode {
-    --primary-dark: #4f46e5;
     --accent: #f59e0b;
     --danger: #dc2626;
     --warning: #d97706;
@@ -1204,7 +1203,7 @@ select:disabled {
 
 /* Button variants */
 .btn-primary {
-    background: #4f46e5 !important;
+    background: var(--primary) !important;
     color: white !important;
 }
 

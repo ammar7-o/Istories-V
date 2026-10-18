@@ -240,8 +240,8 @@ function performFullReset() {
     const keepVocabulary = confirm(config.resetConfirm);
 
     localStorage.setItem('theme', 'light');
-    localStorage.setItem('selectedColor', '#243d34');
-    localStorage.setItem('selectedSecondaryColor', '#d38d70');
+    localStorage.setItem('selectedColor', '#09d9ba');
+    localStorage.setItem('selectedSecondaryColor', '#007ce1');
     localStorage.setItem(config.storageKey, '');
 
     if (config.resetFont) {

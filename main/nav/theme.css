@@ -1,13 +1,13 @@
 /* ==========================================================================
-   IStories — shared visual theme ("forest & cream")
+   IStories — shared visual theme ("teal & cream")
    ==========================================================================
    Loaded LAST in <head> on every page. It only re-maps the colour tokens the
    app already uses (plus a few hard-coded white surfaces) — no layout changes.
 
    Palette (sampled from the reference design):
-     forest        #243d34     forest-deep  #1b2f28     forest-soft  #3b4f44
+     teal          #09d9ba     teal-deep    #00a687     teal-soft    #00695c
      cream         #f9f7f0     sand         #edeae3     sand-deep    #e2ddcf
-     peach         #d38d70     peach-light  #edb995     muted        #67756c
+     blue          #007ce1     blue-light   #33afff     muted        #5f7d78
 
    Dark mode (body.dark-mode) is left untouched: every override below is
    guarded with body:not(.dark-mode) or applied to the light sidebar only.
@@ -15,12 +15,12 @@
 
 :root {
     /* --- Brand colours --- */
-    --primary: #243d34;
-    --primary-dark: #1b2f28;
-    --secondary: #d38d70;
-    --secondary-dark: #b9744f;
-    --secondary-light: #edb995;
-    --accent: #d38d70;
+    --primary: #09d9ba;
+    --primary-dark: #00a687;
+    --secondary: #007ce1;
+    --secondary-dark: #0049ae;
+    --secondary-light: #33afff;
+    --accent: #007ce1;
 
     /* --- Surfaces (cards / panels / inputs) --- */
     --bg: #edeae3;
@@ -31,9 +31,9 @@
     --code-bg: #f0ede6;
 
     /* --- Text --- */
-    --text: #243d34;
-    --text-light: #67756c;
-    --text-lighter: #8a968d;
+    --text: #0d3b36;
+    --text-light: #5f7d78;
+    --text-lighter: #86a09a;
 
     /* --- Lines & shadow --- */
     --border: #e2ddcf;
@@ -46,7 +46,7 @@
    -------------------------------------------------------------------------- */
 body:not(.dark-mode) {
     background-color: #f9f7f0;
-    color: #243d34;
+    color: #0d3b36;
 }
 
 /* The container keeps the cream page colour so the sand cards read on top. */
@@ -58,7 +58,7 @@ body:not(.dark-mode) .container {
 /* Buttons that hard-code white in the page stylesheets. */
 body:not(.dark-mode) .cta-button {
     background-color: #f9f7f0;
-    color: #243d34;
+    color: #0d3b36;
 }
 
 body:not(.dark-mode) .cta-button:hover {
@@ -80,17 +80,17 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 }
 
 /* --------------------------------------------------------------------------
-   Sidebar — dark forest, cream text, peach accents.
+   Sidebar — deep teal, cream text, blue accents.
    (Variables live on .ist-sidebar so they beat the :root defaults in
    sidebar.css regardless of file order.)
    -------------------------------------------------------------------------- */
 .ist-sidebar {
-    --ist-sidebar-bg: #243d34;
+    --ist-sidebar-bg: #00796b;
     --ist-sidebar-fg: #f9f7f0;
-    --ist-sidebar-muted: #a6b4a9;
+    --ist-sidebar-muted: #9ecfc8;
     --ist-sidebar-border: rgba(249, 247, 240, .14);
-    --ist-sidebar-accent: #edb995;
-    box-shadow: 0 12px 40px rgba(15, 28, 22, .38);
+    --ist-sidebar-accent: #7cc4ff;
+    box-shadow: 0 12px 40px rgba(8, 38, 34, .38);
 }
 
 .ist-sidebar__head,
@@ -103,7 +103,7 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 }
 
 .ist-sidebar__section {
-    color: #8fa096;
+    color: #8fbfb8;
 }
 
 .ist-sidebar__link {
@@ -111,26 +111,26 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 }
 
 .ist-sidebar__link i {
-    color: #a6b4a9;
+    color: #9ecfc8;
 }
 
 .ist-sidebar__link:hover {
-    background: #3b4f44;
+    background: #00695c;
     color: #f9f7f0;
 }
 
 .ist-sidebar__link:hover i {
-    color: #edb995;
+    color: #7cc4ff;
 }
 
 .ist-sidebar__link.is-active {
-    background: #3b4f44;
-    border-color: rgba(237, 185, 149, .35);
-    color: #edb995;
+    background: #00695c;
+    border-color: rgba(124, 196, 255, .4);
+    color: #7cc4ff;
 }
 
 .ist-sidebar__link.is-active i {
-    color: #edb995;
+    color: #7cc4ff;
 }
 
 .ist-sidebar__close,
@@ -141,8 +141,8 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 
 .ist-sidebar__close:hover,
 .ist-sidebar__collapse:hover {
-    background: #3b4f44;
-    color: #edb995;
+    background: #00695c;
+    color: #7cc4ff;
 }
 
 .ist-sidebar__action {
@@ -151,12 +151,12 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 }
 
 .ist-sidebar__action:hover {
-    background: #3b4f44;
+    background: #00695c;
 }
 
 /* Floating burger (pages with no header) matches the sidebar. */
 .ist-burger.ist-burger--floating {
-    background: #243d34;
+    background: #00796b;
     color: #f9f7f0;
     border-color: rgba(249, 247, 240, .18);
 }

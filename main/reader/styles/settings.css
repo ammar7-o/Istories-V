@@ -402,7 +402,7 @@ select {
 
 /* Button variants */
 .btn-primary {
-    background: #4f46e5 !important;
+    background: var(--primary) !important;
     color: white !important;
 }
 

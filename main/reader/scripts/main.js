@@ -1930,8 +1930,8 @@ function applyFontFamily() {
 async function init() {
     try {
         // STEP 0: Set global color variables
-        window.selectedColor = localStorage.getItem('selectedColor') || '#243d34';
-        window.selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#d38d70';
+        window.selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
+        window.selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
 
         // STEP 1: Apply saved theme FIRST
         console.log('Step 1: Applying theme...');

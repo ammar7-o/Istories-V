@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Analyzer — IStories</title>
+    <title>Istories - tools Analyzer</title>
     <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
 
@@ -15,7 +15,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
 <style>
-   
+
 
     h2 {
         text-align: center;
@@ -167,23 +167,27 @@
         .button-group {
             flex-direction: column;
         }
-        
+
         button {
             width: 100%;
             justify-content: center;
         }
-        
+
         .export-options {
             flex-direction: column;
         }
     }
 </style>
+
     <!-- Shared sidebar navigation (nav/sidebar.js) -->
-    <link rel="stylesheet" href="../../../main/nav/sidebar.css">
-    <script src="../../../main/nav/sidebar.js" defer></script>
-    <script src="../../../main/nav/common.js"></script>
-    <link rel="stylesheet" href="../../../main/nav/theme.css">
-    <link rel="stylesheet" href="../../../main/nav/header.css">
+    <link rel="stylesheet" href="../../main/nav/sidebar.css">
+    <!-- Large user data (userStories, savedWords, userDictionaries, …) is stored in IndexedDB via localForage; must load before page scripts. -->
+    <script src="../../main/nav/vendor/localforage.min.js"></script>
+    <script src="../../main/nav/storage.js"></script>
+    <script src="../../main/nav/sidebar.js" defer></script>
+    <script src="../../main/nav/common.js"></script>
+    <link rel="stylesheet" href="../../main/nav/theme.css">
+    <link rel="stylesheet" href="../../main/nav/header.css">
 </head>
 
 <body>
@@ -202,9 +206,15 @@
                 <span>Text Analyzer</span>
             </span>
             <div class="ist-header__spacer"></div>
+            <a class="ist-header__action" id="settings-button" href="../../main/settings/index.html" aria-label="Settings"
+                title="Settings">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </a>
         </div>
     </header>
 
+
+    <div id="settings-overlay" class="settings-overlay"></div>
 
     <main class="main-content">
         <div class="container">
@@ -308,7 +318,7 @@
             // Store original words exactly as they appear
             // Match words including apostrophes and hyphens
             originalWords = text.match(/[a-zA-ZÀ-ÿ\u0600-\u06FF']+([-'’][a-zA-ZÀ-ÿ\u0600-\u06FF']+)*/g) || [];
-            
+
             // For analysis (lowercase, no punctuation except apostrophes)
             allWords = text.toLowerCase()
                 .match(/[a-zA-ZÀ-ÿ\u0600-\u06FF']+([-'’][a-zA-ZÀ-ÿ\u0600-\u06FF']+)*/g) || [];
@@ -363,13 +373,13 @@
 
             let csv = "word,count,frequency\n";
             let totalWords = allWords.length;
-            
+
             for (const [wordLower, count] of Object.entries(lastWordData)) {
                 const originalWord = originalWordMap[wordLower] || wordLower;
                 const frequency = ((count / totalWords) * 100).toFixed(2);
                 // Escape quotes in the word
-                const escapedWord = originalWord.includes(',') || originalWord.includes('"') || originalWord.includes('\n') 
-                    ? `"${originalWord.replace(/"/g, '""')}"` 
+                const escapedWord = originalWord.includes(',') || originalWord.includes('"') || originalWord.includes('\n')
+                    ? `"${originalWord.replace(/"/g, '""')}"`
                     : originalWord;
                 csv += `${escapedWord},${count},${frequency}%\n`;
             }
@@ -392,7 +402,7 @@
             // Get unique original words (preserving case and punctuation)
             const uniqueOriginalWords = [];
             const seen = new Set();
-            
+
             originalWords.forEach(word => {
                 const normalized = word.toLowerCase();
                 if (!seen.has(normalized)) {
@@ -408,8 +418,8 @@
             let csv = "word\n";
             uniqueOriginalWords.forEach(word => {
                 // Escape quotes in the word
-                const escapedWord = word.includes(',') || word.includes('"') || word.includes('\n') 
-                    ? `"${word.replace(/"/g, '""')}"` 
+                const escapedWord = word.includes(',') || word.includes('"') || word.includes('\n')
+                    ? `"${word.replace(/"/g, '""')}"`
                     : word;
                 csv += `${escapedWord}\n`;
             });
@@ -432,7 +442,7 @@
             // Get unique original words (preserving case and punctuation)
             const uniqueOriginalWords = [];
             const seen = new Set();
-            
+
             originalWords.forEach(word => {
                 const normalized = word.toLowerCase();
                 if (!seen.has(normalized)) {
@@ -472,13 +482,13 @@
                 e.preventDefault();
                 analyzeText();
             }
-            
+
             // Ctrl/Cmd + S to export words only
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
                 exportWordsOnly();
             }
-            
+
             // Ctrl/Cmd + E to export with counts
             if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
                 e.preventDefault();
@@ -491,7 +501,7 @@
             const exampleText = `Aujourd'hui, j'ai visité l'école d'un ami. C'était incroyable!
 L'hôpital était grand et propre. D'accord, je suis d'accord avec toi.
 Ça va bien merci. L'avion décolle à 15h30. J'aime les pommes.`;
-            
+
             document.getElementById('textInput').value = exampleText;
             analyzeText(); // Auto-analyze the example text
         });

@@ -1,6 +1,7 @@
 /* Base Variables */
 :root {
-    --secondary: #10b981;
+        --primary: #10b981;
+    --secondary: #007ab3;
     --accent: #f59e0b;
     --text: #1f2937;
     --text-light: #6b7280;
@@ -14,7 +15,9 @@
 
 
 .dark-mode {
-    --secondary-light: var(--js-secondary-light, #34d399) !important;
+     --primary: #00a56e;
+    --secondary: #006c9d;
+    --secondary-light: var(--js-secondary-light, #33afff) !important;
     --accent: #f59e0b;
     --text: #f9fafb;
     --text-light: #d1d5db;

@@ -71,9 +71,9 @@
 }
 
 .ist-header .ist-burger:hover {
-    background: color-mix(in srgb, var(--primary, #243d34) 12%, transparent);
-    border-color: color-mix(in srgb, var(--primary, #243d34) 26%, transparent);
-    color: var(--primary, #243d34);
+    background: color-mix(in srgb, var(--primary, #09d9ba) 12%, transparent);
+    border-color: color-mix(in srgb, var(--primary, #09d9ba) 26%, transparent);
+    color: var(--primary, #09d9ba);
 }
 
 /* --- Brand --- */
@@ -113,7 +113,7 @@
 }
 
 .ist-header__page i {
-    color: var(--secondary, #d38d70);
+    color: var(--secondary, #007ce1);
 }
 
 .ist-header__spacer {
@@ -137,8 +137,8 @@
 }
 
 .ist-header__search:focus-within {
-    border-color: color-mix(in srgb, var(--primary, #243d34) 45%, var(--border, #e5e7eb));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #243d34) 14%, transparent);
+    border-color: color-mix(in srgb, var(--primary, #09d9ba) 45%, var(--border, #e5e7eb));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #09d9ba) 14%, transparent);
 }
 
 .ist-header__search .search-input {
@@ -172,7 +172,7 @@
 }
 
 .ist-header__search-btn:hover {
-    color: var(--primary, #243d34);
+    color: var(--primary, #09d9ba);
     background: var(--hover, rgba(0, 0, 0, .06));
 }
 
@@ -195,8 +195,8 @@
 }
 
 .ist-header__action:hover {
-    color: var(--primary, #243d34);
-    border-color: color-mix(in srgb, var(--primary, #243d34) 32%, var(--border, #e5e7eb));
+    color: var(--primary, #09d9ba);
+    border-color: color-mix(in srgb, var(--primary, #09d9ba) 32%, var(--border, #e5e7eb));
 }
 
 /* ==========================================================================
