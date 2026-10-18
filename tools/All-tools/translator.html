@@ -160,6 +160,59 @@
         .copy-btn:hover {
             background: #0b7dda;
         }
+
+        /* --- Mobile fixes (phones only; desktop unchanged) --- */
+        @media (max-width: 768px) {
+            /* Undo the double-nested .container so content uses the full width */
+            #home .container {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            /* Language selectors: stack full-width instead of tiny side dropdowns */
+            .language-selectors {
+                gap: 12px;
+            }
+
+            .language-group {
+                flex-basis: 100%;
+                min-width: 0;
+            }
+
+            /* Full-width, readable (>=16px stops iOS auto-zoom on focus) fields */
+            .main-content select,
+            .main-content input[type="file"],
+            .main-content textarea {
+                width: 100%;
+                font-size: 16px;
+            }
+
+            /* Big, full-width, easy-to-tap primary buttons */
+            #translate-btn,
+            #stop-btn {
+                width: 100%;
+                min-height: 46px;
+                font-size: 16px;
+            }
+
+            .result-section h3 {
+                font-size: 18px;
+            }
+
+            .copy-btn {
+                margin-left: 0;
+            }
+
+            .result-section>div {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            h1 {
+                font-size: 26px;
+                margin-bottom: 20px;
+            }
+        }
     </style>
     <!-- Shared sidebar navigation (nav/sidebar.js) -->
     <link rel="stylesheet" href="../../../main/nav/sidebar.css">

@@ -54,11 +54,6 @@ body:not(.dark-mode) .container {
     background-color: transparent;
 }
 
-/* Hero banner -> understated forest gradient with cream text. */
-body:not(.dark-mode) .hero {
-    background: linear-gradient(135deg, #243d34 0%, #3b4f44 100%);
-    color: #f9f7f0;
-}
 
 /* Buttons that hard-code white in the page stylesheets. */
 body:not(.dark-mode) .cta-button {

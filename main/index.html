@@ -389,11 +389,18 @@
                     entries.forEach(function (entry) {
                         var file = entry && (entry.file || entry.value);
                         if (!file) return;
+                        var raw = String(file).trim();
                         var opt = document.createElement('option');
-                        // A bare filename resolves inside database/database/; a
-                        // value that already contains a "/" is used as-is.
-                        opt.value = file.indexOf('/') === -1 ? '../database/database/' + file : file;
-                        opt.textContent = entry.label || file;
+                        if (/^(https?:)?\/\//i.test(raw)) {
+                            // Absolute URL — use as-is
+                            opt.value = raw;
+                        } else {
+                            // Relative to the story-source folder (database/database/).
+                            // A leading "/" (e.g. "/A1/more.js") is ignored so the
+                            // value still resolves inside that folder.
+                            opt.value = '../database/database/' + raw.replace(/^\/+/, '');
+                        }
+                        opt.textContent = entry.label || raw.split('/').pop();
                         selectElement.appendChild(opt);
                     });
                     done();

@@ -283,33 +283,56 @@ function addTranslationBadge() {
 }
 // Function to get all available database files
 async function getDatabaseFiles() {
-    // Default files
+    // Fallback list used only if database/reader.json can't be loaded.
     const defaultFiles = [
         '../../database/database/main.js',
-        '../../database/database/more.js',
-        '../../database/database/stories1.js',
-        '../../database/database/stories2.js',
-        '../../database/database/stories3.js',
-        '../../database/database/adventure.js',
-        '../../database/database/romance.js',
-        '../../database/database/scifi.js',
-        '../../database/database/mystery.js',
-        '../../database/database/fantasy.js',
-        '../../database/database/horror.js'
+        '../../database/database/A1/more.js',
+        '../../database/database/more.js'
     ];
 
-    // Try to get dynamic list from server
+    // The story source the user selected in the library goes FIRST, so the exact
+    // story they clicked is the one loaded. This matters because different source
+    // files can reuse the same ids (e.g. more.js and A1/more.js both use 11-15).
+    const files = [];
+
     try {
-        const response = await fetch('../../database/database/db-list.json');
-        if (response.ok) {
-            const fileList = await response.json();
-            return fileList.files || defaultFiles;
+        const selected = localStorage.getItem('selectedStoriesFile');
+        if (selected) {
+            // The library stores this path relative to /main/. Resolve it against
+            // /main/ into an absolute URL so the reader — one level deeper in
+            // /main/reader/ — loads the very same file the library was showing.
+            const libraryBase = new URL('../', window.location.href); // .../main/
+            files.push(new URL(selected, libraryBase).href);
         }
-    } catch (error) {
-        console.log('No db-list.json found, using default files');
+    } catch (e) {
+        console.log('No selected story source found in storage');
     }
 
-    return defaultFiles;
+    // The editable list of sources the reader can open (database/reader.json).
+    // Entries are full paths under database/database/ (root-relative), so they
+    // resolve correctly no matter how deep the current page is.
+    let loadedList = false;
+    try {
+        const response = await fetch('../../database/reader.json');
+        if (response.ok) {
+            const list = await response.json();
+            const entries = Array.isArray(list) ? list : (list.files || []);
+            entries.forEach(function (entry) {
+                const path = typeof entry === 'string' ? entry : (entry && (entry.file || entry.path));
+                if (path && files.indexOf(path) === -1) files.push(path);
+            });
+            loadedList = true;
+        }
+    } catch (error) {
+        console.log('No database/reader.json found, using default files');
+    }
+
+    // Fallback if reader.json couldn't be loaded
+    if (!loadedList) {
+        defaultFiles.forEach(f => { if (files.indexOf(f) === -1) files.push(f); });
+    }
+
+    return files;
 }
 // Add this helper function to debug database loading
 async function debugDatabaseFiles() {

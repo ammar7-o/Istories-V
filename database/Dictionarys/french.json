@@ -1,0 +1,5810 @@
+{
+  "le": {
+    "translation": "الـ (مذكر)"
+  },
+  "la": {
+    "translation": "الـ (مؤنث)"
+  },
+  "de": {
+    "translation": "من"
+  },
+  "à": {
+    "translation": "إلى / في"
+  },
+  "et": {
+    "translation": "و"
+  },
+  "un": {
+    "translation": "واحد / أداة نكرة مذكر"
+  },
+  "une": {
+    "translation": "واحدة / أداة نكرة مؤنث"
+  },
+  "en": {
+    "translation": "في / من"
+  },
+  "du": {
+    "translation": "من الـ"
+  },
+  "au": {
+    "translation": "للـ"
+  },
+  "aux": {
+    "translation": "للـ (جمع)"
+  },
+  "les": {
+    "translation": "الـ (جمع)"
+  },
+  "des": {
+    "translation": "من الـ (جمع)"
+  },
+  "est": {
+    "translation": "يكون (هو)"
+  },
+  "sont": {
+    "translation": "يكونون"
+  },
+  "été": {
+    "translation": "كان"
+  },
+  "être": {
+    "translation": "يكون"
+  },
+  "avoir": {
+    "translation": "يملك"
+  },
+  "avait": {
+    "translation": "كان يملك"
+  },
+  "ai": {
+    "translation": "أملك"
+  },
+  "as": {
+    "translation": "تملك"
+  },
+  "a": {
+    "translation": "يملك"
+  },
+  "ont": {
+    "translation": "يملكون"
+  },
+  "fait": {
+    "translation": "فعل / صنع"
+  },
+  "faire": {
+    "translation": "يفعل"
+  },
+  "dit": {
+    "translation": "قال"
+  },
+  "je": {
+    "translation": "أنا"
+  },
+  "tu": {
+    "translation": "أنت"
+  },
+  "il": {
+    "translation": "هو"
+  },
+  "elle": {
+    "translation": "هي"
+  },
+  "nous": {
+    "translation": "نحن"
+  },
+  "vous": {
+    "translation": "أنتم"
+  },
+  "ils": {
+    "translation": "هم"
+  },
+  "elles": {
+    "translation": "هنّ"
+  },
+  "me": {
+    "translation": "إياي"
+  },
+  "te": {
+    "translation": "إياك"
+  },
+  "se": {
+    "translation": "نفسه"
+  },
+  "mon": {
+    "translation": "خاصتي"
+  },
+  "ma": {
+    "translation": "خاصتي (مؤنث)"
+  },
+  "mes": {
+    "translation": "خاصتي (جمع)"
+  },
+  "ton": {
+    "translation": "خاصتك"
+  },
+  "ta": {
+    "translation": "خاصتك (مؤنث)"
+  },
+  "tes": {
+    "translation": "خاصتك (جمع)"
+  },
+  "son": {
+    "translation": "خاصته"
+  },
+  "sa": {
+    "translation": "خاصته (مؤنث)"
+  },
+  "ses": {
+    "translation": "خاصته (جمع)"
+  },
+  "notre": {
+    "translation": "خاصتنا"
+  },
+  "nos": {
+    "translation": "خاصتنا (جمع)"
+  },
+  "votre": {
+    "translation": "خاصكم"
+  },
+  "vos": {
+    "translation": "خاصكم (جمع)"
+  },
+  "leur": {
+    "translation": "خاصهم"
+  },
+  "leurs": {
+    "translation": "خاصهم (جمع)"
+  },
+  "ce": {
+    "translation": "هذا"
+  },
+  "cet": {
+    "translation": "هذا (قبل معتل)"
+  },
+  "cette": {
+    "translation": "هذه"
+  },
+  "ces": {
+    "translation": "هؤلاء"
+  },
+  "qui": {
+    "translation": "الذي"
+  },
+  "que": {
+    "translation": "الذي / أن"
+  },
+  "quoi": {
+    "translation": "ماذا"
+  },
+  "où": {
+    "translation": "أين"
+  },
+  "quand": {
+    "translation": "متى"
+  },
+  "pourquoi": {
+    "translation": "لماذا"
+  },
+  "comment": {
+    "translation": "كيف"
+  },
+  "si": {
+    "translation": "إذا"
+  },
+  "ne": {
+    "translation": "لا (نفي)"
+  },
+  "pas": {
+    "translation": "ليس"
+  },
+  "non": {
+    "translation": "لا"
+  },
+  "oui": {
+    "translation": "نعم"
+  },
+  "plus": {
+    "translation": "أكثر"
+  },
+  "moins": {
+    "translation": "أقل"
+  },
+  "très": {
+    "translation": "جدا"
+  },
+  "trop": {
+    "translation": "جدا"
+  },
+  "aussi": {
+    "translation": "أيضا"
+  },
+  "encore": {
+    "translation": "مرة أخرى"
+  },
+  "toujours": {
+    "translation": "دائمًا"
+  },
+  "jamais": {
+    "translation": "أبدًا"
+  },
+  "souvent": {
+    "translation": "غالبًا"
+  },
+  "parfois": {
+    "translation": "أحيانًا"
+  },
+  "maintenant": {
+    "translation": "الآن"
+  },
+  "alors": {
+    "translation": "إذن"
+  },
+  "après": {
+    "translation": "بعد"
+  },
+  "avant": {
+    "translation": "قبل"
+  },
+  "pendant": {
+    "translation": "أثناء"
+  },
+  "avec": {
+    "translation": "مع"
+  },
+  "sans": {
+    "translation": "بدون"
+  },
+  "pour": {
+    "translation": "من أجل"
+  },
+  "par": {
+    "translation": "بواسطة"
+  },
+  "sur": {
+    "translation": "على"
+  },
+  "sous": {
+    "translation": "تحت"
+  },
+  "dans": {
+    "translation": "في"
+  },
+  "entre": {
+    "translation": "بين"
+  },
+  "vers": {
+    "translation": "نحو"
+  },
+  "jusqu": {
+    "translation": "حتى"
+  },
+  "depuis": {
+    "translation": "منذ"
+  },
+  "comme": {
+    "translation": "مثل"
+  },
+  "selon": {
+    "translation": "وفقًا"
+  },
+  "malgré": {
+    "translation": "رغم"
+  },
+  "donc": {
+    "translation": "لذا"
+  },
+  "mais": {
+    "translation": "لكن"
+  },
+  "ou": {
+    "translation": "أو"
+  },
+  "ni": {
+    "translation": "ولا"
+  },
+  "car": {
+    "translation": "لأن"
+  },
+  "ainsi": {
+    "translation": "هكذا"
+  },
+  "pourtant": {
+    "translation": "ومع ذلك"
+  },
+  "cependant": {
+    "translation": "غير أن"
+  },
+  "tout": {
+    "translation": "كل"
+  },
+  "tous": {
+    "translation": "الجميع"
+  },
+  "toute": {
+    "translation": "كل (مؤنث)"
+  },
+  "toutes": {
+    "translation": "كل (جمع)"
+  },
+  "rien": {
+    "translation": "لا شيء"
+  },
+  "quelqu'un": {
+    "translation": "شخص ما"
+  },
+  "chacun": {
+    "translation": "كل واحد"
+  },
+  "autre": {
+    "translation": "آخر"
+  },
+  "même": {
+    "translation": "نفس"
+  },
+  "seulement": {
+    "translation": "فقط"
+  },
+  "déjà": {
+    "translation": "بالفعل"
+  },
+  "bien": {
+    "translation": "جيدا"
+  },
+  "mal": {
+    "translation": "بلا / سيئ"
+  },
+  "vite": {
+    "translation": "بسرعة"
+  },
+  "lentement": {
+    "translation": "ببطء"
+  },
+  "ici": {
+    "translation": "هنا"
+  },
+  "là": {
+    "translation": "هناك"
+  },
+  "peut": {
+    "translation": "يستطيع"
+  },
+  "peuvent": {
+    "translation": "يستطيعون"
+  },
+  "doit": {
+    "translation": "يجب"
+  },
+  "doivent": {
+    "translation": "يجبون"
+  },
+  "veut": {
+    "translation": "يريد"
+  },
+  "veulent": {
+    "translation": "يريدون"
+  },
+  "vont": {
+    "translation": "يذهبون"
+  },
+  "vais": {
+    "translation": "أذهب"
+  },
+  "va": {
+    "translation": "يذهب"
+  },
+  "viens": {
+    "translation": "آتي"
+  },
+  "vient": {
+    "translation": "يأتي"
+  },
+  "voit": {
+    "translation": "يرى"
+  },
+  "voient": {
+    "translation": "يرون"
+  },
+  "disent": {
+    "translation": "يقولون"
+  },
+  "prend": {
+    "translation": "يأخذ"
+  },
+  "prennent": {
+    "translation": "يأخذون"
+  },
+  "donne": {
+    "translation": "يعطي"
+  },
+  "donnent": {
+    "translation": "يعطون"
+  },
+  "met": {
+    "translation": "يضع"
+  },
+  "mettent": {
+    "translation": "يضعون"
+  },
+  "sait": {
+    "translation": "يعرف"
+  },
+  "savent": {
+    "translation": "يعرفون"
+  },
+  "voici": {
+    "translation": "ها هو"
+  },
+  "voilà": {
+    "translation": "ها هناك"
+  },
+  "deux": {
+    "translation": "اثنان"
+  },
+  "trois": {
+    "translation": "ثلاثة"
+  },
+  "quatre": {
+    "translation": "أربعة"
+  },
+  "cinq": {
+    "translation": "خمسة"
+  },
+  "six": {
+    "translation": "ستة"
+  },
+  "sept": {
+    "translation": "سبعة"
+  },
+  "huit": {
+    "translation": "ثمانية"
+  },
+  "neuf": {
+    "translation": "تسعة"
+  },
+  "dix": {
+    "translation": "عشرة"
+  },
+  "onze": {
+    "translation": "أحد عشر"
+  },
+  "douze": {
+    "translation": "اثنا عشر"
+  },
+  "treize": {
+    "translation": "ثلاثة عشر"
+  },
+  "quatorze": {
+    "translation": "أربعة عشر"
+  },
+  "quinze": {
+    "translation": "خمسة عشر"
+  },
+  "seize": {
+    "translation": "ستة عشر"
+  },
+  "dix-sept": {
+    "translation": "سبعة عشر"
+  },
+  "dix-huit": {
+    "translation": "ثمانية عشر"
+  },
+  "dix-neuf": {
+    "translation": "تسعة عشر"
+  },
+  "vingt": {
+    "translation": "عشرون"
+  },
+  "trente": {
+    "translation": "ثلاثون"
+  },
+  "quarante": {
+    "translation": "أربعون"
+  },
+  "cinquante": {
+    "translation": "خمسون"
+  },
+  "soixante": {
+    "translation": "ستون"
+  },
+  "soixante-dix": {
+    "translation": "سبعون"
+  },
+  "quatre-vingts": {
+    "translation": "ثمانون"
+  },
+  "quatre-vingt-dix": {
+    "translation": "تسعون"
+  },
+  "cent": {
+    "translation": "مائة"
+  },
+  "mille": {
+    "translation": "ألف"
+  },
+  "premier": {
+    "translation": "أول"
+  },
+  "deuxième": {
+    "translation": "ثاني"
+  },
+  "troisième": {
+    "translation": "ثالث"
+  },
+  "dernier": {
+    "translation": "أخير"
+  },
+  "rouge": {
+    "translation": "أحمر"
+  },
+  "bleu": {
+    "translation": "أزرق"
+  },
+  "vert": {
+    "translation": "أخضر"
+  },
+  "jaune": {
+    "translation": "أصفر"
+  },
+  "noir": {
+    "translation": "أسود"
+  },
+  "blanc": {
+    "translation": "أبيض"
+  },
+  "orange": {
+    "translation": "برتقالي"
+  },
+  "violet": {
+    "translation": "بنفسجي"
+  },
+  "rose": {
+    "translation": "وردي"
+  },
+  "marron": {
+    "translation": "بني"
+  },
+  "gris": {
+    "translation": "رمادي"
+  },
+  "doré": {
+    "translation": "ذهبي"
+  },
+  "argenté": {
+    "translation": "فضي"
+  },
+  "temps": {
+    "translation": "وقت"
+  },
+  "jour": {
+    "translation": "يوم"
+  },
+  "nuit": {
+    "translation": "ليل"
+  },
+  "matin": {
+    "translation": "صباح"
+  },
+  "après-midi": {
+    "translation": "بعد الظهر"
+  },
+  "soir": {
+    "translation": "مساء"
+  },
+  "semaine": {
+    "translation": "أسبوع"
+  },
+  "mois": {
+    "translation": "شهر"
+  },
+  "année": {
+    "translation": "سنة"
+  },
+  "heure": {
+    "translation": "ساعة"
+  },
+  "minute": {
+    "translation": "دقيقة"
+  },
+  "seconde": {
+    "translation": "ثانية"
+  },
+  "aujourd'hui": {
+    "translation": "اليوم"
+  },
+  "demain": {
+    "translation": "غدًا"
+  },
+  "hier": {
+    "translation": "أمس"
+  },
+  "bientôt": {
+    "translation": "قريبا"
+  },
+  "tôt": {
+    "translation": "مبكر"
+  },
+  "tard": {
+    "translation": "متأخر"
+  },
+  "famille": {
+    "translation": "عائلة"
+  },
+  "père": {
+    "translation": "أب"
+  },
+  "mère": {
+    "translation": "أم"
+  },
+  "fils": {
+    "translation": "ابن"
+  },
+  "fille": {
+    "translation": "ابنة / فتاة"
+  },
+  "frère": {
+    "translation": "أخ"
+  },
+  "sœur": {
+    "translation": "أخت"
+  },
+  "grand-père": {
+    "translation": "جد"
+  },
+  "grand-mère": {
+    "translation": "جدة"
+  },
+  "oncle": {
+    "translation": "عم"
+  },
+  "tante": {
+    "translation": "عمة"
+  },
+  "cousin": {
+    "translation": "ابن العم"
+  },
+  "parents": {
+    "translation": "الوالدان"
+  },
+  "enfant": {
+    "translation": "طفل"
+  },
+  "bébé": {
+    "translation": "رضيع"
+  },
+  "mari": {
+    "translation": "زوج"
+  },
+  "femme": {
+    "translation": "امرأة / زوجة"
+  },
+  "tête": {
+    "translation": "رأس"
+  },
+  "visage": {
+    "translation": "وجه"
+  },
+  "œil": {
+    "translation": "عين"
+  },
+  "oreille": {
+    "translation": "أذن"
+  },
+  "nez": {
+    "translation": "أنف"
+  },
+  "bouche": {
+    "translation": "فم"
+  },
+  "dent": {
+    "translation": "سن"
+  },
+  "langue": {
+    "translation": "لسان / لغة"
+  },
+  "cheveu": {
+    "translation": "شعر"
+  },
+  "cou": {
+    "translation": "رقبة"
+  },
+  "épaule": {
+    "translation": "كتف"
+  },
+  "bras": {
+    "translation": "ذراع"
+  },
+  "main": {
+    "translation": "يد"
+  },
+  "doigt": {
+    "translation": "إصبع"
+  },
+  "poitrine": {
+    "translation": "صدر"
+  },
+  "dos": {
+    "translation": "ظهر"
+  },
+  "ventre": {
+    "translation": "معدة"
+  },
+  "jambe": {
+    "translation": "ساق"
+  },
+  "genou": {
+    "translation": "ركبة"
+  },
+  "pied": {
+    "translation": "قدم"
+  },
+  "cœur": {
+    "translation": "قلب"
+  },
+  "sang": {
+    "translation": "دم"
+  },
+  "os": {
+    "translation": "عظام"
+  },
+  "peau": {
+    "translation": "جلد"
+  },
+  "cerveau": {
+    "translation": "مخ"
+  },
+  "aliment": {
+    "translation": "طعام"
+  },
+  "eau": {
+    "translation": "ماء"
+  },
+  "pain": {
+    "translation": "خبز"
+  },
+  "riz": {
+    "translation": "أرز"
+  },
+  "viande": {
+    "translation": "لحم"
+  },
+  "poisson": {
+    "translation": "سمك"
+  },
+  "poulet": {
+    "translation": "دجاج"
+  },
+  "œuf": {
+    "translation": "بيضة"
+  },
+  "lait": {
+    "translation": "حليب"
+  },
+  "fromage": {
+    "translation": "جبن"
+  },
+  "beurre": {
+    "translation": "زبدة"
+  },
+  "sucre": {
+    "translation": "سكر"
+  },
+  "sel": {
+    "translation": "ملح"
+  },
+  "huile": {
+    "translation": "زيت"
+  },
+  "thé": {
+    "translation": "شاي"
+  },
+  "café": {
+    "translation": "قهوة"
+  },
+  "jus": {
+    "translation": "عصير"
+  },
+  "soupe": {
+    "translation": "شوربة"
+  },
+  "salade": {
+    "translation": "سلطة"
+  },
+  "fruit": {
+    "translation": "فاكهة"
+  },
+  "pomme": {
+    "translation": "تفاحة"
+  },
+  "banane": {
+    "translation": "موزة"
+  },
+  "raisin": {
+    "translation": "عنب"
+  },
+  "légume": {
+    "translation": "خضار"
+  },
+  "pomme-de-terre": {
+    "translation": "بطاطا"
+  },
+  "tomate": {
+    "translation": "طماطم"
+  },
+  "oignon": {
+    "translation": "بصل"
+  },
+  "carotte": {
+    "translation": "جزر"
+  },
+  "maison": {
+    "translation": "منزل"
+  },
+  "pièce": {
+    "translation": "غرفة"
+  },
+  "porte": {
+    "translation": "باب"
+  },
+  "fenêtre": {
+    "translation": "نافذة"
+  },
+  "mur": {
+    "translation": "جدار"
+  },
+  "sol": {
+    "translation": "أرضية"
+  },
+  "plafond": {
+    "translation": "سقف"
+  },
+  "cuisine": {
+    "translation": "مطبخ"
+  },
+  "salle-de-bain": {
+    "translation": "حمّام"
+  },
+  "chambre": {
+    "translation": "غرفة نوم"
+  },
+  "lit": {
+    "translation": "سرير"
+  },
+  "table": {
+    "translation": "طاولة"
+  },
+  "chaise": {
+    "translation": "كرسي"
+  },
+  "canapé": {
+    "translation": "أريكة"
+  },
+  "lampe": {
+    "translation": "مصباح"
+  },
+  "clé": {
+    "translation": "مفتاح"
+  },
+  "toit": {
+    "translation": "سطح"
+  },
+  "jardin": {
+    "translation": "حديقة"
+  },
+  "école": {
+    "translation": "مدرسة"
+  },
+  "élève": {
+    "translation": "طالب"
+  },
+  "professeur": {
+    "translation": "معلم"
+  },
+  "classe": {
+    "translation": "صف"
+  },
+  "leçon": {
+    "translation": "درس"
+  },
+  "livre": {
+    "translation": "كتاب"
+  },
+  "stylo": {
+    "translation": "قلم"
+  },
+  "papier": {
+    "translation": "ورق"
+  },
+  "cahier": {
+    "translation": "دفتر"
+  },
+  "examen": {
+    "translation": "امتحان"
+  },
+  "question": {
+    "translation": "سؤال"
+  },
+  "réponse": {
+    "translation": "جواب"
+  },
+  "étude": {
+    "translation": "دراسة"
+  },
+  "connaissance": {
+    "translation": "معرفة"
+  },
+  "university": {
+    "translation": "جامعة"
+  },
+  "travail": {
+    "translation": "عمل"
+  },
+  "patron": {
+    "translation": "رئيس"
+  },
+  "entreprise": {
+    "translation": "شركة"
+  },
+  "argent": {
+    "translation": "مال"
+  },
+  "prix": {
+    "translation": "سعر"
+  },
+  "coût": {
+    "translation": "تكلفة"
+  },
+  "ville": {
+    "translation": "مدينة"
+  },
+  "pays": {
+    "translation": "بلد"
+  },
+  "village": {
+    "translation": "قرية"
+  },
+  "rue": {
+    "translation": "شارع"
+  },
+  "route": {
+    "translation": "طريق"
+  },
+  "place": {
+    "translation": "ساحة / مكان"
+  },
+  "marché": {
+    "translation": "سوق"
+  },
+  "magasin": {
+    "translation": "متجر"
+  },
+  "hôpital": {
+    "translation": "مستشفى"
+  },
+  "banque": {
+    "translation": "مصرف"
+  },
+  "hôtel": {
+    "translation": "فندق"
+  },
+  "restaurant": {
+    "translation": "مطعم"
+  },
+  "musée": {
+    "translation": "متحف"
+  },
+  "église": {
+    "translation": "كنيسة"
+  },
+  "mosquée": {
+    "translation": "مسجد"
+  },
+  "aéroport": {
+    "translation": "مطار"
+  },
+  "gare": {
+    "translation": "محطة قطار"
+  },
+  "voiture": {
+    "translation": "سيارة"
+  },
+  "bus": {
+    "translation": "حافلة"
+  },
+  "train": {
+    "translation": "قطار"
+  },
+  "avion": {
+    "translation": "طائرة"
+  },
+  "bateau": {
+    "translation": "سفينة"
+  },
+  "vélo": {
+    "translation": "دراجة"
+  },
+  "taxi": {
+    "translation": "سيارة أجرة"
+  },
+  "ticket": {
+    "translation": "تذكرة"
+  },
+  "nature": {
+    "translation": "طبيعة"
+  },
+  "soleil": {
+    "translation": "شمس"
+  },
+  "lune": {
+    "translation": "قمر"
+  },
+  "étoile": {
+    "translation": "نجم"
+  },
+  "ciel": {
+    "translation": "سماء"
+  },
+  "nuage": {
+    "translation": "سحابة"
+  },
+  "pluie": {
+    "translation": "مطر"
+  },
+  "neige": {
+    "translation": "ثلج"
+  },
+  "vent": {
+    "translation": "ريح"
+  },
+  "feu": {
+    "translation": "نار"
+  },
+  "terre": {
+    "translation": "أرض"
+  },
+  "mer": {
+    "translation": "بحر"
+  },
+  "fleuve": {
+    "translation": "نهر"
+  },
+  "montagne": {
+    "translation": "جبل"
+  },
+  "arbre": {
+    "translation": "شجرة"
+  },
+  "fleur": {
+    "translation": "زهرة"
+  },
+  "herbe": {
+    "translation": "عشب"
+  },
+  "forêt": {
+    "translation": "غابة"
+  },
+  "animal": {
+    "translation": "حيوان"
+  },
+  "oiseau": {
+    "translation": "طائر"
+  },
+  "chien": {
+    "translation": "كلب"
+  },
+  "chat": {
+    "translation": "قطة"
+  },
+  "cheval": {
+    "translation": "حصان"
+  },
+  "chose": {
+    "translation": "شيء"
+  },
+  "objet": {
+    "translation": "غرض"
+  },
+  "part": {
+    "translation": "جزء"
+  },
+  "groupe": {
+    "translation": "مجموعة"
+  },
+  "équipe": {
+    "translation": "فريق"
+  },
+  "liste": {
+    "translation": "قائمة"
+  },
+  "boîte": {
+    "translation": "صندوق"
+  },
+  "sac": {
+    "translation": "حقيبة"
+  },
+  "bouteille": {
+    "translation": "زجاجة"
+  },
+  "tasse": {
+    "translation": "كوب"
+  },
+  "verre": {
+    "translation": "زجاج"
+  },
+  "assiette": {
+    "translation": "طبق"
+  },
+  "couteau": {
+    "translation": "سكين"
+  },
+  "fourchette": {
+    "translation": "شوكة"
+  },
+  "cuillère": {
+    "translation": "ملعقة"
+  },
+  "horloge": {
+    "translation": "ساعة حائط"
+  },
+  "téléphone": {
+    "translation": "هاتف"
+  },
+  "ordinateur": {
+    "translation": "حاسوب"
+  },
+  "télévision": {
+    "translation": "تلفاز"
+  },
+  "radio": {
+    "translation": "راديو"
+  },
+  "journal": {
+    "translation": "جريدة"
+  },
+  "photo": {
+    "translation": "صورة"
+  },
+  "vidéo": {
+    "translation": "فيديو"
+  },
+  "musique": {
+    "translation": "موسيقى"
+  },
+  "chanson": {
+    "translation": "أغنية"
+  },
+  "jeu": {
+    "translation": "لعبة"
+  },
+  "jouet": {
+    "translation": "لعبة أطفال"
+  },
+  "cadeau": {
+    "translation": "هدية"
+  },
+  "vêtement": {
+    "translation": "ملابس"
+  },
+  "chemise": {
+    "translation": "قميص"
+  },
+  "robe": {
+    "translation": "فستان"
+  },
+  "pantalon": {
+    "translation": "بنطال"
+  },
+  "chaussure": {
+    "translation": "حذاء"
+  },
+  "chapeau": {
+    "translation": "قبعة"
+  },
+  "manteau": {
+    "translation": "معطف"
+  },
+  "poche": {
+    "translation": "جيب"
+  },
+  "heureux": {
+    "translation": "سعيد"
+  },
+  "triste": {
+    "translation": "حزين"
+  },
+  "fâché": {
+    "translation": "غاضب"
+  },
+  "peureux": {
+    "translation": "خائف"
+  },
+  "fatigué": {
+    "translation": "متعب"
+  },
+  "affamé": {
+    "translation": "جائع"
+  },
+  "soiffé": {
+    "translation": "عطشان"
+  },
+  "malade": {
+    "translation": "مريض"
+  },
+  "fort": {
+    "translation": "قوي"
+  },
+  "faible": {
+    "translation": "ضعيف"
+  },
+  "rapide": {
+    "translation": "سريع"
+  },
+  "lent": {
+    "translation": "بطيء"
+  },
+  "chaud": {
+    "translation": "حار"
+  },
+  "beau": {
+    "translation": "جميل"
+  },
+  "laid": {
+    "translation": "قبيح"
+  },
+  "facile": {
+    "translation": "سهل"
+  },
+  "difficile": {
+    "translation": "صعب"
+  },
+  "simple": {
+    "translation": "بسيط"
+  },
+  "propre": {
+    "translation": "نظيف"
+  },
+  "sale": {
+    "translation": "متسخ"
+  },
+  "plein": {
+    "translation": "ممتلئ"
+  },
+  "vide": {
+    "translation": "فارغ"
+  },
+  "ouvert": {
+    "translation": "مفتوح"
+  },
+  "fermé": {
+    "translation": "مغلق"
+  },
+  "riche": {
+    "translation": "غني"
+  },
+  "pauvre": {
+    "translation": "فقير"
+  },
+  "occupé": {
+    "translation": "مشغول"
+  },
+  "libre": {
+    "translation": "حر"
+  },
+  "prêt": {
+    "translation": "جاهز"
+  },
+  "sûr": {
+    "translation": "آمن"
+  },
+  "dangereux": {
+    "translation": "خطير"
+  },
+  "rarement": {
+    "translation": "نادرًا"
+  },
+  "ensuite": {
+    "translation": "ثم"
+  },
+  "puis": {
+    "translation": "ثم"
+  },
+  "ensemble": {
+    "translation": "معًا"
+  },
+  "seul": {
+    "translation": "وحيد"
+  },
+  "partout": {
+    "translation": "كل مكان"
+  },
+  "ailleurs": {
+    "translation": "في مكان آخر"
+  },
+  "dire": {
+    "translation": "يقول"
+  },
+  "aller": {
+    "translation": "يذهب"
+  },
+  "voir": {
+    "translation": "يرى"
+  },
+  "savoir": {
+    "translation": "يعرف"
+  },
+  "penser": {
+    "translation": "يفكر"
+  },
+  "prendre": {
+    "translation": "يأخذ"
+  },
+  "vouloir": {
+    "translation": "يريد"
+  },
+  "pouvoir": {
+    "translation": "يستطيع"
+  },
+  "devoir": {
+    "translation": "يجب"
+  },
+  "venir": {
+    "translation": "يأتي"
+  },
+  "trouver": {
+    "translation": "يجد"
+  },
+  "donner": {
+    "translation": "يعطي"
+  },
+  "falloir": {
+    "translation": "يلزم"
+  },
+  "parler": {
+    "translation": "يتكلم"
+  },
+  "mettre": {
+    "translation": "يضع"
+  },
+  "regarder": {
+    "translation": "يشاهد"
+  },
+  "passer": {
+    "translation": "يمر"
+  },
+  "connaître": {
+    "translation": "يعرف"
+  },
+  "aimer": {
+    "translation": "يحب"
+  },
+  "croire": {
+    "translation": "يعتقد"
+  },
+  "demander": {
+    "translation": "يسأل"
+  },
+  "répondre": {
+    "translation": "يرد"
+  },
+  "entrer": {
+    "translation": "يدخل"
+  },
+  "sortir": {
+    "translation": "يخرج"
+  },
+  "monter": {
+    "translation": "يصعد"
+  },
+  "descend": {
+    "translation": "ينزل"
+  },
+  "rester": {
+    "translation": "يبقى"
+  },
+  "tomber": {
+    "translation": "يسقط"
+  },
+  "ouvrir": {
+    "translation": "يفتح"
+  },
+  "fermer": {
+    "translation": "يغلق"
+  },
+  "commencer": {
+    "translation": "يبدأ"
+  },
+  "finir": {
+    "translation": "يستمر / ينتهي"
+  },
+  "continuer": {
+    "translation": "يستمر"
+  },
+  "arrêter": {
+    "translation": "يتوقف"
+  },
+  "acheter": {
+    "translation": "يشتري"
+  },
+  "vendre": {
+    "translation": "يبيع"
+  },
+  "payer": {
+    "translation": "يدفع"
+  },
+  "coûter": {
+    "translation": "يكلف"
+  },
+  "jouer": {
+    "translation": "يلعب"
+  },
+  "chanter": {
+    "translation": "يغني"
+  },
+  "danser": {
+    "translation": "يرقص"
+  },
+  "rire": {
+    "translation": "يضحك"
+  },
+  "pleurer": {
+    "translation": "يبكي"
+  },
+  "dormir": {
+    "translation": "ينام"
+  },
+  "marcher": {
+    "translation": "يمشي"
+  },
+  "courir": {
+    "translation": "يركض"
+  },
+  "voler": {
+    "translation": "يطير"
+  },
+  "nager": {
+    "translation": "يسبح"
+  },
+  "conduire": {
+    "translation": "يقود"
+  },
+  "écrire": {
+    "translation": "يكتب"
+  },
+  "lire": {
+    "translation": "يقرأ"
+  },
+  "apprendre": {
+    "translation": "يتعلم"
+  },
+  "enseigner": {
+    "translation": "يدرّس"
+  },
+  "étudier": {
+    "translation": "يدرس"
+  },
+  "expliquer": {
+    "translation": "يشرح"
+  },
+  "comprendre": {
+    "translation": "يفهم"
+  },
+  "traduire": {
+    "translation": "يترجم"
+  },
+  "aider": {
+    "translation": "يساعد"
+  },
+  "protéger": {
+    "translation": "يحمي"
+  },
+  "guérir": {
+    "translation": "يشفي"
+  },
+  "mourir": {
+    "translation": "يموت"
+  },
+  "naître": {
+    "translation": "يولد"
+  },
+  "vivre": {
+    "translation": "يعيش"
+  },
+  "habiter": {
+    "translation": "يسكن"
+  },
+  "voyager": {
+    "translation": "يسافر"
+  },
+  "visiter": {
+    "translation": "يزور"
+  },
+  "inviter": {
+    "translation": "يدعو"
+  },
+  "remercier": {
+    "translation": "يشكر"
+  },
+  "pardonner": {
+    "translation": "يسامح"
+  },
+  "réussir": {
+    "translation": "ينجح"
+  },
+  "échouer": {
+    "translation": "يفشل"
+  },
+  "gagner": {
+    "translation": "يفوز"
+  },
+  "perdre": {
+    "translation": "يخسر"
+  },
+  "essayer": {
+    "translation": "يحاول"
+  },
+  "choisir": {
+    "translation": "يختار"
+  },
+  "décider": {
+    "translation": "يقرر"
+  },
+  "changer": {
+    "translation": "يغير"
+  },
+  "augmenter": {
+    "translation": "يزيد"
+  },
+  "diminuer": {
+    "translation": "ينقص"
+  },
+  "créer": {
+    "translation": "ينشئ"
+  },
+  "inventer": {
+    "translation": "يخترع"
+  },
+  "sentir": {
+    "translation": "يشعر"
+  },
+  "toucher": {
+    "translation": "يلمس"
+  },
+  "goûter": {
+    "translation": "يتذوق"
+  },
+  "écouter": {
+    "translation": "ينصت"
+  },
+  "sembler": {
+    "translation": "يبدو"
+  },
+  "paraître": {
+    "translation": "يظهر"
+  },
+  "devenir": {
+    "translation": "يصبح"
+  },
+  "appartenir": {
+    "translation": "ينتمي"
+  },
+  "valoir": {
+    "translation": "يستحق"
+  },
+  "durer": {
+    "translation": "يدوم"
+  },
+  "arriver": {
+    "translation": "يصل"
+  },
+  "partir": {
+    "translation": "يغادر"
+  },
+  "revenir": {
+    "translation": "يعود"
+  },
+  "rencontrer": {
+    "translation": "يقابل"
+  },
+  "suivre": {
+    "translation": "يتبع"
+  },
+  "attendre": {
+    "translation": "ينتظر"
+  },
+  "chercher": {
+    "translation": "يبحث"
+  },
+  "garder": {
+    "translation": "يحتفظ"
+  },
+  "oublier": {
+    "translation": "ينسى"
+  },
+  "rappeler": {
+    "translation": "يتذكر"
+  },
+  "se souvenir": {
+    "translation": "يتذكر"
+  },
+  "rêver": {
+    "translation": "يحلم"
+  },
+  "douter": {
+    "translation": "يشك"
+  },
+  "jurer": {
+    "translation": "يقسم"
+  },
+  "promettre": {
+    "translation": "يعد"
+  },
+  "refuser": {
+    "translation": "يرفض"
+  },
+  "accepter": {
+    "translation": "يقبل"
+  },
+  "autorisr": {
+    "translation": "يسمح"
+  },
+  "interdire": {
+    "translation": "يمنع"
+  },
+  "éviter": {
+    "translation": "يتجنب"
+  },
+  "encourager": {
+    "translation": "يشجع"
+  },
+  "féliciter": {
+    "translation": "يهنئ"
+  },
+  "blâmer": {
+    "translation": "يلوم"
+  },
+  "critiquer": {
+    "translation": "ينتقد"
+  },
+  "louer": {
+    "translation": "يمدح"
+  },
+  "haïr": {
+    "translation": "يكره"
+  },
+  "détester": {
+    "translation": "يكره"
+  },
+  "préfيرير": {
+    "translation": "يفضل"
+  },
+  "admirer": {
+    "translation": "يعجب بـ"
+  },
+  "idée": {
+    "translation": "فكرة"
+  },
+  "raison": {
+    "translation": "سبب"
+  },
+  "problème": {
+    "translation": "مشكلة"
+  },
+  "solution": {
+    "translation": "حل"
+  },
+  "résultat": {
+    "translation": "نتيجة"
+  },
+  "effet": {
+    "translation": "أثر"
+  },
+  "but": {
+    "translation": "هدف"
+  },
+  "signification": {
+    "translation": "معنى"
+  },
+  "importance": {
+    "translation": "أهمية"
+  },
+  "valeur": {
+    "translation": "قيمة"
+  },
+  "qualité": {
+    "translation": "جودة"
+  },
+  "quantité": {
+    "translation": "كمية"
+  },
+  "nombre": {
+    "translation": "رقم"
+  },
+  "taille": {
+    "translation": "حجم"
+  },
+  "longueur": {
+    "translation": "طول"
+  },
+  "largeur": {
+    "translation": "عرض"
+  },
+  "hauteur": {
+    "translation": "ارتفاع"
+  },
+  "poids": {
+    "translation": "وزن"
+  },
+  "vitesse": {
+    "translation": "سرعة"
+  },
+  "distance": {
+    "translation": "مسافة"
+  },
+  "différence": {
+    "translation": "فرق"
+  },
+  "situation": {
+    "translation": "حالة"
+  },
+  "état": {
+    "translation": "حالة"
+  },
+  "position": {
+    "translation": "موضع"
+  },
+  "endroit": {
+    "translation": "مكان"
+  },
+  "direction": {
+    "translation": "اتجاه"
+  },
+  "mouvement": {
+    "translation": "حركة"
+  },
+  "action": {
+    "translation": "فعل"
+  },
+  "activité": {
+    "translation": "نشاط"
+  },
+  "événement": {
+    "translation": "حدث"
+  },
+  "expérience": {
+    "translation": "تجربة"
+  },
+  "mémoire": {
+    "translation": "ذاكرة"
+  },
+  "pensée": {
+    "translation": "فكرة"
+  },
+  "rêve": {
+    "translation": "حلم"
+  },
+  "espoir": {
+    "translation": "أمل"
+  },
+  "peur": {
+    "translation": "خوف"
+  },
+  "amour": {
+    "translation": "حرب / حب"
+  },
+  "haine": {
+    "translation": "كره"
+  },
+  "joie": {
+    "translation": "فرح"
+  },
+  "chagrin": {
+    "translation": "حزن"
+  },
+  "colère": {
+    "translation": "غضب"
+  },
+  "paix": {
+    "translation": "سلام"
+  },
+  "guerre": {
+    "translation": "حرب"
+  },
+  "énergie": {
+    "translation": "طاقة"
+  },
+  "capacité": {
+    "translation": "قدرة"
+  },
+  "compétence": {
+    "translation": "مهارة"
+  },
+  "talent": {
+    "translation": "موهبة"
+  },
+  "intelligence": {
+    "translation": "ذكاء"
+  },
+  "sagesse": {
+    "translation": "حكمة"
+  },
+  "vérité": {
+    "translation": "حقيقة"
+  },
+  "mensonge": {
+    "translation": "كذبة"
+  },
+  "histoire": {
+    "translation": "تاريخ / قصة"
+  },
+  "nouvelle": {
+    "translation": "خبر"
+  },
+  "message": {
+    "translation": "رسالة"
+  },
+  "lettre": {
+    "translation": "رسالة"
+  },
+  "mot": {
+    "translation": "كلمة"
+  },
+  "phrase": {
+    "translation": "جملة"
+  },
+  "traduction": {
+    "translation": "ترجمة"
+  },
+  "méthode": {
+    "translation": "طريقة"
+  },
+  "style": {
+    "translation": "أسلوب"
+  },
+  "forme": {
+    "translation": "شكل"
+  },
+  "type": {
+    "translation": "نوع"
+  },
+  "exemple": {
+    "translation": "مثال"
+  },
+  "demi": {
+    "translation": "نصف"
+  },
+  "couple": {
+    "translation": "زوج"
+  },
+  "série": {
+    "translation": "سلسلة"
+  },
+  "collection": {
+    "translation": "مجموعة"
+  },
+  "foule": {
+    "translation": "حشد"
+  },
+  "partie": {
+    "translation": "جزء"
+  },
+  "moitié": {
+    "translation": "نصف"
+  },
+  "bout": {
+    "translation": "طرف"
+  },
+  "coin": {
+    "translation": "زاوية"
+  },
+  "milieu": {
+    "translation": "وسط"
+  },
+  "haut": {
+    "translation": "قمة"
+  },
+  "bas": {
+    "translation": "قاع"
+  },
+  "côté": {
+    "translation": "جانب"
+  },
+  "devant": {
+    "translation": "أمام"
+  },
+  "fin": {
+    "translation": "نهاية"
+  },
+  "début": {
+    "translation": "بداية"
+  },
+  "espace": {
+    "translation": "مساحة"
+  },
+  "région": {
+    "translation": "منطقة"
+  },
+  "territoire": {
+    "translation": "إقليم"
+  },
+  "sable": {
+    "translation": "رمل"
+  },
+  "pierre": {
+    "translation": "حجر"
+  },
+  "rocher": {
+    "translation": "صخرة"
+  },
+  "métal": {
+    "translation": "معدن"
+  },
+  "bois": {
+    "translation": "خشب"
+  },
+  "médecin": {
+    "translation": "طبيب"
+  },
+  "infirmier": {
+    "translation": "ممرضة"
+  },
+  "avocat": {
+    "translation": "محامٍ"
+  },
+  "juge": {
+    "translation": "قاضٍ"
+  },
+  "policier": {
+    "translation": "شرطي"
+  },
+  "soldat": {
+    "translation": "جندي"
+  },
+  "pilote": {
+    "translation": "طيّار"
+  },
+  "chauffeur": {
+    "translation": "سائق"
+  },
+  "peintre": {
+    "translation": "رسام"
+  },
+  "écrivain": {
+    "translation": "كاتب"
+  },
+  "musicien": {
+    "translation": "موسيقي"
+  },
+  "chanteur": {
+    "translation": "مغنٍّ"
+  },
+  "acteur": {
+    "translation": "ممثل"
+  },
+  "danseur": {
+    "translation": "راقص"
+  },
+  "joueur": {
+    "translation": "لاعب"
+  },
+  "entraîneur": {
+    "translation": "مدرب"
+  },
+  "ingénieur": {
+    "translation": "مهندس"
+  },
+  "artisan": {
+    "translation": "حرفي"
+  },
+  "fermier": {
+    "translation": "مزارع"
+  },
+  "boulanger": {
+    "translation": "خباز"
+  },
+  "boucher": {
+    "translation": "جزار"
+  },
+  "coiffeur": {
+    "translation": "حلّاق"
+  },
+  "cuisinier": {
+    "translation": "طباخ"
+  },
+  "serveur": {
+    "translation": "نادل"
+  },
+  "vendeur": {
+    "translation": "بائع"
+  },
+  "client": {
+    "translation": "زبون"
+  },
+  "voisin": {
+    "translation": "جار"
+  },
+  "ami": {
+    "translation": "صديق"
+  },
+  "ennemi": {
+    "translation": "عدو"
+  },
+  "partenaire": {
+    "translation": "شريك"
+  },
+  "santé": {
+    "translation": "صحة"
+  },
+  "médecine": {
+    "translation": "دواء"
+  },
+  "maladie": {
+    "translation": "مرض"
+  },
+  "douleur": {
+    "translation": "ألم"
+  },
+  "fièvre": {
+    "translation": "حمى"
+  },
+  "toux": {
+    "translation": "سعال"
+  },
+  "grippe": {
+    "translation": "إنفلونزا"
+  },
+  "blessure": {
+    "translation": "إصابة"
+  },
+  "guérison": {
+    "translation": "شفاء"
+  },
+  "météo": {
+    "translation": "طقس"
+  },
+  "température": {
+    "translation": "حرارة"
+  },
+  "chaleur": {
+    "translation": "حرارة"
+  },
+  "froidure": {
+    "translation": "برد"
+  },
+  "humidité": {
+    "translation": "رطوبة"
+  },
+  "tonnerre": {
+    "translation": "رعد"
+  },
+  "éclair": {
+    "translation": "برق"
+  },
+  "brouillard": {
+    "translation": "ضباب"
+  },
+  "vague": {
+    "translation": "موجة"
+  },
+  "marée": {
+    "translation": "مد وجزر"
+  },
+  "lac": {
+    "translation": "بحيرة"
+  },
+  "île": {
+    "translation": "جزيرة"
+  },
+  "plage": {
+    "translation": "شاطئ"
+  },
+  "vallée": {
+    "translation": "وادٍ"
+  },
+  "colline": {
+    "translation": "تل"
+  },
+  "meuble": {
+    "translation": "أثاث"
+  },
+  "bureau": {
+    "translation": "مكتب"
+  },
+  "étagère": {
+    "translation": "رف"
+  },
+  "oreiller": {
+    "translation": "وسادة"
+  },
+  "couverture": {
+    "translation": "بطانية"
+  },
+  "serviette": {
+    "translation": "منشفة"
+  },
+  "savon": {
+    "translation": "صابون"
+  },
+  "miroir": {
+    "translation": "مرآة"
+  },
+  "aiguille": {
+    "translation": "إبرة"
+  },
+  "bouton": {
+    "translation": "زر"
+  },
+  "ceinture": {
+    "translation": "حزام"
+  },
+  "gant": {
+    "translation": "قفاز"
+  },
+  "écharpe": {
+    "translation": "وشاح"
+  },
+  "bague": {
+    "translation": "خاتم"
+  },
+  "collier": {
+    "translation": "قلادة"
+  },
+  "montre": {
+    "translation": "ساعة يد"
+  },
+  "lunettes": {
+    "translation": "نظارة"
+  },
+  "parapluie": {
+    "translation": "مظلة"
+  },
+  "portefeuille": {
+    "translation": "محفظة"
+  },
+  "valise": {
+    "translation": "حقيبة سفر"
+  },
+  "panier": {
+    "translation": "سلة"
+  },
+  "seau": {
+    "translation": "دلو"
+  },
+  "pot": {
+    "translation": "قدر"
+  },
+  "casserole": {
+    "translation": "مقلاة"
+  },
+  "bouilloire": {
+    "translation": "غلاية"
+  },
+  "bol": {
+    "translation": "زبدية"
+  },
+  "plat": {
+    "translation": "طبق"
+  },
+  "tapisser": {
+    "translation": "صينية"
+  },
+  "appeler": {
+    "translation": "ينادي"
+  },
+  "jeter": {
+    "translation": "يرمي"
+  },
+  "pousser": {
+    "translation": "يدفع"
+  },
+  "tirer": {
+    "translation": "يسحب"
+  },
+  "lever": {
+    "translation": "يرفع"
+  },
+  "poser": {
+    "translation": "يضع"
+  },
+  "tenir": {
+    "translation": "يمسك"
+  },
+  "apporter": {
+    "translation": "يجلب"
+  },
+  "emporter": {
+    "translation": "يأخذ معه"
+  },
+  "ramener": {
+    "translation": "يعيد"
+  },
+  "renvoyer": {
+    "translation": "يرجع"
+  },
+  "envoyer": {
+    "translation": "يرسل"
+  },
+  "recevoir": {
+    "translation": "يستلم"
+  },
+  "prêter": {
+    "translation": "يُقرض"
+  },
+  "emprunter": {
+    "translation": "يستعير"
+  },
+  "échanger": {
+    "translation": "يتبادل"
+  },
+  "partager": {
+    "translation": "يشارك"
+  },
+  "mesurer": {
+    "translation": "يقيس"
+  },
+  "compter": {
+    "translation": "يعد"
+  },
+  "calculer": {
+    "translation": "يحسب"
+  },
+  "résoudre": {
+    "translation": "يحل"
+  },
+  "réparer": {
+    "translation": "يصلح"
+  },
+  "nettoyer": {
+    "translation": "ينظف"
+  },
+  "laver": {
+    "translation": "يغسل"
+  },
+  "cuisiner": {
+    "translation": "يطبخ"
+  },
+  "façon": {
+    "translation": "طريقة"
+  },
+  "moment": {
+    "translation": "لحظة"
+  },
+  "fois": {
+    "translation": "مرة"
+  },
+  "manière": {
+    "translation": "أسلوب"
+  },
+  "cas": {
+    "translation": "حالة"
+  },
+  "besoin": {
+    "translation": "حاجة"
+  },
+  "envie": {
+    "translation": "رغبة"
+  },
+  "goût": {
+    "translation": "طعم"
+  },
+  "odeur": {
+    "translation": "رائحة"
+  },
+  "bruit": {
+    "translation": "ضوضاء"
+  },
+  "voix": {
+    "translation": "صوت"
+  },
+  "lumière": {
+    "translation": "ضوء"
+  },
+  "ombre": {
+    "translation": "ظل"
+  },
+  "couleur": {
+    "translation": "لون"
+  },
+  "figure": {
+    "translation": "وجه"
+  },
+  "image": {
+    "translation": "صورة"
+  },
+  "air": {
+    "translation": "هواء"
+  },
+  "lundi": {
+    "translation": "الاثنين"
+  },
+  "mardi": {
+    "translation": "الثلاثاء"
+  },
+  "mercredi": {
+    "translation": "الأربعاء"
+  },
+  "jeudi": {
+    "translation": "الخميس"
+  },
+  "vendredi": {
+    "translation": "الجمعة"
+  },
+  "samedi": {
+    "translation": "السبت"
+  },
+  "dimanche": {
+    "translation": "الأحد"
+  },
+  "weekend": {
+    "translation": "عطلة نهاية الأسبوع"
+  },
+  "printemps": {
+    "translation": "ربيع"
+  },
+  "automne": {
+    "translation": "خريف"
+  },
+  "hiver": {
+    "translation": "شتاء"
+  },
+  "janvier": {
+    "translation": "يناير"
+  },
+  "février": {
+    "translation": "فبراير"
+  },
+  "mars": {
+    "translation": "مارس"
+  },
+  "avril": {
+    "translation": "أبريل"
+  },
+  "juin": {
+    "translation": "يونيو"
+  },
+  "juillet": {
+    "translation": "يوليو"
+  },
+  "août": {
+    "translation": "أغسطس"
+  },
+  "septembre": {
+    "translation": "سبتمبر"
+  },
+  "octobre": {
+    "translation": "أكتوبر"
+  },
+  "novembre": {
+    "translation": "نوفمبر"
+  },
+  "décembre": {
+    "translation": "ديسمبر"
+  },
+  "an": {
+    "translation": "سنة"
+  },
+  "abîmer": {
+    "translation": "يتلف"
+  },
+  "accéder": {
+    "translation": "يصل"
+  },
+  "accompagner": {
+    "translation": "يرافق"
+  },
+  "accorder": {
+    "translation": "يمنح"
+  },
+  "accuser": {
+    "translation": "يتهم"
+  },
+  "adorer": {
+    "translation": "يعبد"
+  },
+  "afficher": {
+    "translation": "يعرض"
+  },
+  "affirmer": {
+    "translation": "يؤكد"
+  },
+  "agir": {
+    "translation": "يتصرف"
+  },
+  "agiter": {
+    "translation": "يهز"
+  },
+  "aligner": {
+    "translation": "يصف"
+  },
+  "allumer": {
+    "translation": "يشعل"
+  },
+  "amener": {
+    "translation": "يجلب"
+  },
+  "amuser": {
+    "translation": "يسلّي"
+  },
+  "analyser": {
+    "translation": "يحلل"
+  },
+  "annoncer": {
+    "translation": "يعلن"
+  },
+  "animer": {
+    "translation": "ينشّط"
+  },
+  "apaiser": {
+    "translation": "يهدّئ"
+  },
+  "apercevoir": {
+    "translation": "يلمح"
+  },
+  "appuyer": {
+    "translation": "يضغط"
+  },
+  "arracher": {
+    "translation": "ينتزع"
+  },
+  "assurer": {
+    "translation": "يضمن"
+  },
+  "attacher": {
+    "translation": "يربط"
+  },
+  "attaquer": {
+    "translation": "يهاجم"
+  },
+  "attribuer": {
+    "translation": "ينسب"
+  },
+  "avancer": {
+    "translation": "يتقدم"
+  },
+  "avertir": {
+    "translation": "يحذر"
+  },
+  "blesser": {
+    "translation": "يجرح"
+  },
+  "bloquer": {
+    "translation": "يحجب"
+  },
+  "briller": {
+    "translation": "يلمع"
+  },
+  "briser": {
+    "translation": "يكسر"
+  },
+  "brûler": {
+    "translation": "يحرق"
+  },
+  "casser": {
+    "translation": "يكسر"
+  },
+  "causer": {
+    "translation": "يسبب"
+  },
+  "célébrer": {
+    "translation": "يحتفل"
+  },
+  "chuchoter": {
+    "translation": "يهمس"
+  },
+  "citer": {
+    "translation": "يذكر"
+  },
+  "claquer": {
+    "translation": "يصفق"
+  },
+  "combattre": {
+    "translation": "يقاتل"
+  },
+  "commander": {
+    "translation": "يأمر"
+  },
+  "commettre": {
+    "translation": "يرتكب"
+  },
+  "communiquer": {
+    "translation": "يتواصل"
+  },
+  "compléter": {
+    "translation": "يكمل"
+  },
+  "composer": {
+    "translation": "يؤلف"
+  },
+  "comprimer": {
+    "translation": "يضغط"
+  },
+  "concevoir": {
+    "translation": "يصمم"
+  },
+  "condamner": {
+    "translation": "يدين"
+  },
+  "confirmer": {
+    "translation": "يؤكد"
+  },
+  "confisquer": {
+    "translation": "يصادر"
+  },
+  "connecter": {
+    "translation": "يوصل"
+  },
+  "consacrer": {
+    "translation": "يكرّس"
+  },
+  "consentir": {
+    "translation": "يوافق"
+  },
+  "conserver": {
+    "translation": "يحفظ"
+  },
+  "considérer": {
+    "translation": "يعتبر"
+  },
+  "consister": {
+    "translation": "يتكون"
+  },
+  "consoler": {
+    "translation": "يواسي"
+  },
+  "constater": {
+    "translation": "يلاحظ"
+  },
+  "constituer": {
+    "translation": "يشكّل"
+  },
+  "consulter": {
+    "translation": "يستشير"
+  },
+  "contacter": {
+    "translation": "يتصل"
+  },
+  "contenir": {
+    "translation": "يحتوي"
+  },
+  "contribuer": {
+    "translation": "يساهم"
+  },
+  "contrôler": {
+    "translation": "يتحكم"
+  },
+  "converser": {
+    "translation": "يتحادث"
+  },
+  "copier": {
+    "translation": "ينسخ"
+  },
+  "corriger": {
+    "translation": "يصحّح"
+  },
+  "correspondre": {
+    "translation": "يتطابق"
+  },
+  "couper": {
+    "translation": "يقطع"
+  },
+  "croiser": {
+    "translation": "يعبر"
+  },
+  "cultiver": {
+    "translation": "يزرع"
+  },
+  "cueillir": {
+    "translation": "يقطف"
+  },
+  "débarquer": {
+    "translation": "ينزل"
+  },
+  "débattre": {
+    "translation": "يناقش"
+  },
+  "déclarer": {
+    "translation": "يعلن"
+  },
+  "décourager": {
+    "translation": "يثبط"
+  },
+  "décrire": {
+    "translation": "يصف"
+  },
+  "défendre": {
+    "translation": "يدافع"
+  },
+  "défaire": {
+    "translation": "يفك"
+  },
+  "défier": {
+    "translation": "يتحدى"
+  },
+  "dégager": {
+    "translation": "يحرر"
+  },
+  "déjeuner": {
+    "translation": "يتغداء"
+  },
+  "déménager": {
+    "translation": "ينتقل"
+  },
+  "démontrer": {
+    "translation": "يبرهن"
+  },
+  "dépasser": {
+    "translation": "يتخطى"
+  },
+  "dépendre": {
+    "translation": "يعتمد"
+  },
+  "dépenser": {
+    "translation": "ينفق"
+  },
+  "déplacer": {
+    "translation": "ينقل"
+  },
+  "déposer": {
+    "translation": "يودع"
+  },
+  "déprimer": {
+    "translation": "يكتئب"
+  },
+  "déranger": {
+    "translation": "يزعج"
+  },
+  "désigner": {
+    "translation": "يشير"
+  },
+  "désobéir": {
+    "translation": "يعصي"
+  },
+  "déterminer": {
+    "translation": "يحدد"
+  },
+  "développer": {
+    "translation": "يطور"
+  },
+  "diffuser": {
+    "translation": "يبث"
+  },
+  "diriger": {
+    "translation": "يوجّه"
+  },
+  "disparaître": {
+    "translation": "يختفي"
+  },
+  "discuter": {
+    "translation": "يناقش"
+  },
+  "disposer": {
+    "translation": "يتوفر"
+  },
+  "distinguer": {
+    "translation": "يميز"
+  },
+  "distraire": {
+    "translation": "يشتّت"
+  },
+  "distribuer": {
+    "translation": "يوزّع"
+  },
+  "diviser": {
+    "translation": "يقسّم"
+  },
+  "dominer": {
+    "translation": "يهيمن"
+  },
+  "éclairer": {
+    "translation": "ينير"
+  },
+  "éclater": {
+    "translation": "ينفجر"
+  },
+  "écraser": {
+    "translation": "يسحق"
+  },
+  "effacer": {
+    "translation": "يمحو"
+  },
+  "effectuer": {
+    "translation": "ينفّذ"
+  },
+  "élargir": {
+    "translation": "يوسّع"
+  },
+  "élever": {
+    "translation": "يربّي"
+  },
+  "éliminer": {
+    "translation": "يستبعد"
+  },
+  "embrasser": {
+    "translation": "يعانق"
+  },
+  "émigrer": {
+    "translation": "يهاجر"
+  },
+  "enfermer": {
+    "translation": "يحبس"
+  },
+  "enlever": {
+    "translation": "ينزع"
+  },
+  "ennuyer": {
+    "translation": "يضجر"
+  },
+  "enterrer": {
+    "translation": "يدفن"
+  },
+  "entourer": {
+    "translation": "يحيط"
+  },
+  "entraîner": {
+    "translation": "يدرّب"
+  },
+  "envier": {
+    "translation": "يحسد"
+  },
+  "étonner": {
+    "translation": "يفاجئ"
+  },
+  "évaluer": {
+    "translation": "يقيّم"
+  },
+  "examiner": {
+    "translation": "يفحص"
+  },
+  "explorer": {
+    "translation": "يستكشف"
+  },
+  "exposer": {
+    "translation": "يعرض"
+  },
+  "absent": {
+    "translation": "غائب"
+  },
+  "adroit": {
+    "translation": "ماهر"
+  },
+  "agaçant": {
+    "translation": "مزعج"
+  },
+  "aimable": {
+    "translation": "لطيف"
+  },
+  "amer": {
+    "translation": "مرّ"
+  },
+  "ample": {
+    "translation": "واسع"
+  },
+  "ancien": {
+    "translation": "قديم"
+  },
+  "animé": {
+    "translation": "متحمس"
+  },
+  "annuel": {
+    "translation": "سنوي"
+  },
+  "anonyme": {
+    "translation": "مجهول"
+  },
+  "anxieux": {
+    "translation": "قلق"
+  },
+  "arrogant": {
+    "translation": "متعجرف"
+  },
+  "assidu": {
+    "translation": "مثابر"
+  },
+  "authentique": {
+    "translation": "أصيل"
+  },
+  "avare": {
+    "translation": "بخيل"
+  },
+  "aveugle": {
+    "translation": "أعمى"
+  },
+  "bavard": {
+    "translation": "ثرثار"
+  },
+  "bestial": {
+    "translation": "حيواني"
+  },
+  "bruyant": {
+    "translation": "صاخب"
+  },
+  "brutal": {
+    "translation": "وحشي"
+  },
+  "capable": {
+    "translation": "قادر"
+  },
+  "charmant": {
+    "translation": "ساحر"
+  },
+  "chauve": {
+    "translation": "أصلع"
+  },
+  "cher": {
+    "translation": "غالي"
+  },
+  "chic": {
+    "translation": "أنيق"
+  },
+  "clair": {
+    "translation": "واضح"
+  },
+  "colossal": {
+    "translation": "هائل"
+  },
+  "commun": {
+    "translation": "مشترك"
+  },
+  "compact": {
+    "translation": "مدمج"
+  },
+  "compatible": {
+    "translation": "متوافق"
+  },
+  "compétent": {
+    "translation": "كفء"
+  },
+  "concis": {
+    "translation": "موجز"
+  },
+  "concurrent": {
+    "translation": "منافس"
+  },
+  "confiant": {
+    "translation": "واثق"
+  },
+  "conscient": {
+    "translation": "واعٍ"
+  },
+  "conservateur": {
+    "translation": "محافظ"
+  },
+  "constant": {
+    "translation": "ثابت"
+  },
+  "correct": {
+    "translation": "صحيح"
+  },
+  "courageux": {
+    "translation": "شجاع"
+  },
+  "courtois": {
+    "translation": "مؤدب"
+  },
+  "créatif": {
+    "translation": "مبدع"
+  },
+  "creux": {
+    "translation": "مجوف"
+  },
+  "curieux": {
+    "translation": "فضولي"
+  },
+  "dense": {
+    "translation": "كثيف"
+  },
+  "dépendant": {
+    "translation": "معتمد"
+  },
+  "désireux": {
+    "translation": "شغوف"
+  },
+  "désolant": {
+    "translation": "محزن"
+  },
+  "déterminé": {
+    "translation": "حازم"
+  },
+  "différent": {
+    "translation": "مختلف"
+  },
+  "discret": {
+    "translation": "كتوم"
+  },
+  "distinct": {
+    "translation": "مميز"
+  },
+  "divers": {
+    "translation": "متنوع"
+  },
+  "docile": {
+    "translation": "مطيع"
+  },
+  "domestique": {
+    "translation": "منزلي"
+  },
+  "dominant": {
+    "translation": "مهيمن"
+  },
+  "doux": {
+    "translation": "لين"
+  },
+  "dramatique": {
+    "translation": "درامي"
+  },
+  "durable": {
+    "translation": "دائم"
+  },
+  "économe": {
+    "translation": "مقتصد"
+  },
+  "efficace": {
+    "translation": "فعال"
+  },
+  "élégant": {
+    "translation": "أنيق"
+  },
+  "éloquent": {
+    "translation": "فصيح"
+  },
+  "entier": {
+    "translation": "كامل"
+  },
+  "éphémère": {
+    "translation": "زائل"
+  },
+  "épicé": {
+    "translation": "حار"
+  },
+  "errant": {
+    "translation": "تائه"
+  },
+  "étonnant": {
+    "translation": "مدهش"
+  },
+  "exact": {
+    "translation": "دقيق"
+  },
+  "excellent": {
+    "translation": "ممتاز"
+  },
+  "exceptionnel": {
+    "translation": "استثنائي"
+  },
+  "exclusif": {
+    "translation": "حصري"
+  },
+  "exotique": {
+    "translation": "غريب"
+  },
+  "extraordinaire": {
+    "translation": "خارق"
+  },
+  "fascinant": {
+    "translation": "آسر"
+  },
+  "fidèle": {
+    "translation": "وفي"
+  },
+  "fragile": {
+    "translation": "هش"
+  },
+  "franc": {
+    "translation": "صريح"
+  },
+  "fréquent": {
+    "translation": "متكرر"
+  },
+  "futur": {
+    "translation": "مستقبلي"
+  },
+  "généreux": {
+    "translation": "كريم"
+  },
+  "gentil": {
+    "translation": "لطيف"
+  },
+  "gigantesque": {
+    "translation": "عملاق"
+  },
+  "glacial": {
+    "translation": "متجمد"
+  },
+  "gracieux": {
+    "translation": "رشيق"
+  },
+  "gras": {
+    "translation": "دهني"
+  },
+  "gros": {
+    "translation": "سمين"
+  },
+  "habituel": {
+    "translation": "معتاد"
+  },
+  "hardi": {
+    "translation": "جريء"
+  },
+  "harmonieux": {
+    "translation": "متناغم"
+  },
+  "héroïque": {
+    "translation": "بطولي"
+  },
+  "honnête": {
+    "translation": "صادق"
+  },
+  "hostile": {
+    "translation": "عدائي"
+  },
+  "humain": {
+    "translation": "بشري"
+  },
+  "humble": {
+    "translation": "متواضع"
+  },
+  "ignoble": {
+    "translation": "خسيس"
+  },
+  "immense": {
+    "translation": "هائل"
+  },
+  "impatient": {
+    "translation": "غير صبور"
+  },
+  "intense": {
+    "translation": "شديد"
+  },
+  "invincible": {
+    "translation": "لا يقهر"
+  },
+  "joyeux": {
+    "translation": "مرح"
+  },
+  "lâche": {
+    "translation": "جبان"
+  },
+  "libéral": {
+    "translation": "حر"
+  },
+  "local": {
+    "translation": "محلي"
+  },
+  "logique": {
+    "translation": "منطقي"
+  },
+  "loyal": {
+    "translation": "وفي"
+  },
+  "lucide": {
+    "translation": "واعٍ"
+  },
+  "lumineux": {
+    "translation": "مشرق"
+  },
+  "luxueux": {
+    "translation": "فاخر"
+  },
+  "magnifique": {
+    "translation": "رائع"
+  },
+  "maigre": {
+    "translation": "نحيف"
+  },
+  "nombreux": {
+    "translation": "عديد"
+  },
+  "noble": {
+    "translation": "نبيل"
+  },
+  "notoire": {
+    "translation": "مشهور"
+  },
+  "nuisible": {
+    "translation": "ضار"
+  },
+  "obscur": {
+    "translation": "معتم"
+  },
+  "obstiné": {
+    "translation": "عنيد"
+  },
+  "officiel": {
+    "translation": "رسمي"
+  },
+  "opportun": {
+    "translation": "مناسب"
+  },
+  "ordinaire": {
+    "translation": "عادي"
+  },
+  "parfait": {
+    "translation": "مثالي"
+  },
+  "pénible": {
+    "translation": "مُقلِق"
+  },
+  "pittoresque": {
+    "translation": "بديع"
+  },
+  "populaire": {
+    "translation": "شعبي"
+  },
+  "posé": {
+    "translation": "هادئ"
+  },
+  "précis": {
+    "translation": "دقيق"
+  },
+  "présent": {
+    "translation": "حاضر"
+  },
+  "primitif": {
+    "translation": "بدائي"
+  },
+  "principal": {
+    "translation": "رئيسي"
+  },
+  "prudent": {
+    "translation": "حصيف"
+  },
+  "pur": {
+    "translation": "نقي"
+  },
+  "radical": {
+    "translation": "جذري"
+  },
+  "rationnel": {
+    "translation": "عقلاني"
+  },
+  "réaliste": {
+    "translation": "واقعي"
+  },
+  "réciproque": {
+    "translation": "متبادل"
+  },
+  "religieux": {
+    "translation": "ديني"
+  },
+  "remarquable": {
+    "translation": "لافت"
+  },
+  "renommé": {
+    "translation": "ذائع"
+  },
+  "réservé": {
+    "translation": "محجوز"
+  },
+  "résolu": {
+    "translation": "حازم"
+  },
+  "respectueux": {
+    "translation": "محترم"
+  },
+  "révolutionnaire": {
+    "translation": "ثوري"
+  },
+  "ridicule": {
+    "translation": "سخيف"
+  },
+  "robuste": {
+    "translation": "متين"
+  },
+  "rond": {
+    "translation": "مستدير"
+  },
+  "rude": {
+    "translation": "خشن"
+  },
+  "rusé": {
+    "translation": "ماكر"
+  },
+  "sage": {
+    "translation": "حكيم"
+  },
+  "sain": {
+    "translation": "صحي"
+  },
+  "sérieux": {
+    "translation": "جاد"
+  },
+  "social": {
+    "translation": "اجتماعي"
+  },
+  "souple": {
+    "translation": "مرن"
+  },
+  "spirituel": {
+    "translation": "روحي"
+  },
+  "stable": {
+    "translation": "مستقر"
+  },
+  "stérile": {
+    "translation": "عقيم"
+  },
+  "stupide": {
+    "translation": "غبي"
+  },
+  "subtil": {
+    "translation": "دقيق"
+  },
+  "soudain": {
+    "translation": "مفاجئ"
+  },
+  "temporaire": {
+    "translation": "مؤقت"
+  },
+  "tendre": {
+    "translation": "طري"
+  },
+  "terrible": {
+    "translation": "فظيع"
+  },
+  "timide": {
+    "translation": "خجول"
+  },
+  "tranquille": {
+    "translation": "هادئ"
+  },
+  "transparent": {
+    "translation": "شفاف"
+  },
+  "utile": {
+    "translation": "مفيد"
+  },
+  "vaniteux": {
+    "translation": "مغرور"
+  },
+  "vaste": {
+    "translation": "شاسع"
+  },
+  "véridique": {
+    "translation": "صادق"
+  },
+  "vertueux": {
+    "translation": "فضيل"
+  },
+  "vieux": {
+    "translation": "عجوز"
+  },
+  "vigilant": {
+    "translation": "يقظ"
+  },
+  "violent": {
+    "translation": "عنيف"
+  },
+  "visible": {
+    "translation": "مرئي"
+  },
+  "vital": {
+    "translation": "حيوي"
+  },
+  "volontaire": {
+    "translation": "متطوع"
+  },
+  "vulgaire": {
+    "translation": "عامي"
+  },
+  "âge": {
+    "translation": "عمر"
+  },
+  "gens": {
+    "translation": "ناس"
+  },
+  "corps": {
+    "translation": "جسد"
+  },
+  "esprit": {
+    "translation": "عقل"
+  },
+  "monde": {
+    "translation": "عالم"
+  },
+  "soc": {
+    "translation": "جمع"
+  },
+  "merci": {
+    "translation": "شكرا"
+  },
+  "bonjour": {
+    "translation": "مرحبًا"
+  },
+  "bonsoir": {
+    "translation": "مساء الخير"
+  },
+  "au revoir": {
+    "translation": "وداعًا"
+  },
+  "s'il vous plaît": {
+    "translation": "من فضلك"
+  },
+  "pardon": {
+    "translation": "عفوًا"
+  },
+  "d'accord": {
+    "translation": "موافق"
+  },
+  "touriste": {
+    "translation": "سائح"
+  },
+  "victime": {
+    "translation": "ضحية"
+  },
+  "coupable": {
+    "translation": "مذنب"
+  },
+  "témoin": {
+    "translation": "شاهد"
+  },
+  "jardinier": {
+    "translation": "بستاني"
+  },
+  "marchand": {
+    "translation": "تاجر"
+  },
+  "propriétaire": {
+    "translation": "مالك"
+  },
+  "locataire": {
+    "translation": "مستأجر"
+  },
+  "visiteur": {
+    "translation": "زائر"
+  },
+  "infirmière": {
+    "translation": "ممرضة"
+  },
+  "dossier": {
+    "translation": "ملف"
+  },
+  "rapport": {
+    "translation": "تقرير"
+  },
+  "contrat": {
+    "translation": "عقد"
+  },
+  "facture": {
+    "translation": "فاتورة"
+  },
+  "reçu": {
+    "translation": "إيصال"
+  },
+  "devise": {
+    "translation": "عملة"
+  },
+  "économie": {
+    "translation": "اقتصاد"
+  },
+  "impôt": {
+    "translation": "ضريبة"
+  },
+  "salaire": {
+    "translation": "أجر"
+  },
+  "loyer": {
+    "translation": "إيجار"
+  },
+  "hypothèque": {
+    "translation": "رهن"
+  },
+  "caisse": {
+    "translation": "صندوق"
+  },
+  "épargne": {
+    "translation": "مدخرات"
+  },
+  "crédit": {
+    "translation": "ائتمان"
+  },
+  "richesse": {
+    "translation": "ثروة"
+  },
+  "pauvreté": {
+    "translation": "فقر"
+  },
+  "emploi": {
+    "translation": "وظيفة"
+  },
+  "métier": {
+    "translation": "حرفة"
+  },
+  "collègue": {
+    "translation": "زميل"
+  },
+  "atelier": {
+    "translation": "ورشة"
+  },
+  "chantier": {
+    "translation": "موقع بناء"
+  },
+  "usine": {
+    "translation": "مصنع"
+  },
+  "supermarche": {
+    "translation": "متجر كبير"
+  },
+  "arrêt": {
+    "translation": "موقف"
+  },
+  "carrefour": {
+    "translation": "تقاطع"
+  },
+  "pont": {
+    "translation": "جسر"
+  },
+  "avenue": {
+    "translation": "جادة"
+  },
+  "boulevard": {
+    "translation": "شارع عريض"
+  },
+  "immeuble": {
+    "translation": "عمارة"
+  },
+  "étage": {
+    "translation": "طابق"
+  },
+  "escalier": {
+    "translation": "درج"
+  },
+  "ascenseur": {
+    "translation": "مصعد"
+  },
+  "couloir": {
+    "translation": "ممر"
+  },
+  "salon": {
+    "translation": "صالة"
+  },
+  "grenier": {
+    "translation": "علّية"
+  },
+  "cave": {
+    "translation": "قبو"
+  },
+  "terrasse": {
+    "translation": "شرفة"
+  },
+  "camion": {
+    "translation": "شاحنة"
+  },
+  "moto": {
+    "translation": "دراجة نارية"
+  },
+  "hélicoptère": {
+    "translation": "مروحية"
+  },
+  "navette": {
+    "translation": "مركبة فضاء"
+  },
+  "carburant": {
+    "translation": "وقود"
+  },
+  "essence": {
+    "translation": "بنزين"
+  },
+  "pneu": {
+    "translation": "إطار"
+  },
+  "frein": {
+    "translation": "مكابح"
+  },
+  "moteur": {
+    "translation": "محرك"
+  },
+  "volant": {
+    "translation": "عجلة قيادة"
+  },
+  "siège": {
+    "translation": "مقعد"
+  },
+  "essuie-glace": {
+    "translation": "مساحة زجاج"
+  },
+  "phare": {
+    "translation": "مصباح سيارة"
+  },
+  "cours": {
+    "translation": "درس"
+  },
+  "étudiant": {
+    "translation": "طالب جامعي"
+  },
+  "université": {
+    "translation": "جامعة"
+  },
+  "faculty": {
+    "translation": "كلية"
+  },
+  "mathématiques": {
+    "translation": "رياضيات"
+  },
+  "science": {
+    "translation": "علم"
+  },
+  "géographie": {
+    "translation": "جغرافيا"
+  },
+  "littérature": {
+    "translation": "أدب"
+  },
+  "sport": {
+    "translation": "رياضة"
+  },
+  "dessin": {
+    "translation": "رسم"
+  },
+  "crayon": {
+    "translation": "قلم رصاص"
+  },
+  "gomme": {
+    "translation": "ممحاة"
+  },
+  "règle": {
+    "translation": "مسطرة"
+  },
+  "carte": {
+    "translation": "خريطة"
+  },
+  "atlas": {
+    "translation": "أطلس"
+  },
+  "dictionnaire": {
+    "translation": "قاموس"
+  },
+  "bibliothèque": {
+    "translation": "مكتبة"
+  },
+  "diplôme": {
+    "translation": "شهادة"
+  },
+  "note": {
+    "translation": "ملاحظة / نقطة"
+  },
+  "moyenne": {
+    "translation": "متوسط"
+  },
+  "baccalauréat": {
+    "translation": "شهادة الثانوية"
+  },
+  "fraises": {
+    "translation": "فراولة"
+  },
+  "pêche": {
+    "translation": "خوخ"
+  },
+  "cerise": {
+    "translation": "كرز"
+  },
+  "pastèque": {
+    "translation": "بطيخ"
+  },
+  "melon": {
+    "translation": "شمام"
+  },
+  "citron": {
+    "translation": "ليمون"
+  },
+  "mangue": {
+    "translation": "مانجو"
+  },
+  "ananas": {
+    "translation": "أناناس"
+  },
+  "noix": {
+    "translation": "جوز"
+  },
+  "amande": {
+    "translation": "لوز"
+  },
+  "confiture": {
+    "translation": "مربى"
+  },
+  "chocolat": {
+    "translation": "شوكولاتة"
+  },
+  "gâteau": {
+    "translation": "كعكة"
+  },
+  "biscuit": {
+    "translation": "بسكويت"
+  },
+  "glace": {
+    "translation": "مثلجات"
+  },
+  "yaourt": {
+    "translation": "زبادي"
+  },
+  "crème": {
+    "translation": "قشدة"
+  },
+  "farine": {
+    "translation": "طحين"
+  },
+  "pâte": {
+    "translation": "عجين"
+  },
+  "sauce": {
+    "translation": "صلصة"
+  },
+  "poivre": {
+    "translation": "فلفل"
+  },
+  "ail": {
+    "translation": "ثوم"
+  },
+  "concombre": {
+    "translation": "خيار"
+  },
+  "maïs": {
+    "translation": "ذرة"
+  },
+  "blé": {
+    "translation": "قمح"
+  },
+  "veste": {
+    "translation": "سترة"
+  },
+  "pull": {
+    "translation": "كنزة"
+  },
+  "jupe": {
+    "translation": "تنورة"
+  },
+  "botte": {
+    "translation": "حذاء طويل"
+  },
+  "sandale": {
+    "translation": "صندل"
+  },
+  "mocassin": {
+    "translation": "حذاء رخيص"
+  },
+  "bijou": {
+    "translation": "جوهرة"
+  },
+  "bracelet": {
+    "translation": "سوار"
+  },
+  "boucle": {
+    "translation": "دبوس"
+  },
+  "feuille": {
+    "translation": "ورقة"
+  },
+  "racine": {
+    "translation": "جذر"
+  },
+  "tronc": {
+    "translation": "جذع"
+  },
+  "graine": {
+    "translation": "بذرة"
+  },
+  "plante": {
+    "translation": "نبات"
+  },
+  "champ": {
+    "translation": "حقل"
+  },
+  "prairie": {
+    "translation": "مرج"
+  },
+  "rivière": {
+    "translation": "نهر صغير"
+  },
+  "source": {
+    "translation": "نبع"
+  },
+  "roche": {
+    "translation": "صخر"
+  },
+  "boue": {
+    "translation": "طين"
+  },
+  "orage": {
+    "translation": "عاصفة"
+  },
+  "arc-en-ciel": {
+    "translation": "قوس قزح"
+  },
+  "insecte": {
+    "translation": "حشرة"
+  },
+  "baleine": {
+    "translation": "حوت"
+  },
+  "dauphin": {
+    "translation": "دلفين"
+  },
+  "requin": {
+    "translation": "قرش"
+  },
+  "tortue": {
+    "translation": "سلحفاة"
+  },
+  "lézard": {
+    "translation": "ورل"
+  },
+  "grenouille": {
+    "translation": "ضفدع"
+  },
+  "mouche": {
+    "translation": "ذبابة"
+  },
+  "abeille": {
+    "translation": "نحلة"
+  },
+  "fourmi": {
+    "translation": "نملة"
+  },
+  "araignée": {
+    "translation": "عنكبوت"
+  },
+  "moustique": {
+    "translation": "بعوضة"
+  },
+  "papillon": {
+    "translation": "فراشة"
+  },
+  "souris": {
+    "translation": "فأر"
+  },
+  "lapin": {
+    "translation": "أرنب"
+  },
+  "renard": {
+    "translation": "ثعلب"
+  },
+  "ours": {
+    "translation": "دب"
+  },
+  "cerf": {
+    "translation": "أيل"
+  },
+  "singe": {
+    "translation": "قرد"
+  },
+  "éléphant": {
+    "translation": "فيل"
+  },
+  "lion": {
+    "translation": "أسد"
+  },
+  "tigre": {
+    "translation": "نمر"
+  },
+  "zèbre": {
+    "translation": "حمار وحشي"
+  },
+  "girafe": {
+    "translation": "زرافة"
+  },
+  "amitié": {
+    "translation": "صداقة"
+  },
+  "injustice": {
+    "translation": "ظلم"
+  },
+  "liberté": {
+    "translation": "حرية"
+  },
+  "égalité": {
+    "translation": "مساواة"
+  },
+  "fraternité": {
+    "translation": "أخاء"
+  },
+  "patrie": {
+    "translation": "وطن"
+  },
+  "drapeau": {
+    "translation": "علم"
+  },
+  "hymne": {
+    "translation": "نشيد"
+  },
+  "frontière": {
+    "translation": "حدود"
+  },
+  "citoyen": {
+    "translation": "مواطن"
+  },
+  "art": {
+    "translation": "فن"
+  },
+  "théâtre": {
+    "translation": "مسرح"
+  },
+  "cinéma": {
+    "translation": "سينما"
+  },
+  "monument": {
+    "translation": "نصب"
+  },
+  "légende": {
+    "translation": "أسطورة"
+  },
+  "poésie": {
+    "translation": "شعر"
+  },
+  "roman": {
+    "translation": "رواية"
+  },
+  "auteur": {
+    "translation": "مؤلف"
+  },
+  "éditeur": {
+    "translation": "ناشر"
+  },
+  "page": {
+    "translation": "صفحة"
+  },
+  "ligne": {
+    "translation": "سطر"
+  },
+  "silence": {
+    "translation": "صمت"
+  },
+  "rires": {
+    "translation": "ضحك"
+  },
+  "larme": {
+    "translation": "دمعة"
+  },
+  "sourire": {
+    "translation": "ابتسامة"
+  },
+  "sanglot": {
+    "translation": "بكاء"
+  },
+  "cri": {
+    "translation": "صراخ"
+  },
+  "soupir": {
+    "translation": "تنهيدة"
+  },
+  "regard": {
+    "translation": "نظرة"
+  },
+  "geste": {
+    "translation": "إيماءة"
+  },
+  "signe": {
+    "translation": "علامة"
+  },
+  "symbole": {
+    "translation": "رمز"
+  },
+  "conseil": {
+    "translation": "مشورة"
+  },
+  "ordre": {
+    "translation": "أمر"
+  },
+  "loi": {
+    "translation": "قانون"
+  },
+  "droit": {
+    "translation": "حق"
+  },
+  "faute": {
+    "translation": "خطأ"
+  },
+  "mérite": {
+    "translation": "جدارة"
+  },
+  "punition": {
+    "translation": "عقاب"
+  },
+  "récompense": {
+    "translation": "مكافأة"
+  },
+  "principe": {
+    "translation": "مبدأ"
+  },
+  "défaut": {
+    "translation": "عيب"
+  },
+  "vertu": {
+    "translation": "فضيلة"
+  },
+  "péché": {
+    "translation": "ذنب"
+  },
+  "brise": {
+    "translation": "نسيم"
+  },
+  "averse": {
+    "translation": "مطر غزير"
+  },
+  "grêle": {
+    "translation": "بَرَد"
+  },
+  "givre": {
+    "translation": "صقيع"
+  },
+  "falaise": {
+    "translation": "جرف"
+  },
+  "sommet": {
+    "translation": "قمة"
+  },
+  "pente": {
+    "translation": "منحدر"
+  },
+  "crevasse": {
+    "translation": "شق"
+  },
+  "étang": {
+    "translation": "بركة"
+  },
+  "cascade": {
+    "translation": "شلال"
+  },
+  "désert": {
+    "translation": "صحراء"
+  },
+  "jungle": {
+    "translation": "أدغال"
+  },
+  "gazon": {
+    "translation": "مرج أخضر"
+  },
+  "buisson": {
+    "translation": "شجيرة"
+  },
+  "palmier": {
+    "translation": "نخلة"
+  },
+  "mousse": {
+    "translation": "طحلب"
+  },
+  "écorce": {
+    "translation": "لحاء"
+  },
+  "sève": {
+    "translation": "صمغ"
+  },
+  "abîme": {
+    "translation": "هاوية"
+  },
+  "caverne": {
+    "translation": "كهف"
+  },
+  "grotte": {
+    "translation": "كهف صغير"
+  },
+  "dune": {
+    "translation": "كثيب"
+  },
+  "volcan": {
+    "translation": "بركان"
+  },
+  "tremblement": {
+    "translation": "زلزال"
+  },
+  "inondation": {
+    "translation": "طوفان"
+  },
+  "sécheresse": {
+    "translation": "جفاف"
+  },
+  "éclipse": {
+    "translation": "كسوف"
+  },
+  "comète": {
+    "translation": "مذنب"
+  },
+  "planète": {
+    "translation": "كوكب"
+  },
+  "galaxie": {
+    "translation": "مجرة"
+  },
+  "univers": {
+    "translation": "كون"
+  },
+  "physique": {
+    "translation": "فيزياء"
+  },
+  "chimie": {
+    "translation": "كيمياء"
+  },
+  "biologie": {
+    "translation": "أحياء"
+  },
+  "outil": {
+    "translation": "أداة"
+  },
+  "marteau": {
+    "translation": "مطرقة"
+  },
+  "clou": {
+    "translation": "مسمار"
+  },
+  "scie": {
+    "translation": "منشار"
+  },
+  "pelle": {
+    "translation": "مجرفة"
+  },
+  "pioche": {
+    "translation": "فأس"
+  },
+  "corde": {
+    "translation": "حبل"
+  },
+  "chaîne": {
+    "translation": "سلسلة"
+  },
+  "câble": {
+    "translation": "كابل"
+  },
+  "écrou": {
+    "translation": "مفتاح ربط"
+  },
+  "perceuse": {
+    "translation": "مثقاب"
+  },
+  "cruche": {
+    "translation": "جرة كبيرة"
+  },
+  "bocal": {
+    "translation": "برطمان"
+  },
+  "poêle": {
+    "translation": "مقلاة"
+  },
+  "four": {
+    "translation": "فرن"
+  },
+  "réfrigérateur": {
+    "translation": "ثلاجة"
+  },
+  "lave-linge": {
+    "translation": "غسالة"
+  },
+  "aspirateur": {
+    "translation": "مكنسة كهربائية"
+  },
+  "fer": {
+    "translation": "مكواة"
+  },
+  "tableau": {
+    "translation": "لوحة"
+  },
+  "cadre": {
+    "translation": "إطار"
+  },
+  "peinture": {
+    "translation": "رسم زيتي"
+  },
+  "portrait": {
+    "translation": "بورتريه"
+  },
+  "paysage": {
+    "translation": "منظر طبيعي"
+  },
+  "mosaïque": {
+    "translation": "فسيفساء"
+  },
+  "vitrail": {
+    "translation": "زجاج ملوّن"
+  },
+  "dentelle": {
+    "translation": "دانتيل"
+  },
+  "broderie": {
+    "translation": "تطريز"
+  },
+  "rideau": {
+    "translation": "ستارة"
+  },
+  "nappe": {
+    "translation": "مفرش طاولة"
+  },
+  "nappage": {
+    "translation": "فرش"
+  },
+  "vaisselle": {
+    "translation": "أدوات مائدة"
+  },
+  "lame": {
+    "translation": "شفرة"
+  },
+  "manche": {
+    "translation": "مقبض"
+  },
+  "pointe": {
+    "translation": "طرف"
+  },
+  "tranchant": {
+    "translation": "حافّة"
+  },
+  "angle": {
+    "translation": "زاوية"
+  },
+  "point": {
+    "translation": "نقطة"
+  },
+  "cercle": {
+    "translation": "دائرة"
+  },
+  "carré": {
+    "translation": "مربع"
+  },
+  "rectangle": {
+    "translation": "مستطيل"
+  },
+  "losange": {
+    "translation": "معين"
+  },
+  "spirale": {
+    "translation": "حلزون"
+  },
+  "courbe": {
+    "translation": "منحنى"
+  },
+  "symétrie": {
+    "translation": "تناظر"
+  },
+  "proportion": {
+    "translation": "تناسب"
+  },
+  "échelle": {
+    "translation": "سلم / مقياس"
+  },
+  "modèle": {
+    "translation": "نموذج"
+  },
+  "prototype": {
+    "translation": "نموذج أولي"
+  },
+  "invention": {
+    "translation": "اختراع"
+  },
+  "création": {
+    "translation": "إنجاز"
+  },
+  "progrès": {
+    "translation": "تقدم"
+  },
+  "développement": {
+    "translation": "تطور"
+  },
+  "recherche": {
+    "translation": "بحث"
+  },
+  "hypothèسة": {
+    "translation": "فرضية"
+  },
+  "analyse": {
+    "translation": "تحليل"
+  },
+  "synthèse": {
+    "translation": "تركيب"
+  },
+  "démonstration": {
+    "translation": "برهان"
+  },
+  "preuve": {
+    "translation": "دليل"
+  },
+  "indice": {
+    "translation": "لمحة"
+  },
+  "tendance": {
+    "translation": "ميل"
+  },
+  "phénomène": {
+    "translation": "ظاهرة"
+  },
+  "processus": {
+    "translation": "عملية"
+  },
+  "procédure": {
+    "translation": "إجراء"
+  },
+  "technique": {
+    "translation": "أسلوب"
+  },
+  "système": {
+    "translation": "نظام"
+  },
+  "rôle": {
+    "translation": "دور"
+  },
+  "usage": {
+    "translation": "استخدام"
+  },
+  "bénéfice": {
+    "translation": "فائدة"
+  },
+  "avantage": {
+    "translation": "ميزة"
+  },
+  "inconvénient": {
+    "translation": "عيب"
+  },
+  "limite": {
+    "translation": "حد"
+  },
+  "éternité": {
+    "translation": "أبدية"
+  },
+  "période": {
+    "translation": "فترة"
+  },
+  "durée": {
+    "translation": "مدة"
+  },
+  "délai": {
+    "translation": "مهلة"
+  },
+  "échéance": {
+    "translation": "استحقاق"
+  },
+  "horaire": {
+    "translation": "جدول زمني"
+  },
+  "minuit": {
+    "translation": "منتصف الليل"
+  },
+  "midi": {
+    "translation": "الظهيرة"
+  },
+  "aube": {
+    "translation": "فجر"
+  },
+  "crépuscule": {
+    "translation": "شفق"
+  },
+  "bonheur": {
+    "translation": "سعادة"
+  },
+  "malheur": {
+    "translation": "شقاة"
+  },
+  "détresse": {
+    "translation": "ضيق"
+  },
+  "angoisse": {
+    "translation": "هلع"
+  },
+  "désespoir": {
+    "translation": "يأس"
+  },
+  "rage": {
+    "translation": "سخط"
+  },
+  "honte": {
+    "translation": "خجل"
+  },
+  "fierté": {
+    "translation": "فخر"
+  },
+  "vanité": {
+    "translation": "غرور"
+  },
+  "jalousie": {
+    "translation": "غيرة"
+  },
+  "compassion": {
+    "translation": "شفقة"
+  },
+  "pitiè": {
+    "translation": "رأفة"
+  },
+  "miséricorde": {
+    "translation": "رحمة"
+  },
+  "empathie": {
+    "translation": "تعاطف"
+  },
+  "solitude": {
+    "translation": "وحدة"
+  },
+  "ennui": {
+    "translation": "ضجر"
+  },
+  "plaisir": {
+    "translation": "متعة"
+  },
+  "souffrance": {
+    "translation": "معاناة"
+  },
+  "sant": {
+    "translation": "صحي"
+  },
+  "fatigue": {
+    "translation": "تعب"
+  },
+  "sommeil": {
+    "translation": "نوم"
+  },
+  "réveil": {
+    "translation": "استيقاظ"
+  },
+  "cauchemar": {
+    "translation": "كابوس"
+  },
+  "bâtir": {
+    "translation": "يبني"
+  },
+  "construire": {
+    "translation": "ينشئ"
+  },
+  "détruire": {
+    "translation": "يدمّر"
+  },
+  "raser": {
+    "translation": "يهدم"
+  },
+  "niveller": {
+    "translation": "يسوي"
+  },
+  "fondre": {
+    "translation": "يذوب"
+  },
+  "solidifier": {
+    "translation": "يتصلّب"
+  },
+  "frotter": {
+    "translation": "يفرك"
+  },
+  "rincer": {
+    "translation": "يشطف"
+  },
+  "essuyer": {
+    "translation": "يمسح"
+  },
+  "balayer": {
+    "translation": "يكنس"
+  },
+  "aspirer": {
+    "translation": "يسحب"
+  },
+  "ranger": {
+    "translation": "يرتّب"
+  },
+  "empiler": {
+    "translation": "يرصّ"
+  },
+  "vider": {
+    "translation": "يفرّغ"
+  },
+  "remplir": {
+    "translation": "يملأ"
+  },
+  "déverser": {
+    "translation": "يسكب"
+  },
+  "verser": {
+    "translation": "يصبّ"
+  },
+  "mélanger": {
+    "translation": "يخلط"
+  },
+  "trembler": {
+    "translation": "يرتجف"
+  },
+  "frissonner": {
+    "translation": "يقشعر"
+  },
+  "sauter": {
+    "translation": "يقفز"
+  },
+  "grimper": {
+    "translation": "يتسلّق"
+  },
+  "glisser": {
+    "translation": "ينزلق"
+  },
+  "rouler": {
+    "translation": "يتدحرج"
+  },
+  "sautiller": {
+    "translation": "يقصع"
+  },
+  "se tapir": {
+    "translation": "يتكوّر"
+  },
+  "étreindre": {
+    "translation": "يعناق"
+  },
+  "laisser": {
+    "translation": "يترك"
+  },
+  "surveiller": {
+    "translation": "يراقب"
+  },
+  "espionner": {
+    "translation": "يتجسّس"
+  },
+  "vaincre": {
+    "translation": "يقهر"
+  },
+  "conquérir": {
+    "translation": "يغزو"
+  },
+  "libérer": {
+    "translation": "يحرر"
+  },
+  "échapper": {
+    "translation": "يتهرب"
+  },
+  "fuir": {
+    "translation": "يهرب"
+  },
+  "cacher": {
+    "translation": "يخبّي"
+  },
+  "découvrir": {
+    "translation": "يكشف"
+  },
+  "révéler": {
+    "translation": "يفصّح"
+  },
+  "montrer": {
+    "translation": "يُظهر"
+  },
+  "indiquer": {
+    "translation": "يشير"
+  },
+  "signaler": {
+    "translation": "يبلّغ"
+  },
+  "avouer": {
+    "translation": "يعترف"
+  },
+  "nier": {
+    "translation": "يكنّي"
+  },
+  "menacer": {
+    "translation": "يهدّد"
+  },
+  "prévenir": {
+    "translation": "يحذّر"
+  },
+  "conseiller": {
+    "translation": "يُرشد"
+  },
+  "suggérer": {
+    "translation": "يقترح"
+  },
+  "proposer": {
+    "translation": "يضع مقترحاً"
+  },
+  "recommander": {
+    "translation": "يوصي"
+  },
+  "exiger": {
+    "translation": "يستدعي"
+  },
+  "réclamer": {
+    "translation": "يطالب"
+  },
+  "supplier": {
+    "translation": "يتوسّل"
+  },
+  "implorer": {
+    "translation": "يستجدي"
+  },
+  "excuser": {
+    "translation": "يعتذر"
+  },
+  "désoler": {
+    "translation": "يأسف"
+  },
+  "attrister": {
+    "translation": "يحزن"
+  },
+  "satisfaire": {
+    "translation": "يُرضي"
+  },
+  "divertir": {
+    "translation": "يُنسّي"
+  },
+  "émerveiller": {
+    "translation": "يُبهر"
+  },
+  "éblouir": {
+    "translation": "يبهر"
+  },
+  "impressionner": {
+    "translation": "يُبهر"
+  },
+  "intimider": {
+    "translation": "يرهب"
+  },
+  "effrayer": {
+    "translation": "يفزع"
+  },
+  "rassurer": {
+    "translation": "يطمئن"
+  },
+  "quotidien": {
+    "translation": "يومي"
+  },
+  "routine": {
+    "translation": "روتين"
+  },
+  "journee": {
+    "translation": "يومية"
+  },
+  "tâche": {
+    "translation": "مهمة"
+  },
+  "objectif": {
+    "translation": "غاية"
+  },
+  "candidature": {
+    "translation": "ترشيح"
+  },
+  "embauche": {
+    "translation": "توظيف"
+  },
+  "licenciement": {
+    "translation": "فصل"
+  },
+  "paie": {
+    "translation": "أجرة"
+  },
+  "prime": {
+    "translation": "علاوة"
+  },
+  "congé": {
+    "translation": "إجازة"
+  },
+  "repos": {
+    "translation": "راحة"
+  },
+  "week-end": {
+    "translation": "عطلة"
+  },
+  "séjour": {
+    "translation": "إقامة"
+  },
+  "passeport": {
+    "translation": "جواز سفر"
+  },
+  "visa": {
+    "translation": "تأشيرة"
+  },
+  "mètre": {
+    "translation": "متر"
+  },
+  "kilomètre": {
+    "translation": "كيلومتر"
+  },
+  "centimètre": {
+    "translation": "سنتيمتر"
+  },
+  "gramme": {
+    "translation": "غرام"
+  },
+  "kilogramme": {
+    "translation": "كيلوجرام"
+  },
+  "litre": {
+    "translation": "لتر"
+  },
+  "tonne": {
+    "translation": "طن"
+  },
+  "douzaine": {
+    "translation": "دستة"
+  },
+  "centaine": {
+    "translation": "مئة"
+  },
+  "millier": {
+    "translation": "آلاف"
+  },
+  "milliard": {
+    "translation": "مليار"
+  },
+  "quart": {
+    "translation": "ربع"
+  },
+  "tiers": {
+    "translation": "ثلث"
+  },
+  "cinquième": {
+    "translation": "خمسة أفيال"
+  },
+  "double": {
+    "translation": "مضاعف"
+  },
+  "triple": {
+    "translation": "ثلاثي"
+  },
+  "unique": {
+    "translation": "فريد"
+  },
+  "plusieurs": {
+    "translation": "عدة"
+  },
+  "certain": {
+    "translation": "معيّن"
+  },
+  "lourd": {
+    "translation": "ثقيل"
+  },
+  "profond": {
+    "translation": "عميق"
+  },
+  "étroit": {
+    "translation": "ضيّق"
+  },
+  "court": {
+    "translation": "قصير"
+  },
+  "étendu": {
+    "translation": "ممتد"
+  },
+  "serré": {
+    "translation": "محكم"
+  },
+  "délicat": {
+    "translation": "رقيق"
+  },
+  "cassant": {
+    "translation": "هش"
+  },
+  "rigide": {
+    "translation": "متيبّس"
+  },
+  "bonne nuit": {
+    "translation": "تصبح على خير"
+  },
+  "à demain": {
+    "translation": "إلى اللقاء غدًا"
+  },
+  "bienvenue": {
+    "translation": "أهلاً"
+  },
+  "salut": {
+    "translation": "مرحباً"
+  },
+  "coucou": {
+    "translation": "أهلاً"
+  },
+  "désolé": {
+    "translation": "آسف"
+  },
+  "bravo": {
+    "translation": "أحسنت"
+  },
+  "attention": {
+    "translation": "انتباه"
+  },
+  "urgence": {
+    "translation": "استعجال"
+  },
+  "secours": {
+    "translation": "إنقاذ"
+  },
+  "pompier": {
+    "translation": "إطفائي"
+  },
+  "pharmacie": {
+    "translation": "صيدلية"
+  },
+  "ordonnance": {
+    "translation": "وصفة طبية"
+  },
+  "médicament": {
+    "translation": "علاج دوائي"
+  },
+  "goutte": {
+    "translation": "قطرة"
+  },
+  "comprimé": {
+    "translation": "قرص دواء"
+  },
+  "seringue": {
+    "translation": "محقنة"
+  },
+  "fauteuil": {
+    "translation": "كرسي بذراعين"
+  },
+  "banquette": {
+    "translation": "مقعد طويل"
+  },
+  "escabeau": {
+    "translation": "مقعد صغير"
+  },
+  "tabouret": {
+    "translation": "كرسي بلا ظهر"
+  },
+  "banc": {
+    "translation": "مقعد حديقة"
+  },
+  "chapelle": {
+    "translation": "مصلى"
+  },
+  "cathédrale": {
+    "translation": "كاتدرائية"
+  },
+  "monastère": {
+    "translation": "دير"
+  },
+  "muraille": {
+    "translation": "سور"
+  },
+  "rempart": {
+    "translation": "حصن"
+  },
+  "puits": {
+    "translation": "بئر"
+  },
+  "citerne": {
+    "translation": "خزان مياه"
+  },
+  "réservoir": {
+    "translation": "خزان"
+  },
+  "écluse": {
+    "translation": "سد"
+  },
+  "barrage": {
+    "translation": "سدّ"
+  },
+  "entrepôt": {
+    "translation": "مستودع"
+  },
+  "dépôt": {
+    "translation": "مخزن"
+  },
+  "comptoir": {
+    "translation": "طاولة عرض"
+  },
+  "étal": {
+    "translation": "دكان"
+  },
+  "étiquette": {
+    "translation": "ملصق"
+  },
+  "emballage": {
+    "translation": "تغليف"
+  },
+  "colis": {
+    "translation": "طرد"
+  },
+  "dépêche": {
+    "translation": "إرسالية"
+  },
+  "catalogue": {
+    "translation": "كتالوج"
+  },
+  "répertoire": {
+    "translation": "دليل"
+  },
+  "sommaire": {
+    "translation": "جدول محتويات"
+  },
+  "glossaire": {
+    "translation": "مسرد"
+  },
+  "références": {
+    "translation": "مراجع"
+  },
+  "annexe": {
+    "translation": "ملحق"
+  },
+  "origine": {
+    "translation": "أصالة"
+  },
+  "echantillon": {
+    "translation": "عيّنة"
+  },
+  "prince": {
+    "translation": "أمير"
+  },
+  "princesse": {
+    "translation": "أميرة"
+  },
+  "roi": {
+    "translation": "ملك"
+  },
+  "reine": {
+    "translation": "ملكة"
+  },
+  "chevalier": {
+    "translation": "فارس"
+  },
+  "castle": {
+    "translation": "قلعة"
+  },
+  "dragon": {
+    "translation": "تنّين"
+  },
+  "sorcier": {
+    "translation": "ساحر"
+  },
+  "fée": {
+    "translation": "جنّية"
+  },
+  "ogre": {
+    "translation": "غول"
+  },
+  "loup-garou": {
+    "translation": "عواء"
+  },
+  "corbeau": {
+    "translation": "غراب"
+  },
+  "cygne": {
+    "translation": "بجعة"
+  },
+  "hibou": {
+    "translation": "بومة"
+  },
+  "paon": {
+    "translation": "طاووس"
+  },
+  "faisan": {
+    "translation": "تدرج"
+  },
+  "perdrix": {
+    "translation": "حجل"
+  },
+  "hermine": {
+    "translation": "ابن عرس"
+  },
+  "élaborer": {
+    "translation": "يصوغ"
+  },
+  "formuler": {
+    "translation": "يصاغ"
+  },
+  "eénoncer": {
+    "translation": "يصرّح"
+  },
+  "émettre": {
+    "translation": "يبعث"
+  },
+  "transmette": {
+    "translation": "يُرسل"
+  },
+  "répandre": {
+    "translation": "ينشر"
+  },
+  "propager": {
+    "translation": "ينشر"
+  },
+  "réciter": {
+    "translation": "يتلو"
+  },
+  "raconter": {
+    "translation": "يحكي"
+  },
+  "narrer": {
+    "translation": "يسرد"
+  },
+  "présenter": {
+    "translation": "يقدّم"
+  },
+  "introduire": {
+    "translation": "يُدخل"
+  },
+  "mériter": {
+    "translation": "يستحق"
+  },
+  "acquérir": {
+    "translation": "يكتسب"
+  },
+  "pertenir": {
+    "translation": "يعود"
+  },
+  "fourniture": {
+    "translation": "إمداد"
+  },
+  "équiper": {
+    "translation": "يجهّز"
+  },
+  "organiser": {
+    "translation": "ينظّم"
+  },
+  "coordonner": {
+    "translation": "ينسّق"
+  },
+  "gérer": {
+    "translation": "يدير"
+  },
+  "régner": {
+    "translation": "يتولى"
+  },
+  "présider": {
+    "translation": "يرأس"
+  },
+  "vérifier": {
+    "translation": "يتحقّق"
+  },
+  "valider": {
+    "translation": "يوثّق"
+  },
+  "élire": {
+    "translation": "ينتخب"
+  },
+  "voter": {
+    "translation": "يصوّت"
+  },
+  "nommer": {
+    "translation": "يسمّي"
+  },
+  "affecter": {
+    "translation": "يخصّص"
+  },
+  "allouer": {
+    "translation": "يُخصّص"
+  },
+  "reste": {
+    "translation": "يتبقّى"
+  },
+  "celui": {
+    "translation": "ذلك"
+  },
+  "celle": {
+    "translation": "تلك"
+  },
+  "abri": {
+    "translation": "مأوى"
+  },
+  "affaire": {
+    "translation": "أمر"
+  },
+  "alerte": {
+    "translation": "إنذار"
+  },
+  "allée": {
+    "translation": "ممر أشجار"
+  },
+  "amphithéâتر": {
+    "translation": "مدرّج"
+  },
+  "ancêtre": {
+    "translation": "سلف"
+  },
+  "ancre": {
+    "translation": "مرساة"
+  },
+  "appareil": {
+    "translation": "جهاز"
+  },
+  "appétit": {
+    "translation": "شهية"
+  },
+  "appui": {
+    "translation": "مسند"
+  },
+  "ardoise": {
+    "translation": "أردواز"
+  },
+  "arête": {
+    "translation": "نصل"
+  },
+  "armure": {
+    "translation": "درع"
+  },
+  "arpent": {
+    "translation": "مِنّة"
+  },
+  "arrachée": {
+    "translation": "انتزاع"
+  },
+  "arrosoir": {
+    "translation": "إبريق ريّ"
+  },
+  "ascension": {
+    "translation": "صعود"
+  },
+  "attaque": {
+    "translation": "هجوم"
+  },
+  "attelage": {
+    "translation": "جرّ"
+  },
+  "auberge": {
+    "translation": "خان"
+  },
+  "aubier": {
+    "translation": "لب خشب"
+  },
+  "auge": {
+    "translation": "مذود"
+  },
+  "aurore": {
+    "translation": "شروق"
+  },
+  "avoine": {
+    "translation": "شوفان"
+  },
+  "badigeon": {
+    "translation": "طلاء جيري"
+  },
+  "baguette": {
+    "translation": "عصا صغيرة"
+  },
+  "bain": {
+    "translation": "حمّام"
+  },
+  "balade": {
+    "translation": "جولة"
+  },
+  "balle": {
+    "translation": "كرة"
+  },
+  "bambou": {
+    "translation": "خيزران"
+  },
+  "bananier": {
+    "translation": "شجرة موز"
+  },
+  "bande": {
+    "translation": "شريط"
+  },
+  "bandoulière": {
+    "translation": "حزام عبّاء"
+  },
+  "barque": {
+    "translation": "قارب صغير"
+  },
+  "barre": {
+    "translation": "عصا"
+  },
+  "bassin": {
+    "translation": "حوض"
+  },
+  "baye": {
+    "translation": "خليج"
+  },
+  "bidon": {
+    "translation": "جرّة"
+  },
+  "bière": {
+    "translation": "جعة"
+  },
+  "bilan": {
+    "translation": "حصيلة"
+  },
+  "blason": {
+    "translation": "شعار نبيل"
+  },
+  "bled": {
+    "translation": "بلدة"
+  },
+  "bobine": {
+    "translation": "بكرة"
+  },
+  "boisson": {
+    "translation": "مشروب"
+  },
+  "bonbon": {
+    "translation": "حلوى"
+  },
+  "bond": {
+    "translation": "قفزة"
+  },
+  "bord": {
+    "translation": "حافة"
+  },
+  "bougie": {
+    "translation": "شمعة"
+  },
+  "boulet": {
+    "translation": "قذيفة"
+  },
+  "bouquet": {
+    "translation": "باقة زهر"
+  },
+  "braise": {
+    "translation": "جمر"
+  },
+  "brindille": {
+    "translation": "غصن صغير"
+  },
+  "brosse": {
+    "translation": "فرشاة"
+  },
+  "brume": {
+    "translation": "ضباب خفيف"
+  },
+  "bruyère": {
+    "translation": "متلّج"
+  },
+  "bulle": {
+    "translation": "فقاعة"
+  },
+  "butin": {
+    "translation": "غنائم"
+  },
+  "cabinet": {
+    "translation": "عيادة"
+  },
+  "cadran": {
+    "translation": "قرص ساعة"
+  },
+  "calcin": {
+    "translation": "رماد"
+  },
+  "cale": {
+    "translation": "مقطع سفينة"
+  },
+  "calme": {
+    "translation": "سكون"
+  },
+  "canal": {
+    "translation": "مجراة"
+  },
+  "canard": {
+    "translation": "بطّة"
+  },
+  "canif": {
+    "translation": "مِبرد"
+  },
+  "capitaine": {
+    "translation": "قبطان"
+  },
+  "captaine": {
+    "translation": "رئيسي"
+  },
+  "caravane": {
+    "translation": "قافلة"
+  },
+  "carreau": {
+    "translation": "بلاطة"
+  },
+  "cartable": {
+    "translation": "حقيبة مدرسية"
+  },
+  "casier": {
+    "translation": "خزانة صغيرة"
+  },
+  "casque": {
+    "translation": "خوذة"
+  },
+  "casse": {
+    "translation": "كسر"
+  },
+  "cellophane": {
+    "translation": "ورق شفاف"
+  },
+  "cendre": {
+    "translation": "رماد"
+  },
+  "cercueil": {
+    "translation": "نعش"
+  },
+  "chandelle": {
+    "translation": "شمعة طويلة"
+  },
+  "charge": {
+    "translation": "حمل"
+  },
+  "chariot": {
+    "translation": "عربة صغيرة"
+  },
+  "charrue": {
+    "translation": "محراث"
+  },
+  "chasse": {
+    "translation": "صيد"
+  },
+  "chaudron": {
+    "translation": "بوتّة"
+  },
+  "chausson": {
+    "translation": "خفّ"
+  },
+  "chemin": {
+    "translation": "مسار"
+  },
+  "cheminée": {
+    "translation": "مدفأة"
+  },
+  "chêne": {
+    "translation": "بلوط"
+  },
+  "chevreuil": {
+    "translation": "غزال"
+  },
+  "chiot": {
+    "translation": "جرو"
+  },
+  "choix": {
+    "translation": "اختيار"
+  },
+  "choppe": {
+    "translation": "كأس"
+  },
+  "chuchotement": {
+    "translation": "همس"
+  },
+  "cible": {
+    "translation": "هدف"
+  },
+  "cigogne": {
+    "translation": "لقلق"
+  },
+  "cime": {
+    "translation": "ذروة"
+  },
+  "cirage": {
+    "translation": "ملصّق أحذية"
+  },
+  "cirque": {
+    "translation": "سيرك"
+  },
+  "ciseaux": {
+    "translation": "مقص"
+  },
+  "citoyenneté": {
+    "translation": "مواطنة"
+  },
+  "clarté": {
+    "translation": "صفاء"
+  },
+  "climat": {
+    "translation": "جوّ"
+  },
+  "cloche": {
+    "translation": "جرس"
+  },
+  "clochette": {
+    "translation": "جرس صغير"
+  },
+  "cloître": {
+    "translation": "صوامع"
+  },
+  "clos": {
+    "translation": "مسيّج"
+  },
+  "coccinelle": {
+    "translation": "دعسوقة"
+  },
+  "code": {
+    "translation": "شفرة"
+  },
+  "coffre": {
+    "translation": "صندوق الأمانات"
+  },
+  "cogner": {
+    "translation": "يطرق"
+  },
+  "colombe": {
+    "translation": "حمامة"
+  },
+  "combat": {
+    "translation": "قتال"
+  },
+  "comble": {
+    "translation": "سقف"
+  },
+  "commande": {
+    "translation": "أمر شراء"
+  },
+  "commerce": {
+    "translation": "تجارة"
+  },
+  "commune": {
+    "translation": "بلدية"
+  },
+  "compliment": {
+    "translation": "تهنئة"
+  },
+  "compte": {
+    "translation": "حساب"
+  },
+  "comptine": {
+    "translation": "أغنية أطفال"
+  },
+  "concentration": {
+    "translation": "تركيز"
+  },
+  "concret": {
+    "translation": "ملموس"
+  },
+  "conduite": {
+    "translation": "قيادة"
+  },
+  "confiance": {
+    "translation": "ثقة"
+  },
+  "conflit": {
+    "translation": "صراع"
+  },
+  "confort": {
+    "translation": "راحة"
+  },
+  "connivence": {
+    "translation": "تواطؤ"
+  },
+  "conquête": {
+    "translation": "فتح"
+  },
+  "conscience": {
+    "translation": "ضمير"
+  },
+  "consentement": {
+    "translation": "موافقة"
+  },
+  "console": {
+    "translation": "وحدة تحكّم"
+  },
+  "constat": {
+    "translation": "ملاحظة"
+  },
+  "contact": {
+    "translation": "اتصال"
+  },
+  "contentement": {
+    "translation": "قناعة"
+  },
+  "conte": {
+    "translation": "حكاية"
+  },
+  "contradiction": {
+    "translation": "تناقض"
+  },
+  "contrôle": {
+    "translation": "رقابة"
+  },
+  "convenance": {
+    "translation": "لياقة"
+  },
+  "coq": {
+    "translation": "ديك"
+  },
+  "coran": {
+    "translation": "قرآن"
+  },
+  "corbeille": {
+    "translation": "سلّة"
+  },
+  "corne": {
+    "translation": "قرن"
+  },
+  "corpus": {
+    "translation": "متن"
+  },
+  "cosmos": {
+    "translation": "أثير"
+  },
+  "côte": {
+    "translation": "ضِلع"
+  },
+  "coton": {
+    "translation": "قطن"
+  },
+  "couche": {
+    "translation": "طبقة"
+  },
+  "coude": {
+    "translation": "كوع"
+  },
+  "couler": {
+    "translation": "يتدفّق"
+  },
+  "coupe": {
+    "translation": "كأس"
+  },
+  "cour": {
+    "translation": "فناء"
+  },
+  "course": {
+    "translation": "سباق"
+  },
+  "couture": {
+    "translation": "خياطة"
+  },
+  "couvercle": {
+    "translation": "غطاء"
+  },
+  "couvert": {
+    "translation": "مغطّى"
+  },
+  "cracher": {
+    "translation": "يتفل"
+  },
+  "crainte": {
+    "translation": "وجل"
+  },
+  "creuser": {
+    "translation": "يحفر"
+  },
+  "crevette": {
+    "translation": "جمبري"
+  },
+  "cric": {
+    "translation": "رافعة صغيرة"
+  },
+  "croc": {
+    "translation": "ناب"
+  },
+  "croix": {
+    "translation": "صليب"
+  },
+  "crypte": {
+    "translation": "سرداب"
+  },
+  "culotte": {
+    "translation": "سروال"
+  },
+  "culpabilité": {
+    "translation": "ذنب"
+  },
+  "culture": {
+    "translation": "حرث"
+  },
+  "cymbale": {
+    "translation": "صنج"
+  },
+  "daim": {
+    "translation": "غزال أوروبي"
+  },
+  "dalle": {
+    "translation": "لوح"
+  },
+  "davantage": {
+    "translation": "أكثر"
+  },
+  "dé": {
+    "translation": "نرد"
+  },
+  "décence": {
+    "translation": "لياقة"
+  },
+  "décor": {
+    "translation": "ديكور"
+  },
+  "décret": {
+    "translation": "مرسوم"
+  },
+  "déduction": {
+    "translation": "استنباط"
+  },
+  "défi": {
+    "translation": "تحدٍّ"
+  },
+  "défilé": {
+    "translation": "موكب"
+  },
+  "dégradation": {
+    "translation": "تدهور"
+  },
+  "degré": {
+    "translation": "درجة"
+  },
+  "délice": {
+    "translation": "لذّة"
+  },
+  "demande": {
+    "translation": "مطالبة"
+  },
+  "démarche": {
+    "translation": "خطوة"
+  },
+  "déménagement": {
+    "translation": "انتقال"
+  },
+  "démolition": {
+    "translation": "هدم"
+  },
+  "dénombrement": {
+    "translation": "عدّ"
+  },
+  "dénouement": {
+    "translation": "خاتمة"
+  },
+  "dépendance": {
+    "translation": "تبعية"
+  },
+  "dérive": {
+    "translation": "انحراف"
+  },
+  "descendance": {
+    "translation": "ذرية"
+  },
+  "dessein": {
+    "translation": "قصد"
+  },
+  "détail": {
+    "translation": "تفصيل"
+  },
+  "détective": {
+    "translation": "محقّق"
+  },
+  "détermination": {
+    "translation": "عزيمة"
+  },
+  "dette": {
+    "translation": "دينار"
+  },
+  "devanture": {
+    "translation": "واجهة"
+  },
+  "dévouement": {
+    "translation": "تفانٍ"
+  },
+  "dextérité": {
+    "translation": "براعة"
+  },
+  "diabète": {
+    "translation": "داء السكري"
+  },
+  "dialogue": {
+    "translation": "حوار"
+  },
+  "diamant": {
+    "translation": "ماس"
+  },
+  "dictée": {
+    "translation": "إملاء"
+  },
+  "diction": {
+    "translation": "نطق"
+  },
+  "dieu": {
+    "translation": "إله"
+  },
+  "dignité": {
+    "translation": "كرامة"
+  },
+  "dilution": {
+    "translation": "تخفيف"
+  },
+  "dimension": {
+    "translation": "بُعد"
+  },
+  "direct": {
+    "translation": "مباشر"
+  },
+  "dirigeant": {
+    "translation": "قائد"
+  },
+  "discours": {
+    "translation": "خطاب"
+  },
+  "dispute": {
+    "translation": "شجار"
+  },
+  "distraction": {
+    "translation": "تسلية"
+  },
+  "distinction": {
+    "translation": "تمييز"
+  },
+  "docilité": {
+    "translation": "انقياد"
+  },
+  "domaine": {
+    "translation": "مِلك"
+  },
+  "domicile": {
+    "translation": "مسكن"
+  },
+  "domination": {
+    "translation": "هيمنة"
+  },
+  "dommage": {
+    "translation": "ضرر"
+  },
+  "donation": {
+    "translation": "هبة"
+  },
+  "dotation": {
+    "translation": "عهدة"
+  },
+  "doute": {
+    "translation": "ريبة"
+  },
+  "dragée": {
+    "translation": "حبّة سكر"
+  },
+  "drap": {
+    "translation": "شرشف"
+  },
+  "drapé": {
+    "translation": "ستائر"
+  },
+  "dressage": {
+    "translation": "تدريب"
+  },
+  "droguerie": {
+    "translation": "بقالة"
+  },
+  "duplicata": {
+    "translation": "نسخة"
+  },
+  "dureté": {
+    "translation": "صلابة"
+  },
+  "dynastie": {
+    "translation": "سلالة"
+  },
+  "ébahi": {
+    "translation": "مذهول"
+  },
+  "échafaud": {
+    "translation": "منصّة"
+  },
+  "éclairage": {
+    "translation": "إنارة"
+  },
+  "écrin": {
+    "translation": "صندوق ثمين"
+  },
+  "écriture": {
+    "translation": "كتابة"
+  },
+  "effort": {
+    "translation": "مجهود"
+  },
+  "égoïsme": {
+    "translation": "أنانية"
+  },
+  "élevage": {
+    "translation": "تربية"
+  },
+  "élixir": {
+    "translation": "مرهم"
+  },
+  "emballer": {
+    "translation": "يغلّف"
+  },
+  "embouteillage": {
+    "translation": "ازدحام"
+  },
+  "émeraude": {
+    "translation": "زمرّد"
+  },
+  "émigration": {
+    "translation": "تهجّر"
+  },
+  "émission": {
+    "translation": "بثّ"
+  },
+  "emphase": {
+    "translation": "تشديد"
+  },
+  "emprisonnement": {
+    "translation": "حبس"
+  },
+  "ému": {
+    "translation": "متأثر"
+  },
+  "encens": {
+    "translation": "بخور"
+  },
+  "encre": {
+    "translation": "حبر"
+  },
+  "enfance": {
+    "translation": "مرحلة الطفولة"
+  },
+  "engagement": {
+    "translation": "تزامن"
+  },
+  "engrenage": {
+    "translation": "ترس"
+  },
+  "enigme": {
+    "translation": "لغز"
+  },
+  "enivrement": {
+    "translation": "نشوة"
+  },
+  "enquête": {
+    "translation": "تحقيق"
+  },
+  "enregistrement": {
+    "translation": "تسجيل"
+  },
+  "enseigne": {
+    "translation": "لافتة"
+  },
+  "entouré": {
+    "translation": "محيط"
+  },
+  "entretien": {
+    "translation": "صيانة"
+  },
+  "enveloppe": {
+    "translation": "ظرف"
+  },
+  "envoi": {
+    "translation": "إرسال"
+  },
+  "épaisseur": {
+    "translation": "سماكة"
+  },
+  "épervier": {
+    "translation": "صقر"
+  },
+  "épi": {
+    "translation": "سنبلة"
+  },
+  "épouvante": {
+    "translation": "رعب"
+  },
+  "équation": {
+    "translation": "معادلة"
+  },
+  "équilibre": {
+    "translation": "توازن"
+  },
+  "équipement": {
+    "translation": "تجهيز"
+  },
+  "équitation": {
+    "translation": "فروسية"
+  },
+  "érable": {
+    "translation": "قيقب"
+  },
+  "escorte": {
+    "translation": "مرافقة"
+  },
+  "essai": {
+    "translation": "محاولة"
+  },
+  "estime": {
+    "translation": "تقدير"
+  },
+  "étable": {
+    "translation": "إسطبل"
+  },
+  "étalage": {
+    "translation": "عرض"
+  },
+  "étourdi": {
+    "translation": "دهشان"
+  },
+  "évangile": {
+    "translation": "إنجيل"
+  },
+  "évidence": {
+    "translation": "بديهية"
+  },
+  "évolution": {
+    "translation": "تطوّر"
+  },
+  "excellence": {
+    "translation": "امتياز"
+  },
+  "exception": {
+    "translation": "استثناء"
+  },
+  "excitation": {
+    "translation": "إثارة"
+  },
+  "exécution": {
+    "translation": "إعدام"
+  },
+  "exemplar": {
+    "translation": "مثالي"
+  },
+  "exil": {
+    "translation": "منفى"
+  },
+  "existence": {
+    "translation": "وجود"
+  },
+  "explosion": {
+    "translation": "انفجار"
+  },
+  "exposition": {
+    "translation": "معرض"
+  },
+  "extase": {
+    "translation": "نشوة"
+  },
+  "extension": {
+    "translation": "توسعة"
+  },
+  "extrémit": {
+    "translation": "طرفة"
+  }
+}

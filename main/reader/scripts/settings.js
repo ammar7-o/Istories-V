@@ -841,6 +841,7 @@ function initParagraphTranslation() {
 // Add translation buttons to all paragraphs
 function addTranslationButtons() {
     const paragraphs = document.querySelectorAll('.paragraph');
+    const predefinedTranslations = getPredefinedTranslations();
 
     paragraphs.forEach((paragraph, index) => {
         // Check if buttons already exist
@@ -899,6 +900,28 @@ function addTranslationButtons() {
             transition: all 0.2s ease;
         `;
         googleButton.onclick = () => translateWithGoogle(text, index);
+
+        // Bundled translation from the story's "content-tr" (offline, if present)
+        if (predefinedTranslations && predefinedTranslations[index] && String(predefinedTranslations[index]).trim()) {
+            const trButton = document.createElement('button');
+            trButton.className = 'predefined-translate-btn';
+            trButton.innerHTML = '<i class="fas fa-language"></i> Translation';
+            trButton.style.cssText = `
+                padding: 6px 12px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.8rem;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                transition: all 0.2s ease;
+            `;
+            trButton.onclick = () => togglePredefinedTranslation(index, paragraph);
+            buttonContainer.appendChild(trButton);
+        }
 
         // Append everything
         buttonContainer.appendChild(aiButton);
@@ -1079,6 +1102,105 @@ function setupAutoCloseListeners(resultDiv, currentIndex) {
 
     observer.observe(resultDiv, { attributes: true, attributeFilter: ['style'] });
 }
+// ---- Bundled paragraph translations (story "content-tr") ----
+// A story may define "content-tr": an array with one translation per paragraph
+// in "content". These buttons display that bundled translation with no network
+// call. Aliases content_tr / contentTr are also honoured.
+function getReaderCurrentStory() {
+    // main.js is an ES module, so its `let currentStory` is module-scoped.
+    // displayStory() exposes the active story on window for classic scripts.
+    return window.IStoriesCurrentStory || window.currentStory || null;
+}
+
+function getPredefinedTranslations() {
+    try {
+        const story = getReaderCurrentStory();
+        if (!story) return null;
+        const tr = story['content-tr'] || story.content_tr || story.contentTr;
+        return Array.isArray(tr) ? tr : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function togglePredefinedTranslation(index, paragraphElement) {
+    const resultId = `translate-result-${index}`;
+    closeOtherTranslations(resultId);
+
+    let resultDiv = document.getElementById(resultId);
+
+    // Toggle off if this slot is already showing a bundled translation
+    if (resultDiv && resultDiv.style.display !== 'none' && resultDiv.dataset.kind === 'predefined') {
+        resultDiv.style.display = 'none';
+        showNotification('Translation closed', 'info');
+        return;
+    }
+
+    if (!resultDiv) {
+        resultDiv = document.createElement('div');
+        resultDiv.className = 'translate-result';
+        resultDiv.id = resultId;
+        paragraphElement.parentNode.insertBefore(resultDiv, paragraphElement.nextSibling);
+    }
+    resultDiv.dataset.kind = 'predefined';
+
+    const translations = getPredefinedTranslations();
+    const translation = translations ? translations[index] : null;
+
+    // Same visual box as the AI / Google translation results
+    const boxStyle = `
+        margin-top: 10px;
+        padding: 12px;
+        background: var(--background-light);
+        border-radius: 6px;
+        border-left: 3px solid var(--primary);
+        animation: fadeIn 0.3s ease;
+    `;
+
+    if (!translation || !String(translation).trim()) {
+        resultDiv.style.cssText = boxStyle;
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <div style="color: #dc3545;">
+                <i class="fas fa-exclamation-circle"></i> No bundled translation for this paragraph.
+            </div>
+        `;
+        return;
+    }
+
+    const storyNow = getReaderCurrentStory();
+    const targetLang = (storyNow && storyNow.lang) || localStorage.getItem('defaultTranslateLanguage') || 'ar';
+    const rtlLanguages = ['ar', 'ar-SA', 'ar-EG', 'fa', 'ur', 'he', 'yi', 'dv'];
+    const shouldBeRTL = rtlLanguages.includes(targetLang);
+
+    resultDiv.style.cssText = boxStyle;
+    resultDiv.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="color: var(--primary);">
+                <i class="fas fa-language"></i> Translation
+            </strong>
+            <button onclick="closeTranslation(${index})"
+                    style="background: none; border: none; color: #999; cursor: pointer; font-size: 0.8em;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="translation-prg" style="line-height: 1.5; color: var(--text); font-size: 0.8em;
+                   ${shouldBeRTL ? 'direction: rtl; text-align: right;' : ''}">
+            ${translation}
+        </div>
+    `;
+    resultDiv.style.display = 'block';
+    if (shouldBeRTL) {
+        resultDiv.style.direction = 'rtl';
+        resultDiv.style.textAlign = 'right';
+    } else {
+        resultDiv.style.direction = 'ltr';
+        resultDiv.style.textAlign = 'left';
+    }
+
+    setupAutoCloseListeners(resultDiv, index);
+}
+
 // Translate with Google (open in new tab)
 function translateWithGoogle(text, index) {
     const targetLang = localStorage.getItem('defaultTranslateLanguage') || 'ar';

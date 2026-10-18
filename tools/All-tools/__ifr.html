@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0">
+<iframe id="fr" src="http://127.0.0.1:8099/tools/All-tools/Analyzer.html?name=inner2" style="width:375px;height:1500px;border:0"></iframe>
+<script>
+window.addEventListener('load', function(){
+  var f=document.getElementById('fr'); var d=f.contentDocument; var w=f.contentWindow;
+  var out=[]; var vw=d.documentElement.clientWidth;
+  function cs(el,p){return w.getComputedStyle(el)[p];}
+  var hdr=d.querySelector('.ist-header');
+  out.push('HEADER bg='+cs(hdr,'backgroundColor')+' h='+Math.round(hdr.getBoundingClientRect().height)+' pos='+cs(hdr,'position'));
+  out.push('BODY bg='+cs(d.body,'backgroundColor')+' padTop='+cs(d.body,'paddingTop')+' fontFamily='+cs(d.body,'fontFamily'));
+  out.push('MAINCONTENT padTop='+cs(d.querySelector('.main-content'),'paddingTop'));
+  // enumerate direct structure with boxes
+  var sels=['.container','#home','#home .container','.language-selectors','.language-group','select','#csv-file','textarea','#translate-btn','.result-section','#result','h1','h2','.stats','.stat-card','.button-group','button#analyzeBtn','.result-box'];
+  sels.forEach(function(sel){var el=d.querySelector(sel);if(!el){out.push(sel+' :: MISSING');return;}var r=el.getBoundingClientRect();out.push(sel+' :: L'+Math.round(r.left)+' T'+Math.round(r.top)+' W'+Math.round(r.width)+' H'+Math.round(r.height)+' fs='+cs(el,'fontSize'));});
+  // count nested containers
+  out.push('nested .container count in #home = '+d.querySelectorAll('#home .container').length);
+  try{ navigator.sendBeacon('/__report?name='+encodeURIComponent((new URLSearchParams(location.search)).get('name')||'ifr2'), out.join('\n')); }catch(e){}
+});
+</script></body></html>

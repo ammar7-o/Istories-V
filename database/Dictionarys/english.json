@@ -1,0 +1,6002 @@
+{
+  "the": {
+    "translation": "الـ"
+  },
+  "be": {
+    "translation": "يكون"
+  },
+  "to": {
+    "translation": "إلى"
+  },
+  "of": {
+    "translation": "من"
+  },
+  "and": {
+    "translation": "و"
+  },
+  "a": {
+    "translation": "أداة نكرة"
+  },
+  "in": {
+    "translation": "في"
+  },
+  "that": {
+    "translation": "ذلك / أن"
+  },
+  "have": {
+    "translation": "يملك"
+  },
+  "i": {
+    "translation": "أنا"
+  },
+  "it": {
+    "translation": "هو / هي"
+  },
+  "for": {
+    "translation": "من أجل"
+  },
+  "not": {
+    "translation": "ليس"
+  },
+  "on": {
+    "translation": "على"
+  },
+  "with": {
+    "translation": "مع"
+  },
+  "he": {
+    "translation": "هو"
+  },
+  "as": {
+    "translation": "مثل / كما"
+  },
+  "you": {
+    "translation": "أنت"
+  },
+  "do": {
+    "translation": "يفعل"
+  },
+  "at": {
+    "translation": "عند / في"
+  },
+  "this": {
+    "translation": "هذا"
+  },
+  "but": {
+    "translation": "لكن"
+  },
+  "his": {
+    "translation": "له"
+  },
+  "by": {
+    "translation": "بواسطة"
+  },
+  "from": {
+    "translation": "من"
+  },
+  "they": {
+    "translation": "هم"
+  },
+  "we": {
+    "translation": "نحن"
+  },
+  "say": {
+    "translation": "يقول"
+  },
+  "her": {
+    "translation": "لها"
+  },
+  "she": {
+    "translation": "هي"
+  },
+  "or": {
+    "translation": "أو"
+  },
+  "will": {
+    "translation": "سوف"
+  },
+  "my": {
+    "translation": "خاصتي"
+  },
+  "one": {
+    "translation": "واحد"
+  },
+  "all": {
+    "translation": "كل"
+  },
+  "would": {
+    "translation": "قد"
+  },
+  "there": {
+    "translation": "هناك"
+  },
+  "their": {
+    "translation": "لهم"
+  },
+  "what": {
+    "translation": "ماذا"
+  },
+  "so": {
+    "translation": "لذا"
+  },
+  "up": {
+    "translation": "لأعلى"
+  },
+  "out": {
+    "translation": "خارج"
+  },
+  "if": {
+    "translation": "إذا"
+  },
+  "about": {
+    "translation": "عن"
+  },
+  "who": {
+    "translation": "من"
+  },
+  "get": {
+    "translation": "يحصل"
+  },
+  "which": {
+    "translation": "الذي"
+  },
+  "go": {
+    "translation": "يذهب"
+  },
+  "me": {
+    "translation": "إياي"
+  },
+  "when": {
+    "translation": "عندما"
+  },
+  "make": {
+    "translation": "يصنع"
+  },
+  "can": {
+    "translation": "يستطيع"
+  },
+  "like": {
+    "translation": "يحب / مثل"
+  },
+  "time": {
+    "translation": "وقت"
+  },
+  "no": {
+    "translation": "لا"
+  },
+  "just": {
+    "translation": "فقط"
+  },
+  "him": {
+    "translation": "إياه"
+  },
+  "know": {
+    "translation": "يعرف"
+  },
+  "take": {
+    "translation": "يأخذ"
+  },
+  "people": {
+    "translation": "أشخاص"
+  },
+  "into": {
+    "translation": "إلى داخل"
+  },
+  "year": {
+    "translation": "سنة"
+  },
+  "your": {
+    "translation": "خاصتك"
+  },
+  "good": {
+    "translation": "جيد"
+  },
+  "some": {
+    "translation": "بعض"
+  },
+  "could": {
+    "translation": "يستطيع"
+  },
+  "them": {
+    "translation": "إياهم"
+  },
+  "see": {
+    "translation": "يرى"
+  },
+  "other": {
+    "translation": "آخر"
+  },
+  "than": {
+    "translation": "من"
+  },
+  "then": {
+    "translation": "ثم"
+  },
+  "now": {
+    "translation": "الآن"
+  },
+  "look": {
+    "translation": "ينظر"
+  },
+  "only": {
+    "translation": "فقط"
+  },
+  "come": {
+    "translation": "يأتي"
+  },
+  "its": {
+    "translation": "خاصته"
+  },
+  "over": {
+    "translation": "فوق"
+  },
+  "think": {
+    "translation": "يفكر"
+  },
+  "also": {
+    "translation": "أيضا"
+  },
+  "back": {
+    "translation": "ظهر"
+  },
+  "after": {
+    "translation": "بعد"
+  },
+  "use": {
+    "translation": "يستخدم"
+  },
+  "two": {
+    "translation": "اثنان"
+  },
+  "how": {
+    "translation": "كيف"
+  },
+  "our": {
+    "translation": "خاصتنا"
+  },
+  "work": {
+    "translation": "عمل"
+  },
+  "first": {
+    "translation": "أول"
+  },
+  "well": {
+    "translation": "جيدا"
+  },
+  "way": {
+    "translation": "طريقة"
+  },
+  "even": {
+    "translation": "حتى"
+  },
+  "new": {
+    "translation": "جديد"
+  },
+  "want": {
+    "translation": "يريد"
+  },
+  "because": {
+    "translation": "لأن"
+  },
+  "any": {
+    "translation": "أي"
+  },
+  "these": {
+    "translation": "هؤلاء"
+  },
+  "give": {
+    "translation": "يعطي"
+  },
+  "day": {
+    "translation": "يوم"
+  },
+  "most": {
+    "translation": "معظم"
+  },
+  "us": {
+    "translation": "إيانا"
+  },
+  "need": {
+    "translation": "يحتاج"
+  },
+  "should": {
+    "translation": "ينبغي"
+  },
+  "very": {
+    "translation": "جدا"
+  },
+  "much": {
+    "translation": "كثير"
+  },
+  "where": {
+    "translation": "أين"
+  },
+  "right": {
+    "translation": "صحيح"
+  },
+  "too": {
+    "translation": "أيضا"
+  },
+  "still": {
+    "translation": "ما زال"
+  },
+  "between": {
+    "translation": "بين"
+  },
+  "never": {
+    "translation": "أبدًا"
+  },
+  "always": {
+    "translation": "دائمًا"
+  },
+  "under": {
+    "translation": "تحت"
+  },
+  "before": {
+    "translation": "قبل"
+  },
+  "here": {
+    "translation": "هنا"
+  },
+  "why": {
+    "translation": "لماذا"
+  },
+  "again": {
+    "translation": "مرة أخرى"
+  },
+  "many": {
+    "translation": "كثير"
+  },
+  "more": {
+    "translation": "أكثر"
+  },
+  "through": {
+    "translation": "من خلال"
+  },
+  "during": {
+    "translation": "خلال"
+  },
+  "while": {
+    "translation": "بينما"
+  },
+  "same": {
+    "translation": "نفس"
+  },
+  "few": {
+    "translation": "قليل"
+  },
+  "own": {
+    "translation": "خاص"
+  },
+  "already": {
+    "translation": "بالفعل"
+  },
+  "often": {
+    "translation": "غالبًا"
+  },
+  "sometimes": {
+    "translation": "أحيانًا"
+  },
+  "usually": {
+    "translation": "عادةً"
+  },
+  "soon": {
+    "translation": "قريبا"
+  },
+  "today": {
+    "translation": "اليوم"
+  },
+  "tomorrow": {
+    "translation": "غدًا"
+  },
+  "yesterday": {
+    "translation": "أمس"
+  },
+  "later": {
+    "translation": "لاحقًا"
+  },
+  "early": {
+    "translation": "مبكرًا"
+  },
+  "late": {
+    "translation": "متأخرًا"
+  },
+  "left": {
+    "translation": "يسار"
+  },
+  "down": {
+    "translation": "أسفل"
+  },
+  "near": {
+    "translation": "قريب"
+  },
+  "far": {
+    "translation": "بعيد"
+  },
+  "inside": {
+    "translation": "داخل"
+  },
+  "outside": {
+    "translation": "خارج"
+  },
+  "above": {
+    "translation": "فوق"
+  },
+  "below": {
+    "translation": "تحت"
+  },
+  "across": {
+    "translation": "عبر"
+  },
+  "along": {
+    "translation": "بمحاذاة"
+  },
+  "around": {
+    "translation": "حول"
+  },
+  "behind": {
+    "translation": "خلف"
+  },
+  "beside": {
+    "translation": "بجانب"
+  },
+  "toward": {
+    "translation": "نحو"
+  },
+  "without": {
+    "translation": "بدون"
+  },
+  "within": {
+    "translation": "ضمن"
+  },
+  "against": {
+    "translation": "ضد"
+  },
+  "until": {
+    "translation": "حتى"
+  },
+  "upon": {
+    "translation": "على"
+  },
+  "among": {
+    "translation": "بين"
+  },
+  "per": {
+    "translation": "لكل"
+  },
+  "via": {
+    "translation": "عن طريق"
+  },
+  "besides": {
+    "translation": "إضافة إلى"
+  },
+  "except": {
+    "translation": "ما عدا"
+  },
+  "including": {
+    "translation": "بما في ذلك"
+  },
+  "following": {
+    "translation": "التالي"
+  },
+  "according": {
+    "translation": "وفقًا"
+  },
+  "despite": {
+    "translation": "رغم"
+  },
+  "although": {
+    "translation": "بالرغم من"
+  },
+  "unless": {
+    "translation": "إلا إذا"
+  },
+  "whereas": {
+    "translation": "بينما"
+  },
+  "wherever": {
+    "translation": "أينما"
+  },
+  "whenever": {
+    "translation": "متى ما"
+  },
+  "however": {
+    "translation": "لكن"
+  },
+  "therefore": {
+    "translation": "لذلك"
+  },
+  "moreover": {
+    "translation": "علاوة على ذلك"
+  },
+  "furthermore": {
+    "translation": "فضلاً عن ذلك"
+  },
+  "otherwise": {
+    "translation": "وإلا"
+  },
+  "instead": {
+    "translation": "بدلاً من"
+  },
+  "rather": {
+    "translation": "بل"
+  },
+  "almost": {
+    "translation": "تقريبًا"
+  },
+  "nearly": {
+    "translation": "تقريبًا"
+  },
+  "quite": {
+    "translation": "تماما"
+  },
+  "perhaps": {
+    "translation": "ربما"
+  },
+  "maybe": {
+    "translation": "ربما"
+  },
+  "probably": {
+    "translation": "على الأرجح"
+  },
+  "certainly": {
+    "translation": "بالتأكيد"
+  },
+  "really": {
+    "translation": "حقًا"
+  },
+  "actually": {
+    "translation": "في الواقع"
+  },
+  "exactly": {
+    "translation": "بالضبط"
+  },
+  "especially": {
+    "translation": "خصوصًا"
+  },
+  "generally": {
+    "translation": "بشكل عام"
+  },
+  "normally": {
+    "translation": "عاديا"
+  },
+  "currently": {
+    "translation": "حاليًا"
+  },
+  "recently": {
+    "translation": "مؤخرًا"
+  },
+  "finally": {
+    "translation": "أخيرا"
+  },
+  "immediately": {
+    "translation": "فورًا"
+  },
+  "suddenly": {
+    "translation": "فجأة"
+  },
+  "quickly": {
+    "translation": "بسرعة"
+  },
+  "slowly": {
+    "translation": "ببطء"
+  },
+  "easily": {
+    "translation": "بسهولة"
+  },
+  "hardly": {
+    "translation": "بالكاد"
+  },
+  "together": {
+    "translation": "معًا"
+  },
+  "alone": {
+    "translation": "وحيد"
+  },
+  "anyway": {
+    "translation": "على أي حال"
+  },
+  "meanwhile": {
+    "translation": "في هذه الأثناء"
+  },
+  "anywhere": {
+    "translation": "أي مكان"
+  },
+  "everywhere": {
+    "translation": "كل مكان"
+  },
+  "somewhere": {
+    "translation": "مكان ما"
+  },
+  "nowhere": {
+    "translation": "لا مكان"
+  },
+  "somewhat": {
+    "translation": "إلى حد ما"
+  },
+  "somehow": {
+    "translation": "بطريقة ما"
+  },
+  "altogether": {
+    "translation": "إجمالًا"
+  },
+  "thus": {
+    "translation": "هكذا"
+  },
+  "hence": {
+    "translation": "من هنا"
+  },
+  "elsewhere": {
+    "translation": "في مكان آخر"
+  },
+  "mine": {
+    "translation": "خاصتي"
+  },
+  "yours": {
+    "translation": "خاصتك"
+  },
+  "hers": {
+    "translation": "خاصتها"
+  },
+  "ours": {
+    "translation": "لنا"
+  },
+  "theirs": {
+    "translation": "لهم"
+  },
+  "myself": {
+    "translation": "نفسي"
+  },
+  "yourself": {
+    "translation": "نفسك"
+  },
+  "himself": {
+    "translation": "نفسه"
+  },
+  "herself": {
+    "translation": "نفسها"
+  },
+  "itself": {
+    "translation": "ذاته"
+  },
+  "ourselves": {
+    "translation": "أنفسنا"
+  },
+  "themselves": {
+    "translation": "أنفسهم"
+  },
+  "whom": {
+    "translation": "مَن"
+  },
+  "whose": {
+    "translation": "الذي يملك"
+  },
+  "those": {
+    "translation": "أولئك"
+  },
+  "whoever": {
+    "translation": "أي شخص"
+  },
+  "whatever": {
+    "translation": "أي شيء"
+  },
+  "whichever": {
+    "translation": "أيهما"
+  },
+  "find": {
+    "translation": "يجد"
+  },
+  "tell": {
+    "translation": "يخبر"
+  },
+  "call": {
+    "translation": "يتصل"
+  },
+  "try": {
+    "translation": "يحاول"
+  },
+  "ask": {
+    "translation": "يسأل"
+  },
+  "feel": {
+    "translation": "يشعر"
+  },
+  "become": {
+    "translation": "يصبح"
+  },
+  "leave": {
+    "translation": "يغادر"
+  },
+  "put": {
+    "translation": "يضع"
+  },
+  "mean": {
+    "translation": "يعني"
+  },
+  "keep": {
+    "translation": "يحتفظ"
+  },
+  "let": {
+    "translation": "يدع"
+  },
+  "begin": {
+    "translation": "يبدأ"
+  },
+  "seem": {
+    "translation": "يبدو"
+  },
+  "help": {
+    "translation": "يساعد"
+  },
+  "talk": {
+    "translation": "يتكلم"
+  },
+  "turn": {
+    "translation": "يدور"
+  },
+  "start": {
+    "translation": "يبدأ"
+  },
+  "show": {
+    "translation": "يُظهر"
+  },
+  "hear": {
+    "translation": "يسمع"
+  },
+  "play": {
+    "translation": "يلعب"
+  },
+  "run": {
+    "translation": "يركض"
+  },
+  "move": {
+    "translation": "يتحرك"
+  },
+  "live": {
+    "translation": "يعيش"
+  },
+  "believe": {
+    "translation": "يعتقد"
+  },
+  "hold": {
+    "translation": "يمسك"
+  },
+  "happen": {
+    "translation": "يحدث"
+  },
+  "bring": {
+    "translation": "يجلب"
+  },
+  "write": {
+    "translation": "يكتب"
+  },
+  "sit": {
+    "translation": "يجلس"
+  },
+  "stand": {
+    "translation": "يقف"
+  },
+  "lose": {
+    "translation": "يفقد"
+  },
+  "pay": {
+    "translation": "يدفع"
+  },
+  "meet": {
+    "translation": "يقابل"
+  },
+  "include": {
+    "translation": "يتضمن"
+  },
+  "continue": {
+    "translation": "يستمر"
+  },
+  "set": {
+    "translation": "يضبط"
+  },
+  "learn": {
+    "translation": "يتعلم"
+  },
+  "change": {
+    "translation": "يغير"
+  },
+  "lead": {
+    "translation": "يقود"
+  },
+  "understand": {
+    "translation": "يفهم"
+  },
+  "watch": {
+    "translation": "يشاهد"
+  },
+  "follow": {
+    "translation": "يتبع"
+  },
+  "stop": {
+    "translation": "يتوقف"
+  },
+  "create": {
+    "translation": "ينشئ"
+  },
+  "speak": {
+    "translation": "يتحدث"
+  },
+  "read": {
+    "translation": "يقرأ"
+  },
+  "allow": {
+    "translation": "يسمح"
+  },
+  "add": {
+    "translation": "يضيف"
+  },
+  "spend": {
+    "translation": "ينفق"
+  },
+  "grow": {
+    "translation": "ينمو"
+  },
+  "open": {
+    "translation": "يفتح"
+  },
+  "walk": {
+    "translation": "يمشي"
+  },
+  "win": {
+    "translation": "يفوز"
+  },
+  "offer": {
+    "translation": "يعرض"
+  },
+  "remember": {
+    "translation": "يتذكر"
+  },
+  "consider": {
+    "translation": "يعتبر"
+  },
+  "appear": {
+    "translation": "يظهر"
+  },
+  "buy": {
+    "translation": "يشتري"
+  },
+  "wait": {
+    "translation": "ينتظر"
+  },
+  "serve": {
+    "translation": "يخدم"
+  },
+  "die": {
+    "translation": "يموت"
+  },
+  "send": {
+    "translation": "يرسل"
+  },
+  "build": {
+    "translation": "يبني"
+  },
+  "stay": {
+    "translation": "يبقى"
+  },
+  "fall": {
+    "translation": "يسقط"
+  },
+  "cut": {
+    "translation": "يقطع"
+  },
+  "reach": {
+    "translation": "يصل"
+  },
+  "kill": {
+    "translation": "يقتل"
+  },
+  "raise": {
+    "translation": "يرفع"
+  },
+  "pass": {
+    "translation": "يمر"
+  },
+  "sell": {
+    "translation": "يبيع"
+  },
+  "decide": {
+    "translation": "يقرر"
+  },
+  "return": {
+    "translation": "يعود"
+  },
+  "explain": {
+    "translation": "يشرح"
+  },
+  "hope": {
+    "translation": "يأمل"
+  },
+  "develop": {
+    "translation": "يطور"
+  },
+  "carry": {
+    "translation": "يحمل"
+  },
+  "break": {
+    "translation": "يكسر"
+  },
+  "receive": {
+    "translation": "يستلم"
+  },
+  "agree": {
+    "translation": "يوافق"
+  },
+  "support": {
+    "translation": "يدعم"
+  },
+  "hit": {
+    "translation": "يضرب"
+  },
+  "produce": {
+    "translation": "ينتج"
+  },
+  "eat": {
+    "translation": "يأكل"
+  },
+  "cover": {
+    "translation": "يغطي"
+  },
+  "catch": {
+    "translation": "يلتقط"
+  },
+  "draw": {
+    "translation": "يرسم"
+  },
+  "choose": {
+    "translation": "يختار"
+  },
+  "cause": {
+    "translation": "يسبب"
+  },
+  "point": {
+    "translation": "يشير"
+  },
+  "listen": {
+    "translation": "ينصت"
+  },
+  "realize": {
+    "translation": "يدرك"
+  },
+  "wish": {
+    "translation": "يتمنى"
+  },
+  "smile": {
+    "translation": "يبتسم"
+  },
+  "cry": {
+    "translation": "يبكي"
+  },
+  "sleep": {
+    "translation": "ينام"
+  },
+  "fight": {
+    "translation": "يقاتل"
+  },
+  "teach": {
+    "translation": "يدرّس"
+  },
+  "study": {
+    "translation": "يدرس"
+  },
+  "clean": {
+    "translation": "ينظف"
+  },
+  "wash": {
+    "translation": "يغسل"
+  },
+  "cook": {
+    "translation": "يطبخ"
+  },
+  "drive": {
+    "translation": "يقود"
+  },
+  "travel": {
+    "translation": "يسافر"
+  },
+  "visit": {
+    "translation": "يزور"
+  },
+  "swim": {
+    "translation": "يسبح"
+  },
+  "fly": {
+    "translation": "يطير"
+  },
+  "climb": {
+    "translation": "يتسلق"
+  },
+  "throw": {
+    "translation": "يرمي"
+  },
+  "paint": {
+    "translation": "يطلي"
+  },
+  "sing": {
+    "translation": "يغني"
+  },
+  "dance": {
+    "translation": "يرقص"
+  },
+  "laugh": {
+    "translation": "يضحك"
+  },
+  "shout": {
+    "translation": "يصرخ"
+  },
+  "whisper": {
+    "translation": "يهمس"
+  },
+  "hug": {
+    "translation": "يعانق"
+  },
+  "kiss": {
+    "translation": "يقبّل"
+  },
+  "marry": {
+    "translation": "يتزوج"
+  },
+  "save": {
+    "translation": "ينقذ"
+  },
+  "protect": {
+    "translation": "يحمي"
+  },
+  "hurt": {
+    "translation": "يؤلم"
+  },
+  "heal": {
+    "translation": "يشفي"
+  },
+  "forget": {
+    "translation": "ينسى"
+  },
+  "finish": {
+    "translation": "ينهي"
+  },
+  "complete": {
+    "translation": "يكمل"
+  },
+  "prepare": {
+    "translation": "يجهز"
+  },
+  "plan": {
+    "translation": "يخطط"
+  },
+  "manage": {
+    "translation": "يدير"
+  },
+  "control": {
+    "translation": "يتحكم"
+  },
+  "check": {
+    "translation": "يتحقق"
+  },
+  "fix": {
+    "translation": "يصلح"
+  },
+  "repair": {
+    "translation": "يصلح"
+  },
+  "close": {
+    "translation": "يغلق"
+  },
+  "push": {
+    "translation": "يدفع"
+  },
+  "pull": {
+    "translation": "يسحب"
+  },
+  "lift": {
+    "translation": "يرفع"
+  },
+  "drop": {
+    "translation": "يُسقط"
+  },
+  "pack": {
+    "translation": "يحزم"
+  },
+  "hide": {
+    "translation": "يخفي"
+  },
+  "search": {
+    "translation": "يبحث"
+  },
+  "notice": {
+    "translation": "يلاحظ"
+  },
+  "observe": {
+    "translation": "يراقب"
+  },
+  "guess": {
+    "translation": "يخمن"
+  },
+  "suppose": {
+    "translation": "يفترض"
+  },
+  "doubt": {
+    "translation": "يشك"
+  },
+  "trust": {
+    "translation": "يثق"
+  },
+  "expect": {
+    "translation": "يتوقع"
+  },
+  "imagine": {
+    "translation": "يتخيل"
+  },
+  "invent": {
+    "translation": "يخترع"
+  },
+  "discover": {
+    "translation": "يكتشف"
+  },
+  "explore": {
+    "translation": "يستكشف"
+  },
+  "describe": {
+    "translation": "يصف"
+  },
+  "discuss": {
+    "translation": "يناقش"
+  },
+  "translate": {
+    "translation": "يترجم"
+  },
+  "compare": {
+    "translation": "يقارن"
+  },
+  "measure": {
+    "translation": "يقيس"
+  },
+  "count": {
+    "translation": "يعد"
+  },
+  "calculate": {
+    "translation": "يحسب"
+  },
+  "solve": {
+    "translation": "يحل"
+  },
+  "answer": {
+    "translation": "يجيب"
+  },
+  "reply": {
+    "translation": "يرد"
+  },
+  "greet": {
+    "translation": "يحيي"
+  },
+  "introduce": {
+    "translation": "يُعرِّف"
+  },
+  "invite": {
+    "translation": "يدعو"
+  },
+  "thank": {
+    "translation": "يشكر"
+  },
+  "apologize": {
+    "translation": "يعتذر"
+  },
+  "forgive": {
+    "translation": "يسامح"
+  },
+  "promise": {
+    "translation": "يعد"
+  },
+  "refuse": {
+    "translation": "يرفض"
+  },
+  "accept": {
+    "translation": "يقبل"
+  },
+  "forbid": {
+    "translation": "يمنع"
+  },
+  "prevent": {
+    "translation": "يمنع"
+  },
+  "avoid": {
+    "translation": "يتجنب"
+  },
+  "escape": {
+    "translation": "يهرب"
+  },
+  "arrive": {
+    "translation": "يصل"
+  },
+  "enter": {
+    "translation": "يدخل"
+  },
+  "depart": {
+    "translation": "يغادر"
+  },
+  "accompany": {
+    "translation": "يرافق"
+  },
+  "guide": {
+    "translation": "يرشد"
+  },
+  "chase": {
+    "translation": "يطارد"
+  },
+  "succeed": {
+    "translation": "ينجح"
+  },
+  "fail": {
+    "translation": "يفشل"
+  },
+  "compete": {
+    "translation": "يتنافس"
+  },
+  "attempt": {
+    "translation": "يحاول"
+  },
+  "practice": {
+    "translation": "يتدرب"
+  },
+  "train": {
+    "translation": "يدرّب"
+  },
+  "exercise": {
+    "translation": "يتمرن"
+  },
+  "rest": {
+    "translation": "يستريح"
+  },
+  "relax": {
+    "translation": "يسترخي"
+  },
+  "enjoy": {
+    "translation": "يستمتع"
+  },
+  "bore": {
+    "translation": "يسئم"
+  },
+  "hate": {
+    "translation": "يكره"
+  },
+  "prefer": {
+    "translation": "يفضل"
+  },
+  "admire": {
+    "translation": "يعجب بـ"
+  },
+  "respect": {
+    "translation": "يحترم"
+  },
+  "praise": {
+    "translation": "يمدح"
+  },
+  "blame": {
+    "translation": "يلوم"
+  },
+  "criticize": {
+    "translation": "ينتقد"
+  },
+  "encourage": {
+    "translation": "يشجع"
+  },
+  "inspire": {
+    "translation": "يلهم"
+  },
+  "motivate": {
+    "translation": "يحفز"
+  },
+  "arrange": {
+    "translation": "يرتب"
+  },
+  "organize": {
+    "translation": "ينظم"
+  },
+  "collect": {
+    "translation": "يجمع"
+  },
+  "store": {
+    "translation": "يخزن"
+  },
+  "waste": {
+    "translation": "يهدر"
+  },
+  "earn": {
+    "translation": "يكسب"
+  },
+  "borrow": {
+    "translation": "يستعير"
+  },
+  "lend": {
+    "translation": "يُقرض"
+  },
+  "owe": {
+    "translation": "يدين"
+  },
+  "trade": {
+    "translation": "يتاجر"
+  },
+  "exchange": {
+    "translation": "يتبادل"
+  },
+  "provide": {
+    "translation": "يوفر"
+  },
+  "supply": {
+    "translation": "يمدّ بـ"
+  },
+  "deliver": {
+    "translation": "يوصل"
+  },
+  "transport": {
+    "translation": "ينقل"
+  },
+  "shift": {
+    "translation": "يزيح"
+  },
+  "rotate": {
+    "translation": "يدور"
+  },
+  "shake": {
+    "translation": "يهز"
+  },
+  "flow": {
+    "translation": "يتدفق"
+  },
+  "pour": {
+    "translation": "يصب"
+  },
+  "fill": {
+    "translation": "يملأ"
+  },
+  "empty": {
+    "translation": "يفرغ"
+  },
+  "lower": {
+    "translation": "يخفض"
+  },
+  "increase": {
+    "translation": "يزيد"
+  },
+  "decrease": {
+    "translation": "ينقص"
+  },
+  "expand": {
+    "translation": "يتوسع"
+  },
+  "reduce": {
+    "translation": "يقلل"
+  },
+  "improve": {
+    "translation": "يحسّن"
+  },
+  "progress": {
+    "translation": "يتقدم"
+  },
+  "advance": {
+    "translation": "يتقدم"
+  },
+  "retreat": {
+    "translation": "ينسحب"
+  },
+  "attack": {
+    "translation": "يهاجم"
+  },
+  "defend": {
+    "translation": "يدافع"
+  },
+  "guard": {
+    "translation": "يحرس"
+  },
+  "monitor": {
+    "translation": "يرصد"
+  },
+  "record": {
+    "translation": "يسجل"
+  },
+  "report": {
+    "translation": "يبلغ"
+  },
+  "announce": {
+    "translation": "يعلن"
+  },
+  "declare": {
+    "translation": "يعلن"
+  },
+  "claim": {
+    "translation": "يدّعي"
+  },
+  "argue": {
+    "translation": "يجادل"
+  },
+  "debate": {
+    "translation": "يناظر"
+  },
+  "convince": {
+    "translation": "يقنع"
+  },
+  "persuade": {
+    "translation": "يقنع"
+  },
+  "warn": {
+    "translation": "يحذر"
+  },
+  "remind": {
+    "translation": "يذكّر"
+  },
+  "advise": {
+    "translation": "ينصح"
+  },
+  "suggest": {
+    "translation": "يقترح"
+  },
+  "recommend": {
+    "translation": "يوصي"
+  },
+  "propose": {
+    "translation": "يقترح"
+  },
+  "intend": {
+    "translation": "ينوي"
+  },
+  "desire": {
+    "translation": "يتوق"
+  },
+  "aim": {
+    "translation": "يستهدف"
+  },
+  "focus": {
+    "translation": "يركز"
+  },
+  "concentrate": {
+    "translation": "يركز"
+  },
+  "attend": {
+    "translation": "يحضر"
+  },
+  "participate": {
+    "translation": "يشارك"
+  },
+  "contribute": {
+    "translation": "يساهم"
+  },
+  "donate": {
+    "translation": "يتبرع"
+  },
+  "share": {
+    "translation": "يشارك"
+  },
+  "cooperate": {
+    "translation": "يتعاون"
+  },
+  "compromise": {
+    "translation": "يتسامح"
+  },
+  "negotiate": {
+    "translation": "يتفاوض"
+  },
+  "settle": {
+    "translation": "يسوى"
+  },
+  "resolve": {
+    "translation": "يحل"
+  },
+  "install": {
+    "translation": "يثبّت"
+  },
+  "connect": {
+    "translation": "يوصل"
+  },
+  "disconnect": {
+    "translation": "يفصل"
+  },
+  "attach": {
+    "translation": "يرفق"
+  },
+  "combine": {
+    "translation": "يدمج"
+  },
+  "separate": {
+    "translation": "يفصل"
+  },
+  "divide": {
+    "translation": "يقسم"
+  },
+  "split": {
+    "translation": "يشق"
+  },
+  "merge": {
+    "translation": "يدمج"
+  },
+  "gather": {
+    "translation": "يجمع"
+  },
+  "scatter": {
+    "translation": "يوزّع"
+  },
+  "tidy": {
+    "translation": "يرتب"
+  },
+  "classify": {
+    "translation": "يصنف"
+  },
+  "label": {
+    "translation": "يسمّي"
+  },
+  "name": {
+    "translation": "يسمّي"
+  },
+  "express": {
+    "translation": "يعبر"
+  },
+  "state": {
+    "translation": "يصرح"
+  },
+  "mention": {
+    "translation": "يذكر"
+  },
+  "refer": {
+    "translation": "يشير"
+  },
+  "indicate": {
+    "translation": "يشير"
+  },
+  "imply": {
+    "translation": "يلمح"
+  },
+  "denote": {
+    "translation": "يدل على"
+  },
+  "represent": {
+    "translation": "يمثل"
+  },
+  "symbolize": {
+    "translation": "يرمز"
+  },
+  "display": {
+    "translation": "يعرض"
+  },
+  "exhibit": {
+    "translation": "يعرض"
+  },
+  "present": {
+    "translation": "يقدّم"
+  },
+  "treat": {
+    "translation": "يعالج"
+  },
+  "cure": {
+    "translation": "يشفي"
+  },
+  "diagnose": {
+    "translation": "يشخّص"
+  },
+  "prescribe": {
+    "translation": "يصف دواء"
+  },
+  "recover": {
+    "translation": "يتعافى"
+  },
+  "survive": {
+    "translation": "ينجو"
+  },
+  "bury": {
+    "translation": "يدفن"
+  },
+  "mourn": {
+    "translation": "يحزن"
+  },
+  "celebrate": {
+    "translation": "يحتفل"
+  },
+  "perform": {
+    "translation": "يؤدي"
+  },
+  "act": {
+    "translation": "يتصرف"
+  },
+  "match": {
+    "translation": "يطابق"
+  },
+  "fit": {
+    "translation": "يناسب"
+  },
+  "suit": {
+    "translation": "يناسب"
+  },
+  "belong": {
+    "translation": "ينتمي"
+  },
+  "possess": {
+    "translation": "يمتلك"
+  },
+  "contain": {
+    "translation": "يحتوي"
+  },
+  "exclude": {
+    "translation": "يستثني"
+  },
+  "involve": {
+    "translation": "يتضمن"
+  },
+  "require": {
+    "translation": "يتطلب"
+  },
+  "demand": {
+    "translation": "يطلب"
+  },
+  "request": {
+    "translation": "يطلب"
+  },
+  "order": {
+    "translation": "يأمر"
+  },
+  "command": {
+    "translation": "يأمر"
+  },
+  "instruct": {
+    "translation": "يوجّه"
+  },
+  "direct": {
+    "translation": "يوجّه"
+  },
+  "handle": {
+    "translation": "يتعامل مع"
+  },
+  "deal": {
+    "translation": "يتعامل"
+  },
+  "cope": {
+    "translation": "يتأقلم"
+  },
+  "adapt": {
+    "translation": "يتكيف"
+  },
+  "adjust": {
+    "translation": "يضبط"
+  },
+  "modify": {
+    "translation": "يعدّل"
+  },
+  "alter": {
+    "translation": "يغيّر"
+  },
+  "vary": {
+    "translation": "يتفاوت"
+  },
+  "differ": {
+    "translation": "يختلف"
+  },
+  "resemble": {
+    "translation": "يشبه"
+  },
+  "contrast": {
+    "translation": "يقارن"
+  },
+  "distinguish": {
+    "translation": "يميز"
+  },
+  "differentiate": {
+    "translation": "يميز"
+  },
+  "identify": {
+    "translation": "يحدد"
+  },
+  "recognize": {
+    "translation": "يعرف"
+  },
+  "determine": {
+    "translation": "يحدد"
+  },
+  "define": {
+    "translation": "يعرّف"
+  },
+  "specify": {
+    "translation": "يحدد"
+  },
+  "clarify": {
+    "translation": "يوضّح"
+  },
+  "illustrate": {
+    "translation": "يوضّح"
+  },
+  "demonstrate": {
+    "translation": "يبرهن"
+  },
+  "prove": {
+    "translation": "يثبت"
+  },
+  "confirm": {
+    "translation": "يؤكد"
+  },
+  "verify": {
+    "translation": "يتحقق"
+  },
+  "validate": {
+    "translation": "يصادق"
+  },
+  "examine": {
+    "translation": "يفحص"
+  },
+  "inspect": {
+    "translation": "يتفقّد"
+  },
+  "investigate": {
+    "translation": "يحقق"
+  },
+  "research": {
+    "translation": "يبحث"
+  },
+  "analyze": {
+    "translation": "يحلل"
+  },
+  "evaluate": {
+    "translation": "يقيّم"
+  },
+  "assess": {
+    "translation": "يقيّم"
+  },
+  "judge": {
+    "translation": "يحكم"
+  },
+  "estimate": {
+    "translation": "يقدّر"
+  },
+  "compute": {
+    "translation": "يحسب"
+  },
+  "figure": {
+    "translation": "يحسب"
+  },
+  "address": {
+    "translation": "يعالج"
+  },
+  "last": {
+    "translation": "أخير"
+  },
+  "long": {
+    "translation": "طويل"
+  },
+  "great": {
+    "translation": "عظيم"
+  },
+  "little": {
+    "translation": "صغير"
+  },
+  "old": {
+    "translation": "قديم / كبير السن"
+  },
+  "big": {
+    "translation": "كبير"
+  },
+  "high": {
+    "translation": "عالٍ"
+  },
+  "different": {
+    "translation": "مختلف"
+  },
+  "small": {
+    "translation": "صغير"
+  },
+  "large": {
+    "translation": "كبير"
+  },
+  "next": {
+    "translation": "التالي"
+  },
+  "young": {
+    "translation": "شاب"
+  },
+  "important": {
+    "translation": "مهم"
+  },
+  "public": {
+    "translation": "عام"
+  },
+  "bad": {
+    "translation": "سيئ"
+  },
+  "able": {
+    "translation": "قادر"
+  },
+  "three": {
+    "translation": "ثلاثة"
+  },
+  "four": {
+    "translation": "أربعة"
+  },
+  "five": {
+    "translation": "خمسة"
+  },
+  "six": {
+    "translation": "ستة"
+  },
+  "seven": {
+    "translation": "سبعة"
+  },
+  "eight": {
+    "translation": "ثمانية"
+  },
+  "nine": {
+    "translation": "تسعة"
+  },
+  "ten": {
+    "translation": "عشرة"
+  },
+  "eleven": {
+    "translation": "أحد عشر"
+  },
+  "twelve": {
+    "translation": "اثنا عشر"
+  },
+  "thirteen": {
+    "translation": "ثلاثة عشر"
+  },
+  "fourteen": {
+    "translation": "أربعة عشر"
+  },
+  "fifteen": {
+    "translation": "خمسة عشر"
+  },
+  "sixteen": {
+    "translation": "ستة عشر"
+  },
+  "seventeen": {
+    "translation": "سبعة عشر"
+  },
+  "eighteen": {
+    "translation": "ثمانية عشر"
+  },
+  "nineteen": {
+    "translation": "تسعة عشر"
+  },
+  "twenty": {
+    "translation": "عشرون"
+  },
+  "thirty": {
+    "translation": "ثلاثون"
+  },
+  "forty": {
+    "translation": "أربعون"
+  },
+  "fifty": {
+    "translation": "خمسون"
+  },
+  "sixty": {
+    "translation": "ستون"
+  },
+  "seventy": {
+    "translation": "سبعون"
+  },
+  "eighty": {
+    "translation": "ثمانون"
+  },
+  "ninety": {
+    "translation": "تسعون"
+  },
+  "hundred": {
+    "translation": "مائة"
+  },
+  "thousand": {
+    "translation": "ألف"
+  },
+  "million": {
+    "translation": "مليون"
+  },
+  "second": {
+    "translation": "ثاني / ثانية"
+  },
+  "third": {
+    "translation": "ثالث"
+  },
+  "red": {
+    "translation": "أحمر"
+  },
+  "blue": {
+    "translation": "أزرق"
+  },
+  "green": {
+    "translation": "أخضر"
+  },
+  "yellow": {
+    "translation": "أصفر"
+  },
+  "black": {
+    "translation": "أسود"
+  },
+  "white": {
+    "translation": "أبيض"
+  },
+  "orange": {
+    "translation": "برتقالي"
+  },
+  "purple": {
+    "translation": "بنفسجي"
+  },
+  "pink": {
+    "translation": "وردي"
+  },
+  "brown": {
+    "translation": "بني"
+  },
+  "gray": {
+    "translation": "رمادي"
+  },
+  "gold": {
+    "translation": "ذهبي"
+  },
+  "silver": {
+    "translation": "فضي"
+  },
+  "night": {
+    "translation": "ليل"
+  },
+  "morning": {
+    "translation": "صباح"
+  },
+  "afternoon": {
+    "translation": "بعد الظهر"
+  },
+  "evening": {
+    "translation": "مساء"
+  },
+  "week": {
+    "translation": "أسبوع"
+  },
+  "month": {
+    "translation": "شهر"
+  },
+  "hour": {
+    "translation": "ساعة"
+  },
+  "minute": {
+    "translation": "دقيقة"
+  },
+  "family": {
+    "translation": "عائلة"
+  },
+  "father": {
+    "translation": "أب"
+  },
+  "mother": {
+    "translation": "أم"
+  },
+  "son": {
+    "translation": "ابن"
+  },
+  "daughter": {
+    "translation": "ابنة"
+  },
+  "brother": {
+    "translation": "أخ"
+  },
+  "sister": {
+    "translation": "أخت"
+  },
+  "grandfather": {
+    "translation": "جد"
+  },
+  "grandmother": {
+    "translation": "جدة"
+  },
+  "uncle": {
+    "translation": "عم / خال"
+  },
+  "aunt": {
+    "translation": "عمة / خالة"
+  },
+  "cousin": {
+    "translation": "ابن العم"
+  },
+  "parents": {
+    "translation": "الوالدان"
+  },
+  "child": {
+    "translation": "طفل"
+  },
+  "children": {
+    "translation": "أطفال"
+  },
+  "baby": {
+    "translation": "رضيع"
+  },
+  "husband": {
+    "translation": "زوج"
+  },
+  "wife": {
+    "translation": "زوجة"
+  },
+  "head": {
+    "translation": "رأس"
+  },
+  "face": {
+    "translation": "وجه"
+  },
+  "eye": {
+    "translation": "عين"
+  },
+  "ear": {
+    "translation": "أذن"
+  },
+  "nose": {
+    "translation": "أنف"
+  },
+  "mouth": {
+    "translation": "فم"
+  },
+  "tooth": {
+    "translation": "سن"
+  },
+  "tongue": {
+    "translation": "لسان"
+  },
+  "hair": {
+    "translation": "شعر"
+  },
+  "neck": {
+    "translation": "رقبة"
+  },
+  "shoulder": {
+    "translation": "كتف"
+  },
+  "arm": {
+    "translation": "ذراع"
+  },
+  "hand": {
+    "translation": "يد"
+  },
+  "finger": {
+    "translation": "إصبع"
+  },
+  "chest": {
+    "translation": "صدر"
+  },
+  "stomach": {
+    "translation": "معدة"
+  },
+  "leg": {
+    "translation": "ساق"
+  },
+  "knee": {
+    "translation": "ركبة"
+  },
+  "foot": {
+    "translation": "قدم"
+  },
+  "heart": {
+    "translation": "قلب"
+  },
+  "blood": {
+    "translation": "دم"
+  },
+  "bone": {
+    "translation": "عظام"
+  },
+  "skin": {
+    "translation": "جلد"
+  },
+  "brain": {
+    "translation": "مخ"
+  },
+  "food": {
+    "translation": "طعام"
+  },
+  "water": {
+    "translation": "ماء"
+  },
+  "bread": {
+    "translation": "خبز"
+  },
+  "rice": {
+    "translation": "أرز"
+  },
+  "meat": {
+    "translation": "لحم"
+  },
+  "fish": {
+    "translation": "سمك"
+  },
+  "chicken": {
+    "translation": "دجاج"
+  },
+  "egg": {
+    "translation": "بيضة"
+  },
+  "milk": {
+    "translation": "حليب"
+  },
+  "cheese": {
+    "translation": "جبن"
+  },
+  "butter": {
+    "translation": "زبدة"
+  },
+  "sugar": {
+    "translation": "سكر"
+  },
+  "salt": {
+    "translation": "ملح"
+  },
+  "oil": {
+    "translation": "زيت"
+  },
+  "tea": {
+    "translation": "شاي"
+  },
+  "coffee": {
+    "translation": "قهوة"
+  },
+  "juice": {
+    "translation": "عصير"
+  },
+  "soup": {
+    "translation": "شوربة"
+  },
+  "salad": {
+    "translation": "سلطة"
+  },
+  "fruit": {
+    "translation": "فاكهة"
+  },
+  "apple": {
+    "translation": "تفاحة"
+  },
+  "banana": {
+    "translation": "موزة"
+  },
+  "grape": {
+    "translation": "عنب"
+  },
+  "vegetable": {
+    "translation": "خضار"
+  },
+  "potato": {
+    "translation": "بطاطا"
+  },
+  "tomato": {
+    "translation": "طماطم"
+  },
+  "onion": {
+    "translation": "بصل"
+  },
+  "carrot": {
+    "translation": "جزر"
+  },
+  "home": {
+    "translation": "منزل"
+  },
+  "house": {
+    "translation": "بيت"
+  },
+  "room": {
+    "translation": "غرفة"
+  },
+  "door": {
+    "translation": "باب"
+  },
+  "window": {
+    "translation": "نافذة"
+  },
+  "wall": {
+    "translation": "جدار"
+  },
+  "floor": {
+    "translation": "أرضية"
+  },
+  "ceiling": {
+    "translation": "سقف"
+  },
+  "kitchen": {
+    "translation": "مطبخ"
+  },
+  "bathroom": {
+    "translation": "حمّام"
+  },
+  "bedroom": {
+    "translation": "غرفة نوم"
+  },
+  "bed": {
+    "translation": "سرير"
+  },
+  "table": {
+    "translation": "طاولة"
+  },
+  "chair": {
+    "translation": "كرسي"
+  },
+  "sofa": {
+    "translation": "أريكة"
+  },
+  "lamp": {
+    "translation": "مصباح"
+  },
+  "key": {
+    "translation": "مفتاح"
+  },
+  "roof": {
+    "translation": "سطح"
+  },
+  "garden": {
+    "translation": "حديقة"
+  },
+  "school": {
+    "translation": "مدرسة"
+  },
+  "student": {
+    "translation": "طالب"
+  },
+  "teacher": {
+    "translation": "معلم"
+  },
+  "class": {
+    "translation": "صف / درس"
+  },
+  "lesson": {
+    "translation": "درس"
+  },
+  "book": {
+    "translation": "كتاب"
+  },
+  "pen": {
+    "translation": "قلم"
+  },
+  "paper": {
+    "translation": "ورق"
+  },
+  "notebook": {
+    "translation": "دفتر"
+  },
+  "exam": {
+    "translation": "امتحان"
+  },
+  "test": {
+    "translation": "اختبار"
+  },
+  "question": {
+    "translation": "سؤال"
+  },
+  "knowledge": {
+    "translation": "معرفة"
+  },
+  "university": {
+    "translation": "جامعة"
+  },
+  "college": {
+    "translation": "كلية"
+  },
+  "office": {
+    "translation": "مكتب"
+  },
+  "job": {
+    "translation": "وظيفة"
+  },
+  "boss": {
+    "translation": "موظف / رئيس"
+  },
+  "company": {
+    "translation": "شركة"
+  },
+  "money": {
+    "translation": "مال / فلوس"
+  },
+  "price": {
+    "translation": "سعر"
+  },
+  "cost": {
+    "translation": "تكلفة"
+  },
+  "city": {
+    "translation": "مدينة"
+  },
+  "town": {
+    "translation": "بلدة"
+  },
+  "country": {
+    "translation": "بلد"
+  },
+  "village": {
+    "translation": "قرية"
+  },
+  "street": {
+    "translation": "شارع"
+  },
+  "road": {
+    "translation": "طريق"
+  },
+  "place": {
+    "translation": "مكان"
+  },
+  "market": {
+    "translation": "سوق"
+  },
+  "shop": {
+    "translation": "متجر"
+  },
+  "hospital": {
+    "translation": "مستشفى"
+  },
+  "bank": {
+    "translation": "مصرف"
+  },
+  "hotel": {
+    "translation": "فندق"
+  },
+  "restaurant": {
+    "translation": "مطعم"
+  },
+  "park": {
+    "translation": "حديقة عامة"
+  },
+  "museum": {
+    "translation": "متحف"
+  },
+  "church": {
+    "translation": "كنيسة"
+  },
+  "mosque": {
+    "translation": "مسجد"
+  },
+  "airport": {
+    "translation": "مطار"
+  },
+  "station": {
+    "translation": "محطة"
+  },
+  "car": {
+    "translation": "سيارة"
+  },
+  "bus": {
+    "translation": "حافلة"
+  },
+  "plane": {
+    "translation": "طائرة"
+  },
+  "ship": {
+    "translation": "سفينة"
+  },
+  "boat": {
+    "translation": "قارب"
+  },
+  "bicycle": {
+    "translation": "دراجة"
+  },
+  "taxi": {
+    "translation": "سيارة أجرة"
+  },
+  "ticket": {
+    "translation": "تذكرة"
+  },
+  "nature": {
+    "translation": "طبيعة"
+  },
+  "sun": {
+    "translation": "شمس"
+  },
+  "moon": {
+    "translation": "قمر"
+  },
+  "star": {
+    "translation": "نجم"
+  },
+  "sky": {
+    "translation": "سماء"
+  },
+  "cloud": {
+    "translation": "سحابة"
+  },
+  "rain": {
+    "translation": "مطر"
+  },
+  "snow": {
+    "translation": "ثلج"
+  },
+  "wind": {
+    "translation": "ريح"
+  },
+  "fire": {
+    "translation": "نار"
+  },
+  "earth": {
+    "translation": "أرض"
+  },
+  "sea": {
+    "translation": "بحر"
+  },
+  "river": {
+    "translation": "نهر"
+  },
+  "mountain": {
+    "translation": "جبل"
+  },
+  "tree": {
+    "translation": "شجرة"
+  },
+  "flower": {
+    "translation": "زهرة"
+  },
+  "grass": {
+    "translation": "عشب"
+  },
+  "forest": {
+    "translation": "غابة"
+  },
+  "animal": {
+    "translation": "حيوان"
+  },
+  "bird": {
+    "translation": "طائر"
+  },
+  "dog": {
+    "translation": "كلب"
+  },
+  "cat": {
+    "translation": "قطة"
+  },
+  "horse": {
+    "translation": "حصان"
+  },
+  "thing": {
+    "translation": "شيء"
+  },
+  "object": {
+    "translation": "غرض"
+  },
+  "piece": {
+    "translation": "قطعة"
+  },
+  "part": {
+    "translation": "جزء"
+  },
+  "group": {
+    "translation": "مجموعة"
+  },
+  "team": {
+    "translation": "فريق"
+  },
+  "list": {
+    "translation": "قائمة"
+  },
+  "box": {
+    "translation": "صندوق"
+  },
+  "bag": {
+    "translation": "حقيبة"
+  },
+  "bottle": {
+    "translation": "زجاجة"
+  },
+  "cup": {
+    "translation": "كوب"
+  },
+  "glass": {
+    "translation": "كوب / زجاج"
+  },
+  "plate": {
+    "translation": "طبق"
+  },
+  "knife": {
+    "translation": "سكين"
+  },
+  "fork": {
+    "translation": "شوكة"
+  },
+  "spoon": {
+    "translation": "ملعقة"
+  },
+  "clock": {
+    "translation": "ساعة حائط"
+  },
+  "phone": {
+    "translation": "هاتف"
+  },
+  "computer": {
+    "translation": "حاسوب"
+  },
+  "television": {
+    "translation": "تلفاز"
+  },
+  "radio": {
+    "translation": "راديو"
+  },
+  "newspaper": {
+    "translation": "جريدة"
+  },
+  "picture": {
+    "translation": "صورة"
+  },
+  "photo": {
+    "translation": "صورة فوتوغرافية"
+  },
+  "video": {
+    "translation": "فيديو"
+  },
+  "music": {
+    "translation": "موسيقى"
+  },
+  "song": {
+    "translation": "أغنية"
+  },
+  "game": {
+    "translation": "لعبة"
+  },
+  "toy": {
+    "translation": "لعبة أطفال"
+  },
+  "gift": {
+    "translation": "هدية"
+  },
+  "clothes": {
+    "translation": "ملابس"
+  },
+  "shirt": {
+    "translation": "قميص"
+  },
+  "dress": {
+    "translation": "فستان"
+  },
+  "pants": {
+    "translation": "بنطال"
+  },
+  "shoes": {
+    "translation": "حذاء"
+  },
+  "hat": {
+    "translation": "قبعة"
+  },
+  "coat": {
+    "translation": "معطف"
+  },
+  "sock": {
+    "translation": "جورب"
+  },
+  "pocket": {
+    "translation": "جيب"
+  },
+  "happy": {
+    "translation": "سعيد"
+  },
+  "sad": {
+    "translation": "حزين"
+  },
+  "angry": {
+    "translation": "غاضب"
+  },
+  "afraid": {
+    "translation": "خائف"
+  },
+  "tired": {
+    "translation": "متعب"
+  },
+  "hungry": {
+    "translation": "جائع"
+  },
+  "thirsty": {
+    "translation": "عطشان"
+  },
+  "sick": {
+    "translation": "مريض"
+  },
+  "strong": {
+    "translation": "قوي"
+  },
+  "weak": {
+    "translation": "ضعيف"
+  },
+  "fast": {
+    "translation": "سريع"
+  },
+  "slow": {
+    "translation": "بطيء"
+  },
+  "hot": {
+    "translation": "حار"
+  },
+  "cold": {
+    "translation": "بارد"
+  },
+  "warm": {
+    "translation": "دافئ"
+  },
+  "cool": {
+    "translation": "بارد / معتدل"
+  },
+  "beautiful": {
+    "translation": "جميل"
+  },
+  "ugly": {
+    "translation": "قبيح"
+  },
+  "easy": {
+    "translation": "سهل"
+  },
+  "hard": {
+    "translation": "صعب"
+  },
+  "difficult": {
+    "translation": "صعب"
+  },
+  "simple": {
+    "translation": "بسيط"
+  },
+  "dirty": {
+    "translation": "متسخ"
+  },
+  "full": {
+    "translation": "ممتلئ"
+  },
+  "closed": {
+    "translation": "مغلق"
+  },
+  "rich": {
+    "translation": "غني"
+  },
+  "poor": {
+    "translation": "فقير"
+  },
+  "busy": {
+    "translation": "مشغول"
+  },
+  "free": {
+    "translation": "حر / مجاني"
+  },
+  "ready": {
+    "translation": "جاهز"
+  },
+  "safe": {
+    "translation": "آمن"
+  },
+  "dangerous": {
+    "translation": "خطير"
+  },
+  "friend": {
+    "translation": "صديق"
+  },
+  "neighbor": {
+    "translation": "جار"
+  },
+  "guest": {
+    "translation": "ضيف"
+  },
+  "stranger": {
+    "translation": "غريب"
+  },
+  "man": {
+    "translation": "رجل"
+  },
+  "woman": {
+    "translation": "امرأة"
+  },
+  "boy": {
+    "translation": "ولد"
+  },
+  "girl": {
+    "translation": "بنت"
+  },
+  "person": {
+    "translation": "شخص"
+  },
+  "body": {
+    "translation": "جسد"
+  },
+  "life": {
+    "translation": "حياة"
+  },
+  "death": {
+    "translation": "موت"
+  },
+  "world": {
+    "translation": "عالم"
+  },
+  "air": {
+    "translation": "هواء"
+  },
+  "light": {
+    "translation": "ضوء"
+  },
+  "dark": {
+    "translation": "ظلام"
+  },
+  "sunday": {
+    "translation": "الأحد"
+  },
+  "monday": {
+    "translation": "الاثنين"
+  },
+  "tuesday": {
+    "translation": "الثلاثاء"
+  },
+  "wednesday": {
+    "translation": "الأربعاء"
+  },
+  "thursday": {
+    "translation": "الخميس"
+  },
+  "friday": {
+    "translation": "الجمعة"
+  },
+  "saturday": {
+    "translation": "السبت"
+  },
+  "weekend": {
+    "translation": "عطلة نهاية الأسبوع"
+  },
+  "spring": {
+    "translation": "ربيع"
+  },
+  "summer": {
+    "translation": "صيف"
+  },
+  "autumn": {
+    "translation": "خريف"
+  },
+  "winter": {
+    "translation": "شتاء"
+  },
+  "january": {
+    "translation": "يناير"
+  },
+  "february": {
+    "translation": "فبراير"
+  },
+  "march": {
+    "translation": "مارس"
+  },
+  "april": {
+    "translation": "أبريل"
+  },
+  "may": {
+    "translation": "مايو"
+  },
+  "june": {
+    "translation": "يونيو"
+  },
+  "july": {
+    "translation": "يوليو"
+  },
+  "august": {
+    "translation": "أغسطس"
+  },
+  "september": {
+    "translation": "سبتمبر"
+  },
+  "october": {
+    "translation": "أكتوبر"
+  },
+  "november": {
+    "translation": "نوفمبر"
+  },
+  "december": {
+    "translation": "ديسمبر"
+  },
+  "doctor": {
+    "translation": "طبيب"
+  },
+  "nurse": {
+    "translation": "ممرضة"
+  },
+  "dentist": {
+    "translation": "طبيب أسنان"
+  },
+  "surgeon": {
+    "translation": "جراح"
+  },
+  "pharmacist": {
+    "translation": "صيدلي"
+  },
+  "patient": {
+    "translation": "مريض"
+  },
+  "lawyer": {
+    "translation": "محامٍ"
+  },
+  "police": {
+    "translation": "شرطة"
+  },
+  "officer": {
+    "translation": "ضابط"
+  },
+  "soldier": {
+    "translation": "جندي"
+  },
+  "captain": {
+    "translation": "قبطان"
+  },
+  "sailor": {
+    "translation": "بحّار"
+  },
+  "pilot": {
+    "translation": "طيّار"
+  },
+  "driver": {
+    "translation": "سائق"
+  },
+  "artist": {
+    "translation": "فنان"
+  },
+  "painter": {
+    "translation": "رسام"
+  },
+  "sculptor": {
+    "translation": "نحات"
+  },
+  "photographer": {
+    "translation": "مصوّر"
+  },
+  "designer": {
+    "translation": "مصمم"
+  },
+  "architect": {
+    "translation": "معماري"
+  },
+  "engineer": {
+    "translation": "مهندس"
+  },
+  "mechanic": {
+    "translation": "ميكانيكي"
+  },
+  "technician": {
+    "translation": "فني"
+  },
+  "electrician": {
+    "translation": "كهربائي"
+  },
+  "plumber": {
+    "translation": "سبّاك"
+  },
+  "carpenter": {
+    "translation": "نجّار"
+  },
+  "mason": {
+    "translation": "بنّاء"
+  },
+  "welder": {
+    "translation": "لحّام"
+  },
+  "gardener": {
+    "translation": "بستاني"
+  },
+  "farmer": {
+    "translation": "مزارع"
+  },
+  "hunter": {
+    "translation": "صياد"
+  },
+  "fisherman": {
+    "translation": "صياد سمك"
+  },
+  "shepherd": {
+    "translation": "راعي"
+  },
+  "worker": {
+    "translation": "عامل"
+  },
+  "laborer": {
+    "translation": "عامل يدوي"
+  },
+  "employee": {
+    "translation": "موظف"
+  },
+  "employer": {
+    "translation": "صاحب عمل"
+  },
+  "manager": {
+    "translation": "مدير"
+  },
+  "director": {
+    "translation": "مدير / مخرج"
+  },
+  "clerk": {
+    "translation": "موظف إداري"
+  },
+  "cashier": {
+    "translation": "أمين صندوق"
+  },
+  "seller": {
+    "translation": "بائع"
+  },
+  "buyer": {
+    "translation": "مشتري"
+  },
+  "customer": {
+    "translation": "زبون"
+  },
+  "client": {
+    "translation": "عميل"
+  },
+  "host": {
+    "translation": "مضيف"
+  },
+  "enemy": {
+    "translation": "عدو"
+  },
+  "rival": {
+    "translation": "منافس"
+  },
+  "partner": {
+    "translation": "شريك"
+  },
+  "ally": {
+    "translation": "حليف"
+  },
+  "coach": {
+    "translation": "مدرب"
+  },
+  "player": {
+    "translation": "لاعب"
+  },
+  "athlete": {
+    "translation": "رياضي"
+  },
+  "champion": {
+    "translation": "بطل"
+  },
+  "winner": {
+    "translation": "الفائز"
+  },
+  "loser": {
+    "translation": "الخاسر"
+  },
+  "referee": {
+    "translation": "حكم"
+  },
+  "singer": {
+    "translation": "مغنٍّ"
+  },
+  "musician": {
+    "translation": "موسيقي"
+  },
+  "dancer": {
+    "translation": "راقص"
+  },
+  "actor": {
+    "translation": "ممثل"
+  },
+  "author": {
+    "translation": "مؤلف"
+  },
+  "poet": {
+    "translation": "شاعر"
+  },
+  "journalist": {
+    "translation": "صحفي"
+  },
+  "idea": {
+    "translation": "فكرة"
+  },
+  "reason": {
+    "translation": "سبب"
+  },
+  "problem": {
+    "translation": "مشكلة"
+  },
+  "solution": {
+    "translation": "حل"
+  },
+  "result": {
+    "translation": "نتيجة"
+  },
+  "effect": {
+    "translation": "أثر"
+  },
+  "purpose": {
+    "translation": "غرض"
+  },
+  "meaning": {
+    "translation": "معنى"
+  },
+  "importance": {
+    "translation": "أهمية"
+  },
+  "value": {
+    "translation": "قيمة"
+  },
+  "quality": {
+    "translation": "جودة"
+  },
+  "quantity": {
+    "translation": "كمية"
+  },
+  "number": {
+    "translation": "رقم"
+  },
+  "amount": {
+    "translation": "مبلغ"
+  },
+  "size": {
+    "translation": "حجم"
+  },
+  "length": {
+    "translation": "طول"
+  },
+  "width": {
+    "translation": "عرض"
+  },
+  "height": {
+    "translation": "ارتفاع"
+  },
+  "weight": {
+    "translation": "وزن"
+  },
+  "speed": {
+    "translation": "سرعة"
+  },
+  "distance": {
+    "translation": "مسافة"
+  },
+  "area": {
+    "translation": "مساحة"
+  },
+  "difference": {
+    "translation": "فرق"
+  },
+  "similarity": {
+    "translation": "تشابه"
+  },
+  "relation": {
+    "translation": "علاقة"
+  },
+  "connection": {
+    "translation": "صلة"
+  },
+  "situation": {
+    "translation": "حالة"
+  },
+  "condition": {
+    "translation": "شرط"
+  },
+  "position": {
+    "translation": "موضع"
+  },
+  "location": {
+    "translation": "موقع"
+  },
+  "direction": {
+    "translation": "اتجاه"
+  },
+  "movement": {
+    "translation": "حركة"
+  },
+  "action": {
+    "translation": "فعل"
+  },
+  "activity": {
+    "translation": "نشاط"
+  },
+  "event": {
+    "translation": "حدث"
+  },
+  "experience": {
+    "translation": "تجربة"
+  },
+  "memory": {
+    "translation": "ذاكرة"
+  },
+  "thought": {
+    "translation": "فكرة"
+  },
+  "dream": {
+    "translation": "حلم"
+  },
+  "fear": {
+    "translation": "خوف"
+  },
+  "love": {
+    "translation": "حب"
+  },
+  "joy": {
+    "translation": "فرح"
+  },
+  "sorrow": {
+    "translation": "حزن"
+  },
+  "anger": {
+    "translation": "غضب"
+  },
+  "peace": {
+    "translation": "سلام"
+  },
+  "war": {
+    "translation": "حرب"
+  },
+  "power": {
+    "translation": "قوة"
+  },
+  "force": {
+    "translation": "قوة"
+  },
+  "energy": {
+    "translation": "طاقة"
+  },
+  "ability": {
+    "translation": "قدرة"
+  },
+  "skill": {
+    "translation": "مهارة"
+  },
+  "talent": {
+    "translation": "موهبة"
+  },
+  "intelligence": {
+    "translation": "ذكاء"
+  },
+  "wisdom": {
+    "translation": "حكمة"
+  },
+  "truth": {
+    "translation": "حقيقة"
+  },
+  "lie": {
+    "translation": "كذبة"
+  },
+  "fact": {
+    "translation": "حقيقة"
+  },
+  "fiction": {
+    "translation": "خيال"
+  },
+  "story": {
+    "translation": "قصة"
+  },
+  "history": {
+    "translation": "تاريخ"
+  },
+  "news": {
+    "translation": "أخبار"
+  },
+  "message": {
+    "translation": "رسالة"
+  },
+  "letter": {
+    "translation": "رسالة"
+  },
+  "word": {
+    "translation": "كلمة"
+  },
+  "sentence": {
+    "translation": "جملة"
+  },
+  "language": {
+    "translation": "لغة"
+  },
+  "translation": {
+    "translation": "ترجمة"
+  },
+  "method": {
+    "translation": "طريقة"
+  },
+  "style": {
+    "translation": "أسلوب"
+  },
+  "form": {
+    "translation": "شكل"
+  },
+  "kind": {
+    "translation": "نوع"
+  },
+  "type": {
+    "translation": "نوع"
+  },
+  "example": {
+    "translation": "مثال"
+  },
+  "sample": {
+    "translation": "عينة"
+  },
+  "whole": {
+    "translation": "كل"
+  },
+  "half": {
+    "translation": "نصف"
+  },
+  "bit": {
+    "translation": "قليل"
+  },
+  "couple": {
+    "translation": "زوج"
+  },
+  "series": {
+    "translation": "سلسلة"
+  },
+  "collection": {
+    "translation": "مجموعة"
+  },
+  "stack": {
+    "translation": "كومة"
+  },
+  "pile": {
+    "translation": "كومة"
+  },
+  "bunch": {
+    "translation": "عنقود"
+  },
+  "crowd": {
+    "translation": "حشد"
+  },
+  "party": {
+    "translation": "حفلة"
+  },
+  "meeting": {
+    "translation": "اجتماع"
+  },
+  "race": {
+    "translation": "سباق"
+  },
+  "contest": {
+    "translation": "مسابقة"
+  },
+  "prize": {
+    "translation": "جائزة"
+  },
+  "award": {
+    "translation": "جائزة"
+  },
+  "medal": {
+    "translation": "ميدالية"
+  },
+  "score": {
+    "translation": "نقاط"
+  },
+  "line": {
+    "translation": "خط"
+  },
+  "circle": {
+    "translation": "دائرة"
+  },
+  "square": {
+    "translation": "مربع"
+  },
+  "triangle": {
+    "translation": "مثلث"
+  },
+  "edge": {
+    "translation": "حافة"
+  },
+  "corner": {
+    "translation": "زاوية"
+  },
+  "center": {
+    "translation": "مركز"
+  },
+  "middle": {
+    "translation": "وسط"
+  },
+  "top": {
+    "translation": "قمة"
+  },
+  "bottom": {
+    "translation": "قاع"
+  },
+  "side": {
+    "translation": "جانب"
+  },
+  "front": {
+    "translation": "أمام"
+  },
+  "end": {
+    "translation": "نهاية"
+  },
+  "beginning": {
+    "translation": "بداية"
+  },
+  "space": {
+    "translation": "مساحة"
+  },
+  "zone": {
+    "translation": "منطقة"
+  },
+  "region": {
+    "translation": "منطقة"
+  },
+  "land": {
+    "translation": "أرض"
+  },
+  "ground": {
+    "translation": "تراب"
+  },
+  "soil": {
+    "translation": "تربة"
+  },
+  "sand": {
+    "translation": "رمل"
+  },
+  "rock": {
+    "translation": "صخرة"
+  },
+  "stone": {
+    "translation": "حجر"
+  },
+  "metal": {
+    "translation": "معدن"
+  },
+  "wood": {
+    "translation": "خشب"
+  },
+  "plastic": {
+    "translation": "بلاستيك"
+  },
+  "cloth": {
+    "translation": "قماش"
+  },
+  "thread": {
+    "translation": "خيط"
+  },
+  "rope": {
+    "translation": "حبل"
+  },
+  "wire": {
+    "translation": "سلك"
+  },
+  "nail": {
+    "translation": "مسمار"
+  },
+  "hammer": {
+    "translation": "مطرقة"
+  },
+  "tool": {
+    "translation": "أداة"
+  },
+  "machine": {
+    "translation": "آلة"
+  },
+  "device": {
+    "translation": "جهاز"
+  },
+  "engine": {
+    "translation": "محرك"
+  },
+  "wheel": {
+    "translation": "عجلة"
+  },
+  "gate": {
+    "translation": "بوابة"
+  },
+  "stair": {
+    "translation": "درج"
+  },
+  "ladder": {
+    "translation": "سلم"
+  },
+  "bridge": {
+    "translation": "جسر"
+  },
+  "tower": {
+    "translation": "برج"
+  },
+  "building": {
+    "translation": "مبنى"
+  },
+  "apartment": {
+    "translation": "شقّة"
+  },
+  "level": {
+    "translation": "مستوى"
+  },
+  "stage": {
+    "translation": "مرحلة"
+  },
+  "phase": {
+    "translation": "مرحلة"
+  },
+  "step": {
+    "translation": "خطوة"
+  },
+  "path": {
+    "translation": "مسار"
+  },
+  "route": {
+    "translation": "طريق"
+  },
+  "track": {
+    "translation": "مسار"
+  },
+  "trail": {
+    "translation": "أثر"
+  },
+  "glad": {
+    "translation": "مسرور"
+  },
+  "proud": {
+    "translation": "فخور"
+  },
+  "shy": {
+    "translation": "خجول"
+  },
+  "calm": {
+    "translation": "هادئ"
+  },
+  "nervous": {
+    "translation": "متوتر"
+  },
+  "excited": {
+    "translation": "متحمس"
+  },
+  "bored": {
+    "translation": "ضجران"
+  },
+  "lonely": {
+    "translation": "وحيد"
+  },
+  "friendly": {
+    "translation": "ودود"
+  },
+  "cruel": {
+    "translation": "قاسٍ"
+  },
+  "polite": {
+    "translation": "مؤدب"
+  },
+  "rude": {
+    "translation": "وقح"
+  },
+  "honest": {
+    "translation": "صادق"
+  },
+  "brave": {
+    "translation": "شجاع"
+  },
+  "coward": {
+    "translation": "جبان"
+  },
+  "lazy": {
+    "translation": "كسول"
+  },
+  "active": {
+    "translation": "نشيط"
+  },
+  "careful": {
+    "translation": "حذر"
+  },
+  "careless": {
+    "translation": "مهمل"
+  },
+  "quiet": {
+    "translation": "هادئ"
+  },
+  "loud": {
+    "translation": "صاخب"
+  },
+  "bright": {
+    "translation": "ساطع"
+  },
+  "fresh": {
+    "translation": "طازج"
+  },
+  "dry": {
+    "translation": "جاف"
+  },
+  "wet": {
+    "translation": "مبلل"
+  },
+  "heavy": {
+    "translation": "ثقيل"
+  },
+  "deep": {
+    "translation": "عميق"
+  },
+  "shallow": {
+    "translation": "ضحل"
+  },
+  "wide": {
+    "translation": "عريض"
+  },
+  "narrow": {
+    "translation": "ضيق"
+  },
+  "thick": {
+    "translation": "سميك"
+  },
+  "thin": {
+    "translation": "نحيف"
+  },
+  "sharp": {
+    "translation": "حاد"
+  },
+  "sweet": {
+    "translation": "حلو"
+  },
+  "sour": {
+    "translation": "حامض"
+  },
+  "bitter": {
+    "translation": "مر"
+  },
+  "salty": {
+    "translation": "مالح"
+  },
+  "spicy": {
+    "translation": "حار"
+  },
+  "tasty": {
+    "translation": "لذيذ"
+  },
+  "delicious": {
+    "translation": "شهي"
+  },
+  "cheap": {
+    "translation": "رخيص"
+  },
+  "expensive": {
+    "translation": "غالٍ"
+  },
+  "fair": {
+    "translation": "عادل"
+  },
+  "unfair": {
+    "translation": "جائر"
+  },
+  "true": {
+    "translation": "صحيح"
+  },
+  "false": {
+    "translation": "زائف"
+  },
+  "real": {
+    "translation": "حقيقي"
+  },
+  "sure": {
+    "translation": "متأكد"
+  },
+  "certain": {
+    "translation": "أكيد"
+  },
+  "possible": {
+    "translation": "ممكن"
+  },
+  "impossible": {
+    "translation": "مستحيل"
+  },
+  "necessary": {
+    "translation": "ضروري"
+  },
+  "useful": {
+    "translation": "مفيد"
+  },
+  "useless": {
+    "translation": "عديم الفائدة"
+  },
+  "famous": {
+    "translation": "مشهور"
+  },
+  "common": {
+    "translation": "شائع"
+  },
+  "rare": {
+    "translation": "نادر"
+  },
+  "strange": {
+    "translation": "غريب"
+  },
+  "normal": {
+    "translation": "عادي"
+  },
+  "usual": {
+    "translation": "معتاد"
+  },
+  "special": {
+    "translation": "خاص"
+  },
+  "similar": {
+    "translation": "مشابه"
+  },
+  "identical": {
+    "translation": "مطابق"
+  },
+  "various": {
+    "translation": "متنوع"
+  },
+  "several": {
+    "translation": "عدة"
+  },
+  "single": {
+    "translation": "مفرد"
+  },
+  "double": {
+    "translation": "مزدوج"
+  },
+  "enough": {
+    "translation": "كافٍ"
+  },
+  "plenty": {
+    "translation": "وفير"
+  },
+  "scarce": {
+    "translation": "شحيح"
+  },
+  "abundant": {
+    "translation": "وفير"
+  },
+  "exist": {
+    "translation": "يوجد"
+  },
+  "remain": {
+    "translation": "يبقى"
+  },
+  "consist": {
+    "translation": "يتألف"
+  },
+  "deserve": {
+    "translation": "يستحق"
+  },
+  "tend": {
+    "translation": "يميل"
+  },
+  "pretend": {
+    "translation": "يتظاهر"
+  },
+  "bother": {
+    "translation": "يزعج"
+  },
+  "disturb": {
+    "translation": "يزعج"
+  },
+  "annoy": {
+    "translation": "يضايق"
+  },
+  "please": {
+    "translation": "يُرضي"
+  },
+  "satisfy": {
+    "translation": "يرضي"
+  },
+  "disappoint": {
+    "translation": "يخيب أمل"
+  },
+  "surprise": {
+    "translation": "يفاجئ"
+  },
+  "shock": {
+    "translation": "يصيب بصدمة"
+  },
+  "frighten": {
+    "translation": "يخيف"
+  },
+  "amaze": {
+    "translation": "يُذهل"
+  },
+  "interest": {
+    "translation": "يهتم"
+  },
+  "attract": {
+    "translation": "يجذب"
+  },
+  "distract": {
+    "translation": "يشتت"
+  },
+  "discourage": {
+    "translation": "ينفّر"
+  },
+  "permit": {
+    "translation": "يسمح"
+  },
+  "pause": {
+    "translation": "يوقف مؤقتًا"
+  },
+  "resume": {
+    "translation": "يستأنف"
+  },
+  "repeat": {
+    "translation": "يكرر"
+  },
+  "launch": {
+    "translation": "يشغّل"
+  },
+  "operate": {
+    "translation": "يشغّل"
+  },
+  "regulate": {
+    "translation": "ينظم"
+  },
+  "balance": {
+    "translation": "يوازن"
+  },
+  "mix": {
+    "translation": "يخلط"
+  },
+  "stir": {
+    "translation": "يقلّب"
+  },
+  "spill": {
+    "translation": "يسكب"
+  },
+  "leak": {
+    "translation": "يتسرّب"
+  },
+  "tear": {
+    "translation": "يمزق"
+  },
+  "rip": {
+    "translation": "يمزق"
+  },
+  "peel": {
+    "translation": "يقشر"
+  },
+  "slice": {
+    "translation": "يقطّع"
+  },
+  "chop": {
+    "translation": "يفرّم"
+  },
+  "grate": {
+    "translation": "يبشر"
+  },
+  "mash": {
+    "translation": "يدق"
+  },
+  "bake": {
+    "translation": "يخبز"
+  },
+  "fry": {
+    "translation": "يقلي"
+  },
+  "boil": {
+    "translation": "يغلي"
+  },
+  "grill": {
+    "translation": "يشوي"
+  },
+  "roast": {
+    "translation": "يشوي"
+  },
+  "freeze": {
+    "translation": "يجمّد"
+  },
+  "melt": {
+    "translation": "يذوب"
+  },
+  "burn": {
+    "translation": "يحترق"
+  },
+  "ignite": {
+    "translation": "يشعل"
+  },
+  "extinguish": {
+    "translation": "يطفئ"
+  },
+  "explode": {
+    "translation": "ينفجر"
+  },
+  "collapse": {
+    "translation": "ينهار"
+  },
+  "rise": {
+    "translation": "يرتفع"
+  },
+  "descend": {
+    "translation": "ينزل"
+  },
+  "sink": {
+    "translation": "يغرق"
+  },
+  "float": {
+    "translation": "يطفو"
+  },
+  "dive": {
+    "translation": "يغوص"
+  },
+  "sail": {
+    "translation": "يبحر"
+  },
+  "drift": {
+    "translation": "ينجرف"
+  },
+  "slide": {
+    "translation": "ينزلق"
+  },
+  "slip": {
+    "translation": "يزل"
+  },
+  "trip": {
+    "translation": "يتعثر"
+  },
+  "stumble": {
+    "translation": "يتعثر"
+  },
+  "roll": {
+    "translation": "يتدحرج"
+  },
+  "bend": {
+    "translation": "ينحنى"
+  },
+  "stretch": {
+    "translation": "يمدد"
+  },
+  "press": {
+    "translation": "يضغط"
+  },
+  "squeeze": {
+    "translation": "يعصر"
+  },
+  "drag": {
+    "translation": "يجرّ"
+  },
+  "grab": {
+    "translation": "يخطف"
+  },
+  "toss": {
+    "translation": "يرمي"
+  },
+  "bounce": {
+    "translation": "يرتد"
+  },
+  "punch": {
+    "translation": "يضرب بالقبضة"
+  },
+  "kick": {
+    "translation": "يركل"
+  },
+  "slap": {
+    "translation": "يصفق"
+  },
+  "beat": {
+    "translation": "يهزم"
+  },
+  "strike": {
+    "translation": "يضرب"
+  },
+  "touch": {
+    "translation": "يلمس"
+  },
+  "stroke": {
+    "translation": "يلمس بلطف"
+  },
+  "pat": {
+    "translation": "يربت"
+  },
+  "knock": {
+    "translation": "يطرق"
+  },
+  "tap": {
+    "translation": "يطرق"
+  },
+  "ring": {
+    "translation": "يرن"
+  },
+  "echo": {
+    "translation": "يتردد صدى"
+  },
+  "tremble": {
+    "translation": "يرتجف"
+  },
+  "quiver": {
+    "translation": "يرتعش"
+  },
+  "worry": {
+    "translation": "يقلق"
+  },
+  "wonder": {
+    "translation": "يتساءل"
+  },
+  "vanish": {
+    "translation": "يتلاشى"
+  },
+  "furniture": {
+    "translation": "أثاث"
+  },
+  "desk": {
+    "translation": "مكتب"
+  },
+  "bench": {
+    "translation": "مقعد"
+  },
+  "couch": {
+    "translation": "أريكة"
+  },
+  "pillow": {
+    "translation": "وسادة"
+  },
+  "blanket": {
+    "translation": "بطانية"
+  },
+  "sheet": {
+    "translation": "ملاءة"
+  },
+  "towel": {
+    "translation": "منشفة"
+  },
+  "soap": {
+    "translation": "صابون"
+  },
+  "shampoo": {
+    "translation": "شامبو"
+  },
+  "toothbrush": {
+    "translation": "فرشاة أسنان"
+  },
+  "razor": {
+    "translation": "شفرة"
+  },
+  "mirror": {
+    "translation": "مرآة"
+  },
+  "comb": {
+    "translation": "مشط"
+  },
+  "brush": {
+    "translation": "فرشاة"
+  },
+  "needle": {
+    "translation": "إبرة"
+  },
+  "button": {
+    "translation": "زر"
+  },
+  "zipper": {
+    "translation": "سحّاب"
+  },
+  "belt": {
+    "translation": "حزام"
+  },
+  "scarf": {
+    "translation": "وشاح"
+  },
+  "glove": {
+    "translation": "قفاز"
+  },
+  "boot": {
+    "translation": "حذاء طويل"
+  },
+  "sandal": {
+    "translation": "صندل"
+  },
+  "slipper": {
+    "translation": "نعال"
+  },
+  "necklace": {
+    "translation": "قلادة"
+  },
+  "glasses": {
+    "translation": "نظارة"
+  },
+  "umbrella": {
+    "translation": "مظلة"
+  },
+  "wallet": {
+    "translation": "محفظة"
+  },
+  "purse": {
+    "translation": "حقيبة يد"
+  },
+  "suitcase": {
+    "translation": "حقيبة سفر"
+  },
+  "backpack": {
+    "translation": "حقيبة ظهر"
+  },
+  "basket": {
+    "translation": "سلة"
+  },
+  "bucket": {
+    "translation": "دلو"
+  },
+  "jar": {
+    "translation": "برطمان"
+  },
+  "tin": {
+    "translation": "علبة"
+  },
+  "pot": {
+    "translation": "قدر"
+  },
+  "pan": {
+    "translation": "مقلاة"
+  },
+  "kettle": {
+    "translation": "غلاية"
+  },
+  "teapot": {
+    "translation": "إبريق"
+  },
+  "bowl": {
+    "translation": "زبدية"
+  },
+  "dish": {
+    "translation": "طبق"
+  },
+  "tray": {
+    "translation": "صينية"
+  },
+  "napkin": {
+    "translation": "منديل"
+  },
+  "straw": {
+    "translation": "شفاطة"
+  },
+  "mug": {
+    "translation": "كوب"
+  },
+  "saucer": {
+    "translation": "صحن"
+  },
+  "weather": {
+    "translation": "طقس"
+  },
+  "climate": {
+    "translation": "مناخ"
+  },
+  "temperature": {
+    "translation": "درجة حرارة"
+  },
+  "heat": {
+    "translation": "حرارة"
+  },
+  "warmth": {
+    "translation": "دفء"
+  },
+  "humidity": {
+    "translation": "رطوبة"
+  },
+  "storm": {
+    "translation": "عاصفة"
+  },
+  "thunder": {
+    "translation": "رعد"
+  },
+  "lightning": {
+    "translation": "برق"
+  },
+  "fog": {
+    "translation": "ضباب"
+  },
+  "mist": {
+    "translation": "ضباب خفيف"
+  },
+  "dew": {
+    "translation": "ندى"
+  },
+  "flood": {
+    "translation": "فيضان"
+  },
+  "drought": {
+    "translation": "جفاف"
+  },
+  "hurricane": {
+    "translation": "إعصار"
+  },
+  "tornado": {
+    "translation": "إعصار قمعي"
+  },
+  "wave": {
+    "translation": "موجة"
+  },
+  "tide": {
+    "translation": "مد وجزر"
+  },
+  "current": {
+    "translation": "تيار"
+  },
+  "stream": {
+    "translation": "جدول"
+  },
+  "creek": {
+    "translation": "جدول صغير"
+  },
+  "lake": {
+    "translation": "بحيرة"
+  },
+  "pond": {
+    "translation": "بركة"
+  },
+  "pool": {
+    "translation": "حمام سباحة"
+  },
+  "island": {
+    "translation": "جزيرة"
+  },
+  "beach": {
+    "translation": "شاطئ"
+  },
+  "shore": {
+    "translation": "شاطئ"
+  },
+  "coast": {
+    "translation": "ساحل"
+  },
+  "desert": {
+    "translation": "صحراء"
+  },
+  "valley": {
+    "translation": "وادٍ"
+  },
+  "hill": {
+    "translation": "تل"
+  },
+  "cliff": {
+    "translation": "جرف"
+  },
+  "cave": {
+    "translation": "كهف"
+  },
+  "field": {
+    "translation": "حقل"
+  },
+  "farm": {
+    "translation": "مزرعة"
+  },
+  "orchard": {
+    "translation": "بستان"
+  },
+  "vineyard": {
+    "translation": "كرم"
+  },
+  "crop": {
+    "translation": "محصول"
+  },
+  "seed": {
+    "translation": "بذرة"
+  },
+  "root": {
+    "translation": "جذر"
+  },
+  "branch": {
+    "translation": "غصن"
+  },
+  "leaf": {
+    "translation": "ورقة"
+  },
+  "trunk": {
+    "translation": "جذع"
+  },
+  "bark": {
+    "translation": "قشرة"
+  },
+  "thorn": {
+    "translation": "شوكة"
+  },
+  "bush": {
+    "translation": "شجيرة"
+  },
+  "weed": {
+    "translation": "عشب ضار"
+  },
+  "plant": {
+    "translation": "نبات"
+  },
+  "herb": {
+    "translation": "عشبة"
+  },
+  "spice": {
+    "translation": "توابل"
+  },
+  "honey": {
+    "translation": "عسل"
+  },
+  "wool": {
+    "translation": "صوف"
+  },
+  "leather": {
+    "translation": "جلد"
+  },
+  "fur": {
+    "translation": "فرو"
+  },
+  "feather": {
+    "translation": "ريشة"
+  },
+  "wing": {
+    "translation": "جناح"
+  },
+  "tail": {
+    "translation": "ذيل"
+  },
+  "claw": {
+    "translation": "مخلب"
+  },
+  "paw": {
+    "translation": "كف"
+  },
+  "horn": {
+    "translation": "قرن"
+  },
+  "hoof": {
+    "translation": "حافر"
+  },
+  "beak": {
+    "translation": "منقار"
+  },
+  "nest": {
+    "translation": "عش"
+  },
+  "cage": {
+    "translation": "قفص"
+  },
+  "leash": {
+    "translation": "مقود"
+  },
+  "darkness": {
+    "translation": "ظلام"
+  },
+  "sound": {
+    "translation": "صوت"
+  },
+  "voice": {
+    "translation": "صوت"
+  },
+  "noise": {
+    "translation": "ضوضاء"
+  },
+  "color": {
+    "translation": "لون"
+  },
+  "shape": {
+    "translation": "شكل"
+  },
+  "business": {
+    "translation": "عمل تجاري"
+  },
+  "case": {
+    "translation": "حالة"
+  },
+  "chance": {
+    "translation": "فرصة"
+  },
+  "course": {
+    "translation": "دورة"
+  },
+  "credit": {
+    "translation": "ائتمان"
+  },
+  "data": {
+    "translation": "بيانات"
+  },
+  "degree": {
+    "translation": "درجة"
+  },
+  "detail": {
+    "translation": "تفصيل"
+  },
+  "economy": {
+    "translation": "اقتصاد"
+  },
+  "education": {
+    "translation": "تعليم"
+  },
+  "effort": {
+    "translation": "جهد"
+  },
+  "entry": {
+    "translation": "مدخل"
+  },
+  "error": {
+    "translation": "خطأ"
+  },
+  "evidence": {
+    "translation": "دليل"
+  },
+  "expectation": {
+    "translation": "توقع"
+  },
+  "factor": {
+    "translation": "عامل"
+  },
+  "failure": {
+    "translation": "فشل"
+  },
+  "feature": {
+    "translation": "سمة"
+  },
+  "future": {
+    "translation": "مستقبل"
+  },
+  "goal": {
+    "translation": "هدف"
+  },
+  "government": {
+    "translation": "حكومة"
+  },
+  "growth": {
+    "translation": "نمو"
+  },
+  "impact": {
+    "translation": "تأثير"
+  },
+  "industry": {
+    "translation": "صناعة"
+  },
+  "information": {
+    "translation": "معلومات"
+  },
+  "injury": {
+    "translation": "إصابة"
+  },
+  "institute": {
+    "translation": "معهد"
+  },
+  "insurance": {
+    "translation": "تأمين"
+  },
+  "intention": {
+    "translation": "نية"
+  },
+  "investment": {
+    "translation": "استثمار"
+  },
+  "issue": {
+    "translation": "قضية"
+  },
+  "item": {
+    "translation": "بند"
+  },
+  "justice": {
+    "translation": "عدالة"
+  },
+  "labor": {
+    "translation": "عمل"
+  },
+  "lack": {
+    "translation": "نقص"
+  },
+  "leader": {
+    "translation": "قائد"
+  },
+  "limit": {
+    "translation": "حد"
+  },
+  "link": {
+    "translation": "رابط"
+  },
+  "loss": {
+    "translation": "خسارة"
+  },
+  "material": {
+    "translation": "مادة"
+  },
+  "matter": {
+    "translation": "أمر"
+  },
+  "means": {
+    "translation": "وسيلة"
+  },
+  "media": {
+    "translation": "إعلام"
+  },
+  "member": {
+    "translation": "عضو"
+  },
+  "mind": {
+    "translation": "عقل"
+  },
+  "mission": {
+    "translation": "مهمة"
+  },
+  "model": {
+    "translation": "نموذج"
+  },
+  "moment": {
+    "translation": "لحظة"
+  },
+  "mood": {
+    "translation": "مزاج"
+  },
+  "motion": {
+    "translation": "حركة"
+  },
+  "nation": {
+    "translation": "أمة"
+  },
+  "necessity": {
+    "translation": "ضرورة"
+  },
+  "notion": {
+    "translation": "فكرة"
+  },
+  "opportunity": {
+    "translation": "فرصة"
+  },
+  "option": {
+    "translation": "خيار"
+  },
+  "outcome": {
+    "translation": "نتيجة"
+  },
+  "output": {
+    "translation": "مخرجات"
+  },
+  "pace": {
+    "translation": "وتيرة"
+  },
+  "pair": {
+    "translation": "زوج"
+  },
+  "passage": {
+    "translation": "مقطع"
+  },
+  "pattern": {
+    "translation": "نمط"
+  },
+  "payment": {
+    "translation": "دفعة"
+  },
+  "percentage": {
+    "translation": "نسبة مئوية"
+  },
+  "performance": {
+    "translation": "أداء"
+  },
+  "period": {
+    "translation": "فترة"
+  },
+  "permission": {
+    "translation": "إذن"
+  },
+  "philosophy": {
+    "translation": "فلسفة"
+  },
+  "pleasure": {
+    "translation": "متعة"
+  },
+  "policy": {
+    "translation": "سياسة"
+  },
+  "population": {
+    "translation": "سكان"
+  },
+  "possibility": {
+    "translation": "إمكانية"
+  },
+  "poverty": {
+    "translation": "فقر"
+  },
+  "preference": {
+    "translation": "تفضيل"
+  },
+  "preparation": {
+    "translation": "تحضير"
+  },
+  "president": {
+    "translation": "رئيس"
+  },
+  "pressure": {
+    "translation": "ضغط"
+  },
+  "pride": {
+    "translation": "كبرياء"
+  },
+  "principle": {
+    "translation": "مبدأ"
+  },
+  "prison": {
+    "translation": "سجن"
+  },
+  "privacy": {
+    "translation": "خصوصية"
+  },
+  "procedure": {
+    "translation": "إجراء"
+  },
+  "process": {
+    "translation": "عملية"
+  },
+  "producer": {
+    "translation": "منتج"
+  },
+  "product": {
+    "translation": "منتج"
+  },
+  "profession": {
+    "translation": "مهنة"
+  },
+  "profit": {
+    "translation": "ربح"
+  },
+  "project": {
+    "translation": "مشروع"
+  },
+  "proof": {
+    "translation": "دليل"
+  },
+  "property": {
+    "translation": "ملكية"
+  },
+  "proposal": {
+    "translation": "اقتراح"
+  },
+  "protection": {
+    "translation": "حماية"
+  },
+  "range": {
+    "translation": "نطاق"
+  },
+  "rate": {
+    "translation": "معدل"
+  },
+  "reaction": {
+    "translation": "رد فعل"
+  },
+  "reality": {
+    "translation": "واقع"
+  },
+  "recovery": {
+    "translation": "تعافٍ"
+  },
+  "reference": {
+    "translation": "مرجع"
+  },
+  "reform": {
+    "translation": "إصلاح"
+  },
+  "register": {
+    "translation": "سجل"
+  },
+  "release": {
+    "translation": "إطلاق"
+  },
+  "relief": {
+    "translation": "ارتياح"
+  },
+  "religion": {
+    "translation": "دين"
+  },
+  "remark": {
+    "translation": "ملاحظة"
+  },
+  "requirement": {
+    "translation": "متطلب"
+  },
+  "resource": {
+    "translation": "مورد"
+  },
+  "response": {
+    "translation": "استجابة"
+  },
+  "responsibility": {
+    "translation": "مسؤولية"
+  },
+  "revenue": {
+    "translation": "إيراد"
+  },
+  "review": {
+    "translation": "مراجعة"
+  },
+  "reward": {
+    "translation": "مكافأة"
+  },
+  "risk": {
+    "translation": "مخاطرة"
+  },
+  "role": {
+    "translation": "دور"
+  },
+  "rule": {
+    "translation": "قاعدة"
+  },
+  "safety": {
+    "translation": "سلامة"
+  },
+  "scale": {
+    "translation": "مقياس"
+  },
+  "scene": {
+    "translation": "مشهد"
+  },
+  "scheme": {
+    "translation": "مخطط"
+  },
+  "science": {
+    "translation": "علم"
+  },
+  "scope": {
+    "translation": "نطاق"
+  },
+  "season": {
+    "translation": "موسم"
+  },
+  "section": {
+    "translation": "قسم"
+  },
+  "security": {
+    "translation": "أمان"
+  },
+  "selection": {
+    "translation": "اختيار"
+  },
+  "sense": {
+    "translation": "إحساس"
+  },
+  "service": {
+    "translation": "خدمة"
+  },
+  "session": {
+    "translation": "جلسة"
+  },
+  "shelter": {
+    "translation": "مأوى"
+  },
+  "shortage": {
+    "translation": "عجز"
+  },
+  "sight": {
+    "translation": "بصر"
+  },
+  "sign": {
+    "translation": "علامة"
+  },
+  "signature": {
+    "translation": "توقيع"
+  },
+  "significance": {
+    "translation": "دلالة"
+  },
+  "society": {
+    "translation": "مجتمع"
+  },
+  "software": {
+    "translation": "برمجيات"
+  },
+  "source": {
+    "translation": "مصدر"
+  },
+  "speaker": {
+    "translation": "متحدث"
+  },
+  "specialist": {
+    "translation": "أخصائي"
+  },
+  "specific": {
+    "translation": "محدد"
+  },
+  "speech": {
+    "translation": "خطاب"
+  },
+  "spirit": {
+    "translation": "روح"
+  },
+  "spread": {
+    "translation": "انتشار"
+  },
+  "standard": {
+    "translation": "معيار"
+  },
+  "statement": {
+    "translation": "بيان"
+  },
+  "status": {
+    "translation": "وضع"
+  },
+  "stock": {
+    "translation": "مخزون"
+  },
+  "strength": {
+    "translation": "قوة"
+  },
+  "stress": {
+    "translation": "توتر"
+  },
+  "structure": {
+    "translation": "هيكل"
+  },
+  "struggle": {
+    "translation": "كفاح"
+  },
+  "subject": {
+    "translation": "موضوع"
+  },
+  "success": {
+    "translation": "نجاح"
+  },
+  "suggestion": {
+    "translation": "اقتراح"
+  },
+  "surface": {
+    "translation": "سطح"
+  },
+  "survey": {
+    "translation": "استطلاع"
+  },
+  "survival": {
+    "translation": "بقاء"
+  },
+  "symbol": {
+    "translation": "رمز"
+  },
+  "system": {
+    "translation": "نظام"
+  },
+  "target": {
+    "translation": "هدف"
+  },
+  "task": {
+    "translation": "مهمة"
+  },
+  "taste": {
+    "translation": "طعم"
+  },
+  "tax": {
+    "translation": "ضريبة"
+  },
+  "technology": {
+    "translation": "تكنولوجيا"
+  },
+  "tendency": {
+    "translation": "ميل"
+  },
+  "term": {
+    "translation": "مصطلح"
+  },
+  "theory": {
+    "translation": "نظرية"
+  },
+  "threat": {
+    "translation": "تهديد"
+  },
+  "title": {
+    "translation": "عنوان"
+  },
+  "topic": {
+    "translation": "موضوع"
+  },
+  "total": {
+    "translation": "إجمالي"
+  },
+  "traffic": {
+    "translation": "مرور"
+  },
+  "tragedy": {
+    "translation": "مأساة"
+  },
+  "transfer": {
+    "translation": "نقل"
+  },
+  "transition": {
+    "translation": "انتقال"
+  },
+  "treatment": {
+    "translation": "علاج"
+  },
+  "trial": {
+    "translation": "محاكمة"
+  },
+  "unit": {
+    "translation": "وحدة"
+  },
+  "universe": {
+    "translation": "كون"
+  },
+  "user": {
+    "translation": "مستخدم"
+  },
+  "variety": {
+    "translation": "تنوع"
+  },
+  "vehicle": {
+    "translation": "مركبة"
+  },
+  "version": {
+    "translation": "نسخة"
+  },
+  "victim": {
+    "translation": "ضحية"
+  },
+  "victory": {
+    "translation": "نصر"
+  },
+  "view": {
+    "translation": "رأي"
+  },
+  "violence": {
+    "translation": "عنف"
+  },
+  "vision": {
+    "translation": "رؤية"
+  },
+  "volume": {
+    "translation": "حجم"
+  },
+  "vote": {
+    "translation": "تصويت"
+  },
+  "wage": {
+    "translation": "أجر"
+  },
+  "warning": {
+    "translation": "تحذير"
+  },
+  "weapon": {
+    "translation": "سلاح"
+  },
+  "wedding": {
+    "translation": "زفاف"
+  },
+  "welcome": {
+    "translation": "ترحيب"
+  },
+  "welfare": {
+    "translation": "رفاهية"
+  },
+  "witness": {
+    "translation": "شاهد"
+  },
+  "worth": {
+    "translation": "قيمة"
+  },
+  "writer": {
+    "translation": "كاتب"
+  },
+  "youth": {
+    "translation": "شباب"
+  },
+  "accident": {
+    "translation": "حادث"
+  },
+  "achievement": {
+    "translation": "إنجاز"
+  },
+  "adventure": {
+    "translation": "مغامرة"
+  },
+  "advice": {
+    "translation": "نصيحة"
+  },
+  "agency": {
+    "translation": "وكالة"
+  },
+  "ambition": {
+    "translation": "طموح"
+  },
+  "ambulance": {
+    "translation": "سيارة إسعاف"
+  },
+  "appointment": {
+    "translation": "موعد"
+  },
+  "arrival": {
+    "translation": "وصول"
+  },
+  "article": {
+    "translation": "مقال"
+  },
+  "aspect": {
+    "translation": "جانب"
+  },
+  "assistance": {
+    "translation": "مساعدة"
+  },
+  "association": {
+    "translation": "جمعية"
+  },
+  "attitude": {
+    "translation": "موقف"
+  },
+  "audience": {
+    "translation": "جمهور"
+  },
+  "authority": {
+    "translation": "سلطة"
+  },
+  "avenue": {
+    "translation": "جادة"
+  },
+  "axis": {
+    "translation": "محور"
+  },
+  "baggage": {
+    "translation": "أمتعة"
+  },
+  "balcony": {
+    "translation": "شرفة"
+  },
+  "bandage": {
+    "translation": "ضمادة"
+  },
+  "barrier": {
+    "translation": "حاجز"
+  },
+  "basis": {
+    "translation": "أساس"
+  },
+  "battle": {
+    "translation": "معركة"
+  },
+  "beard": {
+    "translation": "لحية"
+  },
+  "benefit": {
+    "translation": "فائدة"
+  },
+  "bike": {
+    "translation": "دراجة"
+  },
+  "block": {
+    "translation": "كتلة"
+  },
+  "board": {
+    "translation": "مجلس"
+  },
+  "bonus": {
+    "translation": "مكافأة"
+  },
+  "brand": {
+    "translation": "علامة تجارية"
+  },
+  "breakthrough": {
+    "translation": "اختراق"
+  },
+  "bride": {
+    "translation": "عروس"
+  },
+  "bundle": {
+    "translation": "حزمة"
+  },
+  "cabin": {
+    "translation": "كابينة"
+  },
+  "cabinet": {
+    "translation": "خزانة"
+  },
+  "calendar": {
+    "translation": "تقويم"
+  },
+  "camera": {
+    "translation": "كاميرا"
+  },
+  "campaign": {
+    "translation": "حملة"
+  },
+  "canal": {
+    "translation": "قناة"
+  },
+  "candidate": {
+    "translation": "مرشح"
+  },
+  "carbon": {
+    "translation": "كربون"
+  },
+  "career": {
+    "translation": "مسار مهني"
+  },
+  "carpet": {
+    "translation": "سجادة"
+  },
+  "carriage": {
+    "translation": "عربة"
+  },
+  "catastrophe": {
+    "translation": "كارثة"
+  },
+  "cattle": {
+    "translation": "ماشية"
+  },
+  "census": {
+    "translation": "تعداد"
+  },
+  "certificate": {
+    "translation": "شهادة"
+  },
+  "chamber": {
+    "translation": "غرفة"
+  },
+  "chapter": {
+    "translation": "فصل"
+  },
+  "charity": {
+    "translation": "إحسان"
+  },
+  "childhood": {
+    "translation": "طفولة"
+  },
+  "circumstance": {
+    "translation": "ظرف"
+  },
+  "clause": {
+    "translation": "بند"
+  },
+  "cloak": {
+    "translation": "عباءة"
+  },
+  "clue": {
+    "translation": "دليل"
+  },
+  "coal": {
+    "translation": "فحم"
+  },
+  "collar": {
+    "translation": "ياقة"
+  },
+  "colony": {
+    "translation": "مستعمرة"
+  },
+  "column": {
+    "translation": "عمود"
+  },
+  "combination": {
+    "translation": "تركيبة"
+  },
+  "comment": {
+    "translation": "تعليق"
+  },
+  "committee": {
+    "translation": "لجنة"
+  },
+  "commodity": {
+    "translation": "سلعة"
+  },
+  "comparison": {
+    "translation": "مقارنة"
+  },
+  "competition": {
+    "translation": "منافسة"
+  },
+  "complaint": {
+    "translation": "شكوى"
+  },
+  "compliment": {
+    "translation": "مجاملة"
+  },
+  "concept": {
+    "translation": "مفهوم"
+  },
+  "conclusion": {
+    "translation": "استنتاج"
+  },
+  "consequence": {
+    "translation": "عاقبة"
+  },
+  "constitution": {
+    "translation": "دستور"
+  },
+  "construction": {
+    "translation": "بناء"
+  },
+  "consultant": {
+    "translation": "مستشار"
+  },
+  "contract": {
+    "translation": "عقد"
+  },
+  "contribution": {
+    "translation": "مساهمة"
+  },
+  "convention": {
+    "translation": "مؤتمر"
+  },
+  "conversation": {
+    "translation": "محادثة"
+  },
+  "conviction": {
+    "translation": "إدانة / قناعة"
+  },
+  "corridor": {
+    "translation": "ممر"
+  },
+  "costume": {
+    "translation": "زي"
+  },
+  "cottage": {
+    "translation": "كوخ"
+  },
+  "council": {
+    "translation": "مجلس"
+  },
+  "courage": {
+    "translation": "شجاعة"
+  },
+  "craft": {
+    "translation": "حرفة"
+  },
+  "crane": {
+    "translation": "رافعة"
+  },
+  "creation": {
+    "translation": "خلق"
+  },
+  "creature": {
+    "translation": "مخلوق"
+  },
+  "crew": {
+    "translation": "طاقم"
+  },
+  "criterion": {
+    "translation": "معيار"
+  },
+  "culture": {
+    "translation": "ثقافة"
+  },
+  "cycle": {
+    "translation": "دورة"
+  },
+  "dairy": {
+    "translation": "ألبان"
+  },
+  "deadline": {
+    "translation": "موعد نهائي"
+  },
+  "debt": {
+    "translation": "دين"
+  },
+  "decade": {
+    "translation": "عقد"
+  },
+  "deception": {
+    "translation": "خداع"
+  },
+  "decision": {
+    "translation": "قرار"
+  },
+  "declaration": {
+    "translation": "إعلان"
+  },
+  "deed": {
+    "translation": "فعل / عمل"
+  },
+  "default": {
+    "translation": "تقصير"
+  },
+  "defense": {
+    "translation": "دفاع"
+  },
+  "deficit": {
+    "translation": "عجز"
+  },
+  "delight": {
+    "translation": "بهجة"
+  },
+  "democracy": {
+    "translation": "ديمقراطية"
+  },
+  "departure": {
+    "translation": "مغادرة"
+  },
+  "description": {
+    "translation": "وصف"
+  },
+  "destiny": {
+    "translation": "قدر"
+  },
+  "difficulty": {
+    "translation": "صعوبة"
+  },
+  "dilemma": {
+    "translation": "معضلة"
+  },
+  "dinner": {
+    "translation": "عشاء"
+  },
+  "diploma": {
+    "translation": "دبلوم"
+  },
+  "disability": {
+    "translation": "إعاقة"
+  },
+  "disagreement": {
+    "translation": "خلاف"
+  },
+  "disaster": {
+    "translation": "كارثة"
+  },
+  "discipline": {
+    "translation": "انضباط"
+  },
+  "discovery": {
+    "translation": "اكتشاف"
+  },
+  "disease": {
+    "translation": "مرض"
+  },
+  "district": {
+    "translation": "حي"
+  },
+  "division": {
+    "translation": "قسمة"
+  },
+  "document": {
+    "translation": "مستند"
+  },
+  "domain": {
+    "translation": "نطاق"
+  },
+  "donation": {
+    "translation": "تبرع"
+  },
+  "draft": {
+    "translation": "مسودة"
+  },
+  "drama": {
+    "translation": "دراما"
+  },
+  "drawing": {
+    "translation": "رسم"
+  },
+  "dressing": {
+    "translation": "ضمادة"
+  },
+  "drug": {
+    "translation": "دواء"
+  },
+  "duty": {
+    "translation": "واجب"
+  },
+  "editor": {
+    "translation": "محرر"
+  },
+  "efficiency": {
+    "translation": "كفاءة"
+  },
+  "election": {
+    "translation": "انتخاب"
+  },
+  "elegance": {
+    "translation": "أناقة"
+  },
+  "element": {
+    "translation": "عنصر"
+  },
+  "elevator": {
+    "translation": "مصعد"
+  },
+  "elite": {
+    "translation": "نخبة"
+  },
+  "emergency": {
+    "translation": "طوارئ"
+  },
+  "emotion": {
+    "translation": "عاطفة"
+  },
+  "emperor": {
+    "translation": "إمبراطور"
+  },
+  "empire": {
+    "translation": "إمبراطورية"
+  },
+  "endurance": {
+    "translation": "تحمّل"
+  },
+  "enforcement": {
+    "translation": "إنفاذ"
+  },
+  "engagement": {
+    "translation": "خطوبة"
+  },
+  "enterprise": {
+    "translation": "مشروع"
+  },
+  "entertainment": {
+    "translation": "ترفيه"
+  },
+  "enthusiasm": {
+    "translation": "حماس"
+  },
+  "entrance": {
+    "translation": "مدخل"
+  },
+  "environment": {
+    "translation": "بيئة"
+  },
+  "episode": {
+    "translation": "حلقة"
+  },
+  "equity": {
+    "translation": "إنصاف"
+  },
+  "era": {
+    "translation": "عصر"
+  },
+  "essay": {
+    "translation": "مقالة"
+  },
+  "estate": {
+    "translation": "عقار"
+  },
+  "exception": {
+    "translation": "استثناء"
+  },
+  "excitement": {
+    "translation": "إثارة"
+  },
+  "execution": {
+    "translation": "تنفيذ"
+  },
+  "exit": {
+    "translation": "مخرج"
+  },
+  "expense": {
+    "translation": "نفقة"
+  },
+  "experiment": {
+    "translation": "تجربة"
+  },
+  "expert": {
+    "translation": "خبير"
+  },
+  "explanation": {
+    "translation": "تفسير"
+  },
+  "exploration": {
+    "translation": "استكشاف"
+  },
+  "export": {
+    "translation": "تصدير"
+  },
+  "expression": {
+    "translation": "تعبير"
+  },
+  "extension": {
+    "translation": "امتداد"
+  },
+  "extent": {
+    "translation": "نطاق"
+  },
+  "eyebrow": {
+    "translation": "حاجب"
+  },
+  "fabric": {
+    "translation": "قماش"
+  },
+  "facility": {
+    "translation": "منشأة"
+  },
+  "fame": {
+    "translation": "شهرة"
+  },
+  "fare": {
+    "translation": "أجرة"
+  },
+  "fashion": {
+    "translation": "موضة"
+  },
+  "fate": {
+    "translation": "مصير"
+  },
+  "fault": {
+    "translation": "خطأ"
+  },
+  "feeling": {
+    "translation": "شعور"
+  },
+  "female": {
+    "translation": "أنثى"
+  },
+  "fence": {
+    "translation": "سياج"
+  },
+  "film": {
+    "translation": "فيلم"
+  },
+  "flight": {
+    "translation": "رحلة جوية"
+  },
+  "flour": {
+    "translation": "طحين"
+  },
+  "forecast": {
+    "translation": "توقع"
+  },
+  "fortune": {
+    "translation": "ثروة"
+  },
+  "foundation": {
+    "translation": "مؤسسة"
+  },
+  "framework": {
+    "translation": "إطار"
+  },
+  "fraud": {
+    "translation": "احتيال"
+  },
+  "frequency": {
+    "translation": "تردد"
+  },
+  "friendship": {
+    "translation": "صداقة"
+  },
+  "frontier": {
+    "translation": "حدود"
+  },
+  "funeral": {
+    "translation": "جنازة"
+  },
+  "galaxy": {
+    "translation": "مجرة"
+  },
+  "gallery": {
+    "translation": "معرض"
+  },
+  "garage": {
+    "translation": "مرآب"
+  },
+  "garbage": {
+    "translation": "قمامة"
+  },
+  "garlic": {
+    "translation": "ثوم"
+  },
+  "gear": {
+    "translation": "معدات"
+  },
+  "gene": {
+    "translation": "جين"
+  },
+  "genius": {
+    "translation": "عبقرية"
+  },
+  "glacier": {
+    "translation": "نهر جليدي"
+  },
+  "gloom": {
+    "translation": "كآبة"
+  },
+  "golf": {
+    "translation": "غولف"
+  },
+  "gown": {
+    "translation": "ثوب"
+  },
+  "grant": {
+    "translation": "منحة"
+  },
+  "graph": {
+    "translation": "رسم بياني"
+  },
+  "gratitude": {
+    "translation": "امتنان"
+  },
+  "grief": {
+    "translation": "حزن"
+  },
+  "guidance": {
+    "translation": "إرشاد"
+  },
+  "guil": {
+    "translation": "ذنب"
+  },
+  "guitar": {
+    "translation": "غيتار"
+  },
+  "habit": {
+    "translation": "عادة"
+  },
+  "hallway": {
+    "translation": "ردهة"
+  },
+  "harbor": {
+    "translation": "ميناء"
+  },
+  "harmony": {
+    "translation": "تناغم"
+  },
+  "harvest": {
+    "translation": "حصاد"
+  },
+  "haven": {
+    "translation": "ملاذ"
+  },
+  "headquarters": {
+    "translation": "مقر رئيسي"
+  },
+  "heap": {
+    "translation": "كومة"
+  },
+  "heaven": {
+    "translation": "جنة"
+  },
+  "heel": {
+    "translation": "كعب"
+  },
+  "heritage": {
+    "translation": "تراث"
+  },
+  "hero": {
+    "translation": "بطل"
+  },
+  "hierarchy": {
+    "translation": "تسلسل هرمي"
+  },
+  "hint": {
+    "translation": "تلميح"
+  },
+  "hobby": {
+    "translation": "هواية"
+  },
+  "hollow": {
+    "translation": "مجوف"
+  },
+  "honor": {
+    "translation": "شرف"
+  },
+  "hormone": {
+    "translation": "هرمون"
+  },
+  "horror": {
+    "translation": "رعب"
+  },
+  "hospitality": {
+    "translation": "ضيافة"
+  },
+  "household": {
+    "translation": "أسرة"
+  },
+  "hypothesis": {
+    "translation": "فرضية"
+  },
+  "icon": {
+    "translation": "أيقونة"
+  },
+  "ideal": {
+    "translation": "مثالي"
+  },
+  "identity": {
+    "translation": "هوية"
+  },
+  "ideology": {
+    "translation": "أيديولوجية"
+  },
+  "illness": {
+    "translation": "مرض"
+  },
+  "imagination": {
+    "translation": "خيال"
+  },
+  "incentive": {
+    "translation": "حافز"
+  },
+  "incident": {
+    "translation": "حادث"
+  },
+  "independence": {
+    "translation": "استقلال"
+  },
+  "index": {
+    "translation": "فهرس"
+  },
+  "indication": {
+    "translation": "دليل"
+  },
+  "individual": {
+    "translation": "فرد"
+  },
+  "infection": {
+    "translation": "عدوى"
+  },
+  "inflation": {
+    "translation": "تضخم"
+  },
+  "influence": {
+    "translation": "تأثير"
+  },
+  "ingredient": {
+    "translation": "مكوّن"
+  },
+  "inhabitant": {
+    "translation": "ساكن"
+  },
+  "inheritance": {
+    "translation": "إرث"
+  },
+  "initiative": {
+    "translation": "مبادرة"
+  },
+  "innovation": {
+    "translation": "ابتكار"
+  },
+  "input": {
+    "translation": "إدخال"
+  },
+  "inquiry": {
+    "translation": "استفسار"
+  },
+  "insight": {
+    "translation": "بصيرة"
+  },
+  "instance": {
+    "translation": "مثال"
+  },
+  "instruction": {
+    "translation": "تعليمات"
+  },
+  "interaction": {
+    "translation": "تفاعل"
+  },
+  "internet": {
+    "translation": "إنترنت"
+  },
+  "intervention": {
+    "translation": "تدخل"
+  },
+  "interview": {
+    "translation": "مقابلة"
+  },
+  "introduction": {
+    "translation": "مقدمة"
+  },
+  "invasion": {
+    "translation": "غزو"
+  },
+  "invitation": {
+    "translation": "دعوة"
+  },
+  "jail": {
+    "translation": "سجن"
+  },
+  "jam": {
+    "translation": "مربى"
+  },
+  "jazz": {
+    "translation": "جاز"
+  },
+  "jewel": {
+    "translation": "جوهرة"
+  },
+  "joint": {
+    "translation": "مفصل"
+  },
+  "journal": {
+    "translation": "مجلة"
+  },
+  "journey": {
+    "translation": "رحلة"
+  },
+  "junction": {
+    "translation": "تقاطع"
+  },
+  "jurisdiction": {
+    "translation": "اختصاص قضائي"
+  },
+  "kernel": {
+    "translation": "نواة"
+  },
+  "keyboard": {
+    "translation": "لوحة مفاتيح"
+  },
+  "kidney": {
+    "translation": "كلية"
+  },
+  "kingdom": {
+    "translation": "مملكة"
+  },
+  "laboratory": {
+    "translation": "مختبر"
+  },
+  "landscape": {
+    "translation": "منظر طبيعي"
+  },
+  "laptop": {
+    "translation": "حاسوب محمول"
+  },
+  "laughter": {
+    "translation": "ضحك"
+  },
+  "league": {
+    "translation": "دوري"
+  },
+  "lecture": {
+    "translation": "محاضرة"
+  },
+  "legacy": {
+    "translation": "إرث"
+  },
+  "legend": {
+    "translation": "أسطورة"
+  },
+  "leisure": {
+    "translation": "فراغ"
+  },
+  "lens": {
+    "translation": "عدسة"
+  },
+  "liability": {
+    "translation": "مسؤولية"
+  },
+  "liberty": {
+    "translation": "حرية"
+  },
+  "library": {
+    "translation": "مكتبة"
+  },
+  "license": {
+    "translation": "ترخيص"
+  },
+  "liquid": {
+    "translation": "سائل"
+  },
+  "literacy": {
+    "translation": "إلمام بالقراءة"
+  },
+  "literature": {
+    "translation": "أدب"
+  },
+  "liver": {
+    "translation": "كبد"
+  },
+  "lobby": {
+    "translation": "ردهة"
+  },
+  "locker": {
+    "translation": "خزانة"
+  },
+  "logic": {
+    "translation": "منطق"
+  },
+  "logo": {
+    "translation": "شعار"
+  },
+  "lotion": {
+    "translation": "مرطب"
+  },
+  "loyalty": {
+    "translation": "ولاء"
+  },
+  "luck": {
+    "translation": "حظ"
+  },
+  "luggage": {
+    "translation": "أمتعة"
+  },
+  "lunch": {
+    "translation": "غداء"
+  },
+  "luxury": {
+    "translation": "فخامة"
+  },
+  "magazine": {
+    "translation": "مجلة"
+  },
+  "magic": {
+    "translation": "سحر"
+  },
+  "magnitude": {
+    "translation": "ضخامة"
+  },
+  "maid": {
+    "translation": "خادمة"
+  },
+  "majority": {
+    "translation": "أغلبية"
+  },
+  "mall": {
+    "translation": "مول"
+  },
+  "mandate": {
+    "translation": "تفويض"
+  },
+  "mansion": {
+    "translation": "قصر"
+  },
+  "margin": {
+    "translation": "هامش"
+  },
+  "marriage": {
+    "translation": "زواج"
+  },
+  "mass": {
+    "translation": "كتلة"
+  },
+  "mechanism": {
+    "translation": "آلية"
+  },
+  "medicine": {
+    "translation": "دواء"
+  },
+  "medium": {
+    "translation": "وسيلة"
+  },
+  "membership": {
+    "translation": "عضوية"
+  },
+  "merchant": {
+    "translation": "تاجر"
+  },
+  "merit": {
+    "translation": "جدارة"
+  },
+  "metaphore": {
+    "translation": "استعارة"
+  },
+  "midday": {
+    "translation": "ظهيرة"
+  },
+  "migration": {
+    "translation": "هجرة"
+  },
+  "milestone": {
+    "translation": "معلم رئيسي"
+  },
+  "minimum": {
+    "translation": "حد أدنى"
+  },
+  "minister": {
+    "translation": "وزير"
+  },
+  "minority": {
+    "translation": "أقلية"
+  },
+  "mistake": {
+    "translation": "خطأ"
+  },
+  "mixture": {
+    "translation": "خليط"
+  },
+  "mode": {
+    "translation": "وضع"
+  },
+  "momentum": {
+    "translation": "زخم"
+  },
+  "monarchy": {
+    "translation": "ملكية"
+  },
+  "monument": {
+    "translation": "نصب تذكاري"
+  },
+  "morale": {
+    "translation": "معنويات"
+  },
+  "mortgage": {
+    "translation": "رهن"
+  },
+  "motive": {
+    "translation": "دافع"
+  },
+  "muscle": {
+    "translation": "عضلة"
+  },
+  "mushroom": {
+    "translation": "فطر"
+  },
+  "mustache": {
+    "translation": "شارب"
+  },
+  "mystery": {
+    "translation": "غموض"
+  },
+  "myth": {
+    "translation": "أسطورة"
+  },
+  "narrative": {
+    "translation": "سرد"
+  },
+  "native": {
+    "translation": "أصلي"
+  },
+  "navigation": {
+    "translation": "ملاحة"
+  },
+  "nerve": {
+    "translation": "عصب"
+  },
+  "network": {
+    "translation": "شبكة"
+  },
+  "neutral": {
+    "translation": "محايد"
+  },
+  "niche": {
+    "translation": "نيتش"
+  },
+  "nightmare": {
+    "translation": "كابوس"
+  },
+  "nitrogen": {
+    "translation": "نيتروجين"
+  },
+  "nomination": {
+    "translation": "ترشيح"
+  },
+  "norm": {
+    "translation": "معيار"
+  },
+  "novel": {
+    "translation": "رواية"
+  },
+  "nucleus": {
+    "translation": "نواة"
+  },
+  "nursery": {
+    "translation": "حضانة"
+  },
+  "nutrition": {
+    "translation": "تغذية"
+  },
+  "oath": {
+    "translation": "قسم"
+  },
+  "obligation": {
+    "translation": "التزام"
+  },
+  "observation": {
+    "translation": "مراقبة"
+  },
+  "occasion": {
+    "translation": "مناسبة"
+  },
+  "occupation": {
+    "translation": "مهنة / احتلال"
+  },
+  "ocean": {
+    "translation": "محيط"
+  },
+  "offering": {
+    "translation": "عرض"
+  },
+  "opponent": {
+    "translation": "خصم"
+  },
+  "opposition": {
+    "translation": "معارضة"
+  },
+  "orbit": {
+    "translation": "مدار"
+  },
+  "organism": {
+    "translation": "كائن حي"
+  },
+  "origin": {
+    "translation": "أصل"
+  },
+  "outrage": {
+    "translation": "سخط"
+  },
+  "ownership": {
+    "translation": "ملكية"
+  },
+  "pact": {
+    "translation": "معاهدة"
+  },
+  "palace": {
+    "translation": "قصر"
+  },
+  "panel": {
+    "translation": "لوحة"
+  },
+  "panic": {
+    "translation": "ذعر"
+  },
+  "parade": {
+    "translation": "موكب"
+  },
+  "paragraph": {
+    "translation": "فقرة"
+  },
+  "parallel": {
+    "translation": "متوازٍ"
+  },
+  "parent": {
+    "translation": "والد"
+  },
+  "parliament": {
+    "translation": "برلمان"
+  },
+  "participant": {
+    "translation": "مشارك"
+  },
+  "partnership": {
+    "translation": "شراكة"
+  },
+  "passion": {
+    "translation": "شغف"
+  },
+  "paste": {
+    "translation": "معجون"
+  },
+  "patience": {
+    "translation": "صبر"
+  },
+  "patrol": {
+    "translation": "دورية"
+  },
+  "peak": {
+    "translation": "قمة"
+  },
+  "peasant": {
+    "translation": "فلاح"
+  },
+  "pension": {
+    "translation": "معاش"
+  },
+  "perception": {
+    "translation": "إدراك"
+  },
+  "persona": {
+    "translation": "شخصية"
+  },
+  "perspective": {
+    "translation": "منظور"
+  },
+  "phrase": {
+    "translation": "عبارة"
+  },
+  "pipe": {
+    "translation": "أنبوب"
+  }
+}
