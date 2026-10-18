@@ -1,0 +1,190 @@
+/* ==========================================================================
+   IStories — shared visual theme ("forest & cream")
+   ==========================================================================
+   Loaded LAST in <head> on every page. It only re-maps the colour tokens the
+   app already uses (plus a few hard-coded white surfaces) — no layout changes.
+
+   Palette (sampled from the reference design):
+     forest        #243d34     forest-deep  #1b2f28     forest-soft  #3b4f44
+     cream         #f9f7f0     sand         #edeae3     sand-deep    #e2ddcf
+     peach         #d38d70     peach-light  #edb995     muted        #67756c
+
+   Dark mode (body.dark-mode) is left untouched: every override below is
+   guarded with body:not(.dark-mode) or applied to the light sidebar only.
+   ========================================================================== */
+
+:root {
+    /* --- Brand colours --- */
+    --primary: #243d34;
+    --primary-dark: #1b2f28;
+    --secondary: #d38d70;
+    --secondary-dark: #b9744f;
+    --secondary-light: #edb995;
+    --accent: #d38d70;
+
+    /* --- Surfaces (cards / panels / inputs) --- */
+    --bg: #edeae3;
+    --bg-secondary: #f4f1ea;
+    --card-bg: #edeae3;
+    --input-bg: #fefdfb;
+    --hover: #efece4;
+    --code-bg: #f0ede6;
+
+    /* --- Text --- */
+    --text: #243d34;
+    --text-light: #67756c;
+    --text-lighter: #8a968d;
+
+    /* --- Lines & shadow --- */
+    --border: #e2ddcf;
+    --border-light: #ece7db;
+    --shadow: 0 1px 2px rgba(36, 61, 52, .05), 0 10px 26px -14px rgba(36, 61, 52, .28);
+}
+
+/* --------------------------------------------------------------------------
+   Light mode — page is cream, cards/panels are sand.
+   -------------------------------------------------------------------------- */
+body:not(.dark-mode) {
+    background-color: #f9f7f0;
+    color: #243d34;
+}
+
+/* The container keeps the cream page colour so the sand cards read on top. */
+body:not(.dark-mode) .container {
+    background-color: transparent;
+}
+
+/* Hero banner -> understated forest gradient with cream text. */
+body:not(.dark-mode) .hero {
+    background: linear-gradient(135deg, #243d34 0%, #3b4f44 100%);
+    color: #f9f7f0;
+}
+
+/* Buttons that hard-code white in the page stylesheets. */
+body:not(.dark-mode) .cta-button {
+    background-color: #f9f7f0;
+    color: #243d34;
+}
+
+body:not(.dark-mode) .cta-button:hover {
+    background-color: #ffffff;
+}
+
+/* Panels / dropdowns / inputs that hard-code white. */
+body:not(.dark-mode) :is(.settings-page, .more) {
+    background: #f4f1ea;
+}
+
+body:not(.dark-mode) .search-form .search-input {
+    background-color: #fefdfb;
+}
+
+/* Give the common cards a hairline so they separate from the cream page. */
+body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocabulary-item, .progress-container) {
+    border: 1px solid var(--border);
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar — dark forest, cream text, peach accents.
+   (Variables live on .ist-sidebar so they beat the :root defaults in
+   sidebar.css regardless of file order.)
+   -------------------------------------------------------------------------- */
+.ist-sidebar {
+    --ist-sidebar-bg: #243d34;
+    --ist-sidebar-fg: #f9f7f0;
+    --ist-sidebar-muted: #a6b4a9;
+    --ist-sidebar-border: rgba(249, 247, 240, .14);
+    --ist-sidebar-accent: #edb995;
+    box-shadow: 0 12px 40px rgba(15, 28, 22, .38);
+}
+
+.ist-sidebar__head,
+.ist-sidebar__foot {
+    border-color: rgba(249, 247, 240, .12);
+}
+
+.ist-sidebar__brand {
+    color: #f9f7f0;
+}
+
+.ist-sidebar__section {
+    color: #8fa096;
+}
+
+.ist-sidebar__link {
+    color: #e7e4da;
+}
+
+.ist-sidebar__link i {
+    color: #a6b4a9;
+}
+
+.ist-sidebar__link:hover {
+    background: #3b4f44;
+    color: #f9f7f0;
+}
+
+.ist-sidebar__link:hover i {
+    color: #edb995;
+}
+
+.ist-sidebar__link.is-active {
+    background: #3b4f44;
+    border-color: rgba(237, 185, 149, .35);
+    color: #edb995;
+}
+
+.ist-sidebar__link.is-active i {
+    color: #edb995;
+}
+
+.ist-sidebar__close,
+.ist-sidebar__collapse {
+    border-color: rgba(249, 247, 240, .18);
+    color: #f9f7f0;
+}
+
+.ist-sidebar__close:hover,
+.ist-sidebar__collapse:hover {
+    background: #3b4f44;
+    color: #edb995;
+}
+
+.ist-sidebar__action {
+    border-color: rgba(249, 247, 240, .18);
+    color: #f9f7f0;
+}
+
+.ist-sidebar__action:hover {
+    background: #3b4f44;
+}
+
+/* Floating burger (pages with no header) matches the sidebar. */
+.ist-burger.ist-burger--floating {
+    background: #243d34;
+    color: #f9f7f0;
+    border-color: rgba(249, 247, 240, .18);
+}
+
+/* Language badge shown on story cards / previews (depends on story `lang`). */
+.story-lang-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--primary, #10b981);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    white-space: nowrap;
+}
+
+.dark-mode .story-lang-badge,
+body.dark-mode .story-lang-badge {
+    background: rgba(16, 185, 129, 0.22);
+    color: #6ee7b7;
+    border-color: rgba(16, 185, 129, 0.5);
+}

@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — IStories</title>
+    <link rel="icon" type="image/png" href="../../icon.png">
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <!-- Shared base (theme tokens, sidebar, helpers) -->
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <!-- Large user data (userStories, savedWords, …) lives in IndexedDB via localForage; loaded before page scripts so the shared storage façade exists. -->
+    <script src="../nav/vendor/localforage.min.js"></script>
+    <script src="../nav/storage.js"></script>
+    <script src="../nav/sidebar.js" defer></script>
+    <script src="../nav/common.js"></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+
+    <style>
+        /* ==================================================================
+           Settings page — a single, central place for the preferences every
+           other page reads (theme, colours, fonts, feature toggles, custom
+           CSS).  Nothing here removes a page's own settings panel; this page
+           simply writes the same localStorage keys those panels use.
+           ================================================================== */
+
+        body.dark-mode {
+            --bg: #111827;
+            --bg-secondary: #1f2937;
+            --card-bg: #1f2937;
+            --input-bg: #111827;
+            --hover: #374151;
+            --text: #f9fafb;
+            --text-light: #d1d5db;
+            --border: #374151;
+            --border-light: #2b3444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, .3), 0 2px 4px -1px rgba(0, 0, 0, .2);
+            background: #111827;
+            color: #f9fafb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg, #edeae3);
+            color: var(--text, #243d34);
+        }
+
+        .container {
+            width: min(1040px, 100% - 32px);
+            margin-inline: auto;
+        }
+
+        /* --- Header ------------------------------------------------------ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: color-mix(in srgb, var(--bg, #edeae3) 90%, transparent);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border, #e2ddcf);
+        }
+
+        .site-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-block: 12px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 800;
+            letter-spacing: -.01em;
+        }
+
+        .logo img { width: 32px; height: 32px; }
+
+        .main-content { padding: 26px 0 72px; }
+
+        /* --- Hero --------------------------------------------------------- */
+        .settings-hero {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 30px 28px;
+            margin-bottom: 26px;
+            border-radius: 22px;
+            color: #f9f7f0;
+            background: linear-gradient(135deg, var(--primary, #243d34) 0%, var(--secondary, #d38d70) 130%);
+            box-shadow: var(--shadow, 0 10px 26px -14px rgba(0, 0, 0, .3));
+        }
+
+        .settings-hero__icon {
+            flex: 0 0 auto;
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            font-size: 1.6rem;
+            color: #fff;
+            background: rgba(255, 255, 255, .16);
+            backdrop-filter: blur(6px);
+        }
+
+        .settings-hero__eyebrow {
+            margin: 0 0 4px;
+            font-size: .74rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            opacity: .85;
+        }
+
+        .settings-hero__title {
+            margin: 0 0 6px;
+            font-size: clamp(1.5rem, 3.4vw, 2rem);
+            letter-spacing: -.02em;
+        }
+
+        .settings-hero__text {
+            margin: 0;
+            max-width: 60ch;
+            line-height: 1.55;
+            opacity: .92;
+        }
+
+        /* --- Cards grid --------------------------------------------------- */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+
+        .settings-card {
+            background: var(--card-bg, #edeae3);
+            border: 1px solid var(--border, #e2ddcf);
+            border-radius: 16px;
+            box-shadow: var(--shadow, 0 10px 26px -14px rgba(36, 61, 52, .28));
+            overflow: hidden;
+        }
+
+        .settings-card--full { grid-column: 1 / -1; }
+
+        .settings-card__head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 18px;
+            background: var(--bg-secondary, #f4f1ea);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-card__head i { color: var(--primary); font-size: 1.05rem; }
+
+        .settings-card__head h2 {
+            margin: 0;
+            font-size: 1rem;
+            letter-spacing: -.01em;
+            color: var(--text);
+        }
+
+        .settings-card__body { padding: 4px 18px 12px; }
+
+        .setting-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-light, var(--border));
+        }
+
+        .setting-row:last-child { border-bottom: 0; }
+
+        .setting-info { flex: 1 1 190px; min-width: 0; }
+
+        .setting-label {
+            display: block;
+            font-weight: 600;
+            font-size: .95rem;
+            color: var(--text);
+        }
+
+        .setting-desc {
+            display: block;
+            margin-top: 2px;
+            font-size: .82rem;
+            line-height: 1.45;
+            color: var(--text-light);
+        }
+
+        .setting-control {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- Controls ---------------------------------------------------- */
+        .ist-switch {
+            width: 50px;
+            height: 28px;
+            flex: 0 0 auto;
+            border: 0;
+            border-radius: 999px;
+            background: #c3c3c3;
+            position: relative;
+            cursor: pointer;
+            transition: background .25s ease;
+        }
+
+        .ist-switch__dot {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+            transition: transform .25s ease;
+        }
+
+        .ist-switch[aria-checked="true"] { background: var(--primary); }
+        .ist-switch[aria-checked="true"] .ist-switch__dot { transform: translateX(22px); }
+        .ist-switch:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+
+        .ist-seg {
+            display: inline-flex;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--input-bg, #fff);
+        }
+
+        .ist-seg button {
+            border: 0;
+            background: transparent;
+            color: var(--text);
+            padding: 7px 12px;
+            font: inherit;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .ist-seg button + button { border-left: 1px solid var(--border); }
+
+        .ist-seg button.is-active { background: var(--primary); color: #fff; }
+
+        .ist-select,
+        .ist-input {
+            background: var(--input-bg, #fff);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font: inherit;
+            max-width: 100%;
+        }
+
+        .ist-select:focus,
+        .ist-input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent); }
+
+        .ist-swatches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .ist-swatch {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            padding: 0;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+        }
+
+        .ist-swatch i {
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, .55);
+            opacity: 0;
+            transition: opacity .15s ease;
+        }
+
+        .ist-swatch.is-active { border-color: var(--text); }
+        .ist-swatch.is-active i { opacity: 1; }
+
+        .ist-swatch--custom {
+            background: conic-gradient(#ef4444, #f59e0b, #10b981, #3b82f6, #8b5cf6, #ec4899, #ef4444);
+        }
+
+        .ist-swatch--custom i { opacity: 1; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
+
+        .ist-swatch--custom input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .ist-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 9px 15px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--primary);
+            color: #fff;
+            transition: transform .15s ease, opacity .15s ease;
+        }
+
+        .ist-btn:hover { opacity: .92; transform: translateY(-1px); }
+
+        .ist-btn--ghost {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .ist-btn--danger { background: #ef4444; }
+
+        .ist-btn--icon { padding: 9px 12px; }
+
+        /* --- Custom CSS editor ------------------------------------------- */
+        .ist-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 12px 0 12px;
+        }
+
+        .ist-tab {
+            border: 1px solid var(--border);
+            background: var(--input-bg, #fff);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 6px 13px;
+            font: inherit;
+            font-size: .84rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .ist-tab.is-active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .ist-textarea {
+            width: 100%;
+            min-height: 190px;
+            resize: vertical;
+            background: var(--input-bg, #fff);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: .84rem;
+            line-height: 1.55;
+        }
+
+        .ist-textarea:focus { outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent); }
+
+        .ist-css-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 12px;
+        }
+
+        .settings-note {
+            margin: 10px 0 0;
+            font-size: .8rem;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+
+        .settings-note a { color: var(--primary); font-weight: 600; }
+
+        @media (max-width: 560px) {
+            .settings-hero { padding: 24px 20px; }
+            .settings-card__body { padding: 2px 15px 10px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                <span>Settings</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+
+            <section class="settings-hero">
+                <span class="settings-hero__icon"><i class="fas fa-sliders"></i></span>
+                <div>
+                    <p class="settings-hero__eyebrow">One place for every page</p>
+                    <h1 class="settings-hero__title">Settings</h1>
+                    <p class="settings-hero__text">Theme, colours, reading, features and custom CSS — saved once and
+                        used across the whole app. Each page keeps its own settings panel too; changes here apply
+                        everywhere.</p>
+                </div>
+            </section>
+
+            <div class="settings-grid">
+
+                <!-- ============ Appearance ============ -->
+                <section class="settings-card">
+                    <div class="settings-card__head">
+                        <i class="fas fa-palette"></i>
+                        <h2>Appearance</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Theme</span>
+                                <span class="setting-desc">Light or dark mode</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" id="themeToggle" role="switch" aria-checked="false"
+                                    aria-label="Dark mode">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Accent color</span>
+                                <span class="setting-desc">Primary colour used for buttons and highlights</span>
+                            </div>
+                            <div class="setting-control">
+                                <div class="ist-swatches" id="primarySwatches">
+                                    <button class="ist-swatch" data-color="#243d34" style="background:#243d34"
+                                        title="Forest"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#4a6cf7" style="background:#4a6cf7"
+                                        title="Blue"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#7c4dff" style="background:#7c4dff"
+                                        title="Purple"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#009688" style="background:#009688"
+                                        title="Teal"><i class="fas fa-check"></i></button>
+                                    <label class="ist-swatch ist-swatch--custom" title="Custom accent color">
+                                        <i class="fas fa-palette"></i>
+                                        <input type="color" id="customColorPicker" value="#243d34">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Secondary color</span>
+                                <span class="setting-desc">Used for accents, badges and gradients</span>
+                            </div>
+                            <div class="setting-control">
+                                <div class="ist-swatches" id="secondarySwatches">
+                                    <button class="ist-swatch" data-color="#d38d70" style="background:#d38d70"
+                                        title="Peach"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#10b981" style="background:#10b981"
+                                        title="Green"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#ec4899" style="background:#ec4899"
+                                        title="Pink"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#b90000" style="background:#b90000"
+                                        title="Red"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#8b5cf6" style="background:#8b5cf6"
+                                        title="Violet"><i class="fas fa-check"></i></button>
+                                    <button class="ist-swatch" data-color="#f97316" style="background:#f97316"
+                                        title="Orange"><i class="fas fa-check"></i></button>
+                                    <label class="ist-swatch ist-swatch--custom" title="Custom secondary color">
+                                        <i class="fas fa-palette"></i>
+                                        <input type="color" id="customSecondaryColorPicker" value="#d38d70">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Reading ============ -->
+                <section class="settings-card">
+                    <div class="settings-card__head">
+                        <i class="fas fa-book-reader"></i>
+                        <h2>Reading</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Font family</span>
+                                <span class="setting-desc">Reading font used in the story reader</span>
+                            </div>
+                            <div class="setting-control">
+                                <select class="ist-select" id="fontFamilySelect">
+                                    <option value="sans-serif">Sans-serif (Default)</option>
+                                    <option value="serif">Serif</option>
+                                    <option value="monospace">Monospace</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Verdana">Verdana</option>
+                                    <option value="Helvetica">Helvetica</option>
+                                    <option value="'Courier New'">Courier New</option>
+                                    <option value="Trebuchet MS">Trebuchet MS</option>
+                                    <option value="'Open Sans'">Open Sans</option>
+                                    <option value="'BradleyHand'">BradleyHand</option>
+                                    <option value="'Caveat'">Caveat</option>
+                                    <option value="'PatrickHandSC'">PatrickHandSC</option>
+                                    <option value="'Pnu'">pnu</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Font size</span>
+                                <span class="setting-desc">Text size in the story reader (1.0–2.0 rem)</span>
+                            </div>
+                            <div class="setting-control">
+                                <div class="ist-seg" id="fontSizeGroup">
+                                    <button data-size="-0.1" title="Decrease"><i class="fas fa-minus"></i></button>
+                                    <button data-size="reset" class="is-active" title="Reset">A</button>
+                                    <button data-size="0.1" title="Increase"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Line spacing</span>
+                                <span class="setting-desc">Comfortable or relaxed spacing between lines</span>
+                            </div>
+                            <div class="setting-control">
+                                <div class="ist-seg" id="lineHeightGroup">
+                                    <button data-lh="1.8">Normal</button>
+                                    <button data-lh="2.2">Relaxed</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Translation ============ -->
+                <section class="settings-card">
+                    <div class="settings-card__head">
+                        <i class="fas fa-language"></i>
+                        <h2>Translation</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Default translation language</span>
+                                <span class="setting-desc">Language used when translating a tapped word</span>
+                            </div>
+                            <div class="setting-control">
+                                <select class="ist-select" id="defaultTranslateLanguage">
+                                    <option value="ar">Arabic (العربية)</option>
+                                    <option value="fr">French (Français)</option>
+                                    <option value="es">Spanish (Español)</option>
+                                    <option value="de">German (Deutsch)</option>
+                                    <option value="ru">Russian (Русский)</option>
+                                    <option value="zh-CN">Chinese (中文)</option>
+                                    <option value="ja">Japanese (日本語)</option>
+                                    <option value="ko">Korean (한국어)</option>
+                                    <option value="pt">Portuguese (Português)</option>
+                                    <option value="it">Italian (Italiano)</option>
+                                    <option value="hi">Hindi (हिन्दी)</option>
+                                    <option value="tr">Turkish (Türkçe)</option>
+                                    <option value="fa">Persian (فارسی)</option>
+                                    <option value="ur">Urdu (اردو)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Auto-translate on tap</span>
+                                <span class="setting-desc">Show the translation immediately when a word is tapped</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="autoTranslateEnabled"
+                                    data-default="true" aria-checked="true" aria-label="Auto-translate on tap">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Paragraph translation</span>
+                                <span class="setting-desc">Translate a whole paragraph, not just single words</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="paragraphTranslationEnabled"
+                                    data-default="false" aria-checked="false" aria-label="Paragraph translation">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Hide translated words</span>
+                                <span class="setting-desc">Hide words that already have a saved translation</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="noTranslatedWords"
+                                    data-default="false" aria-checked="false" aria-label="Hide translated words">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Library & Quizzes ============ -->
+                <section class="settings-card">
+                    <div class="settings-card__head">
+                        <i class="fas fa-layer-group"></i>
+                        <h2>Library &amp; Quizzes</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Show my stories</span>
+                                <span class="setting-desc">Display the stories you created in the library</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="showUserStories"
+                                    data-default="true" aria-checked="true" aria-label="Show my stories">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Show my quizzes</span>
+                                <span class="setting-desc">Display the quizzes you created in the quiz page</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="showUserQuizzes"
+                                    data-default="true" aria-checked="true" aria-label="Show my quizzes">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Vocabulary & Speech ============ -->
+                <section class="settings-card">
+                    <div class="settings-card__head">
+                        <i class="fas fa-volume-high"></i>
+                        <h2>Vocabulary &amp; Speech</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Pronunciation buttons</span>
+                                <span class="setting-desc">Show the speaker button next to saved words</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="showVoiceButtons"
+                                    data-default="true" aria-checked="true" aria-label="Pronunciation buttons">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Auto-pronounce flashcards</span>
+                                <span class="setting-desc">Read a flashcard aloud when it appears</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" role="switch" data-setting="speechEnabled"
+                                    data-default="true" aria-checked="true" aria-label="Auto-pronounce flashcards">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Custom CSS ============ -->
+                <section class="settings-card settings-card--full">
+                    <div class="settings-card__head">
+                        <i class="fas fa-code"></i>
+                        <h2>Custom CSS</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="ist-tabs" id="cssTabs"></div>
+                        <textarea class="ist-textarea" id="cssInput" spellcheck="false"
+                            placeholder="/* Enter custom CSS for this page… */"></textarea>
+                        <div class="ist-css-actions">
+                            <button class="ist-btn" id="cssSave"><i class="fas fa-save"></i> Save</button>
+                            <button class="ist-btn ist-btn--ghost" id="cssPreview"><i class="fas fa-eye"></i>
+                                Preview</button>
+                            <button class="ist-btn ist-btn--ghost" id="cssClear"><i class="fas fa-eraser"></i>
+                                Clear</button>
+                        </div>
+                        <p class="settings-note">Each page has its own stylesheet. Pick a page, add CSS, and it is
+                            applied there with the same rules the in-page editor uses. Clearing only removes that
+                            page's CSS.</p>
+                    </div>
+                </section>
+
+                <!-- ============ Data Management ============ -->
+                <section class="settings-card settings-card--full" id="dataManagement">
+                    <div class="settings-card__head">
+                        <i class="fas fa-database"></i>
+                        <h2>Data Management</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Export my stories</span>
+                                <span class="setting-desc">Download the stories you created (with their translations) as a JSON file</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn" id="dmExportStories"><i class="fas fa-share"></i>
+                                    Export stories</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Delete my stories</span>
+                                <span class="setting-desc">Permanently delete all stories you uploaded. This cannot be undone</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn ist-btn--danger" id="dmDeleteStories"><i
+                                        class="fas fa-trash"></i> Delete stories</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Backup all data</span>
+                                <span class="setting-desc">Download a backup of everything saved on this device</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn" id="dmBackup"><i class="fas fa-download"></i> Backup
+                                    data</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Restore data</span>
+                                <span class="setting-desc">Import a previously saved backup file, replacing what is on this device</span>
+                            </div>
+                            <div class="setting-control">
+                                <input type="file" id="dmRestoreFile" accept="application/json" hidden>
+                                <button class="ist-btn" id="dmRestore"><i class="fas fa-upload"></i> Restore
+                                    data</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Delete all data</span>
+                                <span class="setting-desc">Remove everything saved on this device — stories, words, quizzes and settings</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn ist-btn--danger" id="dmDeleteAll"><i
+                                        class="fas fa-triangle-exclamation"></i> Delete everything</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ About & reset ============ -->
+                <section class="settings-card settings-card--full">
+                    <div class="settings-card__head">
+                        <i class="fas fa-circle-info"></i>
+                        <h2>About &amp; reset</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Profile</span>
+                                <span class="setting-desc">Change the name and photo shown next to your stories</span>
+                            </div>
+                            <div class="setting-control">
+                                <a class="ist-btn ist-btn--ghost" href="../profile/index.html"><i
+                                        class="fas fa-user"></i> Open profile</a>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Version</span>
+                                <span class="setting-desc">IStories 2.1.0 · by Ammar chacal</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn ist-btn--ghost" id="refreshApp"><i class="fas fa-sync-alt"></i>
+                                    Refresh</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Reset preferences</span>
+                                <span class="setting-desc">Restore theme, colours, reading and feature settings to
+                                    their defaults. Your stories, words and quizzes are kept.</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn ist-btn--danger" id="resetPreferences"><i
+                                        class="fas fa-rotate-left"></i> Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* ==================================================================
+           Settings page logic.
+           Writes the same localStorage keys the individual pages read, so a
+           change here is picked up everywhere on the next load.
+           ================================================================== */
+        (function () {
+            'use strict';
+
+            var DEFAULTS = {
+                theme: 'light',
+                selectedColor: '#243d34',
+                selectedSecondaryColor: '#d38d70',
+                fontFamily: 'sans-serif',
+                fontSize: '1.2',
+                lineHeight: '1.8',
+                defaultTranslateLanguage: 'ar'
+            };
+
+            function lsGet(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+            function lsSet(key, value) { try { localStorage.setItem(key, value); } catch (e) { /* ignore */ } }
+            function lsRemove(key) { try { localStorage.removeItem(key); } catch (e) { /* ignore */ } }
+
+            function readBool(key, dflt) {
+                var raw = lsGet(key);
+                if (raw === null) return dflt;
+                return raw === 'true';
+            }
+
+            function notify(message, type) {
+                if (typeof showNotification === 'function') showNotification(message, type || 'success');
+            }
+
+            // --- Colour maths (same as the in-page editors) ---------------
+            function adjustColor(color, percent) {
+                var num = parseInt(String(color).replace('#', ''), 16);
+                var amt = Math.round(2.55 * percent);
+                var R = (num >> 16) + amt;
+                var G = (num >> 8 & 0x00FF) + amt;
+                var B = (num & 0x0000FF) + amt;
+                return '#' + (
+                    0x1000000 +
+                    (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                    (B < 255 ? B < 1 ? 0 : B : 255)
+                ).toString(16).slice(1);
+            }
+
+            function applyPrimaryColor(color) {
+                var root = document.documentElement;
+                root.style.setProperty('--primary', color);
+                root.style.setProperty('--primary-dark', adjustColor(color, -20));
+            }
+
+            function applySecondaryColor(color) {
+                var root = document.documentElement;
+                root.style.setProperty('--secondary', color);
+                root.style.setProperty('--secondary-dark', adjustColor(color, -20));
+                root.style.setProperty('--secondary-light', adjustColor(color, 20));
+            }
+
+            // --- Theme ----------------------------------------------------
+            var themeToggle = document.getElementById('themeToggle');
+
+            function applyTheme() {
+                var theme = lsGet('theme') || DEFAULTS.theme;
+                var dark = theme === 'dark';
+                document.body.classList.toggle('dark-mode', dark);
+                if (themeToggle) themeToggle.setAttribute('aria-checked', dark ? 'true' : 'false');
+            }
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function () {
+                    var dark = !document.body.classList.contains('dark-mode');
+                    lsSet('theme', dark ? 'dark' : 'light');
+                    applyTheme();
+                });
+            }
+
+            // --- Colour selectors ----------------------------------------
+            var colorState = {
+                selectedColor: lsGet('selectedColor') || DEFAULTS.selectedColor,
+                selectedSecondaryColor: lsGet('selectedSecondaryColor') || DEFAULTS.selectedSecondaryColor
+            };
+
+            function paintSwatches(container, active) {
+                if (!container) return;
+                Array.prototype.forEach.call(container.querySelectorAll('.ist-swatch'), function (swatch) {
+                    swatch.classList.toggle('is-active',
+                        String(swatch.dataset.color).toLowerCase() === String(active).toLowerCase());
+                });
+            }
+
+            function initColorGroup(containerId, pickerId, key, apply, defaults) {
+                var container = document.getElementById(containerId);
+                var picker = document.getElementById(pickerId);
+                if (container) {
+                    Array.prototype.forEach.call(container.querySelectorAll('.ist-swatch[data-color]'), function (swatch) {
+                        swatch.addEventListener('click', function () {
+                            var color = swatch.dataset.color;
+                            colorState[key] = color;
+                            lsSet(key, color);
+                            apply(color);
+                            paintSwatches(container, color);
+                            if (picker) picker.value = color;
+                        });
+                    });
+                }
+                if (picker) {
+                    picker.value = colorState[key];
+                    var onCustom = function () {
+                        var color = picker.value;
+                        colorState[key] = color;
+                        lsSet(key, color);
+                        apply(color);
+                        paintSwatches(container, color);
+                    };
+                    picker.addEventListener('input', onCustom);
+                    picker.addEventListener('change', function () { onCustom(); notify('Custom color saved'); });
+                }
+                paintSwatches(container, colorState[key]);
+            }
+
+            initColorGroup('primarySwatches', 'customColorPicker', 'selectedColor', applyPrimaryColor);
+            initColorGroup('secondarySwatches', 'customSecondaryColorPicker', 'selectedSecondaryColor', applySecondaryColor);
+
+            // --- Reading: font family / size / line spacing --------------
+            var fontFamilySelect = document.getElementById('fontFamilySelect');
+            if (fontFamilySelect) {
+                fontFamilySelect.value = lsGet('fontFamily') || DEFAULTS.fontFamily;
+                fontFamilySelect.addEventListener('change', function () {
+                    lsSet('fontFamily', fontFamilySelect.value);
+                    notify('Font family saved');
+                });
+            }
+
+            function currentFontSize() {
+                var value = parseFloat(lsGet('fontSize'));
+                return isNaN(value) ? parseFloat(DEFAULTS.fontSize) : value;
+            }
+
+            function markActive(group, isActive) {
+                if (!group) return;
+                Array.prototype.forEach.call(group.querySelectorAll('button'), function (btn) {
+                    btn.classList.toggle('is-active', isActive(btn));
+                });
+            }
+
+            var fontSizeGroup = document.getElementById('fontSizeGroup');
+            if (fontSizeGroup) {
+                markActive(fontSizeGroup, function (btn) { return btn.dataset.size === 'reset'; });
+                fontSizeGroup.addEventListener('click', function (event) {
+                    var btn = event.target.closest('button[data-size]');
+                    if (!btn) return;
+                    var size = btn.dataset.size;
+                    if (size === 'reset') {
+                        lsSet('fontSize', DEFAULTS.fontSize);
+                    } else {
+                        var next = Math.max(1, Math.min(2, currentFontSize() + parseFloat(size)));
+                        next = Math.round(next * 10) / 10;
+                        lsSet('fontSize', String(next));
+                    }
+                    var value = currentFontSize();
+                    markActive(fontSizeGroup, function (b) {
+                        if (b.dataset.size === 'reset') return value === parseFloat(DEFAULTS.fontSize);
+                        if (b.dataset.size === '-0.1') return false;
+                        if (b.dataset.size === '0.1') return false;
+                        return false;
+                    });
+                    notify('Font size: ' + value + ' rem');
+                });
+            }
+
+            var lineHeightGroup = document.getElementById('lineHeightGroup');
+            function paintLineHeight() {
+                var lh = lsGet('lineHeight') || DEFAULTS.lineHeight;
+                markActive(lineHeightGroup, function (btn) { return btn.dataset.lh === String(lh); });
+            }
+            if (lineHeightGroup) {
+                markActive(lineHeightGroup, function (btn) { return btn.dataset.lh === (lsGet('lineHeight') || DEFAULTS.lineHeight); });
+                lineHeightGroup.addEventListener('click', function (event) {
+                    var btn = event.target.closest('button[data-lh]');
+                    if (!btn) return;
+                    lsSet('lineHeight', btn.dataset.lh);
+                    markActive(lineHeightGroup, function (b) { return b === btn; });
+                });
+            }
+
+            // --- Booleans ------------------------------------------------
+            function initToggle(btn) {
+                var key = btn.dataset.setting;
+                var dflt = btn.dataset.default === 'true';
+                var value = readBool(key, dflt);
+                btn.setAttribute('aria-checked', value ? 'true' : 'false');
+                btn.addEventListener('click', function () {
+                    var next = !(btn.getAttribute('aria-checked') === 'true');
+                    btn.setAttribute('aria-checked', next ? 'true' : 'false');
+                    lsSet(key, next ? 'true' : 'false');
+                });
+            }
+
+            Array.prototype.forEach.call(document.querySelectorAll('.ist-switch[data-setting]'), initToggle);
+
+            // --- Translation language ------------------------------------
+            var languageSelect = document.getElementById('defaultTranslateLanguage');
+            if (languageSelect) {
+                languageSelect.value = lsGet('defaultTranslateLanguage') || DEFAULTS.defaultTranslateLanguage;
+                languageSelect.addEventListener('change', function () {
+                    lsSet('defaultTranslateLanguage', languageSelect.value);
+                    notify('Translation language saved');
+                });
+            }
+
+            // --- Custom CSS ----------------------------------------------
+            var CSS_PAGES = [
+                { key: 'customCSSHome', label: 'Story Library', mode: 'simple' },
+                { key: 'customCSS', label: 'Reader', mode: 'reader' },
+                { key: 'customCSSVo', label: 'Vocabulary', mode: 'simple' },
+                { key: 'customCSSquiz', label: 'Quiz', mode: 'rule' }
+            ];
+            var activeCss = CSS_PAGES[0];
+            var cssTabs = document.getElementById('cssTabs');
+            var cssInput = document.getElementById('cssInput');
+
+            // Mirror of settings-panel.js istAddImportant(), kept local so the
+            // page matches each editor's preview exactly.
+            function addImportant(css, mode) {
+                if (mode === 'rule') {
+                    return css.replace(/([^{}]+)\{([^{}]*)\}/g, function (match, selectors, body) {
+                        var wrapped = body.replace(/([^:;{}]+):([^;{}]+);?/g, function (m, prop, value) {
+                            return prop.trim() + ': ' + value.trim() + ' !important;';
+                        });
+                        return selectors.trim() + ' { ' + wrapped + ' }';
+                    });
+                }
+                var out = css;
+                if (mode === 'reader') {
+                    out = out.replace(/([a-zA-Z-]+)\s*:\s*([^;{}]+)(?!\s*!important)/g, '$1: $2 !important');
+                } else {
+                    out = out.replace(/([a-zA-Z-]+)\s*:\s*([^;{}]+)(?!\s*!important)/g, '$1: $2 !important');
+                }
+                return out;
+            }
+
+            function previewCss() {
+                var style = document.getElementById('ist-css-preview');
+                var value = cssInput ? cssInput.value.trim() : '';
+                if (!value) { if (style) style.remove(); return; }
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = 'ist-css-preview';
+                    document.head.appendChild(style);
+                }
+                style.textContent = addImportant(value, activeCss.mode);
+            }
+
+            function loadCssPage(page) {
+                activeCss = page;
+                if (cssTabs) {
+                    Array.prototype.forEach.call(cssTabs.querySelectorAll('.ist-tab'), function (tab) {
+                        tab.classList.toggle('is-active', tab.dataset.key === page.key);
+                    });
+                }
+                if (cssInput) cssInput.value = lsGet(page.key) || '';
+                previewCss();
+            }
+
+            if (cssTabs) {
+                CSS_PAGES.forEach(function (page) {
+                    var tab = document.createElement('button');
+                    tab.type = 'button';
+                    tab.className = 'ist-tab';
+                    tab.dataset.key = page.key;
+                    tab.textContent = page.label;
+                    tab.addEventListener('click', function () { loadCssPage(page); });
+                    cssTabs.appendChild(tab);
+                });
+                loadCssPage(CSS_PAGES[0]);
+            }
+
+            if (cssInput) cssInput.addEventListener('input', previewCss);
+
+            var cssSave = document.getElementById('cssSave');
+            if (cssSave) {
+                cssSave.addEventListener('click', function () {
+                    var value = cssInput.value.trim();
+                    if (value) lsSet(activeCss.key, value);
+                    else lsRemove(activeCss.key);
+                    previewCss();
+                    notify(activeCss.label + ' CSS saved');
+                });
+            }
+
+            var cssPreview = document.getElementById('cssPreview');
+            if (cssPreview) {
+                cssPreview.addEventListener('click', function () {
+                    previewCss();
+                    notify('Preview applied', 'info');
+                });
+            }
+
+            var cssClear = document.getElementById('cssClear');
+            if (cssClear) {
+                cssClear.addEventListener('click', function () {
+                    if (!confirm('Clear the Custom CSS for ' + activeCss.label + '?')) return;
+                    lsRemove(activeCss.key);
+                    if (cssInput) cssInput.value = '';
+                    previewCss();
+                    notify(activeCss.label + ' CSS cleared');
+                });
+            }
+
+            // --- Data Management -----------------------------------------
+            function storageGet(key) {
+                if (window.IStoriesStorage) {
+                    var value = IStoriesStorage.getItemSync(key);
+                    return value === undefined ? null : value;
+                }
+                return lsGet(key);
+            }
+
+            function parseList(raw) {
+                if (!raw) return [];
+                try { var parsed = JSON.parse(raw); return Array.isArray(parsed) ? parsed : []; }
+                catch (e) { return []; }
+            }
+
+            function parseObject(raw) {
+                if (!raw) return {};
+                try { var parsed = JSON.parse(raw); return (parsed && typeof parsed === 'object') ? parsed : {}; }
+                catch (e) { return {}; }
+            }
+
+            function downloadJson(filename, text) {
+                var blob = new Blob([text], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function fileStamp() {
+                var d = new Date();
+                function p(n) { return String(n).padStart(2, '0'); }
+                return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) +
+                    '_' + p(d.getHours()) + '-' + p(d.getMinutes());
+            }
+
+            // Export the user's stories (with translations) in the shape the
+            // Story Studio imports.
+            var dmExportStories = document.getElementById('dmExportStories');
+            if (dmExportStories) {
+                dmExportStories.addEventListener('click', function () {
+                    var finish = function () {
+                        var userStories = parseList(storageGet('userStories'));
+                        var dicts = parseObject(storageGet('userDictionaries'));
+                        if (!userStories.length) { notify('You have no stories to export yet', 'warning'); return; }
+                        var stories = userStories.map(function (story) {
+                            var out = {
+                                title: story.title || 'Untitled Story',
+                                lang: story.lang || 'en',
+                                level: story.level || 'beginner',
+                                cover: story.cover || '',
+                                coverType: story.coverType || 'emoji',
+                                content: story.content || [''],
+                                author: story.author || 'Anonymous',
+                                uploadDate: story.uploadDate || new Date().toISOString(),
+                                wordCount: story.wordCount || 0
+                            };
+                            var tr = dicts[story.id];
+                            if (tr && Object.keys(tr).length) out.translations = tr;
+                            if (story.levelcefr) out.levelcefr = story.levelcefr;
+                            if (story.sound) out.sound = story.sound;
+                            if (story.dictionaries) out.dictionaries = story.dictionaries;
+                            if (story.audio !== undefined) out.audio = story.audio;
+                            if (story.id !== undefined) out.id = story.id;
+                            return out;
+                        });
+                        downloadJson('stories-export-' + fileStamp() + '.json',
+                            JSON.stringify({ stories: stories }, null, 4));
+                        notify('Exported ' + stories.length + (stories.length === 1 ? ' story' : ' stories'));
+                    };
+                    if (window.IStoriesStorage) IStoriesStorage.whenReady(finish); else finish();
+                });
+            }
+
+            var dmDeleteStories = document.getElementById('dmDeleteStories');
+            if (dmDeleteStories) {
+                dmDeleteStories.addEventListener('click', function () {
+                    var count = parseList(storageGet('userStories')).length;
+                    if (!count) { notify('You have no stories to delete', 'warning'); return; }
+                    if (!confirm('Delete all ' + count + ' of your stories and their translations?\n\nThis cannot be undone.')) return;
+                    if (window.IStoriesStorage) {
+                        IStoriesStorage.removeItem('userStories');
+                        IStoriesStorage.removeItem('userDictionaries');
+                        IStoriesStorage.flush().then(function () { notify('All your stories were deleted'); });
+                    } else {
+                        lsRemove('userStories');
+                        lsRemove('userDictionaries');
+                        notify('All your stories were deleted');
+                    }
+                });
+            }
+
+            // Full backup: localStorage plus the IndexedDB collections.
+            var dmBackup = document.getElementById('dmBackup');
+            if (dmBackup) {
+                dmBackup.addEventListener('click', function () {
+                    var finish = function () {
+                        var snapshot = {};
+                        for (var i = 0; i < localStorage.length; i++) {
+                            var key = localStorage.key(i);
+                            snapshot[key] = localStorage.getItem(key);
+                        }
+                        if (window.IStoriesStorage) {
+                            IStoriesStorage.dataKeys.forEach(function (key) {
+                                var value = IStoriesStorage.getItemSync(key);
+                                if (value !== null && value !== undefined) snapshot[key] = value;
+                            });
+                        }
+                        downloadJson('Istories-backup-' + fileStamp() + '.json', JSON.stringify(snapshot, null, 2));
+                        notify('Backup downloaded');
+                    };
+                    if (window.IStoriesStorage) IStoriesStorage.whenReady(finish); else finish();
+                });
+            }
+
+            // Restore a backup, replacing the data on this device.
+            var dmRestore = document.getElementById('dmRestore');
+            var dmRestoreFile = document.getElementById('dmRestoreFile');
+            if (dmRestore && dmRestoreFile) {
+                dmRestore.addEventListener('click', function () { dmRestoreFile.click(); });
+                dmRestoreFile.addEventListener('change', function (event) {
+                    var file = event.target.files && event.target.files[0];
+                    if (!file) return;
+                    if (!confirm('Restore this backup? It will replace everything currently saved on this device.')) {
+                        dmRestoreFile.value = '';
+                        return;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var data;
+                        try { data = JSON.parse(e.target.result); }
+                        catch (err) { notify('That backup file is not valid JSON', 'error'); return; }
+                        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+                            notify('That backup file is not valid', 'error');
+                            return;
+                        }
+                        localStorage.clear();
+                        Object.keys(data).forEach(function (key) { localStorage.setItem(key, data[key]); });
+                        // IndexedDB writes are async — wait before reloading.
+                        var done = window.IStoriesStorage ? IStoriesStorage.flush() : Promise.resolve();
+                        done.then(function () {
+                            notify('Backup restored — reloading…');
+                            setTimeout(function () { location.reload(); }, 700);
+                        });
+                    };
+                    reader.readAsText(file);
+                });
+            }
+
+            // Delete everything (random-number confirmation).
+            var dmDeleteAll = document.getElementById('dmDeleteAll');
+            if (dmDeleteAll) {
+                dmDeleteAll.addEventListener('click', function () {
+                    var code = String(Math.floor(1000 + Math.random() * 9000));
+                    var input = prompt('DELETE CONFIRMATION\n\nTo delete ALL data, type this number:\n\n' + code);
+                    if (input === null) { notify('Deletion cancelled', 'info'); return; }
+                    if (input !== code) { notify('Incorrect number — deletion cancelled', 'error'); return; }
+                    localStorage.clear();
+                    var done = window.IStoriesStorage ? IStoriesStorage.flush() : Promise.resolve();
+                    done.then(function () {
+                        notify('All data deleted — reloading…');
+                        setTimeout(function () { location.reload(); }, 700);
+                    });
+                });
+            }
+
+            // --- Reset & refresh -----------------------------------------
+            var RESET_KEYS = [
+                'theme', 'selectedColor', 'selectedSecondaryColor',
+                'fontFamily', 'fontSize', 'lineHeight',
+                'autoTranslateEnabled', 'paragraphTranslationEnabled', 'noTranslatedWords',
+                'defaultTranslateLanguage',
+                'showUserStories', 'showUserQuizzes', 'showVoiceButtons', 'speechEnabled'
+            ];
+
+            var resetBtn = document.getElementById('resetPreferences');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function () {
+                    if (!confirm('Reset theme, colours, reading and feature settings to their defaults?\n\nYour stories, words and quizzes are kept.')) return;
+                    RESET_KEYS.forEach(lsRemove);
+                    notify('Preferences reset — reloading…', 'success');
+                    setTimeout(function () { location.reload(); }, 600);
+                });
+            }
+
+            var refreshBtn = document.getElementById('refreshApp');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function () { location.reload(); });
+            }
+
+            // --- Boot -----------------------------------------------------
+            applyTheme();
+            applyPrimaryColor(colorState.selectedColor);
+            applySecondaryColor(colorState.selectedSecondaryColor);
+        })();
+    </script>
+
+</body>
+
+</html>

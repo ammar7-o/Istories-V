@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Istories - Language Quizzes</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <!-- Add Quiz Styles -->
+    <link rel="stylesheet" href="styles/add-quiz.css">
+    <link rel="stylesheet" href="styles/add-quiz.css">
+    <link rel="icon" type="image/png" href="../../icon.png?v=2">
+    <meta property="og:title" content="IStories Quizzes">
+    <meta property="og:description" content="Learn Languages Through Interactive Quizzes.">
+    <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+
+    <!-- Shared sidebar navigation (nav/sidebar.js) -->
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <!-- Large user data (userStories, savedWords, userDictionaries, …) is stored in IndexedDB via localForage; must load before page scripts. -->
+    <script src="../nav/vendor/localforage.min.js"></script>
+    <script src="../nav/storage.js"></script>
+    <script src="../nav/sidebar.js" defer></script>
+    <script src="../nav/common.js"></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+</head>
+
+<body data-css-key="customCSSquiz" data-css-important="rule">
+        <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-brain" aria-hidden="true"></i>
+                <span>Quiz</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+            <form id="search-form" class="ist-header__search" action="#">
+                <i class="fa-solid fa-magnifying-glass ist-header__search-icon" aria-hidden="true"></i>
+                <input class="search-input" id="storySearch" type="text" placeholder="Search" autocomplete="off">
+                <button id="search-btn" class="ist-header__search-btn" type="submit" aria-label="Search">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </form>
+            <a class="ist-header__action" id="settings-button" href="../settings/index.html" aria-label="Settings"
+                title="Settings">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </a>
+        </div>
+    </header>
+
+<main class="main-content">
+        <div class="container">
+            <!-- Home Page -->
+            <div id="home" class="page active">
+                <section class="hero">
+                    <div class="quiz-selector">
+                        <label for="Select"><i class="fas fa-book-open"></i> Select Quiz Collection:</label>
+                        <select name="" id="Select">
+                            <option value="database/quiz.js">Basic Arabic Quizzes</option>
+                            <option value="database/quiz-2.js">Advanced Arabic Quizzes</option>
+                            <option value="database/quiz-3.js">Advanced Arabic Quizzes</option>
+
+                        </select>
+                    </div>
+                </section>
+
+                <div class="level-filter">
+                    <button class="level-btn active" data-level="all">All Levels</button>
+                    <button class="level-btn" data-level="beginner">Beginner</button>
+                    <button class="level-btn" data-level="intermediate">Intermediate</button>
+                    <button class="level-btn" data-level="advanced">Advanced</button>
+                    <button class="level-btn" data-level="user">User</button>
+
+                </div>
+
+                <div class="stories-grid" id="storiesGrid">
+                    <!-- Quiz cards will be populated by JavaScript -->
+                </div>
+            </div>
+            <!-- Add Quiz Page -->
+            <div id="addquiz" class="page">
+                <div class="add-stories-container">
+                    <h1><i class="fas fa-plus-circle"></i> Upload Your Own Quiz</h1>
+                    <p class="page-description">Upload custom quizzes in JSON format or upload existing quizzes to test
+                        your knowledge.</p>
+
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <div class="upload-card">
+                            <div class="upload-header">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h2>Upload Quiz File</h2>
+                            </div>
+                            <p class="upload-description">
+                                Upload a JSON file containing your quiz. The file should follow the quiz JSON format.
+                            </p>
+
+                            <div class="upload-area" id="quizUploadArea">
+                                <i class="fas fa-file-upload"></i>
+                                <h3>Drop your quiz JSON file here</h3>
+                                <p>or click to browse</p>
+                                <input type="file" id="quizFileInput" accept=".json" hidden>
+                                <button class="browse-btn" id="quizBrowseBtn">
+                                    <i class="fas fa-folder-open"></i> Browse Files
+                                </button>
+                                <p class="file-types">Supported format: .json</p>
+                            </div>
+
+                            <div class="selected-file" id="quizSelectedFileInfo" style="display: none;">
+                                <div class="file-info">
+                                    <i class="fas fa-file-code"></i>
+                                    <div class="file-details">
+                                        <span class="file-name" id="quizFileName"></span>
+                                        <span class="file-size" id="quizFileSize"></span>
+                                    </div>
+                                    <button class="remove-file" id="quizRemoveFile">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="upload-action-btn" id="quizUploadBtn" disabled>
+                                <i class="fas fa-upload"></i> Upload Quiz
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Two Column Layout -->
+                    <div class="content-columns">
+                        <!-- Left Column: Your Quizzes -->
+                        <div class="left-column">
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-history"></i>
+                                    <h2>Your Created Quizzes</h2>
+                                </div>
+                                <div class="user-stories-list" id="userQuizzesList">
+                                    <!-- Dynamic content will be inserted here -->
+                                    <div class="empty-state">
+                                        <i class="fas fa-brain"></i>
+                                        <p>No quizzes created yet</p>
+                                        <small>Create your first quiz using the text area or file upload!</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Template & Instructions -->
+                        <div class="right-column">
+                            <!-- Template Download -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-file-download"></i>
+                                    <h2>Download Quiz Template</h2>
+                                </div>
+                                <p>Use our pre-formatted JSON template to create quizzes that work perfectly.</p>
+                                <button class="download-template-btn" id="downloadQuizTemplateBtn">
+                                    <i class="fas fa-download"></i> Download Quiz Template
+                                </button>
+                            </div>
+
+                            <!-- Instructions -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h2>How to Create Your Quiz</h2>
+                                </div>
+                                <div class="instructions">
+                                    <div class="instruction-step">
+                                        <span class="step-number">1</span>
+                                        <div class="step-content">
+                                            <h3>Plan Your Quiz</h3>
+                                            <p>Decide on quiz title, description, level
+                                                (beginner/intermediate/advanced), and type (vocab/grammar/etc).</p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">2</span>
+                                        <div class="step-content">
+                                            <h3>Create Questions</h3>
+                                            <p>Add questions with different types: multiple choice, true/false, fill in
+                                                blank, matching, or drag & drop.</p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">3</span>
+                                        <div class="step-content">
+                                            <h3>Add Answers & Explanations</h3>
+                                            <p>Mark correct answers and add explanations to help learners understand.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">4</span>
+                                        <div class="step-content">
+                                            <h3>Upload & Test</h3>
+                                            <p>Upload your JSON file and test your quiz with all interactive features!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Export Quizzes Button -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-file-export"></i>
+                                    <h2>Export Your Quizzes</h2>
+                                </div>
+                                <p>Export all your created quizzes as a JSON file for backup or sharing with others.</p>
+                                <button class="download-template-btn" id="exportQuizzesBtn">
+                                    <i class="fas fa-download"></i> Export All Quizzes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Import Area for Quizzes -->
+                    <div class="text-import-area">
+                        <textarea id="quizJsonTextArea" placeholder='Paste your quiz JSON here. Example:
+{
+    "title": "My Vocabulary Quiz",
+    "description": "Test your vocabulary knowledge",
+    "level": "beginner",
+    "type": "vocab",
+    "questions": [
+        {
+            "id": 1,
+            "type": "multiple_choice",
+            "question": "What is the Arabic word for book?",
+            "choices": [
+                {"value": "كتاب", "correct": true},
+                {"value": "قلم", "correct": false},
+                {"value": "مدرسة", "correct": false}
+            ],
+            "explanation": "كتاب means book in Arabic."
+        }
+    ]
+}'></textarea>
+
+                        <div class="text-import-actions">
+                            <button class="btn-secondary" id="clearQuizJsonBtn">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                            <button class="btn-primary" id="importQuizJsonBtn">
+                                <i class="fas fa-file-import"></i> Import Quiz from Text
+                            </button>
+                        </div>
+
+                        <div class="json-validation" id="quizJsonValidation" style="display: none;">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="quizValidationMessage"></span>
+                        </div>
+
+                        <!-- Quiz JSON Format Example -->
+                        <div class="json-example-card">
+                            <h2><i class="fas fa-code"></i> Complete Quiz JSON Format Example</h2>
+                            <div class="code-container">
+                                <pre><code id="quizJsonExample">{
+    "id": "my-custom-quiz",
+    "title": "Basic Arabic Vocabulary Quiz",
+    "description": "Test your basic Arabic vocabulary knowledge",
+    "level": "beginner",
+    "type": "vocab",
+    "author": "Your Name",
+    "createdAt": "2024-01-01",
+    "questions": [
+        {
+            "id": 1,
+            "type": "multiple_choice",
+            "question": "What is the Arabic word for 'hello'?",
+            "choices": [
+                {"value": "مرحبا", "correct": true},
+                {"value": "شكرا", "correct": false},
+                {"value": "مع السلامة", "correct": false},
+                {"value": "صباح الخير", "correct": false}
+            ],
+            "explanation": "'مرحبا' means hello in Arabic."
+        },
+        {
+            "id": 2,
+            "type": "true_false",
+            "question": "'كتاب' means 'pen' in Arabic.",
+            "choices": [
+                {"value": "true", "correct": false},
+                {"value": "false", "correct": true}
+            ],
+            "explanation": "'كتاب' means 'book', not 'pen'."
+        },
+        {
+            "id": 3,
+            "type": "fill_in_blank",
+            "question": "The Arabic word for water is ___.",
+            "correctAnswers": ["ماء"],
+            "explanation": "'ماء' means water in Arabic."
+        },
+        {
+            "id": 4,
+            "type": "matching",
+            "question": "Match the Arabic words with their English translations:",
+            "matches": [
+                {"left": "بيت", "right": "House"},
+                {"left": "سيارة", "right": "Car"},
+                {"left": "مدرسة", "right": "School"}
+            ],
+            "correctMatches": {"0": 0, "1": 1, "2": 2},
+            "explanation": "Correct matches: بيت-House, سيارة-Car, مدرسة-School."
+        }
+    ]
+}</code></pre>
+                                <button class="copy-btn" id="copyQuizJsonBtn">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Quiz Modal -->
+                    <div class="preview-modal" id="editQuizModal">
+                        <div class="preview-content">
+                            <div class="preview-header">
+                                <h2><i class="fas fa-edit"></i> Edit Quiz</h2>
+                                <button class="close-preview" id="closeEditQuizModalBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preview-body">
+                                <form id="editQuizForm">
+                                    <div class="form-group">
+                                        <label for="editQuizTitle">
+                                            <i class="fas fa-heading"></i> Quiz Title *
+                                        </label>
+                                        <input type="text" id="editQuizTitle" placeholder="Enter quiz title" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizDescription">
+                                            <i class="fas fa-align-left"></i> Description *
+                                        </label>
+                                        <textarea id="editQuizDescription" rows="2" placeholder="Enter quiz description"
+                                            required></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizLevel">
+                                            <i class="fas fa-chart-line"></i> Difficulty Level *
+                                        </label>
+                                        <select id="editQuizLevel" required>
+                                            <option value="">Select level</option>
+                                            <option value="beginner">Beginner</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="advanced">Advanced</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizType">
+                                            <i class="fas fa-tag"></i> Quiz Type *
+                                        </label>
+                                        <select id="editQuizType" required>
+                                            <option value="">Select type</option>
+                                            <option value="vocab">Vocabulary</option>
+                                            <option value="grammar">Grammar</option>
+                                            <option value="reading">Reading</option>
+                                            <option value="listening">Listening</option>
+                                            <option value="writing">Writing</option>
+                                            <option value="mixed">Mixed</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizAuthor">
+                                            <i class="fas fa-user"></i> Author Name (Optional)
+                                        </label>
+                                        <input type="text" id="editQuizAuthor" placeholder="Your name">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editQuizQuestions">
+                                            <i class="fas fa-question-circle"></i> Quiz Questions (JSON) *
+                                        </label>
+                                        <textarea id="editQuizQuestions" rows="10"
+                                            placeholder='Enter quiz questions in JSON format' required></textarea>
+                                        <small>Format: Array of question objects with id, type, question, choices,
+                                            explanation</small>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-secondary" id="previewQuizBtn">
+                                            <i class="fas fa-eye"></i> Preview Quiz
+                                        </button>
+                                        <button type="button" class="btn-secondary" id="testQuizBtn">
+                                            <i class="fas fa-play"></i> Test Quiz
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="preview-footer">
+                                <button class="btn-secondary" id="closeEditQuizModalBtn2">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button type="submit" form="editQuizForm" class="btn-primary">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Quiz Preview Modal -->
+    <div id="quizPreviewModal" class="quiz-preview-modal" style="display: none;">
+        <div class="preview-overlay"></div>
+        <div class="preview-content">
+            <button class="close-preview" id="closePreview">&times;</button>
+            <div class="preview-header">
+                <div class="preview-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h2 id="previewTitle">Quiz Title</h2>
+            </div>
+            <div class="preview-body">
+                <p id="previewDescription">Quiz description</p>
+                <div class="preview-stats">
+                    <div class="stat">
+                        <i class="fas fa-question-circle"></i>
+                        <span id="previewQuestionCount">0 questions</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-clock"></i>
+                        <span id="previewTimeEstimate">0 min</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="previewLevel">Beginner</span>
+                    </div>
+                </div>
+                <div class="preview-history">
+                    <h3><i class="fas fa-history"></i> Last Attempt</h3>
+                    <div class="history-score" id="previewHistoryScore">
+                        <div class="score-circle">
+                            <span class="score-percentage">--%</span>
+                        </div>
+                        <div class="history-details">
+                            <p class="history-date">Not attempted yet</p>
+                            <p class="history-streak">Start your learning streak!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-actions">
+                <button class="start-quiz-btn" id="startFromPreview">
+                    <i class="fas fa-play"></i> Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+
+        <div class="quiz-header2">
+            <div class="quiz-header-top">
+                <button class="back-to-quizzes-btn" id="backToQuizzes">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="quiz-stats">
+
+                    <span class="quiz-progress" id="quizProgress"></span>
+                </div>
+            </div>
+            <div class="quiz-progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="question-container" id="questionContainer"></div>
+
+        <div class="quiz-navigation">
+            <button class="quiz-nav-btn" id="prevBtn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="quiz-nav-btn" id="nextBtn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="quiz-nav-btn submit-btn" id="submitQuiz" style="display: none;">
+                <i class="fas fa-check-circle"></i> Submit Quiz
+            </button>
+        </div>
+
+        <div class="results-container" id="resultsContainer" style="display: none;"></div>
+
+    </div>
+    <!-- Custom CSS Modal (add at bottom of settings page) -->
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <img src="../../icon.svg" alt="IStories Logo">
+                    <span>IStories Quizzes</span>
+                </div>
+                <div class="footer-links">
+                    <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
+                    <a href="#" id="privacyLink">Privacy Policy</a>
+                    <a href="#" id="termsLink">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables for quizzes
+        window.quizzesLoaded = false;
+        window.quizData = [];
+        window.quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
+        // IndexedDB is async: refresh once storage is ready.
+        if (window.IStoriesStorage) IStoriesStorage.whenReady(function () {
+            window.quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
+        });
+
+        // Function to initialize app after quizzes are loaded
+        function initAppAfterQuizzesLoad() {
+            if (window.quizzesLoaded) {
+                if (window.IStoriesStorage) IStoriesStorage.whenReady(function () { init(); });
+                else init();
+            } else {
+                console.log('Waiting for quizzes to load...');
+                setTimeout(initAppAfterQuizzesLoad, 100);
+            }
+        }
+
+        // Function to load quiz data based on selected file
+        function loadQuizFile(filename) {
+            // Reset loaded state
+            window.quizzesLoaded = false;
+
+            // Remove old script if exists
+            const oldScript = document.querySelector('script[data-quiz="true"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            console.log(`Loading quizzes from: ${filename}`);
+
+            // Create and load new script
+            const s = document.createElement("script");
+            s.src = filename;
+            s.setAttribute('data-quiz', 'true');
+
+            s.onload = function () {
+                console.log('Quizzes loaded successfully');
+
+                // Check if quiz data exists in different formats
+                if (typeof window.quizData !== 'undefined') {
+                    console.log('Quiz data found:', window.quizData);
+                    window.quizzesLoaded = true;
+                } else if (typeof window.quizzes !== 'undefined') {
+                    // Some files might export directly as 'quizzes' array
+                    window.quizData = { quizzes: window.quizzes };
+                    console.log('Quizzes array found:', window.quizData);
+                    window.quizzesLoaded = true;
+                } else {
+                    console.warn('No quiz data found in the expected format');
+                    // Create fallback quiz data
+                    window.quizData = {
+                        meta: {
+                            app: "IStories",
+                            version: "1.0.0",
+                            lastUpdated: "2024-01-16",
+                            language: "ar",
+                            totalQuizzes: 1,
+                            totalQuestions: 5
+                        },
+                        quizzes: [
+                            {
+                                id: "fallback-quiz",
+                                title: "Sample Quiz",
+                                description: "Test your knowledge with this sample quiz",
+                                level: "beginner",
+                                type: "vocab",
+                                author: "IStories",
+                                createdAt: "2024-01-16",
+                                questions: [
+                                    {
+                                        id: 1,
+                                        type: "multiple_choice",
+                                        question: "What is the translation of 'hello'?",
+                                        choices: [
+                                            { value: "مرحبا", correct: true },
+                                            { value: "شكرا", correct: false },
+                                            { value: "مع السلامة", correct: false }
+                                        ],
+                                        explanation: "'مرحبا' means hello in Arabic."
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+                    window.quizzesLoaded = true;
+                }
+
+                // Initialize app
+                initAppAfterQuizzesLoad();
+            };
+
+            s.onerror = function () {
+                console.error(`Failed to load ${filename}`);
+                // Use fallback quiz data
+                window.quizData = {
+                    meta: {
+                        app: "IStories",
+                        version: "1.0.0",
+                        lastUpdated: "2024-01-16",
+                        language: "ar",
+                        totalQuizzes: 1,
+                        totalQuestions: 5
+                    },
+                    quizzes: [
+                        {
+                            id: "error-quiz",
+                            title: "Sample Quiz",
+                            description: "This is a sample quiz. The quiz file could not be loaded.",
+                            level: "beginner",
+                            type: "vocab",
+                            author: "IStories",
+                            createdAt: "2024-01-16",
+                            questions: [
+                                {
+                                    id: 1,
+                                    type: "multiple_choice",
+                                    question: "What does 'quiz' mean?",
+                                    choices: [
+                                        { value: "A test of knowledge", correct: true },
+                                        { value: "A type of story", correct: false },
+                                        { value: "A language", correct: false },
+                                        { value: "A game", correct: false }
+                                    ],
+                                    explanation: "A quiz is a test of knowledge, especially a brief, informal test given to students."
+                                }
+                            ]
+                        }
+                    ]
+                };
+                window.quizzesLoaded = true;
+                // Initialize app with fallback
+                initAppAfterQuizzesLoad();
+            };
+
+            document.head.appendChild(s);
+        }
+
+        // Add event listener to select element
+        document.getElementById('Select').addEventListener('change', function (e) {
+            const selectedFile = e.target.value;
+            console.log(`File changed to: ${selectedFile}`);
+            loadQuizFile(selectedFile);
+        });
+
+        // Load initial quizzes based on default selection
+        const initialFile = document.getElementById('Select').value;
+        loadQuizFile(initialFile);
+    </script>
+
+    <script src="scripts/main.js"></script>
+    <script src="../nav/settings-panel.js"></script>
+    <script src="scripts/creat-quiz.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+/* ==========================================================================
+   IStories — shared slim page header
+   ==========================================================================
+   Linked LAST in <head> on every page that uses the shared header, so it
+   overrides the per-page `header {}` rules the old duplicated headers used.
+
+   Every page gets the same top bar:
+
+       [burger]  brand · page title            [search] [settings]
+
+   - The burger reuses the page's #toggle-nav (or the one injected by
+     sidebar.js) and now sits *inside* the bar instead of floating over it.
+   - The bar is fixed; `body` padding-top reserves its height so pages no
+     longer need their own spacer margins (those are neutralised below).
+   - Colours come from the shared tokens, so light/dark themes just work.
+   ========================================================================== */
+
+:root {
+    --ist-header-h: 64px;
+    --ist-header-gap: 28px;
+}
+
+.ist-header {
+    position: fixed;
+    top: 0;
+    inset-inline: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    width: auto;
+    padding: 0;
+    height: var(--ist-header-h);
+    background: color-mix(in srgb, var(--bg, #ffffff) 88%, transparent);
+    color: var(--text, #1f2233);
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .02), 0 10px 26px -22px rgba(0, 0, 0, .5);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    backdrop-filter: saturate(180%) blur(14px);
+    user-select: none;
+}
+
+/* Sit beside the docked sidebar on desktop instead of underneath it. */
+@media (min-width: 900px) {
+    body.ist-docked .ist-header {
+        inset-inline-start: var(--ist-sidebar-current);
+    }
+}
+
+.ist-header__inner {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-inline: clamp(12px, 3vw, 24px);
+}
+
+/* --- Trigger button: keep it in the bar (override sidebar.css) --- */
+.ist-header .ist-burger,
+.ist-header #toggle-nav.ist-burger {
+    position: static;
+    inset: auto;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    color: inherit;
+    border-color: transparent;
+    background: transparent;
+}
+
+.ist-header .ist-burger:hover {
+    background: color-mix(in srgb, var(--primary, #243d34) 12%, transparent);
+    border-color: color-mix(in srgb, var(--primary, #243d34) 26%, transparent);
+    color: var(--primary, #243d34);
+}
+
+/* --- Brand --- */
+.ist-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    white-space: nowrap;
+}
+
+.ist-header__logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+}
+
+.ist-header__name {
+    font-size: 1.18rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
+}
+
+/* --- Page title --- */
+.ist-header__page {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-inline-start: 14px;
+    margin-inline-start: 2px;
+    border-inline-start: 1px solid var(--border, #e5e7eb);
+    font-size: .98rem;
+    font-weight: 600;
+    color: var(--text-light, #6b7280);
+    white-space: nowrap;
+}
+
+.ist-header__page i {
+    color: var(--secondary, #d38d70);
+}
+
+.ist-header__spacer {
+    flex: 1 1 auto;
+    min-width: 4px;
+}
+
+/* --- Search --- */
+.ist-header__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 1 360px;
+    min-width: 140px;
+    height: 42px;
+    padding-inline: 14px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 999px;
+    background: var(--input-bg, #ffffff);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.ist-header__search:focus-within {
+    border-color: color-mix(in srgb, var(--primary, #243d34) 45%, var(--border, #e5e7eb));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #243d34) 14%, transparent);
+}
+
+.ist-header__search .search-input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: .95rem;
+}
+
+.ist-header__search-icon {
+    color: var(--text-light, #6b7280);
+}
+
+.ist-header__search-btn {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-light, #6b7280);
+    cursor: pointer;
+}
+
+.ist-header__search-btn:hover {
+    color: var(--primary, #243d34);
+    background: var(--hover, rgba(0, 0, 0, .06));
+}
+
+/* --- Icon action (settings) --- */
+.ist-header__action {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 12px;
+    background: var(--bg-secondary, #ffffff);
+    color: inherit;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.ist-header__action:hover {
+    color: var(--primary, #243d34);
+    border-color: color-mix(in srgb, var(--primary, #243d34) 32%, var(--border, #e5e7eb));
+}
+
+/* ==========================================================================
+   Offset the page for the fixed bar.
+   Replaces the legacy per-page spacer margins (`.page` / `.hero`
+   margin-top) so every page starts the same distance below the bar.
+   ========================================================================== */
+body {
+    padding-top: var(--ist-header-h);
+}
+
+.main-content {
+    padding-top: var(--ist-header-gap);
+}
+
+.page,
+.hero {
+    margin-top: 0;
+}
+
+/* --- Dark mode --- */
+body.dark-mode .ist-header {
+    background: color-mix(in srgb, var(--bg, #111827) 88%, transparent);
+}
+
+body.dark-mode .ist-header__action {
+    background: var(--bg-secondary, #1f2937);
+}
+
+/* --- Responsive --- */
+@media (min-width: 900px) {
+
+    /* The docked sidebar already shows the brand — lead with the page title. */
+    body.ist-docked .ist-header__brand {
+        display: none;
+    }
+
+    body.ist-docked .ist-header__page {
+        padding-inline-start: 0;
+        margin-inline-start: 0;
+        border-inline-start: 0;
+    }
+}
+
+@media (max-width: 899.98px) {
+    :root {
+        --ist-header-h: 60px;
+    }
+
+    /* On phones the brand carries the app identity; the page title moves out
+       of the way so the search stays usable. */
+    .ist-header__page {
+        display: none;
+    }
+}
+
+@media (max-width: 760px) {
+    .ist-header__name {
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .ist-header__search {
+        min-width: 0;
+        flex-basis: auto;
+    }
+}

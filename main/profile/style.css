@@ -1,0 +1,433 @@
+/* ==========================================================================
+   Profile page — own stylesheet
+   --------------------------------------------------------------------------
+   Loaded by main/profile/index.html. Base tokens, buttons and shared layout
+   come from the shared library stylesheet (../main/style.css); everything
+   that is specific to the profile editor lives here so the page is
+   self-contained inside its own folder.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Legacy token aliases.
+   A few rules (here and in the shared sheet) reference `--*-color` names that
+   were never defined, so they silently fell back to invalid values. Map them
+   onto the current tokens so the page actually renders as intended.
+   -------------------------------------------------------------------------- */
+:root {
+    --primary-color: var(--primary);
+    --text-color: black;
+    --text-secondary: var(--text-light);
+    --text-tertiary: var(--text-lighter);
+    --border-color: var(--border);
+    --success-color: var(--success, #10b981);
+    --warning-color: var(--warning, #f59e0b);
+    --danger-color: var(--danger, #ef4444);
+}
+.dark-mode{
+       --text-color: white;
+}
+/* --------------------------------------------------------------------------
+   Page shell
+   -------------------------------------------------------------------------- */
+/* Uses the #id so it wins over the shared `.page.active { display:block }`. */
+#profile-settings.profile-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    max-width: 880px;
+    margin: 10px auto 40px;
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+    padding: 0;
+}
+
+.profile-head {
+    padding: 0 4px;
+}
+
+.profile-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 6px;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-color);
+}
+
+.profile-title i {
+    color: var(--primary-color);
+}
+
+.profile-subtitle {
+    margin: 0;
+    font-size: 0.98rem;
+    color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Card
+   -------------------------------------------------------------------------- */
+.profile-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.profile-banner {
+    position: relative;
+    height: 112px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.profile-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(140px 140px at 84% 16%, rgba(255, 255, 255, .38), transparent 70%),
+        radial-gradient(180px 180px at 12% 110%, rgba(0, 0, 0, .18), transparent 70%);
+}
+
+.profile-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 26px 40px 38px;
+}
+
+/* --------------------------------------------------------------------------
+   Avatar
+   -------------------------------------------------------------------------- */
+.photo-upload-container {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: -78px;
+}
+
+.photo-frame {
+    position: relative;
+}
+
+.photo-wrapper {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 4px solid var(--card-bg);
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .55);
+    cursor: pointer;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.photo-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 38px -16px rgba(0, 0, 0, .6);
+}
+
+.profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(0, 0, 0, .55);
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+
+.photo-wrapper:hover .photo-overlay,
+.photo-overlay:focus-visible {
+    opacity: 1;
+}
+
+.photo-overlay i {
+    font-size: 26px;
+}
+
+.photo-camera-badge {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    border: 3px solid var(--card-bg);
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .6);
+    transition: transform .2s ease, background-color .25s ease;
+}
+
+.photo-camera-badge:hover {
+    transform: scale(1.08);
+    background: var(--secondary);
+}
+
+.photo-hint {
+    margin: 0;
+    font-size: .82rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.photo-remove {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: .82rem;
+    color: var(--text-tertiary);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color .2s ease;
+}
+
+.photo-remove:hover {
+    color: var(--danger-color);
+}
+
+/* --------------------------------------------------------------------------
+   Name field
+   -------------------------------------------------------------------------- */
+.name-input-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.input-group {
+    margin-bottom: 24px;
+}
+
+.input-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.input-label i {
+    color: var(--primary-color);
+    font-size: 17px;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.name-input {
+    width: 100%;
+    padding: 15px 52px 15px 18px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-color);
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .3s;
+    outline: none;
+}
+
+.name-input::placeholder {
+    color: var(--text-tertiary);
+    font-weight: 400;
+}
+
+.name-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.name-input.is-invalid {
+    border-color: var(--danger-color);
+}
+
+.name-input.is-invalid:focus {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger-color) 16%, transparent);
+}
+
+.input-valid-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    color: var(--success-color);
+    opacity: 0;
+    transform: translateY(-50%) scale(.6);
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+}
+
+.name-input.is-valid+.input-valid-icon {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+.input-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 9px;
+}
+
+.input-hint {
+    margin: 0;
+    font-size: .84rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
+.char-counter {
+    flex-shrink: 0;
+    font-size: .8rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+}
+
+#name-char-count {
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Actions
+   -------------------------------------------------------------------------- */
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-color);
+}
+
+.profile-actions .btn-primary,
+.profile-actions .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-width: 150px;
+    padding: 13px 22px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: transform .18s ease, box-shadow .18s ease, opacity .2s ease, background-color .25s;
+}
+
+.profile-actions .btn-primary:hover,
+.profile-actions .btn-secondary:hover {
+    transform: translateY(-2px);
+}
+
+.profile-actions .btn-primary:active,
+.profile-actions .btn-secondary:active {
+    transform: translateY(0);
+}
+
+.profile-actions button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.profile-actions button:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary) 40%, transparent);
+    outline-offset: 2px;
+}
+
+.profile-status {
+    min-height: 1.2em;
+    margin: 14px 0 0;
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+}
+
+.profile-status.is-ok {
+    color: var(--success-color);
+}
+
+.profile-status.is-warn {
+    color: var(--warning-color);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .profile-body {
+        flex-direction: column;
+        align-items: center;
+        gap: 26px;
+        padding: 24px 20px 30px;
+    }
+
+    .photo-upload-container {
+        margin-top: -64px;
+    }
+
+    .name-input-container {
+        width: 100%;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions .btn-primary,
+    .profile-actions .btn-secondary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-title {
+        font-size: 1.45rem;
+    }
+
+    .profile-body {
+        padding: 20px 14px 26px;
+    }
+
+    .photo-wrapper {
+        width: 128px;
+        height: 128px;
+    }
+
+    .photo-camera-badge {
+        width: 38px;
+        height: 38px;
+    }
+
+    .name-input {
+        font-size: 1rem;
+        padding: 13px 44px 13px 15px;
+    }
+}

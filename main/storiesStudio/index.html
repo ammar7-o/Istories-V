@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stories Studio — IStories</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="../main/style.css">
+    <link rel="stylesheet" href="addStories.css">
+    <link rel="icon" type="image/png" href="../../icon.png">
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <!-- Large user data (userStories, savedWords, userDictionaries, …) is stored in IndexedDB via localForage; must load before page scripts. -->
+    <script src="../nav/vendor/localforage.min.js"></script>
+    <script src="../nav/storage.js"></script>
+    <script src="../nav/sidebar.js" defer></script>
+    <script src="../nav/common.js"></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+</head>
+
+<body>
+    <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                <span>Stories Studio</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div id="addStories" class="page active">
+                <div class="add-stories-container">
+                    <h1><i class="fas fa-wand-magic-sparkles"></i> Stories Studio</h1>
+                    <p class="page-description">Upload your custom stories in JSON format to read them with all
+                        interactive features.</p>
+
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <div class="upload-card">
+                            <div class="upload-header">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h2>Upload Story File</h2>
+                            </div>
+                            <p class="upload-description">
+                                Upload a JSON file containing your story. The file should follow the specified format.
+                            </p>
+
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-file-upload"></i>
+                                <h3>Drop your JSON file here</h3>
+                                <p>or click to browse</p>
+                                <input type="file" id="storyFileInput" accept=".json" hidden>
+                                <button class="browse-btn" id="browseBtn">
+                                    <i class="fas fa-folder-open"></i> Browse Files
+                                </button>
+                                <p class="file-types">Supported format: .json</p>
+                            </div>
+
+                            <div class="selected-file" id="selectedFileInfo" style="display: none;">
+                                <div class="file-info">
+                                    <i class="fas fa-file-code"></i>
+                                    <div class="file-details">
+                                        <span class="file-name" id="fileName"></span>
+                                        <span class="file-size" id="fileSize"></span>
+                                    </div>
+                                    <button class="remove-file" id="removeFile">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="upload-action-btn" id="uploadBtn" disabled>
+                                <i class="fas fa-upload"></i> Upload Story
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Two Column Layout -->
+                    <div class="content-columns">
+                        <!-- Left Column: Quick Add Form -->
+                        <div class="left-column">
+                            <!-- Your Stories -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-history"></i>
+                                    <h2>Your Uploaded Stories</h2>
+                                </div>
+                                <div class="user-stories-list" id="userStoriesList">
+                                    <!-- Dynamic content will be inserted here -->
+                                    <div class="empty-state">
+                                        <i class="fas fa-book-open"></i>
+                                        <p>No stories uploaded yet</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-card">
+                                <h2><i class="fas fa-plus-circle"></i> Quick Add Form</h2>
+                                <p class="form-description">Prefer to type directly? Use this form to create your story:
+                                </p>
+
+                                <form id="storyForm">
+                                    <div class="form-group">
+                                        <label for="storyTitle">
+                                            <i class="fas fa-heading"></i> Story Title *
+                                        </label>
+                                        <input type="text" id="storyTitle" placeholder="Enter story title" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyLevel">
+                                            <i class="fas fa-chart-line"></i> Difficulty Level *
+                                        </label>
+                                        <select id="storyLevel" required>
+                                            <option value="">Select level</option>
+                                            <option value="beginner">Beginner</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="advanced">Advanced</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group lang-group">
+                                        <label for="storyLanguage">
+                                            <i class="fas fa-globe"></i> Story Language *
+                                            <span class="help-icon"
+                                                title="The language this story is written in. It controls the reading direction, the pronunciation used for text-to-speech, and the language cards are filtered by.">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <div class="lang-select-field">
+                                            <i class="fas fa-language" aria-hidden="true"></i>
+                                            <select id="storyLanguage" required>
+                                                <optgroup label="Popular">
+                                                    <option value="en">🇬🇧 English</option>
+                                                    <option value="fr">🇫🇷 French</option>
+                                                    <option value="es">🇪🇸 Spanish</option>
+                                                    <option value="de">🇩🇪 German</option>
+                                                    <option value="it">🇮🇹 Italian</option>
+                                                    <option value="pt">🇵🇹 Portuguese</option>
+                                                </optgroup>
+                                                <optgroup label="Right-to-left">
+                                                    <option value="ar">🇸🇦 Arabic</option>
+                                                    <option value="fa">🇮🇷 Persian</option>
+                                                    <option value="ur">🇵🇰 Urdu</option>
+                                                    <option value="he">🇮🇱 Hebrew</option>
+                                                </optgroup>
+                                                <optgroup label="More languages">
+                                                    <option value="ru">🇷🇺 Russian</option>
+                                                    <option value="tr">🇹🇷 Turkish</option>
+                                                    <option value="nl">🇳🇱 Dutch</option>
+                                                    <option value="pl">🇵🇱 Polish</option>
+                                                    <option value="sv">🇸🇪 Swedish</option>
+                                                    <option value="el">🇬🇷 Greek</option>
+                                                    <option value="hi">🇮🇳 Hindi</option>
+                                                    <option value="zh">🇨🇳 Chinese</option>
+                                                    <option value="ja">🇯🇵 Japanese</option>
+                                                    <option value="ko">🇰🇷 Korean</option>
+                                                </optgroup>
+                                            </select>
+                                            <i class="fas fa-chevron-down lang-caret" aria-hidden="true"></i>
+                                        </div>
+                                        <small class="lang-hint" id="storyLanguageHint">English · left-to-right · read with an English voice</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyLevelCefr">
+                                            <i class="fas fa-language"></i> CEFR Level (Optional)
+                                            <span class="help-icon"
+                                                title="Common European Framework of Reference for Languages (A1, A2, B1, B2, C1, C2)">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <select id="storyLevelCefr">
+                                            <option value="">Select CEFR level (optional)</option>
+                                            <option value="A1">A1 (Beginner)</option>
+                                            <option value="A2">A2 (Elementary)</option>
+                                            <option value="B1">B1 (Intermediate)</option>
+                                            <option value="B2">B2 (Upper Intermediate)</option>
+                                            <option value="C1">C1 (Advanced)</option>
+                                            <option value="C2">C2 (Proficient)</option>
+                                        </select>
+                                        <small>Select the CEFR level that best matches your story</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyCover">
+                                            <i class="fas fa-image"></i> Cover Emoji/Icon/Image URL
+                                        </label>
+                                        <input type="text" id="storyCover"
+                                            placeholder="e.g., 📚 or fas fa-book or https://example.com/image.jpg"
+                                            value="📚">
+                                        <small>Enter an emoji, FontAwesome class, or image URL</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyCoverType">
+                                            <i class="fas fa-palette"></i> Cover Type
+                                        </label>
+                                        <select id="storyCoverType">
+                                            <option value="emoji">Emoji</option>
+                                            <option value="icon">Icon</option>
+                                            <option value="image">Image</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storySound">
+                                            <i class="fas fa-volume-up"></i> Audio File URL (Optional)
+                                            <span class="help-icon" title="URL to an MP3 or audio file for your story">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <input type="text" id="storySound"
+                                            placeholder="e.g., https://example.com/audio.mp3 or ../sounds/story1.mp3">
+                                        <small>Add audio narration for your story (MP3 recommended)</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyDictionaries">
+                                            <i class="fas fa-book"></i> External Dictionaries (Optional)
+                                            <span class="help-icon" title="Path(s) to external JSON dictionary files">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <textarea id="storyDictionaries" rows="3" placeholder="
+Enter one dictionary path per line"></textarea>
+                                        <small>Add paths to external dictionary files (one per line, optional)</small>
+                                        <div>
+                                            <strong>Example:</strong>
+                                            <pre class="example-code">../../database/Dictionarys/story4.json
+../../database/Dictionarys/main.json</pre>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyContent">
+                                            <i class="fas fa-align-left"></i> Story Content *
+                                        </label>
+                                        <textarea id="storyContent" rows="8"
+                                            placeholder="Type your story here. Each paragraph should be on a new line."
+                                            required></textarea>
+                                        <small>Each line will be treated as a separate paragraph</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyAuthor">
+                                            <i class="fas fa-user"></i> Author Name (Optional)
+                                        </label>
+                                        <input type="text" id="storyAuthor" placeholder="Your name">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyTranslations">
+                                            <i class="fas fa-language"></i> Custom Translations (Optional)
+                                            <span class="help-icon"
+                                                title="Add word translations in JSON format. Example: {'hello': {'translation': 'مرحبا'}, 'world': {'translation': 'عالم'}}">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <textarea id="storyTranslations" rows="6"
+                                            placeholder="Add custom word translations in JSON format (optional)"></textarea>
+                                        <div class="translation-example">
+                                            <strong>Example:</strong>
+                                            <pre class="example-code">{
+  "hello": {"translation": "مرحبا"},
+  "world": {"translation": "عالم"},
+  "book": {"translation": "كتاب"}
+}</pre>
+                                            <button type="button" class="example-btn" id="loadExampleTranslations">
+                                                <i class="fas fa-magic"></i> Load Example
+                                            </button>
+                                        </div>
+                                        <small>Add your own translations for words in the story. This will override
+                                            default translations.</small>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" class="previw-btn" id="previewBtn">
+                                            <i class="fas fa-eye"></i> Preview
+                                        </button>
+                                        <button type="submit" class="btn-primary">
+                                            <i class="fas fa-save"></i> Save Story
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Template & Instructions -->
+                        <div class="right-column">
+                            <!-- Template Download -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-file-download"></i>
+                                    <h2>Download Template</h2>
+                                </div>
+                                <p>Use our pre-formatted JSON template to ensure your story works perfectly.</p>
+                                <button class="download-template-btn" id="downloadTemplateBtn">
+                                    <i class="fas fa-download"></i> Download JSON Template
+                                </button>
+                            </div>
+
+                            <!-- Instructions -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h2>How to Create Your Story</h2>
+                                </div>
+                                <div class="instructions">
+                                    <div class="instruction-step">
+                                        <span class="step-number">1</span>
+                                        <div class="step-content">
+                                            <h3>Prepare Your Text</h3>
+                                            <p>Write your story in any text editor. Each paragraph should be on a new
+                                                line.</p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">2</span>
+                                        <div class="step-content">
+                                            <h3>Add Translations (Optional)</h3>
+                                            <p>Add custom translations for difficult words to help readers.</p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">3</span>
+                                        <div class="step-content">
+                                            <h3>Add Details</h3>
+                                            <p>Include title, difficulty level, CEFR level, cover, and optional audio.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="instruction-step">
+                                        <span class="step-number">4</span>
+                                        <div class="step-content">
+                                            <h3>Upload & Enjoy</h3>
+                                            <p>Upload your JSON file and start reading with interactive features!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Export Stories Button -->
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-file-export"></i>
+                                    <h2>Export Your Stories</h2>
+                                </div>
+                                <p>Export all your uploaded stories as a JSON file for backup or sharing.</p>
+                                <button class="download-template-btn" id="exportStoriesBtn">
+                                    <i class="fas fa-download"></i> Export All Stories
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-import-area">
+                        <textarea id="jsonTextArea" placeholder='Paste your JSON here. Example:
+{
+    "title": "My Story",
+    "lang": "en",
+    "level": "beginner",
+    "content": ["First paragraph.", "Second paragraph."]
+}'></textarea>
+
+                        <div class="text-import-actions">
+                            <button class="btn-secondary" id="clearJsonBtn">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                            <button class="btn-primary" id="importJsonBtn">
+                                <i class="fas fa-file-import"></i> Import from Text
+                            </button>
+                        </div>
+
+                        <div class="json-validation" id="jsonValidation" style="display: none;">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="validationMessage"></span>
+                        </div>
+                        <!-- JSON Format Example -->
+                        <div class="json-example-card">
+                            <h2><i class="fas fa-code"></i> Complete JSON Format Example</h2>
+                            <div class="code-container">
+                                <pre><code id="jsonExample">{
+    "title": "The Adventure Begins",                 // #any-text #shown-on-the-card
+    "lang": "en",                                    // #en #fr #es #de #it #pt #ar #fa #ur #he #ru #tr #nl #pl #sv #el #hi #zh #ja #ko
+    "level": "intermediate",                         // #beginner #intermediate #advanced
+    "levelcefr": "A2",                               // #A1 #A2 #B1 #B2 #C1 #C2
+    "cover": "🏝️",                                   // #emoji-char | #image-path-or-URL | #fa-class-like-fas-fa-book
+    "coverType": "emoji",                            // #emoji #image #icon
+    "content": [
+        "Once upon a time, in a small village nestled between mountains...",   // #one-string-per-paragraph
+        "The young hero set out on a journey filled with challenges.",         // you can use <span class="mark"></span> as marked word
+        "Each step brought new lessons and unforgettable experiences."         // you can use </img> for add images
+    ],
+
+    "author": "Your Name",                           // #optional #any-text
+    "sound": "../sounds/story1.mp3",                 // #optional #path-or-URL #mp3 #read-along-audio
+    "tags": [                                        // #optional #array-of-strings #used-by-search
+        "adventure",
+        "nature",
+        "mystery"
+    ],
+    "dictionaries": [                                // #optional #array-of-file-paths
+        "../../database/Dictionarys/story4.json",
+        "../../database/Dictionarys/main.json"
+    ],
+    "translations": {                                // #optional #key-is-the-word
+        "journey": "رحلة"                            // #short-form: translation-only
+    }
+}</code></pre>
+                                <button class="copy-btn" id="copyJsonBtn">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <p class="code-note">
+                                <i class="fas fa-circle-info"></i>
+                                Everything after <code>//</code> is a note listing every value the field accepts (the
+                                hashtags). The <strong>Copy</strong> button removes the notes for you.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Preview Modal -->
+                    <div class="preview-modal" id="previewModal">
+                        <div class="preview-content">
+                            <div class="preview-header">
+                                <h2><i class="fas fa-eye"></i> Story Preview</h2>
+                                <button class="close-preview" id="closePreview">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preview-body">
+                                <div class="preview-story-card">
+                                    <div class="preview-cover">
+                                        <div id="previewCoverDisplay">📚</div>
+                                    </div>
+                                    <div class="preview-details">
+                                        <span class="preview-level" id="previewLevel">intermediate</span>
+                                        <span class="preview-cefr" id="previewCefr">A2</span>
+                                        <span class="preview-lang story-lang-badge" id="previewLang"><i class="fas fa-globe"></i> English</span>
+                                        <h3 id="previewTitle">Story Title</h3>
+                                        <p id="previewDescription">Story description will appear here...</p>
+                                        <div class="preview-meta">
+                                            <span><i class="fas fa-font"></i> <span id="previewWordCount">0</span>
+                                                words</span>
+                                            <span><i class="fas fa-clock"></i> 1 min read</span>
+                                            <span><i class="fas fa-user"></i> <span
+                                                    id="previewAuthor">Anonymous</span></span>
+                                            <span id="previewAudioBadge" style="display: none;">
+                                                <i class="fas fa-volume-up"></i> Audio
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="preview-content-section">
+                                    <h3>Story Content Preview:</h3>
+                                    <div class="preview-text" id="previewText">
+                                        <p>Your story content will appear here...</p>
+                                    </div>
+                                </div>
+                                <div class="preview-translations-section" id="previewTranslationsSection"
+                                    style="display: none;">
+                                    <h3><i class="fas fa-language"></i> Custom Translations:</h3>
+                                    <div class="translations-list" id="previewTranslationsList">
+                                        <!-- Translations will appear here -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-footer">
+                                <button class="btn-secondary" id="closePreviewBtn">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                                <button class="btn-primary" id="saveFromPreviewBtn">
+                                    <i class="fas fa-save"></i> Save Story
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Edit Story Modal -->
+                    <div class="preview-modal" id="editStoryModal">
+                        <div class="preview-content">
+                            <div class="preview-header">
+                                <h2><i class="fas fa-edit"></i> Edit Story</h2>
+                                <button class="close-preview" id="closeEditModalBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preview-body">
+                                <form id="editStoryForm">
+                                    <div class="form-group">
+                                        <label for="editStoryTitle">
+                                            <i class="fas fa-heading"></i> Story Title *
+                                        </label>
+                                        <input type="text" id="editStoryTitle" placeholder="Enter story title" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryLevel">
+                                            <i class="fas fa-chart-line"></i> Difficulty Level *
+                                        </label>
+                                        <select id="editStoryLevel" required>
+                                            <option value="">Select level</option>
+                                            <option value="beginner">Beginner</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="advanced">Advanced</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group lang-group">
+                                        <label for="editStoryLanguage">
+                                            <i class="fas fa-globe"></i> Story Language *
+                                        </label>
+                                        <div class="lang-select-field">
+                                            <i class="fas fa-language" aria-hidden="true"></i>
+                                            <select id="editStoryLanguage" required>
+                                                <optgroup label="Popular">
+                                                    <option value="en">🇬🇧 English</option>
+                                                    <option value="fr">🇫🇷 French</option>
+                                                    <option value="es">🇪🇸 Spanish</option>
+                                                    <option value="de">🇩🇪 German</option>
+                                                    <option value="it">🇮🇹 Italian</option>
+                                                    <option value="pt">🇵🇹 Portuguese</option>
+                                                </optgroup>
+                                                <optgroup label="Right-to-left">
+                                                    <option value="ar">🇸🇦 Arabic</option>
+                                                    <option value="fa">🇮🇷 Persian</option>
+                                                    <option value="ur">🇵🇰 Urdu</option>
+                                                    <option value="he">🇮🇱 Hebrew</option>
+                                                </optgroup>
+                                                <optgroup label="More languages">
+                                                    <option value="ru">🇷🇺 Russian</option>
+                                                    <option value="tr">🇹🇷 Turkish</option>
+                                                    <option value="nl">🇳🇱 Dutch</option>
+                                                    <option value="pl">🇵🇱 Polish</option>
+                                                    <option value="sv">🇸🇪 Swedish</option>
+                                                    <option value="el">🇬🇷 Greek</option>
+                                                    <option value="hi">🇮🇳 Hindi</option>
+                                                    <option value="zh">🇨🇳 Chinese</option>
+                                                    <option value="ja">🇯🇵 Japanese</option>
+                                                    <option value="ko">🇰🇷 Korean</option>
+                                                </optgroup>
+                                            </select>
+                                            <i class="fas fa-chevron-down lang-caret" aria-hidden="true"></i>
+                                        </div>
+                                        <small class="lang-hint" id="editStoryLanguageHint">English · left-to-right · read with an English voice</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryLevelCefr">
+                                            <i class="fas fa-language"></i> CEFR Level (Optional)
+                                        </label>
+                                        <select id="editStoryLevelCefr">
+                                            <option value="">Select CEFR level (optional)</option>
+                                            <option value="A1">A1 (Beginner)</option>
+                                            <option value="A2">A2 (Elementary)</option>
+                                            <option value="B1">B1 (Intermediate)</option>
+                                            <option value="B2">B2 (Upper Intermediate)</option>
+                                            <option value="C1">C1 (Advanced)</option>
+                                            <option value="C2">C2 (Proficient)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryAuthor">
+                                            <i class="fas fa-user"></i> Author Name (Optional)
+                                        </label>
+                                        <input type="text" id="editStoryAuthor" placeholder="Your name">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryCoverType">
+                                            <i class="fas fa-palette"></i> Cover Type
+                                        </label>
+                                        <select id="editStoryCoverType">
+                                            <option value="emoji">Emoji</option>
+                                            <option value="icon">Icon</option>
+                                            <option value="image">Image</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryCover">
+                                            <span id="editCoverLabel">Emoji</span> *
+                                        </label>
+                                        <input type="text" id="editStoryCover"
+                                            placeholder="e.g., 📚 or fas fa-book or https://example.com/image.jpg"
+                                            required>
+                                        <small>Enter an emoji, FontAwesome class, or image URL</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStorySound">
+                                            <i class="fas fa-volume-up"></i> Audio File URL (Optional)
+                                        </label>
+                                        <input type="text" id="editStorySound"
+                                            placeholder="e.g., https://example.com/audio.mp3">
+                                        <small>Add audio narration for your story (MP3 recommended)</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryDictionaries">
+                                            <i class="fas fa-book"></i> External Dictionaries (Optional)
+                                        </label>
+                                        <textarea id="editStoryDictionaries" rows="3" placeholder="
+../../database/Dictionarys/main.json
+
+Enter one dictionary path per line"></textarea>
+                                        <small>Add paths to external dictionary files (one per line, optional)</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryContent">
+                                            <i class="fas fa-align-left"></i> Story Content *
+                                        </label>
+                                        <textarea id="editStoryContent" rows="8"
+                                            placeholder="Type your story here. Each paragraph should be on a new line."
+                                            required></textarea>
+                                        <small>Each line will be treated as a separate paragraph</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryTranslations">
+                                            <i class="fas fa-language"></i> Custom Translations (Optional)
+                                        </label>
+                                        <textarea id="editStoryTranslations" rows="6"
+                                            placeholder="Add custom word translations in JSON format (optional)"></textarea>
+                                        <small>Add your own translations for words in the story</small>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="preview-footer">
+                                <button class="btn-secondary" id="closeEditModalBtn2">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button type="submit" form="editStoryForm" class="btn-primary">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Apply the saved theme/colors so the page matches the rest of the app.
+        (function () {
+            var t = localStorage.getItem('theme') || 'light';
+            if (t === 'dark') document.body.classList.add('dark-mode');
+            var root = document.documentElement;
+            var pc = localStorage.getItem('selectedColor');
+            var sc = localStorage.getItem('selectedSecondaryColor');
+            if (pc) root.style.setProperty('--primary', pc);
+            if (sc) root.style.setProperty('--secondary', sc);
+        })();
+    </script>
+    <script>
+        // Globals normally provided by main/main.js on the story library page.
+        // The Stories Studio screen only needs the user-story machinery, so the
+        // library grid is stubbed out here.
+        var currentPage = 'addStories';
+        var stories = [];
+        var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+        var navLinks = [];
+        function renderStories() { /* story grid lives on main/index.html */ }
+    </script>
+    <script src="addstories.js"></script>
+
+</body>
+
+</html>

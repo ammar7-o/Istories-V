@@ -1,0 +1,419 @@
+{
+  "hello": {
+    "translation": "مرحبًا"
+  },
+  "and": {
+    "translation": "و"
+  },
+  "welcome": {
+    "translation": "أهلاً بك"
+  },
+  "to": {
+    "translation": "إلى"
+  },
+  "istories": {
+    "translation": "آي ستوريس"
+  },
+  "this": {
+    "translation": "هذا"
+  },
+  "website": {
+    "translation": "موقع"
+  },
+  "was": {
+    "translation": "كان"
+  },
+  "created": {
+    "translation": "تم إنشاؤه"
+  },
+  "by": {
+    "translation": "بواسطة"
+  },
+  "ammar": {
+    "translation": "عمّار"
+  },
+  "chacal": {
+    "translation": "شاكال"
+  },
+  "help": {
+    "translation": "مساعدة"
+  },
+  "people": {
+    "translation": "الناس"
+  },
+  "learn": {
+    "translation": "يتعلمون"
+  },
+  "languages": {
+    "translation": "اللغات"
+  },
+  "in": {
+    "translation": "في"
+  },
+  "a": {
+    "translation": "ـ"
+  },
+  "fun": {
+    "translation": "ممتعة"
+  },
+  "engaging": {
+    "translation": "جذّابة"
+  },
+  "way": {
+    "translation": "طريقة"
+  },
+  "through": {
+    "translation": "من خلال"
+  },
+  "these": {
+    "translation": "هذه"
+  },
+  "interactive": {
+    "translation": "تفاعلية"
+  },
+  "stories": {
+    "translation": "القصص"
+  },
+  "you": {
+    "translation": "أنت"
+  },
+  "can": {
+    "translation": "تستطيع"
+  },
+  "improve": {
+    "translation": "تحسّن"
+  },
+  "your": {
+    "translation": "مهاراتك"
+  },
+  "vocabulary": {
+    "translation": "المفردات"
+  },
+  "comprehension": {
+    "translation": "الفهم"
+  },
+  "skills": {
+    "translation": "المهارات"
+  },
+  "naturally": {
+    "translation": "بشكل طبيعي"
+  },
+  "each": {
+    "translation": "كل"
+  },
+  "story": {
+    "translation": "قصة"
+  },
+  "is": {
+    "translation": "هي"
+  },
+  "designed": {
+    "translation": "مصممة"
+  },
+  "for": {
+    "translation": "لـ"
+  },
+  "different": {
+    "translation": "مختلفة"
+  },
+  "learning": {
+    "translation": "التعلم"
+  },
+  "levels": {
+    "translation": "المستويات"
+  },
+  "beginner": {
+    "translation": "مبتدئ"
+  },
+  "intermediate": {
+    "translation": "متوسط"
+  },
+  "advanced": {
+    "translation": "متقدم"
+  },
+  "use": {
+    "translation": "تستخدم"
+  },
+  "simple": {
+    "translation": "بسيطة"
+  },
+  "words": {
+    "translation": "كلمات"
+  },
+  "short": {
+    "translation": "قصيرة"
+  },
+  "sentences": {
+    "translation": "جمل"
+  },
+  "perfect": {
+    "translation": "مثالية"
+  },
+  "those": {
+    "translation": "الذين"
+  },
+  "just": {
+    "translation": "فقط"
+  },
+  "starting": {
+    "translation": "يبدؤون"
+  },
+  "their": {
+    "translation": "رحلتهم"
+  },
+  "journey": {
+    "translation": "الرحلة"
+  },
+  "as": {
+    "translation": "بينما"
+  },
+  "read": {
+    "translation": "تقرأ"
+  },
+  "click": {
+    "translation": "اضغط"
+  },
+  "on": {
+    "translation": "على"
+  },
+  "any": {
+    "translation": "أي"
+  },
+  "word": {
+    "translation": "كلمة"
+  },
+  "see": {
+    "translation": "لتشاهد"
+  },
+  "its": {
+    "translation": "ترجمتها"
+  },
+  "translation": {
+    "translation": "ترجمة"
+  },
+  "definition": {
+    "translation": "تعريف"
+  },
+  "feature": {
+    "translation": "ميزة"
+  },
+  "helps": {
+    "translation": "تساعد"
+  },
+  "new": {
+    "translation": "جديدة"
+  },
+  "context": {
+    "translation": "السياق"
+  },
+  "much": {
+    "translation": "أكثر"
+  },
+  "effective": {
+    "translation": "فعالية"
+  },
+  "than": {
+    "translation": "من"
+  },
+  "memorizing": {
+    "translation": "حفظ"
+  },
+  "lists": {
+    "translation": "قوائم"
+  },
+  "cover": {
+    "translation": "تغطي"
+  },
+  "various": {
+    "translation": "متنوعة"
+  },
+  "topics": {
+    "translation": "مواضيع"
+  },
+  "genres": {
+    "translation": "أنواع"
+  },
+  "from": {
+    "translation": "من"
+  },
+  "everyday": {
+    "translation": "يومية"
+  },
+  "situations": {
+    "translation": "مواقف"
+  },
+  "exciting": {
+    "translation": "ممتعة"
+  },
+  "adventures": {
+    "translation": "مغامرات"
+  },
+  "variety": {
+    "translation": "التنوّع"
+  },
+  "ensures": {
+    "translation": "يضمن"
+  },
+  "encounter": {
+    "translation": "مواجهة"
+  },
+  "types": {
+    "translation": "أنواع"
+  },
+  "sentence": {
+    "translation": "جملة"
+  },
+  "structures": {
+    "translation": "تراكيب"
+  },
+  "reading": {
+    "translation": "القراءة"
+  },
+  "regularly": {
+    "translation": "بانتظام"
+  },
+  "one": {
+    "translation": "واحدة"
+  },
+  "best": {
+    "translation": "أفضل"
+  },
+  "ways": {
+    "translation": "طرق"
+  },
+  "practice": {
+    "translation": "تدرب"
+  },
+  "while": {
+    "translation": "أثناء"
+  },
+  "enjoying": {
+    "translation": "الاستمتاع"
+  },
+  "interesting": {
+    "translation": "شيّقة"
+  },
+  "narratives": {
+    "translation": "سرديات"
+  },
+  "remember": {
+    "translation": "تذكر"
+  },
+  "that": {
+    "translation": "أن"
+  },
+  "takes": {
+    "translation": "يأخذ"
+  },
+  "time": {
+    "translation": "وقتًا"
+  },
+  "patience": {
+    "translation": "صبرًا"
+  },
+  "don't": {
+    "translation": "لا"
+  },
+  "worry": {
+    "translation": "تقلق"
+  },
+  "understand": {
+    "translation": "تفهم"
+  },
+  "every": {
+    "translation": "كل"
+  },
+  "first": {
+    "translation": "أولاً"
+  },
+  "try": {
+    "translation": "حاول"
+  },
+  "general": {
+    "translation": "العام"
+  },
+  "meaning": {
+    "translation": "المعنى"
+  },
+  "paragraph": {
+    "translation": "فقرة"
+  },
+  "we": {
+    "translation": "نحن"
+  },
+  "recommend": {
+    "translation": "نوصي"
+  },
+  "day": {
+    "translation": "يوم"
+  },
+  "reviewing": {
+    "translation": "مراجعة"
+  },
+  "consistent": {
+    "translation": "الاستمرارية"
+  },
+  "key": {
+    "translation": "مفتاح"
+  },
+  "making": {
+    "translation": "تحقيق"
+  },
+  "progress": {
+    "translation": "تقدم"
+  },
+  "thank": {
+    "translation": "شكرًا"
+  },
+  "choosing": {
+    "translation": "اختيار"
+  },
+  "hope": {
+    "translation": "نأمل"
+  },
+  "enjoy": {
+    "translation": "تستمتع"
+  },
+  "find": {
+    "translation": "تجد"
+  },
+  "them": {
+    "translation": "إياها"
+  },
+  "helpful": {
+    "translation": "مفيدة"
+  },
+  "achieving": {
+    "translation": "تحقيق"
+  },
+  "goals": {
+    "translation": "أهدافك"
+  },
+  "language": {
+    "translation": "لغة"
+  },
+  "the": {
+    "translation": "ال"
+  },
+  "of": {
+    "translation": "من"
+  },
+  "at": {
+    "translation": "في"
+  },
+  "click-to-translate": {
+    "translation": "انقر للترجمة"
+  },
+  "if": {
+    "translation": "إذا"
+  },
+  "with": {
+    "translation": "مع"
+  },
+  "more": {
+    "translation": "أكثر"
+  },
+  "which": {
+    "translation": "الذي"
+  }
+}

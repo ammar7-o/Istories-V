@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Istories - Vocabulary</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="icon" type="image/png" href="../icon.png">
+    <meta property="og:title" content="Istories">
+    <meta property="og:description" content="Learn Languages Through Interactive Stories.">
+    <meta property="og:image" content="https://ammar7-o.github.io/Istories-V/icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ammar7-o.github.io/Istories-V/">
+
+    <!-- Shared sidebar navigation (nav/sidebar.js) -->
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <!-- Large user data (userStories, savedWords, userDictionaries, …) is stored in IndexedDB via localForage; must load before page scripts. -->
+    <script src="../nav/vendor/localforage.min.js"></script>
+    <script src="../nav/storage.js"></script>
+    <script src="../nav/sidebar.js" defer></script>
+    <script src="../nav/common.js"></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+</head>
+
+<body data-css-key="customCSSVo" data-css-important="simple">
+        <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-language" aria-hidden="true"></i>
+                <span>Vocabulary</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+            <form id="search-form" class="ist-header__search" action="#">
+                <i class="fa-solid fa-magnifying-glass ist-header__search-icon" aria-hidden="true"></i>
+                <input class="search-input" id="storySearch" type="text" placeholder="Search words" autocomplete="off">
+                <button id="search-btn" class="ist-header__search-btn" type="submit" aria-label="Search">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </form>
+            <a class="ist-header__action" id="settings-button" href="../settings/index.html" aria-label="Settings"
+                title="Settings">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </a>
+        </div>
+    </header>
+
+<main class="main-content">
+        <div class="container">
+            <!-- Home Page -->
+            <div id="home" class="page active">
+
+                <div class="vocabulary-header">
+                    <h2>My Vocabulary</h2>
+                    <div class="Vocabulary-actions">
+
+<button onclick="exportVocabulary()" class="btn btn-primary v-btn" id="exportBtn">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                        <button onclick="importVocabulary()" class="btn btn-primary v-btn">
+                            <i class="fa-solid fa-file-import"></i> Import
+                        </button>
+                        <button onclick="removeAll()" class="btn btn-primary v-btn">
+                            <i class="fas fa-remove"></i> Remove all
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="vocabulary-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalWords">0</div>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="masteredWords">0</div>
+                        <div class="stat-label">Mastered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="practiceDue">0</div>
+                        <div class="stat-label">Due for Practice</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="readingStreak">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                </div>
+
+                <div class="vocab-toolbar">
+                    <div class="vocab-lang-filter">
+                        <i class="fas fa-globe" aria-hidden="true"></i>
+                        <select id="vocabLangFilter" aria-label="Filter words by language">
+                            <option value="all">🌍 All languages</option>
+                        </select>
+                    </div>
+                    <span class="vocab-lang-indicator" id="vocabLangIndicator"></span>
+                </div>
+
+                <div class="vocabulary-list" id="vocabularyList">
+                    <!-- Vocabulary items will be populated by JavaScript -->
+                </div>
+
+            </div>
+
+        </div>
+        </div>
+    </main>
+
+    <!-- Custom CSS Modal (add at bottom of settings page) -->
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <img src="../../icon.svg" alt="">
+                    <span>IStories</span>
+                </div>
+                <div class="footer-links">
+                    <a target="_blank" href="https://ammar7-o.github.io/RAME/#">About</a>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="../nav/settings-panel.js"></script>
+
+</body>
+
+</html>
