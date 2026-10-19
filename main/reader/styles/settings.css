@@ -915,6 +915,9 @@ select {
 }
 
 @media print {
+    .watermark{
+        display: flex;
+    }
     .ist-header{
         display: none;
         position: absolute;

@@ -1,6 +1,6 @@
 /* Base Variables */
 :root {
-   
+
     --accent: #f59e0b;
     --text: #1f2937;
     --text-light: #6b7280;
@@ -14,7 +14,7 @@
 
 
 .dark-mode {
-   
+
     --secondary-light: var(--js-secondary-light, #33afff) !important;
     --accent: #f59e0b;
     --text: #f9fafb;
@@ -160,6 +160,26 @@ body.dark-mode .translation-example {
 
 body.dark-mode .translation-item {
     background: rgba(255, 255, 255, 0.03);
+}
+
+.watermark {
+    width: 100%;
+    height: 60px;
+    border-bottom: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    display: none;
+}
+
+.watermark img {
+    width: 50px;
+}
+
+.watermark span {
+    font-size: 2rem;
+    font-weight: bolder;
 }
 
 .container {
@@ -417,6 +437,15 @@ html.ist-rtl-lang .story-title {
     border-left-color: var(--primary);
 }
 
+/* RTL story languages (Arabic / Persian / Urdu / Hebrew): the story
+   paragraphs read right-to-left. */
+html[data-story-lang="ar"] .paragraph,
+html[data-story-lang="fa"] .paragraph,
+html[data-story-lang="ur"] .paragraph,
+html[data-story-lang="he"] .paragraph {
+    direction: rtl;
+}
+
 .paragraph .mark {
     background: #ff7b0023;
     border-bottom: 2px dashed #ff7b00;
@@ -466,7 +495,7 @@ html.ist-rtl-lang .story-title {
     display: none;
     border: 1px solid var(--border);
     text-align: center;
-    
+
 }
 
 .dictionary-popup.show {
