@@ -759,7 +759,7 @@ function playGoogleVoice(word, language = 'en') {
         .catch(error => {
             console.error('حدث خطأ أثناء التشغيل:', error);
             // محاولة النطق الداخلي كخيار احتياطي
-            useNativeSpeechSynthesis(text, language);
+            // useNativeSpeechSynthesis(text, language);
         });
 
     audio.onended = resetTTSButton;

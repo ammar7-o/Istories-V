@@ -465,6 +465,8 @@ html.ist-rtl-lang .story-title {
     z-index: 1000;
     display: none;
     border: 1px solid var(--border);
+    text-align: center;
+    
 }
 
 .dictionary-popup.show {
