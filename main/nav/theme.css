@@ -85,8 +85,8 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
    sidebar.css regardless of file order.)
    -------------------------------------------------------------------------- */
 .ist-sidebar {
-    --ist-sidebar-bg: #00796b;
-    --ist-sidebar-fg: #f9f7f0;
+    --ist-sidebar-bg: #e3e3e3;
+    --ist-sidebar-fg: #000000;
     --ist-sidebar-muted: #9ecfc8;
     --ist-sidebar-border: rgba(249, 247, 240, .14);
     --ist-sidebar-accent: #7cc4ff;
@@ -99,46 +99,68 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 }
 
 .ist-sidebar__brand {
+    color: #000000;
+}
+.dark-mode .ist-sidebar__brand {
     color: #f9f7f0;
 }
-
 .ist-sidebar__section {
     color: #8fbfb8;
 }
 
 .ist-sidebar__link {
+    color: #000000;
+}
+.dark-mode .ist-sidebar__link {
     color: #e7e4da;
 }
-
 .ist-sidebar__link i {
+    color: #226057;
+}
+.dark-mode .ist-sidebar__link i {
     color: #9ecfc8;
 }
 
 .ist-sidebar__link:hover {
-    background: #00695c;
+   
+    color: #000000;
+}
+.dark-mode .ist-sidebar__link:hover {
+   
     color: #f9f7f0;
 }
-
 .ist-sidebar__link:hover i {
     color: #7cc4ff;
 }
 
 .ist-sidebar__link.is-active {
-    background: #00695c;
+    background: #004469;
     border-color: rgba(124, 196, 255, .4);
-    color: #7cc4ff;
+    color: #ffffff;
+}
+.dark-mode .ist-sidebar__link.is-active {
+    background: #004469;
+    border-color: rgba(124, 196, 255, .4);
+    color: #ffffff;
 }
 
 .ist-sidebar__link.is-active i {
+     color: #ffffff;
+}
+.dark-mode .ist-sidebar__link.is-active i {
     color: #7cc4ff;
 }
 
 .ist-sidebar__close,
 .ist-sidebar__collapse {
+    border-color: rgba(35, 35, 35, 0.18);
+    color: #000000;
+}
+.dark-mode .ist-sidebar__close,
+.ist-sidebar__collapse {
     border-color: rgba(249, 247, 240, .18);
     color: #f9f7f0;
 }
-
 .ist-sidebar__close:hover,
 .ist-sidebar__collapse:hover {
     background: #00695c;
@@ -146,12 +168,16 @@ body:not(.dark-mode) :is(.story-card, .stat-card, .stat-item, .flashcard, .vocab
 }
 
 .ist-sidebar__action {
+    border-color: rgba(53, 53, 53, 0.18);
+    color: #000000;
+}
+.dark-mode .ist-sidebar__action {
     border-color: rgba(249, 247, 240, .18);
     color: #f9f7f0;
 }
 
 .ist-sidebar__action:hover {
-    background: #00695c;
+    background: #004469;
 }
 
 /* Floating burger (pages with no header) matches the sidebar. */

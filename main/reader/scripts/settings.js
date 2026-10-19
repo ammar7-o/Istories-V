@@ -250,32 +250,66 @@ async function translateWordToLanguage(word, targetLang = null) {
         targetLang = getCurrentTranslationLanguage();
     }
 
-    try {
-        const response = await fetch(
-            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(word)}`
-        );
+    const q = encodeURIComponent(word);
 
-        if (!response.ok) {
-            throw new Error('Translation API error');
+    // Two Google routes: the endpoint the app has always used, plus the Chrome
+    // dictionary endpoint as a backup (it keeps working when the primary one is
+    // rate-limited with HTTP 429).
+    const endpoints = [
+        {
+            url: `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${q}`,
+            parse: (data) => (data && data[0] && data[0][0] && data[0][0][0]) || null
+        },
+        {
+            url: `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=auto&tl=${targetLang}&q=${q}`,
+            parse: (data) => {
+                if (Array.isArray(data) && Array.isArray(data[0]) && typeof data[0][0] === 'string') {
+                    return data[0][0];
+                }
+                if (data && data[0] && data[0][0] && typeof data[0][0][0] === 'string') {
+                    return data[0][0][0];
+                }
+                return null;
+            }
         }
+    ];
 
-        const data = await response.json();
+    let lastError = null;
+    for (const endpoint of endpoints) {
+        try {
+            const response = await fetch(endpoint.url);
 
-        if (data && data[0] && data[0][0] && data[0][0][0]) {
-            return data[0][0][0];
-        } else {
+            if (!response.ok) {
+                throw new Error(`Translation API error (HTTP ${response.status})`);
+            }
+
+            const data = await response.json();
+            const translation = endpoint.parse(data);
+
+            if (translation) {
+                return translation;
+            }
+
             throw new Error('Invalid translation response');
+        } catch (error) {
+            lastError = error;
         }
-    } catch (error) {
-        console.error('Translation error:', error);
-        throw error;
     }
+
+    console.error('Translation error:', lastError);
+    throw lastError || new Error('Translation failed');
 }
 
 // Show translation in popup
 function showTranslationInPopup(originalWord, translation, targetLanguage) {
     const popupTranslation = document.getElementById('popupTranslation');
     if (!popupTranslation) return;
+
+    // تجاهل الترجمة إن كانت النافذة قد انتقلت إلى كلمة أخرى أثناء الجلب
+    const popupWordEl = document.getElementById('popupWord');
+    if (popupWordEl && popupWordEl.textContent.trim() !== String(originalWord).trim()) {
+        return;
+    }
 
     // Generate a unique ID for this translation instance
     const translationId = 'translation-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -559,10 +593,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     autoTranslateTriggered = true;
                     autoTranslateOnDictionaryOpen();
 
-                    // Reset flag after 2 seconds
+                    // Reset flag shortly after (it only exists to dedupe the
+                    // burst of style mutations from a single popup open).
                     setTimeout(() => {
                         autoTranslateTriggered = false;
-                    }, 2000);
+                    }, 800);
                 }
             }
         });
@@ -1018,14 +1053,8 @@ async function translateWithAI(text, index, paragraphElement) {
 
         resultDiv.innerHTML = translationHTML;
 
-        // Apply RTL styles to the entire container if needed
-        if (shouldBeRTL) {
-            resultDiv.style.direction = 'rtl';
-            resultDiv.style.textAlign = 'right';
-        } else {
-            resultDiv.style.direction = 'ltr';
-            resultDiv.style.textAlign = 'left';
-        }
+    
+        
 
         // showNotification('Paragraph translated successfully', 'success');
 

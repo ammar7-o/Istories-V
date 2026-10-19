@@ -15,7 +15,7 @@
     --ist-sidebar-fg: var(--text, #1f2233);
     --ist-sidebar-muted: var(--text-light, #6b7280);
     --ist-sidebar-border: var(--border, #e5e7eb);
-    --ist-sidebar-accent: var(--primary, #09d9ba);
+    --ist-sidebar-accent: var(--primary, #52ffe5);
     --ist-sidebar-z: 1000;
 }
 
@@ -222,10 +222,13 @@ body.ist-sidebar-open {
 }
 
 .ist-sidebar__link:hover {
+    background: rgba(27, 187, 189, 0.1);
+    background: color-mix(in srgb, var(--ist-sidebar-accent) 10%, transparent);
+}
+.dark-mode .ist-sidebar__link:hover {
     background: rgba(79, 70, 229, .10);
     background: color-mix(in srgb, var(--ist-sidebar-accent) 10%, transparent);
 }
-
 .ist-sidebar__link:hover i {
     color: var(--ist-sidebar-accent);
 }

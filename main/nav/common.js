@@ -236,7 +236,7 @@ const IST_LANG_FLAGS = {
     en: '🇬🇧', fr: '🇫🇷', es: '🇪🇸', de: '🇩🇪', it: '🇮🇹', pt: '🇵🇹',
     ru: '🇷🇺', tr: '🇹🇷', ar: '🇸🇦', fa: '🇮🇷', ur: '🇵🇰', zh: '🇨🇳',
     ja: '🇯🇵', ko: '🇰🇷', hi: '🇮🇳', nl: '🇳🇱', pl: '🇵🇱', sv: '🇸🇪',
-    el: '🇬🇷', he: '🇮🇱'
+    el: '🇬🇷', he: '🇮'
 };
 
 // Preferred display order for language pickers/filters.

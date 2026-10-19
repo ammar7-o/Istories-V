@@ -632,8 +632,6 @@ function displayStory(story) {
     window.IStoriesCurrentStory = story;
     const storyLang = (story.lang || 'en').toLowerCase();
     document.documentElement.setAttribute('data-story-lang', storyLang);
-    document.documentElement.dir = isRtlLang(storyLang) ? 'rtl' : 'ltr';
-    document.documentElement.classList.toggle('ist-rtl-lang', isRtlLang(storyLang));
 
     if (story.author && story.author.trim() !== "") {
         const badge = document.createElement('span');
@@ -701,7 +699,7 @@ function displayStory(story) {
     paragraphs.forEach(paragraph => {
         const p = document.createElement('div');
         p.className = 'paragraph';
-        p.innerHTML = makeWordsClickable(paragraph, { debug: false });
+        p.innerHTML = makeWordsClickable(paragraph, { debug: false, lang: storyLang });
         storyText.appendChild(p);
     });
 
@@ -729,8 +727,31 @@ function makeWordsClickable(htmlString, options = {}) {
     }
 
     const debug = !!options.debug;
-    // regex لكلمة فرنسية/انجليزية مع دعم apostrophes والواصلات.
-    const wordPattern = /[A-Za-zÀ-ÖØ-öø-ÿ0-9’']+(?:[’'\-][A-Za-zÀ-ÖØ-öø-ÿ0-9]+)*/g;
+
+    // لغة القصة المعروضة (تحدد طريقة تقسيم الكلمات)
+    const storyLang = String(
+        options.lang || document.documentElement.getAttribute('data-story-lang') || 'en'
+    ).toLowerCase().split('-')[0];
+
+    // نمط كلمات يونيكود: يعمل مع كل الحروف التي يدعمها التطبيق (لاتيني، يوناني،
+    // سيريلي، عبري، عربي، فارسي، أردو، هندي/ديفاناغري، كوري…).
+    // علامات التشكيل (\p{M}) تبقى داخل الكلمة (تشكيل عربي/عبري وحركات هندية).
+    // بالنسبة للغات اللاتينية حدود الكلمات مطابقة للنمط القديم تماماً.
+    const wordPattern = /[\p{L}\p{N}\p{M}]+(?:[’'\-][\p{L}\p{N}\p{M}]+)*/gu;
+
+    // الصينية واليابانية بلا مسافات، لذا نستخدم مُقطّع الكلمات الأصلي في المتصفح
+    // (Intl.Segmenter) إن توفر، وإلا نغلّف كل حرف CJK على حدة.
+    const NO_SPACE_LANGS = new Set(['zh', 'ja']);
+    let cjkSegmenter = null;
+    if (NO_SPACE_LANGS.has(storyLang) &&
+        typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+        try {
+            cjkSegmenter = new Intl.Segmenter(storyLang, { granularity: 'word' });
+        } catch (error) {
+            cjkSegmenter = null;
+        }
+    }
+    const cjkFallbackPattern = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]|[\p{L}\p{N}\p{M}]+(?:[’'\-][\p{L}\p{N}\p{M}]+)*/gu;
 
     const container = document.createElement('div');
     container.innerHTML = htmlString;
@@ -812,6 +833,48 @@ function makeWordsClickable(htmlString, options = {}) {
         return false;
     }
 
+    // دالة تغليف كلمات النص بروابط قابلة للنقر (نفس شكل الـ HTML السابق).
+    function buildWrappedText(text) {
+        const makeSpan = (match) => {
+
+            // جرد الكلمة المجلوبة من القصة مباشرة
+            const trimmedMatch = match.trim();
+
+            // نستخدم الكلمة المجرّدة (trimmedMatch) في البحث
+            const translationFound = hasTranslation(trimmedMatch);
+
+            const className = translationFound ? 'word clickable-word' : 'word no-translation';
+
+            // تخزين المفتاح القياسي للكلمة المجرّدة (يحافظ على الفاصلة الأصلية)
+            const keyToSave = getStandardKey(trimmedMatch);
+
+            const safeMatch = keyToSave
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+
+            // نستخدم match الأصلية (غير المجرّدة) في النص للعرض
+            return `<span class="${className}" data-word="${safeMatch}">${match}</span>`;
+        };
+
+        // اللغات بلا مسافات (الصينية/اليابانية): التقطيع عبر Intl.Segmenter
+        if (cjkSegmenter) {
+            let result = '';
+            let lastIndex = 0;
+            for (const segment of cjkSegmenter.segment(text)) {
+                if (!segment.isWordLike) continue;
+                result += text.slice(lastIndex, segment.index) + makeSpan(segment.segment);
+                lastIndex = segment.index + segment.segment.length;
+            }
+            return result + text.slice(lastIndex);
+        }
+
+        // النمط العادي (أو نمط احتياطي حرف-بحرف للصينية/اليابانية)
+        const pattern = NO_SPACE_LANGS.has(storyLang) ? cjkFallbackPattern : wordPattern;
+        return text.replace(pattern, makeSpan);
+    }
+
     // دالة المعالجة الرئيسية (تستخدم Pre-order Traversal)
     function traverseAndWrap(node) {
         if (skipTags.has(node.nodeName)) {
@@ -821,28 +884,7 @@ function makeWordsClickable(htmlString, options = {}) {
         if (node.nodeType === Node.TEXT_NODE) {
             const text = node.nodeValue;
 
-            const wrappedText = text.replace(wordPattern, (match) => {
-
-                // جرد الكلمة المجلوبة من القصة مباشرة
-                const trimmedMatch = match.trim();
-
-                // نستخدم الكلمة المجرّدة (trimmedMatch) في البحث
-                const translationFound = hasTranslation(trimmedMatch);
-
-                const className = translationFound ? 'word clickable-word' : 'word no-translation';
-
-                // تخزين المفتاح القياسي للكلمة المجرّدة (يحافظ على الفاصلة الأصلية)
-                const keyToSave = getStandardKey(trimmedMatch);
-
-                const safeMatch = keyToSave
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;');
-
-                // نستخدم match الأصلية (غير المجرّدة) في النص للعرض
-                return `<span class="${className}" data-word="${safeMatch}">${match}</span>`;
-            });
+            const wrappedText = buildWrappedText(text);
 
             if (wrappedText !== text) {
                 const fragment = document.createDocumentFragment();
@@ -1030,9 +1072,22 @@ function showDictionary(word, element, isTextSelection = false) {
         rect = wordElement.getBoundingClientRect();
     }
 
-    dictionaryPopup.style.top = `${rect.bottom + window.scrollY + 10}px`;
-    dictionaryPopup.style.left = `${Math.max(10, rect.left + window.scrollX - 150)}px`;
+    // إعادة فتح النافذة: نبدّل display حتى يلتقط مراقب settings.js التغيير في
+    // كل نقرة (على الشاشات الكبيرة تكون اللوحة مثبتة والقيمة لا تتغير أبداً).
+    dictionaryPopup.style.display = 'none';
     dictionaryPopup.style.display = 'block';
+    const popupWidth = dictionaryPopup.offsetWidth || 350;
+
+    // إبقاء النافذة داخل حدود الشاشة حتى لا تخرج عنها.
+    const viewportWidth = document.documentElement.clientWidth;
+    let popupLeft = Math.max(10, rect.left + window.scrollX - 150);
+    const maxLeft = window.scrollX + viewportWidth - popupWidth - 10;
+    if (popupLeft > maxLeft) {
+        popupLeft = Math.max(10, maxLeft);
+    }
+
+    dictionaryPopup.style.top = `${rect.bottom + window.scrollY + 10}px`;
+    dictionaryPopup.style.left = `${popupLeft}px`;
 
     // Highlight the word element
     if (wordElement && wordElement.classList) {
@@ -1213,6 +1268,16 @@ function saveWordToStorage(wordObject, element) {
 
 // Translate a word using the Google Translate API.
 async function translateWordWithGoogle(word, targetLang = 'ar') {
+    // Use the shared translator (tries multiple Google endpoints).
+    if (typeof translateWordToLanguage === 'function') {
+        try {
+            return await translateWordToLanguage(word, targetLang);
+        } catch (error) {
+            console.error('Google Translate error:', error);
+            return null;
+        }
+    }
+
     try {
         // Google Translate API endpoint
         const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(word)}`;

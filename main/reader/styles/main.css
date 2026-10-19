@@ -1,7 +1,6 @@
 /* Base Variables */
 :root {
-        --primary: #10b981;
-    --secondary: #007ab3;
+   
     --accent: #f59e0b;
     --text: #1f2937;
     --text-light: #6b7280;
@@ -15,8 +14,7 @@
 
 
 .dark-mode {
-     --primary: #00a56e;
-    --secondary: #006c9d;
+   
     --secondary-light: var(--js-secondary-light, #33afff) !important;
     --accent: #f59e0b;
     --text: #f9fafb;
@@ -218,7 +216,7 @@ header {
     border-radius: 50px;
     font-size: 0.8rem;
     font-weight: 600;
-  
+
 }
 
 #lvlcefr {
@@ -227,7 +225,7 @@ header {
     border-radius: 50px;
     font-size: 0.8rem;
     font-weight: 600;
-   
+
 }
 
 .level-section {
@@ -399,19 +397,11 @@ html.ist-rtl-lang .story-title {
     font-family: 'Amiri', 'Noto Naskh Arabic', 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
 }
 
-html.ist-rtl-lang .story-text,
-html.ist-rtl-lang .paragraph {
-    text-align: right;
-}
 
-html.ist-rtl-lang .paragraph {
-    border-left: none;
-    border-right: 4px solid transparent;
-}
 
-html.ist-rtl-lang .paragraph:hover {
-    border-right-color: var(--primary);
-}
+
+
+
 
 .paragraph {
     margin-bottom: 2em;
@@ -537,16 +527,7 @@ html.ist-rtl-lang .paragraph:hover {
     /* Hidden as in original */
 }
 
-.dictionary-translation {
-    font-size: 20px;
-    /* Fixed size as in original */
-    color: var(--text);
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 500;
-    direction: rtl;
-    /* For Arabic text */
-}
+
 
 .dictionary-actions {
     display: flex;
@@ -1027,6 +1008,7 @@ html.ist-rtl-lang .paragraph:hover {
    override the inline styles written by showDictionary() / hideDictionary().
    ========================================================================== */
 @media (min-width: 1024px) {
+
     /* Reserve room for the permanently docked dictionary panel. */
     .main-content {
         padding-right: 360px;
