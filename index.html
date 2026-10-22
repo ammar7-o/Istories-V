@@ -134,10 +134,10 @@
     </script>
 
   <!-- Favicon & App Icons -->
-  <link rel="icon" type="image/png" href="../../icon.png" sizes="32x32">
-  <link rel="icon" type="image/svg+xml" href="../../icon.svg">
-  <link rel="apple-touch-icon" href="../../icon.png" sizes="180x180">
-  <link rel="mask-icon" href="../../icon.svg" color="#4f46e5">
+  <link rel="icon" type="image/png" href="icon.png" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.png" sizes="180x180">
+  <link rel="mask-icon" href="icon.svg" color="#4f46e5">
 
   <!-- Manifest for PWA -->
   <link rel="manifest" href="manifest.json">
@@ -1252,7 +1252,7 @@
       // (root, /Istories-V/, a sub-folder, …). The old code used an undefined
       // `BASE`, which threw and meant the service worker never registered.
       const swUrl = new URL('sw.js', document.baseURI).href;
-      navigator.serviceWorker.register(swUrl).then(reg => {
+      navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' }).then(reg => {
 
         // التحقق مما إذا كان هناك تحديث ينتظر التفعيل
         reg.addEventListener('updatefound', () => {
