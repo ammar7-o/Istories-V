@@ -8,6 +8,23 @@ if (window.IStoriesStorage) IStoriesStorage.whenReady(function () {
 });
 let currentEditIndex = -1; // Track which story is being edited
 
+/**
+ * Persist the two user-data collections through the shared IndexedDB helper.
+ * `IStoriesStorage` updates its synchronous mirror instantly, so the rest of
+ * this page can keep reading `localStorage` as before.
+ */
+function saveUserData() {
+    if (window.IStoriesUserData) {
+        return IStoriesUserData.saveUserData({
+            stories: userStories,
+            dictionaries: userDictionaries
+        });
+    }
+    localStorage.setItem('userStories', JSON.stringify(userStories));
+    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+    return Promise.resolve();
+}
+
 // Initialize Add Stories page
 function initAddStories() {
     // Add event listeners
@@ -463,7 +480,9 @@ function handleEditStorySubmit(e) {
         content,
         wordCount,
         hasTranslations: translationsText.trim() !== '',
-        uploadDate: new Date().toISOString() // Update upload date
+        // Editing is not a new import: keep the original added date.
+        uploadDate: story.uploadDate || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     };
 
     // Update in main stories array
@@ -486,9 +505,8 @@ function handleEditStorySubmit(e) {
         delete userDictionaries[storyId];
     }
 
-    // Save to localStorage
-    localStorage.setItem('userStories', JSON.stringify(userStories));
-    localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+    // Save to IndexedDB (through the shared user-data helper)
+    saveUserData();
 
     // Update UI
     loadUserStories();
@@ -518,52 +536,62 @@ function closeEditModal() {
     }
 }
 
-// Process story data - UPDATED to handle multiple stories
-function processStoryData(storyData, fileName) {
+// Process story data - handles single stories, arrays and { stories: [...] }
+// Returns { imported, skipped, invalid, stories } so callers (PDF/source picker)
+// can react without parsing notifications.
+function processStoryData(storyData, fileName, options) {
+    options = options || {};
+
     let processedStories = [];
     let totalImported = 0;
     let skippedDuplicates = 0;
+    let invalidStories = 0;
 
-    // Check if it's a single story or array of stories
-    if (Array.isArray(storyData)) {
-        // Multiple stories in an array
-        for (const story of storyData) {
-            const result = processSingleStory(story, fileName);
-            if (result.success) {
-                processedStories.push(result.story);
-                totalImported++;
-            } else {
-                skippedDuplicates++;
-            }
-        }
-    } else if (storyData.stories && Array.isArray(storyData.stories)) {
-        // Stories inside a "stories" property (like window.storiesData format)
-        for (const story of storyData.stories) {
-            const result = processSingleStory(story, fileName);
-            if (result.success) {
-                processedStories.push(result.story);
-                totalImported++;
-            } else {
-                skippedDuplicates++;
-            }
-        }
-    } else {
-        // Single story object
-        const result = processSingleStory(storyData, fileName);
+    const sourceFileName = options.sourceFile || fileName || '';
+    const helper = window.IStoriesUserData;
+
+    function storySignature(story) {
+        if (helper) return helper.storySignature(story);
+        return String(story && story.title || '').toLowerCase() + '|' +
+            JSON.stringify(story && story.content || []);
+    }
+
+    // Include stories already saved *and* stories earlier in this same batch,
+    // so a database that repeats a story cannot import it twice.
+    const seenSignatures = new Set(userStories.map(storySignature));
+
+    function handleOne(story) {
+        const result = processSingleStory(story, sourceFileName, options);
         if (result.success) {
+            const signature = storySignature(result.story);
+            if (seenSignatures.has(signature)) {
+                skippedDuplicates++;
+                return;
+            }
+            seenSignatures.add(signature);
             processedStories.push(result.story);
             totalImported++;
+        } else if (result.reason === 'Duplicate') {
+            skippedDuplicates++;
         } else {
-            showNotification('Story already exists or invalid format.', 'error');
-            return;
+            invalidStories++;
         }
     }
 
-    // Save all imported stories to localStorage
+    if (Array.isArray(storyData)) {
+        storyData.forEach(handleOne);
+    } else if (storyData && Array.isArray(storyData.stories)) {
+        storyData.stories.forEach(handleOne);
+    } else if (storyData && typeof storyData === 'object') {
+        handleOne(storyData);
+    } else {
+        invalidStories++;
+    }
+
+    // Save all imported stories to IndexedDB
     if (processedStories.length > 0) {
-        // Add all new stories to userStories array
         userStories.push(...processedStories);
-        localStorage.setItem('userStories', JSON.stringify(userStories));
+        saveUserData();
 
         // Add all new stories to main stories array
         processedStories.forEach(story => {
@@ -579,39 +607,61 @@ function processStoryData(storyData, fileName) {
         renderStories();
     }
 
-    // Show success message
-    let message = '';
-    if (totalImported > 0) {
-        message = `${totalImported} story${totalImported !== 1 ? 's' : ''} imported successfully!`;
-        if (skippedDuplicates > 0) {
-            message += ` ${skippedDuplicates} duplicate${skippedDuplicates !== 1 ? 's' : ''} skipped.`;
+    // Show success message unless the caller renders its own status
+    if (options.notify !== false) {
+        let message = '';
+        if (totalImported > 0) {
+            message = `${totalImported} story${totalImported !== 1 ? 's' : ''} imported successfully!`;
+            if (skippedDuplicates > 0) {
+                message += ` ${skippedDuplicates} duplicate${skippedDuplicates !== 1 ? 's' : ''} skipped.`;
+            }
+            showNotification(message, 'success');
+        } else if (invalidStories > 0) {
+            showNotification('No stories were imported. They may already exist or have invalid format.', 'warning');
+        } else {
+            showNotification('No stories were imported. They may already exist.', 'warning');
         }
-        showNotification(message, 'success');
-    } else {
-        showNotification('No stories were imported. They may already exist or have invalid format.', 'warning');
     }
 
-    // Clear file selection
-    clearSelectedFile();
+    // Clear file selection when this came from the JSON upload card
+    if (options.clearFile !== false) {
+        clearSelectedFile();
+    }
 
     // Open the first imported story in reader if only one was imported
-    if (totalImported === 1 && processedStories.length > 0) {
+    if (options.autoOpen !== false && totalImported === 1 && processedStories.length > 0) {
         openUserStoryInReader(processedStories[0].id);
     }
+
+    return {
+        imported: totalImported,
+        skipped: skippedDuplicates,
+        invalid: invalidStories,
+        stories: processedStories
+    };
 }
 
 // Helper function to process a single story
-function processSingleStory(storyData, fileName) {
-    // Validate story structure
-    if (!validateStory(storyData)) {
+function processSingleStory(storyData, fileName, options) {
+    options = options || {};
+    const helper = window.IStoriesUserData;
+
+    // Normalise content first so a string is accepted as well as an array
+    const content = helper
+        ? helper.normalizeContent(storyData && storyData.content)
+        : (Array.isArray(storyData && storyData.content) ? storyData.content : []);
+
+    if (!storyData || !validateStory({ ...storyData, content })) {
         return { success: false, reason: 'Invalid format' };
     }
 
-    // Check if story already exists (by title and content)
-    const existingStory = userStories.find(story =>
-        story.title === storyData.title &&
-        JSON.stringify(story.content) === JSON.stringify(storyData.content)
-    );
+    // Check if story already exists (by a stable language+title+content signature)
+    const signature = helper ? helper.storySignature({ ...storyData, content }) : '';
+    const existingStory = userStories.find(story => {
+        if (helper) return helper.storySignature(story) === signature;
+        return story.title === storyData.title &&
+            JSON.stringify(story.content) === JSON.stringify(storyData.content);
+    });
 
     if (existingStory) {
         return { success: false, reason: 'Duplicate' };
@@ -619,37 +669,60 @@ function processSingleStory(storyData, fileName) {
 
     // Process translations if they exist
     let translations = {};
-    if (storyData.translations) {
-        try {
-            translations = storyData.translations;
-        } catch (error) {
-            console.error('Error parsing translations:', error);
-            translations = {};
-        }
+    if (storyData.translations && typeof storyData.translations === 'object') {
+        translations = storyData.translations;
     }
 
     // Generate unique ID
-    const storyId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const storyId = 'user_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 11);
+
+    const fileNameResolved = options.sourceFile || fileName || storyData.fileName || '';
+    const sourceType = options.sourceType ||
+        storyData.sourceType ||
+        (helper ? helper.inferSourceType({ ...storyData, fileName: fileNameResolved, sourceFile: fileNameResolved }) : 'unknown');
+
+    const tags = helper
+        ? helper.normalizeTags(storyData.tags)
+        : (Array.isArray(storyData.tags) ? storyData.tags.slice() : []);
 
     // Prepare story object
     const userStory = {
         ...storyData,
         id: storyId,
         lang: storyData.lang || 'en',
+        content,
+        tags,
         isUserStory: true,
-        fileName: fileName,
+        fileName: fileNameResolved,
+        sourceType,
+        sourceFile: options.sourceFile || storyData.sourceFile || fileNameResolved,
+        sourceLabel: options.sourceLabel ||
+            (helper ? helper.sourceLabel({ sourceType, sourceFile: fileNameResolved, fileName: fileNameResolved }) : ''),
+        importedAt: options.importedAt || new Date().toISOString(),
         uploadDate: new Date().toISOString(),
-        wordCount: calculateWordCount(storyData.content),
+        wordCount: calculateWordCount(content),
         hasTranslations: Object.keys(translations).length > 0
     };
 
-    // Remove translations from story object to keep it clean
+    if (options.pdfMeta || storyData.pdfMeta) {
+        userStory.pdfMeta = { ...(storyData.pdfMeta || {}), ...(options.pdfMeta || {}) };
+    }
+    if (options.sourceName) userStory.sourceName = options.sourceName;
+    if (options.tags && options.tags.length) {
+        const extraTags = helper ? helper.normalizeTags(options.tags) : options.tags;
+        extraTags.forEach(tag => {
+            if (!userStory.tags.some(existing => String(existing).toLowerCase() === String(tag).toLowerCase())) {
+                userStory.tags.push(tag);
+            }
+        });
+    }
+
+    // Keep translations out of the story object
     delete userStory.translations;
 
     // Save translations separately if they exist
     if (Object.keys(translations).length > 0) {
         userDictionaries[storyId] = translations;
-        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
     }
 
     return { success: true, story: userStory };
@@ -669,7 +742,18 @@ function openUserStoryInReader(storyId) {
     // Get translations for this story
     const translations = userDictionaries[storyId] || {};
 
-    // Store story data in localStorage for the reader
+    // Store story data in IndexedDB for the reader and redirect once it is committed.
+    if (window.IStoriesUserData) {
+        IStoriesUserData.openStoryInReader(story, {
+            isUserStory: true,
+            translations: translations,
+            sourceType: IStoriesUserData.inferSourceType(story),
+            sourceFile: story.sourceFile || story.fileName || ''
+        });
+        return;
+    }
+
+    // Fallback for pages that did not load userdata.js
     localStorage.setItem('currentReadingStory', JSON.stringify({
         id: story.id,
         title: story.title,
@@ -681,14 +765,12 @@ function openUserStoryInReader(storyId) {
         coverType: story.coverType,
         author: story.author || '',
         translations: translations,
-        // Include optional fields
         ...(story.levelcefr && { levelcefr: story.levelcefr }),
         ...(story.sound && { sound: story.sound }),
         ...(story.dictionaries && { dictionaries: story.dictionaries }),
         ...(story.audio && { audio: story.audio })
     }));
 
-    // Redirect to reader page
     const storyPage = '../reader/index.html?id=' + storyId + '&userStory=true';
     window.location.href = storyPage;
 }
@@ -710,9 +792,8 @@ function deleteUserStory(index) {
         // Remove translations
         delete userDictionaries[storyId];
 
-        // Update localStorage
-        localStorage.setItem('userStories', JSON.stringify(userStories));
-        localStorage.setItem('userDictionaries', JSON.stringify(userDictionaries));
+        // Update IndexedDB
+        saveUserData();
 
         // Update UI
         loadUserStories();
@@ -1233,6 +1314,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Language pickers: live helper text under the dropdown
     setupLanguagePickers();
+
+    // Deep link from My Stories: ?edit=<storyId> opens the edit modal.
+    const editId = new URLSearchParams(window.location.search).get('edit');
+    if (editId) {
+        const openRequestedStory = function (list) {
+            const index = list.findIndex(story => String(story.id) === String(editId));
+            if (index !== -1) {
+                userStories = list;
+                // Let the page finish its initial render before opening the modal.
+                setTimeout(() => openEditStoryModal(index), 60);
+            } else {
+                showNotification('That story could not be found. It may have been deleted.', 'warning');
+            }
+        };
+
+        if (window.IStoriesUserData) {
+            IStoriesUserData.getUserStories().then(openRequestedStory);
+        } else {
+            openRequestedStory(userStories);
+        }
+    }
 });
 
 // Keep the little hint under the language <select> in sync with the choice.
@@ -1377,14 +1479,19 @@ function deleteAllUserStories() {
         });
 
         // 2. Clear user stories array
+        const deletedCount = userStories.length;
         userStories = [];
 
         // 3. Clear user dictionaries
         userDictionaries = {};
 
-        // 4. Update localStorage
-        localStorage.removeItem('userStories');
-        localStorage.removeItem('userDictionaries');
+        // 4. Update IndexedDB
+        if (window.IStoriesUserData) {
+            IStoriesUserData.clearUserData();
+        } else {
+            localStorage.removeItem('userStories');
+            localStorage.removeItem('userDictionaries');
+        }
 
         // 5. Update UI
         if (currentPage === 'home' || currentPage === 'addStories') {
@@ -1395,7 +1502,7 @@ function deleteAllUserStories() {
         loadUserStories();
 
         // 7. Show success message
-        showNotification(`✅ All ${userStories.length} user stories deleted successfully!`, 'success');
+        showNotification(`✅ All ${deletedCount} user stories deleted successfully!`, 'success');
 
         console.log('🗑️ All user stories deleted successfully');
 

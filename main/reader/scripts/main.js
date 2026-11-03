@@ -60,10 +60,12 @@ function getStoryIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     const isUserStory = urlParams.get('userStory') === 'true';
+    const external = urlParams.get('external') === 'true';
 
     return {
         id: id || '1',
-        isUserStory: isUserStory
+        isUserStory: isUserStory,
+        external: external
     };
 }
 
@@ -188,49 +190,49 @@ async function loadDictionary(dictionaryPaths) {
     }
 }
 
-// Add this function to load user translations
-// Update the loadUserTranslations function
+// Merge a { word: translation } object into the active dictionary. Used for
+// translations saved with a user story and for embedded source-story
+// translations carried by `currentReadingStory`.
+function mergeTranslationsIntoDictionary(customDictionary) {
+    if (!customDictionary || typeof customDictionary !== 'object') return 0;
+
+    let loadedCount = 0;
+
+    for (const [word, data] of Object.entries(customDictionary)) {
+        const standardKey = getStandardKey(word);
+
+        if (typeof data === 'string') {
+            dictionary[standardKey] = {
+                translation: data,
+                pos: "unknown",
+                definition: `Custom translation from user story`,
+                example: `From "${currentStory?.title || 'user story'}"`,
+                source: 'user_story'
+            };
+            loadedCount++;
+        } else if (data && typeof data === 'object') {
+            dictionary[standardKey] = {
+                translation: data.translation || "No translation",
+                pos: data.pos || "unknown",
+                definition: data.definition || `Custom translation from user story`,
+                example: data.example || `From "${currentStory?.title || 'user story'}"`,
+                source: 'user_story'
+            };
+            loadedCount++;
+        }
+    }
+
+    return loadedCount;
+}
+
 function loadUserTranslations(storyId) {
     try {
-        // Get user dictionaries from localStorage
+        // Get user dictionaries from localStorage (IndexedDB facade)
         const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
-
-        // Check if this story has custom translations
         const customDictionary = userDictionaries[storyId];
 
         if (customDictionary) {
-            console.log(`Loading ${Object.keys(customDictionary).length} custom translations for story ${storyId}`);
-
-            let loadedCount = 0;
-
-            // Merge custom translations into main dictionary
-            for (const [word, data] of Object.entries(customDictionary)) {
-                const standardKey = getStandardKey(word);
-                const normalizedKey = getNormalizedKey(word);
-
-                if (typeof data === 'string') {
-                    // If data is just a string translation
-                    dictionary[standardKey] = {
-                        translation: data,
-                        pos: "unknown",
-                        definition: `Custom translation from user story`,
-                        example: `From "${currentStory?.title || 'user story'}"`,
-                        source: 'user_story'
-                    };
-                    loadedCount++;
-                } else if (data && typeof data === 'object') {
-                    // If data is an object with translation properties
-                    dictionary[standardKey] = {
-                        translation: data.translation || "No translation",
-                        pos: data.pos || "unknown",
-                        definition: data.definition || `Custom translation from user story`,
-                        example: data.example || `From "${currentStory?.title || 'user story'}"`,
-                        source: 'user_story'
-                    };
-                    loadedCount++;
-                }
-            }
-
+            const loadedCount = mergeTranslationsIntoDictionary(customDictionary);
             console.log(`Successfully loaded ${loadedCount} custom translations for story ${storyId}`);
             return loadedCount > 0;
         }
@@ -238,6 +240,17 @@ function loadUserTranslations(storyId) {
         console.error('Error loading user translations:', error);
     }
     return false;
+}
+
+// Load translations embedded in a source story (or cached in
+// currentReadingStory) without requiring the story to be saved first.
+function loadEmbeddedTranslations(story) {
+    if (!story || !story.translations) return false;
+    const loadedCount = mergeTranslationsIntoDictionary(story.translations);
+    if (loadedCount > 0) {
+        console.log(`Successfully loaded ${loadedCount} embedded translations for "${story.title || 'story'}"`);
+    }
+    return loadedCount > 0;
 }
 
 // ----------------------------------------------------
@@ -370,6 +383,23 @@ async function debugDatabaseFiles() {
     }
     console.log("=== END DEBUG ===");
 }
+// Pick the dictionary files for a story, falling back to the shared main
+// dictionary when a story (PDF import, plain JSON upload, …) does not declare
+// any. An empty array is treated as "no dictionaries", not as a valid list.
+function storyDictionaryPaths(story) {
+    const candidates = [
+        story && story.dictionaries,
+        story && story.dictionary
+    ];
+
+    for (const candidate of candidates) {
+        if (Array.isArray(candidate) && candidate.length > 0) return candidate;
+        if (typeof candidate === 'string' && candidate.trim()) return [candidate];
+    }
+
+    return ["../../database/Dictionarys/main.json"];
+}
+
 // Load story from database files by ID or user stories
 async function loadStory() {
     try {
@@ -384,17 +414,45 @@ async function loadStory() {
         // Clear dictionary before loading new story
         dictionary = {};
 
+        // A source story opened from the Studio without being saved first. The
+        // studio stores the full payload in currentReadingStory so the reader
+        // does not need a matching record in userStories or a database file.
+        if (storyInfo.external) {
+            let pendingStory = null;
+            try {
+                pendingStory = JSON.parse(localStorage.getItem('currentReadingStory')) || null;
+            } catch (error) {
+                console.warn('Could not read currentReadingStory:', error);
+            }
+
+            if (pendingStory && String(pendingStory.id) === String(storyId) &&
+                Array.isArray(pendingStory.content) && pendingStory.content.length > 0) {
+                currentStory = pendingStory;
+                await loadDictionary(storyDictionaryPaths(currentStory));
+
+                const hasSavedTranslations = loadUserTranslations(storyId);
+                const hasEmbeddedTranslations = loadEmbeddedTranslations(currentStory);
+
+                if (hasSavedTranslations || hasEmbeddedTranslations) {
+                    setTimeout(addTranslationBadge, 1000);
+                }
+
+                displayStory(currentStory);
+                return;
+            }
+        }
+
         // Check if it's a user story first
         if (isUserStory) {
             const userStories = getUserStories();
             currentStory = userStories.find(s => s.id === storyId);
 
             if (currentStory) {
-                // First load custom translations if they exist
-                const hasCustomTranslations = loadUserTranslations(storyId);
+                // Load the shared dictionary first, then merge the per-story
+                // translations on top (loadDictionary resets the dictionary).
+                await loadDictionary(storyDictionaryPaths(currentStory));
 
-                // Then load default dictionary
-                await loadDictionary(currentStory.dictionaries || ["../../database/Dictionarys/main.json"]);
+                const hasCustomTranslations = loadUserTranslations(storyId);
 
                 // Show translation badge if custom translations exist
                 if (hasCustomTranslations) {
@@ -412,7 +470,7 @@ async function loadStory() {
             const allStories = window.storiesData.stories || window.storiesData;
             currentStory = allStories.find(s => s.id == storyId);
             if (currentStory) {
-                await loadDictionary(currentStory.dictionaries);
+                await loadDictionary(storyDictionaryPaths(currentStory));
                 displayStory(currentStory);
                 return;
             }

@@ -50,6 +50,7 @@
                 title: 'Learn',
                 items: [
                     { key: 'stories', label: 'Story Library', icon: 'fa-solid fa-book-open', path: 'main/index.html' },
+                    { key: 'myStories', label: 'My Stories', icon: 'fa-solid fa-book-bookmark', path: 'main/myStories/index.html' },
                     { key: 'vocabulary', label: 'Vocabulary', icon: 'fa-solid fa-language', path: 'main/vocabulary/index.html' },
                     { key: 'flashcard', label: 'Flashcards', icon: 'fa-solid fa-layer-group', path: 'main/flashcard/index.html' },
                     { key: 'quiz', label: 'Quiz', icon: 'fa-solid fa-brain', path: 'main/quiz/index.html' }

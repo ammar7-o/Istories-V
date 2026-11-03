@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v3.7';
+const CACHE_VERSION = 'v3.9';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;
@@ -43,10 +43,13 @@ const SHELL_ASSETS = [
   './main/nav/sidebar.js',
   './main/nav/common.js',
   './main/nav/storage.js',
+  './main/nav/userdata.js',
   './main/nav/theme.css',
   './main/nav/header.css',
   './main/nav/settings-panel.js',
   './main/nav/vendor/localforage.min.js',
+  './main/nav/vendor/pdfjs/pdf.min.js',
+  './main/nav/vendor/pdfjs/pdf.worker.min.js',
 
   // Pages
   './main/index.html',
@@ -57,6 +60,7 @@ const SHELL_ASSETS = [
   './main/profile/index.html',
   './main/settings/index.html',
   './main/storiesStudio/index.html',
+  './main/myStories/index.html',
   './store/index.html',
   './tools/index.html',
   './tools/All-tools/translator.html',
@@ -87,6 +91,9 @@ const SHELL_ASSETS = [
   './main/profile/style.css',
   './main/storiesStudio/addstories.js',
   './main/storiesStudio/addStories.css',
+  './main/storiesStudio/import-studio.js',
+  './main/myStories/main.js',
+  './main/myStories/style.css',
   './store/main.js',
   './store/stories.js',
   './store/stories2.js',

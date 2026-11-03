@@ -1,0 +1,878 @@
+/* ==========================================================================
+   My Stories — personal story library
+   ========================================================================== */
+
+/* The `hidden` attribute must win over the component display rules below. */
+[hidden] {
+    display: none !important;
+}
+
+.ms-container {
+    max-width: 1280px;
+    padding-top: 24px;
+    padding-bottom: 56px;
+}
+
+.ms-header-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 0.87rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ms-header-action:hover {
+    border-color: var(--primary);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Hero -------------------------------------------------------------------- */
+.ms-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 28px;
+    flex-wrap: wrap;
+    padding: 26px 28px;
+    margin-bottom: 22px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background:
+        radial-gradient(1200px 220px at 88% -30%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 65%),
+        var(--card-bg);
+    box-shadow: var(--shadow);
+}
+
+.ms-hero__copy {
+    max-width: 620px;
+}
+
+.ms-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+}
+
+.ms-hero h1 {
+    margin: 8px 0 10px;
+    font-size: clamp(2rem, 3.2vw, 2.8rem);
+    line-height: 1.05;
+    color: var(--text);
+}
+
+.ms-hero p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+
+.ms-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(84px, 1fr));
+    gap: 10px;
+}
+
+.ms-stat {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--card-bg) 65%, var(--bg));
+    border: 1px solid var(--border);
+    min-width: 84px;
+}
+
+.ms-stat__value {
+    display: block;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.ms-stat__label {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.72rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+}
+
+/* Toolbar ----------------------------------------------------------------- */
+.ms-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+}
+
+.ms-search {
+    position: relative;
+    flex: 1 1 340px;
+    min-width: 240px;
+}
+
+.ms-search > i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    pointer-events: none;
+}
+
+.ms-search input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 40px 11px 40px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--input-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.93rem;
+}
+
+.ms-search input:focus {
+    outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+    outline-offset: 1px;
+    border-color: var(--primary);
+}
+
+.ms-search__clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+}
+
+.ms-search__clear:hover {
+    color: var(--text);
+    background: var(--hover);
+}
+
+.ms-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+}
+
+.ms-filter-toggle:hover {
+    border-color: var(--primary);
+}
+
+.ms-filter-count {
+    display: grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.ms-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.ms-sort select {
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.86rem;
+}
+
+/* Layout ------------------------------------------------------------------ */
+.ms-layout {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+/* Filters ----------------------------------------------------------------- */
+.ms-filters {
+    position: sticky;
+    top: 84px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.ms-filters__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.ms-filters__head h2 {
+    margin: 0;
+    font-size: 0.98rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ms-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    color: var(--primary-dark);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.ms-link-btn:hover {
+    background: var(--hover);
+}
+
+.ms-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+    min-width: 0;
+}
+
+.ms-filter-group label,
+.ms-filter-group legend {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+}
+
+.ms-filter-group select,
+.ms-filter-group input[type="number"],
+.ms-filter-group input[type="date"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--input-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+    min-height: 38px;
+}
+
+.ms-filter-group select:focus,
+.ms-filter-group input:focus {
+    outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+    outline-offset: 1px;
+    border-color: var(--primary);
+}
+
+.ms-filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.ms-filter-fieldset {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 10px 12px 4px;
+    margin: 4px 0 12px;
+}
+
+.ms-filter-fieldset legend {
+    padding: 0 5px;
+}
+
+.ms-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.ms-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.ms-check span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ms-source-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1px dashed var(--border);
+}
+
+/* Source pills (shared by legend and cards) --------------------------------- */
+.source-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.source-pill--pdf {
+    background: color-mix(in srgb, #ef4444 15%, var(--card-bg));
+    color: #b91c1c;
+    border-color: color-mix(in srgb, #ef4444 35%, transparent);
+}
+
+.source-pill--js {
+    background: color-mix(in srgb, #f59e0b 17%, var(--card-bg));
+    color: #92400e;
+    border-color: color-mix(in srgb, #f59e0b 38%, transparent);
+}
+
+.source-pill--json {
+    background: color-mix(in srgb, #3b82f6 15%, var(--card-bg));
+    color: #1d4ed8;
+    border-color: color-mix(in srgb, #3b82f6 35%, transparent);
+}
+
+.source-pill--manual {
+    background: color-mix(in srgb, #8b5cf6 15%, var(--card-bg));
+    color: #6d28d9;
+    border-color: color-mix(in srgb, #8b5cf6 35%, transparent);
+}
+
+.source-pill--text {
+    background: color-mix(in srgb, #10b981 15%, var(--card-bg));
+    color: #047857;
+    border-color: color-mix(in srgb, #10b981 35%, transparent);
+}
+
+.source-pill--unknown {
+    background: color-mix(in srgb, var(--text-light) 14%, var(--card-bg));
+    color: var(--text-light);
+    border-color: var(--border);
+}
+
+/* Results ----------------------------------------------------------------- */
+.ms-results {
+    min-width: 0;
+}
+
+.ms-results__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.ms-results__count {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.ms-results__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ms-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 12px;
+}
+
+.ms-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ms-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+.ms-chip i {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+.ms-chip--clear {
+    background: transparent;
+    border-style: dashed;
+    color: var(--text-light);
+}
+
+.ms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* Story cards ------------------------------------------------------------- */
+.ms-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ms-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+    box-shadow: 0 18px 38px -24px rgba(0, 0, 0, 0.5);
+}
+
+.ms-card__cover {
+    position: relative;
+    height: 132px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+        radial-gradient(600px 160px at 82% -30%, color-mix(in srgb, var(--primary) 35%, transparent), transparent 70%),
+        linear-gradient(135deg, color-mix(in srgb, var(--bg) 82%, var(--card-bg)), var(--card-bg));
+    border-bottom: 1px solid var(--border);
+}
+
+.ms-card__cover--pdf {
+    background:
+        radial-gradient(500px 150px at 85% -30%, color-mix(in srgb, #ef4444 35%, transparent), transparent 70%),
+        linear-gradient(135deg, color-mix(in srgb, var(--bg) 82%, var(--card-bg)), var(--card-bg));
+}
+
+.ms-card__cover--js {
+    background:
+        radial-gradient(500px 150px at 85% -30%, color-mix(in srgb, #f59e0b 32%, transparent), transparent 70%),
+        linear-gradient(135deg, color-mix(in srgb, var(--bg) 82%, var(--card-bg)), var(--card-bg));
+}
+
+.ms-card__cover-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+}
+
+.ms-card__emoji {
+    font-size: 3rem;
+    line-height: 1;
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
+}
+
+.ms-card__cover > i {
+    font-size: 2.6rem;
+    color: var(--primary-dark);
+}
+
+.ms-card__source {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    max-width: calc(100% - 20px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.ms-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    flex: 1;
+}
+
+.ms-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.ms-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    color: var(--text-light);
+    background: var(--bg);
+    white-space: nowrap;
+}
+
+.ms-badge--level.beginner {
+    color: #047857;
+    background: color-mix(in srgb, #10b981 14%, var(--card-bg));
+    border-color: color-mix(in srgb, #10b981 32%, transparent);
+}
+
+.ms-badge--level.intermediate {
+    color: #1d4ed8;
+    background: color-mix(in srgb, #3b82f6 14%, var(--card-bg));
+    border-color: color-mix(in srgb, #3b82f6 32%, transparent);
+}
+
+.ms-badge--level.advanced {
+    color: #b91c1c;
+    background: color-mix(in srgb, #ef4444 14%, var(--card-bg));
+    border-color: color-mix(in srgb, #ef4444 32%, transparent);
+}
+
+.ms-badge--cefr {
+    color: var(--primary-dark);
+    background: color-mix(in srgb, var(--primary) 14%, var(--card-bg));
+    border-color: color-mix(in srgb, var(--primary) 32%, transparent);
+}
+
+.ms-badge--translations {
+    color: #6d28d9;
+    background: color-mix(in srgb, #8b5cf6 13%, var(--card-bg));
+    border-color: color-mix(in srgb, #8b5cf6 30%, transparent);
+}
+
+.ms-badge--audio {
+    color: #0369a1;
+    background: color-mix(in srgb, #0ea5e9 13%, var(--card-bg));
+    border-color: color-mix(in srgb, #0ea5e9 30%, transparent);
+}
+
+.ms-card__title {
+    margin: 2px 0 0;
+    font-size: 1.04rem;
+    line-height: 1.35;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ms-card__author {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ms-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin: 0;
+    font-size: 0.76rem;
+    color: var(--text-light);
+}
+
+.ms-card__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ms-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: auto;
+}
+
+.ms-card__tags span {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 7px;
+}
+
+.ms-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 10px;
+    margin-top: 4px;
+    border-top: 1px dashed var(--border);
+}
+
+.ms-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--card-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.ms-action:hover {
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+.ms-action--primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    flex: 1;
+}
+
+.ms-action--primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff;
+}
+
+.ms-action--icon {
+    padding: 8px 10px;
+}
+
+.ms-action--danger:hover {
+    border-color: var(--danger, #ef4444);
+    color: var(--danger, #ef4444);
+}
+
+/* Empty state ------------------------------------------------------------- */
+.ms-empty {
+    text-align: center;
+    padding: 60px 26px;
+    border: 1px dashed var(--border);
+    border-radius: 18px;
+    background: var(--card-bg);
+}
+
+.ms-empty > i {
+    font-size: 2.8rem;
+    color: var(--primary);
+    opacity: 0.65;
+    margin-bottom: 12px;
+}
+
+.ms-empty h2 {
+    margin: 0 0 8px;
+    color: var(--text);
+    font-size: 1.3rem;
+}
+
+.ms-empty p {
+    margin: 0 auto 18px;
+    max-width: 520px;
+    color: var(--text-light);
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+.ms-empty__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-size: 0.87rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 0 4px;
+}
+
+.ms-empty__btn:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.ms-empty__btn[hidden] {
+    display: none;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Responsive -------------------------------------------------------------- */
+@media (max-width: 980px) {
+    .ms-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .ms-filters {
+        position: static;
+        max-height: none;
+        display: none;
+    }
+
+    .ms-filters.is-open {
+        display: block;
+    }
+
+    .ms-filter-toggle {
+        order: 2;
+    }
+}
+
+@media (max-width: 720px) {
+    .ms-hero {
+        padding: 20px;
+    }
+
+    .ms-stats {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ms-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .ms-sort span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .ms-container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .ms-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ms-toolbar {
+        padding: 12px;
+    }
+
+    .ms-search {
+        flex-basis: 100%;
+    }
+
+    .ms-action span:not(.sr-only) {
+        display: none;
+    }
+}
+
+/* Dark mode: keep the source pills legible on dark cards. */
+body.dark-mode .source-pill--pdf { color: #fca5a5; }
+body.dark-mode .source-pill--js { color: #fcd34d; }
+body.dark-mode .source-pill--json { color: #93c5fd; }
+body.dark-mode .source-pill--manual { color: #c4b5fd; }
+body.dark-mode .source-pill--text { color: #6ee7b7; }
+body.dark-mode .ms-badge--level.beginner { color: #6ee7b7; }
+body.dark-mode .ms-badge--level.intermediate { color: #93c5fd; }
+body.dark-mode .ms-badge--level.advanced { color: #fca5a5; }

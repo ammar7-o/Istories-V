@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Stories — IStories</title>
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="../main/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="../../icon.png">
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <!-- Large user data (userStories, userDictionaries, …) is stored in IndexedDB via localForage. -->
+    <script src="../nav/vendor/localforage.min.js"></script>
+    <script src="../nav/storage.js"></script>
+    <script src="../nav/userdata.js"></script>
+    <script src="../nav/sidebar.js" defer></script>
+    <script src="../nav/common.js"></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+</head>
+
+<body>
+    <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+                <span>My Stories</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+            <a class="ms-header-action" href="../storiesStudio/index.html">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                <span>Add stories</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container ms-container">
+            <section class="ms-hero">
+                <div class="ms-hero__copy">
+                    <span class="ms-eyebrow"><i class="fas fa-book-bookmark"></i> Your personal library</span>
+                    <h1>My Stories</h1>
+                    <p>Every story you saved in Stories Studio lives here — imported PDFs, stories copied from a
+                        JavaScript database, JSON uploads and stories written by hand.</p>
+                </div>
+                <div class="ms-stats" aria-label="Library statistics">
+                    <div class="ms-stat">
+                        <span class="ms-stat__value" id="statTotal">0</span>
+                        <span class="ms-stat__label">Stories</span>
+                    </div>
+                    <div class="ms-stat">
+                        <span class="ms-stat__value" id="statPdf">0</span>
+                        <span class="ms-stat__label">From PDF</span>
+                    </div>
+                    <div class="ms-stat">
+                        <span class="ms-stat__value" id="statWords">0</span>
+                        <span class="ms-stat__label">Words</span>
+                    </div>
+                    <div class="ms-stat">
+                        <span class="ms-stat__value" id="statTranslations">0</span>
+                        <span class="ms-stat__label">With translations</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="ms-toolbar">
+                <div class="ms-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="msSearch" placeholder="Search titles, authors, tags or story text…"
+                        autocomplete="off">
+                    <button type="button" class="ms-search__clear" id="msClearSearch" aria-label="Clear search" hidden>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <button type="button" class="ms-filter-toggle" id="msFilterToggle" aria-expanded="true"
+                    aria-controls="msFilters">
+                    <i class="fas fa-sliders"></i> Filters
+                    <span class="ms-filter-count" id="msFilterCount" hidden>0</span>
+                </button>
+                <label class="ms-sort">
+                    <span>Sort</span>
+                    <select id="msSort">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="title">Title A–Z</option>
+                        <option value="words-desc">Most words</option>
+                        <option value="words-asc">Fewest words</option>
+                        <option value="level">Difficulty</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="ms-layout">
+                <aside class="ms-filters" id="msFilters" aria-label="Story filters">
+                    <div class="ms-filters__head">
+                        <h2><i class="fas fa-filter"></i> Advanced filters</h2>
+                        <button type="button" class="ms-link-btn" id="msResetFilters">Reset all</button>
+                    </div>
+
+                    <div class="ms-filter-group">
+                        <label for="msSource">Source</label>
+                        <select id="msSource">
+                            <option value="all">All sources</option>
+                            <option value="pdf">PDF import</option>
+                            <option value="js">JavaScript database</option>
+                            <option value="json">JSON file</option>
+                            <option value="manual">Written in Studio</option>
+                            <option value="text">Pasted text</option>
+                            <option value="unknown">Other / older stories</option>
+                        </select>
+                    </div>
+
+                    <div class="ms-filter-row">
+                        <div class="ms-filter-group">
+                            <label for="msLanguage">Language</label>
+                            <select id="msLanguage">
+                                <option value="all">All languages</option>
+                            </select>
+                        </div>
+                        <div class="ms-filter-group">
+                            <label for="msLevel">Difficulty</label>
+                            <select id="msLevel">
+                                <option value="all">All levels</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="ms-filter-row">
+                        <div class="ms-filter-group">
+                            <label for="msCefr">CEFR</label>
+                            <select id="msCefr">
+                                <option value="all">Any CEFR</option>
+                                <option value="A1">A1</option>
+                                <option value="A2">A2</option>
+                                <option value="B1">B1</option>
+                                <option value="B2">B2</option>
+                                <option value="C1">C1</option>
+                                <option value="C2">C2</option>
+                                <option value="none">Not set</option>
+                            </select>
+                        </div>
+                        <div class="ms-filter-group">
+                            <label for="msTag">Tag</label>
+                            <select id="msTag">
+                                <option value="all">Any tag</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <fieldset class="ms-filter-group ms-filter-fieldset">
+                        <legend>Features</legend>
+                        <label class="ms-check">
+                            <input type="checkbox" id="msHasTranslations">
+                            <span><i class="fas fa-language"></i> Has translations</span>
+                        </label>
+                        <label class="ms-check">
+                            <input type="checkbox" id="msHasAudio">
+                            <span><i class="fas fa-volume-up"></i> Has audio</span>
+                        </label>
+                    </fieldset>
+
+                    <div class="ms-filter-row">
+                        <div class="ms-filter-group">
+                            <label for="msWordsMin">Words (min)</label>
+                            <input type="number" id="msWordsMin" min="0" step="10" placeholder="0">
+                        </div>
+                        <div class="ms-filter-group">
+                            <label for="msWordsMax">Words (max)</label>
+                            <input type="number" id="msWordsMax" min="0" step="10" placeholder="∞">
+                        </div>
+                    </div>
+
+                    <div class="ms-filter-row">
+                        <div class="ms-filter-group">
+                            <label for="msDateFrom">Added from</label>
+                            <input type="date" id="msDateFrom">
+                        </div>
+                        <div class="ms-filter-group">
+                            <label for="msDateTo">Added to</label>
+                            <input type="date" id="msDateTo">
+                        </div>
+                    </div>
+
+                    <div class="ms-source-legend">
+                        <span class="source-pill source-pill--pdf"><i class="fas fa-file-pdf"></i> PDF</span>
+                        <span class="source-pill source-pill--js"><i class="fas fa-database"></i> JS database</span>
+                        <span class="source-pill source-pill--json"><i class="fas fa-file-code"></i> JSON</span>
+                        <span class="source-pill source-pill--manual"><i class="fas fa-pen"></i> Studio</span>
+                        <span class="source-pill source-pill--text"><i class="fas fa-keyboard"></i> Text</span>
+                    </div>
+                </aside>
+
+                <section class="ms-results">
+                    <div class="ms-results__head">
+                        <p class="ms-results__count" id="msResultCount">Loading your stories…</p>
+                        <div class="ms-results__actions">
+                            <button type="button" class="ms-link-btn" id="msExportAll" hidden>
+                                <i class="fas fa-file-export"></i> Export filtered
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ms-active-filters" id="msActiveFilters" hidden></div>
+
+                    <div class="ms-grid" id="msStoriesGrid"></div>
+
+                    <div class="ms-empty" id="msEmpty" hidden>
+                        <i class="fas fa-book-open"></i>
+                        <h2 id="msEmptyTitle">No stories yet</h2>
+                        <p id="msEmptyText">Save a story from Stories Studio to see it here.</p>
+                        <a class="ms-empty__btn" id="msEmptyStudio" href="../storiesStudio/index.html">
+                            <i class="fas fa-wand-magic-sparkles"></i> Open Stories Studio
+                        </a>
+                        <button type="button" class="ms-empty__btn" id="msEmptyReset" hidden>
+                            <i class="fas fa-eraser"></i> Reset filters
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Apply the saved theme/colours so the page matches the rest of the app.
+        (function () {
+            var t = localStorage.getItem('theme') || 'light';
+            if (t === 'dark') document.body.classList.add('dark-mode');
+            var root = document.documentElement;
+            var pc = localStorage.getItem('selectedColor');
+            var sc = localStorage.getItem('selectedSecondaryColor');
+            if (pc) root.style.setProperty('--primary', pc);
+            if (sc) root.style.setProperty('--secondary', sc);
+        })();
+    </script>
+    <script src="main.js"></script>
+</body>
+
+</html>

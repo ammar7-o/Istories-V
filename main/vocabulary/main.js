@@ -1622,7 +1622,7 @@ function playGoogleVoice(word, language = 'en') {
             .catch(error => {
                 console.error('TTS play failed:', error);
                 // Fallback to native speech synthesis
-                useNativeSpeechSynthesis(text, language, clickedButton);
+                // useNativeSpeechSynthesis(text, language, clickedButton);
             });
 
         // Reset the clicked button when audio ends
@@ -1639,7 +1639,7 @@ function playGoogleVoice(word, language = 'en') {
                 resetSingleVoiceButton(clickedButton);
             }
             // Fallback to native speech synthesis
-            useNativeSpeechSynthesis(text, language, clickedButton);
+            // useNativeSpeechSynthesis(text, language, clickedButton);
         };
 
     } catch (error) {
@@ -1647,7 +1647,7 @@ function playGoogleVoice(word, language = 'en') {
         if (clickedButton) {
             resetSingleVoiceButton(clickedButton);
         }
-        useNativeSpeechSynthesis(text, language, clickedButton);
+        // useNativeSpeechSynthesis(text, language, clickedButton);
     }
 }
 function useNativeSpeechSynthesis(text, language = 'en-US', clickedButton) {
