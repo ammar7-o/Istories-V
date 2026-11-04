@@ -77,77 +77,43 @@ function filterStoriesBySearch(query) {
     });
 }
 
+// Search results paginate independently from the library view.
+let searchRenderState = { items: [], shown: 0, options: {} };
+
 function displayFilteredStories(filteredStories, query) {
     storiesGrid.innerHTML = '';
 
     if (filteredStories.length === 0) {
+        const noResults = typeof istText === 'function'
+            ? istText('library.noResults', { query: query }, `No stories found for "${query}"`)
+            : `No stories found for "${query}"`;
+        const tryKeywords = typeof istText === 'function'
+            ? istText('library.tryKeywords', null, 'Try different keywords or browse all stories')
+            : 'Try different keywords or browse all stories';
+
         storiesGrid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search fa-2x"></i>
-                <h3>No stories found for "${query}"</h3>
-                <p>Try different keywords or browse all stories</p>
-                ${!showUserStories ? '<p><em>Note: User stories are currently disabled in settings</em></p>' : ''}
+                <h3>${noResults}</h3>
+                <p>${tryKeywords}</p>
+                ${!showUserStories ? '<p><em>' +
+                    (typeof istText === 'function'
+                        ? istText('library.userDisabled', null, 'User stories are currently disabled in settings')
+                        : 'User stories are currently disabled in settings') +
+                    '</em></p>' : ''}
             </div>
         `;
         return;
     }
 
-    filteredStories.forEach(story => {
-        const storyCard = document.createElement('div');
-        storyCard.className = 'story-card';
-        storyCard.dataset.storyId = story.id;
-
-        // Use the corrected function
-        const highlightedTitle = highlightSearchMatch(story.title, query);
-
-        // Only show author if it exists and is not empty
-        const authorHTML = story.author && story.author.trim() !== ""
-            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
-            : '';
-
-        // Add user story indicator only if user stories are enabled
-        const userStoryBadge = (story.isUserStory && showUserStories)
-            ? '<span class="user-story-badge" title="User-added story"><i class="fas fa-user-plus"></i></span>'
-            : '';
-
-        // Get CEFR level with fallback
-        const cefrLevel = story.levelcefr || '';
-
-        // Language badge (depends on the story lang). Kept identical to the
-        // library/store cards so search results don't lose it.
-        const langBadge = story.lang
-            ? `<span class="story-lang-badge" title="Story language"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
-            : '';
-
-        storyCard.innerHTML = `
-            <div class="story-image">
-                ${authorHTML}
-                ${renderStoryCover(story)}
-            </div>
-            <div class="story-content">
-                <div class="story-header">
-                    <div>
-                        <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                        <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
-                        ${langBadge}
-                    </div>
-                    ${userStoryBadge}
-                </div>
-                <h3 class="story-title">${highlightedTitle}</h3>
-                <p>${story.content[0].substring(0, 100)}...</p>
-                <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
-                </div>
-            </div>
-        `;
-
-        storyCard.addEventListener('click', () => {
-            openStoryInNewPage(story.id);
-        });
-
-        storiesGrid.appendChild(storyCard);
-    });
+    // Render only the first 20 matches; "Load 20 more stories" adds the rest
+    // while keeping the active search query and language filter.
+    searchRenderState = {
+        items: filteredStories,
+        shown: 0,
+        options: { query: query }
+    };
+    renderStoryBatch(searchRenderState, storiesGrid);
 }
 
 function highlightSearchMatch(text, query) {

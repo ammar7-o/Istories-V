@@ -1,6 +1,9 @@
 // stories.js
 
 window.storiesData = {
+    // Central offline dictionary used by every story. Per-story `dictionaries`
+    // below are optional overrides layered on top for backwards compatibility.
+    "sharedDictionary": "../../database/Dictionarys/shared.json",
     "stories": [
         {
             "id": 1,
@@ -48,7 +51,7 @@ window.storiesData = {
             "author": "Istories",
             "coverType": "image",
             "sound": "../sounds/story2.mp3",
-            "dictionaries": ["../../database/Dictionarys/story2.json"],  // Note: capital D
+            "dictionaries": ["../../database/Dictionarys/shared.json"],  // Central dictionary (story2.json was missing)
             "content": [
                 "In a small village surrounded by beautiful mountains, there lived a young girl named Lily. She loved music more than anything in the world. Every day, she would sit by the river and listen to the sounds of nature.",
                 "Lily noticed that each season had its own special music. In spring, she heard the gentle rain falling on new leaves and the songs of birds returning from their winter homes. The sound was soft and happy, like a lullaby waking the world from its sleep.",
@@ -85,7 +88,7 @@ window.storiesData = {
             "coverType": "image",
             "author": "Istories",
             "sound": "../sounds/story3.mp3",
-            "dictionaries": ["../../database/Dictionarys/story3.json"],  // Note: capital D
+            "dictionaries": ["../../database/Dictionarys/shared.json"],  // Central dictionary (story3.json was missing)
             "content": [
                 "On clear nights when the moon was new and the sky was filled with stars, old Manu would take his special net and go to the highest cliff overlooking the ocean. The children of the village called him the Star Fisher because he said he was catching falling stars.",
                 "Most adults thought Manu was just a funny old man with strange habits. But the children loved his stories about the stars he caught. He would describe them as being made of light and dreams, each one different and special.",
@@ -129,7 +132,7 @@ window.storiesData = {
             "cover": "🌅",
             "coverType": "emoji",
             "sound": "../sounds/storyFr.mp3",
-            "dictionaries": ["../../database/Dictionarys/story1-fr.json", "../../database/Dictionarys/main.json."],
+            "dictionaries": ["../../database/Dictionarys/story1-fr.json", "../../database/Dictionarys/main.json"],
             "content": [
                 "Bonjour et bienvenue sur <span class='mark'>IStories</span> ! Ce site web a été créé par Ammar Chacal pour aider les gens à apprendre les langues de manière amusante et interactive. <img src='../../imges/cover.webp' alt='Example'> Grâce à ces histoires interactives, vous pouvez améliorer naturellement votre <span class='mark'>vocabulaire</span> et votre <span class='mark'>compréhension</span>.",
                 "Chaque histoire est conçue pour différents niveaux d’apprentissage – débutant, intermédiaire et avancé. Les histoires pour débutants utilisent des mots simples et des phrases courtes, parfaites pour ceux qui commencent leur parcours <span class='mark'>linguistique</span>.",

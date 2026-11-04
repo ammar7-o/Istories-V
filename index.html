@@ -913,6 +913,13 @@
   }
 </style>
     <link rel="stylesheet" href="main/nav/theme.css">
+    <!-- Interface localization (English / Arabic) -->
+    <link rel="stylesheet" href="main/nav/i18n.css">
+    <script src="main/nav/i18n.js"></script>
+    <!-- First-visit welcome guide (IndexedDB flag) -->
+    <link rel="stylesheet" href="main/nav/welcome.css">
+    <script src="main/nav/vendor/localforage.min.js"></script>
+    <script src="main/nav/welcome.js" defer></script>
 
 <body>
   <header id="top">
@@ -924,7 +931,17 @@
         </div>
         <nav></nav>
         <div class="header-actions">
-          <button class="theme-toggle" id="themeToggle">
+          <div class="ist-lang-switch" role="group" aria-label="Language">
+            <button type="button" class="ist-lang-switch__btn" data-set-lang="en">EN</button>
+            <button type="button" class="ist-lang-switch__btn" data-set-lang="ar"
+              aria-label="العربية">ع</button>
+          </div>
+          <button class="theme-toggle" id="welcomeHelpBtn" type="button" data-welcome-open
+            aria-label="Help &amp; guide" title="Help &amp; guide">
+            <i class="fas fa-circle-question"></i>
+          </button>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"
+            title="Toggle dark mode">
             <i class="fas fa-moon"></i>
           </button>
           <div class="user-actions">

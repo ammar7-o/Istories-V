@@ -12,6 +12,12 @@ let fontFamily = localStorage.getItem('fontFamily') || 'sans-serif'; // Add this
 let currentStory = null;
 let currentWordData = null;
 let dictionary = {};
+// Phrase-level translations live beside the word dictionary so a text
+// selection like “au revoir” can be translated as one unit.
+let phraseDictionary = {};
+// One centralized dictionary shared by every story. Per-story legacy
+// dictionaries are loaded afterwards and still override these entries.
+const SHARED_DICTIONARY_PATH = '../../database/Dictionarys/shared.json';
 // Global variables for paragraph translation
 let paragraphTranslationEnabled = false;
 let translationSettings = {
@@ -127,8 +133,51 @@ function getUserStories() {
     }
 }
 
+/** Normalize a story language code to its base (en-US → en). */
+function storyLanguage(story) {
+    const raw = (story && (story.lang || story.language)) ||
+        document.documentElement.getAttribute('data-story-lang') || 'en';
+    return String(raw).toLowerCase().split('-')[0];
+}
+
+/** Turn a phrase key into a stable lookup form. */
+function normalizePhraseKey(value) {
+    return String(value == null ? '' : value)
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+}
+
+/**
+ * Extract the language-specific word map (and phrase map) from the
+ * centralized shared.json payload. Legacy flat dictionaries are returned
+ * unchanged so old story databases keep working.
+ */
+function extractDictionaryEntries(payload, lang, storyId) {
+    if (!payload || typeof payload !== 'object' ||
+        !payload.languages || typeof payload.languages !== 'object') {
+        return { words: payload || {}, phrases: {} };
+    }
+
+    const languages = payload.languages;
+    const languageKey = languages[lang] ? lang : (languages.en ? 'en' : Object.keys(languages)[0]);
+    let words = languageKey ? { ...(languages[languageKey] || {}) } : {};
+
+    // Story-specific overrides bundled in the shared file.
+    const storyOverrides = payload.stories && payload.stories[String(storyId)];
+    if (storyOverrides) {
+        const overrideWords = storyOverrides[languageKey] || storyOverrides.en || {};
+        words = { ...words, ...overrideWords };
+    }
+
+    const phrases = (payload.phrases && (payload.phrases[languageKey] || payload.phrases[lang])) || {};
+    return { words, phrases };
+}
+
 /**
  * Load dictionaries from JSON file(s).
+ * Accepts both legacy flat dictionaries ({ word: { translation } }) and the
+ * structured shared dictionary ({ languages, phrases, stories }).
  * يتضمن تنظيف مفاتيح القاموس من الفراغات الزائدة أثناء التحميل.
  */
 async function loadDictionary(dictionaryPaths) {
@@ -137,6 +186,7 @@ async function loadDictionary(dictionaryPaths) {
     }
 
     dictionary = {};
+    phraseDictionary = {};
 
     if (dictionaryPaths.length === 0) {
         console.log('No dictionary paths provided.');
@@ -144,8 +194,11 @@ async function loadDictionary(dictionaryPaths) {
     }
 
     try {
+        const lang = storyLanguage(currentStory);
+        const storyId = currentStory ? currentStory.id : null;
+
         const loadPromises = dictionaryPaths.map(async (path) => {
-            if (!path) return {};
+            if (!path) return null;
 
             try {
                 const response = await fetch(path);
@@ -153,9 +206,19 @@ async function loadDictionary(dictionaryPaths) {
                     throw new Error(`Failed to load dictionary: ${response.status} from ${path}`);
                 }
                 const dictContent = await response.json();
+                const extracted = extractDictionaryEntries(dictContent, lang, storyId);
 
-                console.log(`Loaded ${Object.keys(dictContent).length} words from: ${path}`);
-                return dictContent;
+                console.log(`Loaded ${Object.keys(extracted.words).length} words from: ${path}`);
+
+                // Multi-word legacy keys are phrase translations too.
+                for (const key in extracted.words) {
+                    if (key.indexOf(' ') !== -1) {
+                        phraseDictionary[normalizePhraseKey(key)] = extracted.words[key];
+                    }
+                }
+                Object.assign(phraseDictionary, extracted.phrases || {});
+
+                return extracted.words;
 
             } catch (error) {
                 console.error(`Error loading dictionary from ${path}:`, error);
@@ -167,6 +230,7 @@ async function loadDictionary(dictionaryPaths) {
 
         // دمج جميع القواميس وتجريد المفاتيح من الفراغات الزائدة
         dictionary = allDictionaries.reduce((mergedDict, currentDict) => {
+            if (!currentDict) return mergedDict;
             const trimmedDict = {};
             for (const key in currentDict) {
                 if (currentDict.hasOwnProperty(key)) {
@@ -392,12 +456,21 @@ function storyDictionaryPaths(story) {
         story && story.dictionary
     ];
 
+    const paths = [SHARED_DICTIONARY_PATH];
+
     for (const candidate of candidates) {
-        if (Array.isArray(candidate) && candidate.length > 0) return candidate;
-        if (typeof candidate === 'string' && candidate.trim()) return [candidate];
+        const list = Array.isArray(candidate) ? candidate :
+            (typeof candidate === 'string' && candidate.trim() ? [candidate] : []);
+        for (const path of list) {
+            if (typeof path !== 'string' || !path.trim()) continue;
+            // Repair the historical "main.json." typo found in old story data.
+            const cleaned = path.trim().replace(/main\.json\.$/, 'main.json');
+            if (paths.indexOf(cleaned) === -1) paths.push(cleaned);
+        }
+        if (list.length > 0) break;
     }
 
-    return ["../../database/Dictionarys/main.json"];
+    return paths;
 }
 
 // Load story from database files by ID or user stories
@@ -516,10 +589,9 @@ async function loadStory() {
                             if (currentStory) {
                                 console.log(`🎉 Story found in ${dbFile}!`);
 
-                                // Load dictionary if specified
-                                if (currentStory.dictionaries) {
-                                    await loadDictionary(currentStory.dictionaries);
-                                }
+                                // Load the shared dictionary plus any per-story
+                                // dictionaries (shared entries are the base).
+                                await loadDictionary(storyDictionaryPaths(currentStory));
 
                                 displayStory(currentStory);
                                 storyFound = true;
@@ -574,9 +646,7 @@ async function loadStory() {
                 }
 
                 if (currentStory) {
-                    if (currentStory.dictionaries) {
-                        await loadDictionary(currentStory.dictionaries);
-                    }
+                    await loadDictionary(storyDictionaryPaths(currentStory));
                     displayStory(currentStory);
                     document.head.removeChild(script);
                     console.log(`Story loaded from story_${storyId}.js`);
@@ -983,9 +1053,30 @@ function setupWordInteractions() {
         }
 
         word.addEventListener('click', (e) => {
+            // A multi-word text selection is handled as a phrase by the
+            // mouseup listener below; don't overwrite it with one word.
+            const selection = window.getSelection();
+            const selectedText = selection ? selection.toString().trim() : '';
+            if (selectedText && selectedText.split(/\s+/).length > 1) return;
+
             e.stopPropagation();
             showDictionary(dataWord, word);
         });
+    });
+}
+
+// Phrase-level lookup: selecting “au revoir”, “bonne nuit”, etc. shows the
+// translation stored in the shared dictionary's `phrases` map.
+if (storyText) {
+    storyText.addEventListener('mouseup', function () {
+        setTimeout(function () {
+            const selection = window.getSelection();
+            if (!selection || selection.rangeCount === 0) return;
+            const selectedText = selection.toString().replace(/\s+/g, ' ').trim();
+            if (!selectedText || selectedText.split(' ').length < 2) return;
+            if (!storyText.contains(selection.anchorNode)) return;
+            showDictionary(selectedText, null, true);
+        }, 0);
     });
 }
 
@@ -1068,6 +1159,18 @@ function showDictionary(word, element, isTextSelection = false) {
         }
     }
 
+    // Phrase-level translation (multi-word selection or a multi-word key).
+    if (!wordData) {
+        const phraseKey = normalizePhraseKey(word);
+        const phraseData = phraseDictionary[phraseKey] ||
+            phraseDictionary[normalizePhraseKey(originalWordText)];
+        if (phraseData) {
+            wordData = typeof phraseData === 'string'
+                ? { translation: phraseData, source: 'phrase' }
+                : phraseData;
+        }
+    }
+
     // If not found in custom dictionary, check main dictionary
     if (!wordData) {
         wordData = dictionary[word] || dictionary[getNormalizedKey(word)];
@@ -1084,7 +1187,10 @@ function showDictionary(word, element, isTextSelection = false) {
 
         // Add source indicator if it's a custom translation
         if (wordData.source === 'user_story') {
-            popupTranslation.innerHTML += ' <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;"><i class="fas fa-user-edit"></i> Custom</span>';
+            var customLabel = window.IStoriesI18n
+                ? window.IStoriesI18n.t('reader.custom')
+                : 'Custom';
+            popupTranslation.innerHTML += ' <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;"><i class="fas fa-user-edit"></i> ' + customLabel + '</span>';
         }
 
         const isSaved = savedWords.some(w => w.word === word || w.originalWord === originalWordText);
@@ -1095,7 +1201,9 @@ function showDictionary(word, element, isTextSelection = false) {
         saveWordBtn.classList.toggle('disabled', isSaved);
         saveWordBtn.classList.remove('no-translation-btn');
     } else {
-        popupTranslation.textContent = "لا توجد ترجمة متاحة";
+        popupTranslation.textContent = window.IStoriesI18n
+            ? window.IStoriesI18n.t('reader.noTranslation')
+            : "لا توجد ترجمة متاحة";
 
         saveWordBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save Word (No Translation)';
         saveWordBtn.disabled = false;
@@ -2037,6 +2145,36 @@ style.textContent = `
 document.head.appendChild(style);
 
 // ----------------------------------------------------
+// The dictionary popup's own placeholder text is excluded from automatic
+// translation (story words/translations live there), so localize it here only
+// while no real word is being shown.
+function localizeDictionaryPlaceholders() {
+    var i18n = window.IStoriesI18n;
+    if (!i18n) return;
+
+    var popupOpen = dictionaryPopup && dictionaryPopup.style.display === 'block';
+
+    if (popupWord) {
+        var currentWord = popupWord.textContent.trim();
+        if (!popupOpen || !currentWord ||
+            currentWord === 'Dictionary' || currentWord === 'قاموس') {
+            popupWord.textContent = i18n.t('reader.dictionary');
+        }
+    }
+
+    if (!popupTranslation) return;
+    if (popupTranslation.querySelector('.word-translation-persistent')) return;
+
+    if (popupOpen && currentWordData) {
+        if (!currentWordData.hasTranslation) {
+            popupTranslation.textContent = i18n.t('reader.noTranslation');
+        }
+        return;
+    }
+
+    popupTranslation.textContent = i18n.t('reader.selectWord');
+}
+
 // 🚀 دالة التهيئة (Initialization)
 // ----------------------------------------------------
 // Function to apply saved font family
@@ -2073,6 +2211,7 @@ async function init() {
         }
 
         loadFontSettings();
+        localizeDictionaryPlaceholders();
 
         // STEP 3: Initialize color selectors
         console.log('Step 3: Initializing color selectors...');
@@ -2116,4 +2255,5 @@ async function init() {
         showNotification('Failed to initialize application', 'error');
     }
 }
+document.addEventListener('ist-language-change', localizeDictionaryPlaceholders);
 document.addEventListener('DOMContentLoaded', init);

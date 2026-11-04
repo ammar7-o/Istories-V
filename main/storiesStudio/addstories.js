@@ -1351,10 +1351,20 @@ function setupLanguagePickers() {
 
         const update = () => {
             const code = select.value || 'en';
-            const dir = (typeof isRtlLang === 'function' && isRtlLang(code)) ? 'right-to-left' : 'left-to-right';
+            const isRtl = (typeof isRtlLang === 'function' && isRtlLang(code));
             const name = (typeof langDisplayName === 'function') ? langDisplayName(code) : code;
-            hint.textContent = `${langFlag(code) ? langFlag(code) + '  ' : ''}${name} · ${dir} · read with a ${name} voice`;
+            const i18n = window.IStoriesI18n;
+            const dir = i18n
+                ? i18n.t(isRtl ? 'studio.direction.rtl' : 'studio.direction.ltr')
+                : (isRtl ? 'right-to-left' : 'left-to-right');
+            const text = i18n
+                ? i18n.t('studio.langHint', { name: name, direction: dir })
+                : `${name} · ${dir} · read with a ${name} voice`;
+            hint.textContent = `${langFlag(code) ? langFlag(code) + '  ' : ''}${text}`;
         };
+
+        // Refresh the hint when the interface language changes too.
+        document.addEventListener('ist-language-change', update);
 
         select.addEventListener('change', update);
         update();

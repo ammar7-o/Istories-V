@@ -1858,5 +1858,11 @@ function init() {
     console.log('Vocabulary page initialization complete!');
 }
 
+// Rebuild vocabulary cards and statistics for the new interface language.
+document.addEventListener('ist-language-change', function () {
+    if (typeof renderVocabulary === 'function') renderVocabulary();
+    if (typeof updateStats === 'function') updateStats();
+});
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);

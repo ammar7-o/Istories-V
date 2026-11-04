@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v3.9';
+const CACHE_VERSION = 'v4.0';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;
@@ -46,6 +46,10 @@ const SHELL_ASSETS = [
   './main/nav/userdata.js',
   './main/nav/theme.css',
   './main/nav/header.css',
+  './main/nav/i18n.css',
+  './main/nav/i18n.js',
+  './main/nav/welcome.css',
+  './main/nav/welcome.js',
   './main/nav/settings-panel.js',
   './main/nav/vendor/localforage.min.js',
   './main/nav/vendor/pdfjs/pdf.min.js',
@@ -107,6 +111,7 @@ const SHELL_ASSETS = [
   './database/Dictionarys/english.json',
   './database/Dictionarys/french.json',
   './database/Dictionarys/main.json',
+  './database/Dictionarys/shared.json',
   './database/Dictionarys/story1.json',
   './database/Dictionarys/story1-fr.json',
 

@@ -1,5 +1,14 @@
 // ========= App State Variables ==========
 
+// Localized UI string helper (falls back to English before i18n loads).
+function storeText(key, vars, fallback) {
+    if (window.IStoriesI18n && typeof window.IStoriesI18n.t === 'function') {
+        const value = window.IStoriesI18n.t(key, vars);
+        if (value && value !== key) return value;
+    }
+    return fallback;
+}
+
 let currentPage = 'home';
 let currentStory = null;
 let stories = []; // Will be loaded from external file
@@ -126,12 +135,6 @@ function init() {
 
     setupEventListeners();
     setupSettings();
-
-    // STEP 7: Verify everything is set up correctly
-    console.log('Step 7: Final verification...');
-    setTimeout(() => {
-        verifyColorSetup();
-    }, 200);
 
     console.log('App initialization complete!');
 }
@@ -543,8 +546,17 @@ function renderStories(level = currentLevel, lang = currentLang) {
 
         // Language badge (depends on the story lang)
         const langBadge = story.lang
-            ? `<span class="story-lang-badge" title="Story language"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
+            ? `<span class="story-lang-badge" title="${storeText('library.storyLanguage', null, 'Story language')}"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
             : '';
+
+        const levelValue = String(story.level || 'beginner').toLowerCase();
+        const levelText = storeText('library.' + levelValue, null,
+            levelValue.charAt(0).toUpperCase() + levelValue.slice(1));
+        const wordsText = story.wordCount
+            ? storeText('library.wordsCount', { count: story.wordCount }, `${story.wordCount} words`)
+            : 'N/A words';
+        const minutesText = storeText('library.minRead', { count: Math.ceil((story.wordCount || 100) / 200) },
+            `${Math.ceil((story.wordCount || 100) / 200)} min read`);
 
         storyCard.innerHTML = `
             <div class="story-image">
@@ -554,17 +566,17 @@ function renderStories(level = currentLevel, lang = currentLang) {
             <div class="story-content">
                 <div class="story-header">
                     <div>
-                    <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
+                    <span class="story-level ${levelValue}">${levelText}</span>
                     <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
                     ${langBadge}
                 </div>
         
-                    ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
+                    ${isUserStory ? '<span class="user-story-badge">' + storeText('library.userStory', null, 'Your Story') + '</span>' : ''}
                 </div>
                 <h3 class="story-title">${story.title}</h3>
                 <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                    <span><i class="fas fa-font"></i> ${wordsText}</span>
+                    <span><i class="fas fa-clock"></i> ${minutesText}</span>
                 </div>
                 
                 <!-- Action Buttons - Save button and Download button -->
@@ -903,8 +915,17 @@ function displayFilteredStories(filteredStories, query) {
         const cefrLevel = story.levelcefr || '';
 
         const langBadge = story.lang
-            ? `<span class="story-lang-badge" title="Story language"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
+            ? `<span class="story-lang-badge" title="${storeText('library.storyLanguage', null, 'Story language')}"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
             : '';
+
+        const levelValue = String(story.level || 'beginner').toLowerCase();
+        const levelText = storeText('library.' + levelValue, null,
+            levelValue.charAt(0).toUpperCase() + levelValue.slice(1));
+        const wordsText = story.wordCount
+            ? storeText('library.wordsCount', { count: story.wordCount }, `${story.wordCount} words`)
+            : 'N/A words';
+        const minutesText = storeText('library.minRead', { count: Math.ceil((story.wordCount || 100) / 200) },
+            `${Math.ceil((story.wordCount || 100) / 200)} min read`);
 
         storyCard.innerHTML = `
             <div class="story-image">
@@ -913,17 +934,17 @@ function displayFilteredStories(filteredStories, query) {
             </div>
             <div class="story-content">
             <div>
-              <span class="story-level ${story.level}">${story.level}</span>
+              <span class="story-level ${levelValue}">${levelText}</span>
               <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
               ${langBadge}
             </div>
               
 
-                ${isUserStory ? '<span class="user-story-badge">Your Story</span>' : ''}
+                ${isUserStory ? '<span class="user-story-badge">' + storeText('library.userStory', null, 'Your Story') + '</span>' : ''}
                 <h3 class="story-title">${highlightedTitle}</h3>
                 <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
+                    <span><i class="fas fa-font"></i> ${wordsText}</span>
+                    <span><i class="fas fa-clock"></i> ${minutesText}</span>
                 </div>
                 
                 <!-- Action Buttons for search results -->
@@ -2085,6 +2106,17 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Store cards contain generated level/language/word-count labels; rebuild
+// them when the interface language changes.
+document.addEventListener('ist-language-change', function () {
+    if (!storiesGrid) return;
+    if (typeof searchInput !== 'undefined' && searchInput && searchInput.value.trim()) {
+        displayFilteredStories(filterStoriesBySearch(searchInput.value.trim()), searchInput.value.trim());
+        return;
+    }
+    renderStories(currentLevel, currentLang);
+});
 
 // ========= Initialize App ==========
 document.addEventListener('DOMContentLoaded', function () {

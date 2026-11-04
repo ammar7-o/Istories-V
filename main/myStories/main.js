@@ -793,6 +793,12 @@
         };
     }
 
+    // Rebuild cards and filter chips with the current interface language.
+    document.addEventListener('ist-language-change', function () {
+        if (!els.grid) return;
+        render();
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
         cacheElements();
         setupListeners();

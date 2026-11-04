@@ -1,6 +1,8 @@
 // stories.js
 
 window.storiesData = {
+    // Central offline dictionary used by every story.
+    "sharedDictionary": "../../database/Dictionarys/shared.json",
     "stories": [
                {
             "id": 11,

@@ -1,0 +1,246 @@
+/* ==========================================================================
+   i18n.css — Arabic typography and right-to-left layout support
+   ==========================================================================
+   Loaded on every page after the page stylesheet. It only adds direction-aware
+   rules; the existing light/dark theme tokens are untouched.
+   ========================================================================== */
+
+/* --- Arabic typography ---------------------------------------------------- */
+html[lang="ar"] body {
+    font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", "Amiri", "Scheherazade New", sans-serif;
+    line-height: 1.8;
+}
+
+html[lang="ar"] :is(h1, h2, h3, h4, h5, h6) {
+    letter-spacing: 0 !important;
+    line-height: 1.35;
+}
+
+/* Keep story content in its own language/font; only the interface is Arabic. */
+html[lang="ar"] :is(.story-text, #storyText, .word, .story-title, .preview-story-content) {
+    font-family: inherit;
+}
+
+/* --- Generic direction-aware fixes --------------------------------------- */
+html[dir="rtl"] body {
+    text-align: right;
+}
+
+html[dir="rtl"] :is(
+    .container,
+    .main-content,
+    .settings-grid,
+    .stories-grid,
+    .story-content,
+    .setting-info,
+    .feature-card,
+    .footer-content,
+    .ist-header__inner,
+    .ist-header__search,
+    .card,
+    .panel,
+    .modal,
+    .dialog
+) {
+    text-align: start;
+}
+
+/* Icons that carry direction should mirror in RTL. */
+html[dir="rtl"] :is(
+    .cta-button .fa-arrow-right,
+    .cta-button .fa-chevron-right,
+    .cta-ghost .fa-chevron-right,
+    .ist-header__search-btn .fa-chevron-right,
+    .story-card .fa-arrow-right,
+    button .fa-arrow-right
+) {
+    transform: scaleX(-1);
+}
+
+html[dir="rtl"] .cta-button:hover i.fa-arrow-right {
+    transform: scaleX(-1) translateX(4px);
+}
+
+/* Floating burger fallback. */
+html[dir="rtl"] .ist-burger.ist-burger--floating {
+    right: auto;
+    left: 10px;
+}
+
+/* Toast stack and accent bars. */
+html[dir="rtl"] #ist-toast-container {
+    right: auto;
+    left: 18px;
+    align-items: flex-start;
+}
+
+html[dir="rtl"] .ist-toast {
+    padding: 13px 14px 13px 40px;
+    border-left: 1px solid var(--border, #e5e7eb);
+    border-right: 5px solid var(--ist-toast-accent);
+}
+
+html[dir="rtl"] .ist-toast__close {
+    right: auto;
+    left: 7px;
+}
+
+html[dir="rtl"] .ist-toast__bar {
+    left: auto;
+    right: 0;
+}
+
+@keyframes istToastInRtl {
+    from { opacity: 0; transform: translateX(-110%) scale(.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+html[dir="rtl"] .ist-toast {
+    animation-name: istToastInRtl;
+}
+
+/* --- Shared language switcher -------------------------------------------- */
+.ist-lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 999px;
+    background: var(--bg-secondary, #f4f1ea);
+    color: var(--text, #0d3b36);
+}
+
+.ist-lang-switch__btn {
+    min-width: 38px;
+    min-height: 30px;
+    padding: 4px 9px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: .8rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+.ist-lang-switch__btn:hover {
+    background: var(--hover, rgba(0, 0, 0, .06));
+}
+
+.ist-lang-switch__btn.is-active,
+.ist-lang-switch__btn[aria-pressed="true"] {
+    background: var(--primary, #09d9ba);
+    color: #fff;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, .3);
+}
+
+.ist-lang-switch__btn:focus-visible {
+    outline: 2px solid var(--secondary, #007ce1);
+    outline-offset: 2px;
+}
+
+header .ist-lang-switch {
+    flex: 0 0 auto;
+}
+
+/* Compact globe toggle used in the sidebar. */
+.ist-sidebar__lang {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+}
+
+.ist-sidebar__lang [data-language-label] {
+    font-weight: 700;
+    color: var(--ist-sidebar-accent, var(--primary));
+}
+
+/* --- Common directly-injected UI ----------------------------------------- */
+html[dir="rtl"] .translation-badge {
+    right: auto !important;
+    left: 20px;
+}
+
+html[dir="rtl"] .dictionary-popup {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .dictionary-popup :is(.dictionary-actions, .dictionary-actions-buttom) {
+    direction: rtl;
+}
+
+/* Search highlights and story badges keep their natural alignment. */
+html[dir="rtl"] .search-highlight {
+    direction: inherit;
+}
+
+/* Library "load more" control (shared by main library and search results). */
+.ist-load-more-wrap {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px 0 10px;
+}
+
+.ist-load-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 11px 26px;
+    border: 1px solid var(--border, #e2ddcf);
+    border-radius: 999px;
+    background: var(--bg-secondary, #f4f1ea);
+    color: var(--text, #0d3b36);
+    font: inherit;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: var(--shadow, 0 10px 26px -14px rgba(36, 61, 52, .28));
+    transition: transform .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+.ist-load-more:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary, #09d9ba);
+    background: color-mix(in srgb, var(--primary, #09d9ba) 12%, var(--bg-secondary, #f4f1ea));
+}
+
+.ist-load-more:active {
+    transform: translateY(0);
+}
+
+.ist-load-more:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary, #09d9ba) 45%, transparent);
+    outline-offset: 3px;
+}
+
+.ist-load-more:disabled {
+    opacity: .6;
+    cursor: wait;
+    transform: none;
+}
+
+.ist-load-more__hint {
+    font-size: .82rem;
+    color: var(--text-light, #5f7d78);
+}
+
+/* Reduce animation for users who ask for it. */
+@media (prefers-reduced-motion: reduce) {
+    .ist-load-more,
+    .ist-lang-switch__btn {
+        transition: none !important;
+    }
+}

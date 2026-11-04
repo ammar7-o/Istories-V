@@ -18,6 +18,12 @@
     <script src="../nav/common.js"></script>
     <link rel="stylesheet" href="../nav/theme.css">
     <link rel="stylesheet" href="../nav/header.css">
+    <!-- Interface localization (English / Arabic) -->
+    <link rel="stylesheet" href="../nav/i18n.css">
+    <script src="../nav/i18n.js"></script>
+    <!-- Welcome guide (auto-opens on the homepage only) -->
+    <link rel="stylesheet" href="../nav/welcome.css">
+    <script src="../nav/welcome.js" defer></script>
 </head>
 
 <body>
@@ -104,7 +110,7 @@
                                     <i class="fas fa-database"></i>
                                     <h2>Story Database</h2>
                                 </div>
-                                <p class="upload-description">
+                                <p class="upload-description" data-i18n-html="studio.sourceIntro">
                                     Open a <code>.js</code> or <code>.json</code> database such as
                                     <code>database/database/main.js</code>, then read or save any story it contains.
                                 </p>
@@ -134,7 +140,7 @@
                                     <i class="fas fa-file-pdf"></i>
                                     <h2>Import from PDF</h2>
                                 </div>
-                                <p class="upload-description">
+                                <p class="upload-description" data-i18n-html="studio.pdfIntro">
                                     Choose up to <strong>10 pages</strong> from a PDF, extract their text, edit it, and save it as a story.
                                 </p>
 
@@ -572,8 +578,8 @@ Enter one dictionary path per line"></textarea>
                             </div>
                             <p class="code-note">
                                 <i class="fas fa-circle-info"></i>
-                                Everything after <code>//</code> is a note listing every value the field accepts (the
-                                hashtags). The <strong>Copy</strong> button removes the notes for you.
+                                <span data-i18n-html="studio.codeNote">Everything after <code>//</code> is a note listing every value the field accepts (the
+                                hashtags). The <strong>Copy</strong> button removes the notes for you.</span>
                             </p>
                         </div>
                     </div>

@@ -43,50 +43,56 @@
             {
                 title: null,
                 items: [
-                    { key: 'home', label: 'Home', icon: 'fa-solid fa-house', path: '' }
+                    { key: 'home', label: 'Home', i18n: 'nav.home', icon: 'fa-solid fa-house', path: '' }
                 ]
             },
             {
                 title: 'Learn',
+                i18n: 'nav.learn',
                 items: [
-                    { key: 'stories', label: 'Story Library', icon: 'fa-solid fa-book-open', path: 'main/index.html' },
-                    { key: 'myStories', label: 'My Stories', icon: 'fa-solid fa-book-bookmark', path: 'main/myStories/index.html' },
-                    { key: 'vocabulary', label: 'Vocabulary', icon: 'fa-solid fa-language', path: 'main/vocabulary/index.html' },
-                    { key: 'flashcard', label: 'Flashcards', icon: 'fa-solid fa-layer-group', path: 'main/flashcard/index.html' },
-                    { key: 'quiz', label: 'Quiz', icon: 'fa-solid fa-brain', path: 'main/quiz/index.html' }
+                    { key: 'stories', label: 'Story Library', i18n: 'nav.stories', icon: 'fa-solid fa-book-open', path: 'main/index.html' },
+                    { key: 'myStories', label: 'My Stories', i18n: 'nav.myStories', icon: 'fa-solid fa-book-bookmark', path: 'main/myStories/index.html' },
+                    { key: 'vocabulary', label: 'Vocabulary', i18n: 'nav.vocabulary', icon: 'fa-solid fa-language', path: 'main/vocabulary/index.html' },
+                    { key: 'flashcard', label: 'Flashcards', i18n: 'nav.flashcards', icon: 'fa-solid fa-layer-group', path: 'main/flashcard/index.html' },
+                    { key: 'quiz', label: 'Quiz', i18n: 'nav.quiz', icon: 'fa-solid fa-brain', path: 'main/quiz/index.html' }
                 ]
             },
             {
                 title: 'Create',
+                i18n: 'nav.create',
                 items: [
-                    { key: 'addStories', label: 'Stories Studio', icon: 'fa-solid fa-circle-plus', path: 'main/storiesStudio/index.html' },
-                    { key: 'profile', label: 'Profile', icon: 'fa-solid fa-user', path: 'main/profile/index.html' }
+                    { key: 'addStories', label: 'Stories Studio', i18n: 'nav.studio', icon: 'fa-solid fa-circle-plus', path: 'main/storiesStudio/index.html' },
+                    { key: 'profile', label: 'Profile', i18n: 'nav.profile', icon: 'fa-solid fa-user', path: 'main/profile/index.html' }
                 ]
             },
             {
                 title: 'Discover',
+                i18n: 'nav.discover',
                 items: [
-                    { key: 'store', label: 'Story Store', icon: 'fa-solid fa-store', path: 'store/index.html' },
-                    { key: 'tools', label: 'Tools', icon: 'fa-solid fa-screwdriver-wrench', path: 'tools/index.html' }
+                    { key: 'store', label: 'Story Store', i18n: 'nav.store', icon: 'fa-solid fa-store', path: 'store/index.html' },
+                    { key: 'tools', label: 'Tools', i18n: 'nav.tools', icon: 'fa-solid fa-screwdriver-wrench', path: 'tools/index.html' }
                 ]
             },
             {
                 title: 'Translation',
+                i18n: 'nav.translation',
                 items: [
-                    { key: 'csvTranslator', label: 'CSV → Dictionary', icon: 'fa-solid fa-right-left', path: 'tools/All-tools/translator.html' },
-                    { key: 'analyzer', label: 'Text Analyzer', icon: 'fa-solid fa-magnifying-glass-chart', path: 'tools/All-tools/Analyzer.html' }
+                    { key: 'csvTranslator', label: 'CSV → Dictionary', i18n: 'nav.csvTranslator', icon: 'fa-solid fa-right-left', path: 'tools/All-tools/translator.html' },
+                    { key: 'analyzer', label: 'Text Analyzer', i18n: 'nav.analyzer', icon: 'fa-solid fa-magnifying-glass-chart', path: 'tools/All-tools/Analyzer.html' }
                 ]
             },
             {
                 title: 'System',
+                i18n: 'nav.system',
                 items: [
-                    { key: 'settings', label: 'Settings', icon: 'fa-solid fa-gear', path: 'main/settings/index.html' }
+                    { key: 'settings', label: 'Settings', i18n: 'nav.settings', icon: 'fa-solid fa-gear', path: 'main/settings/index.html' }
                 ]
             }
         ],
         footer: [
-            { key: 'theme', label: 'Theme', icon: 'fa-solid fa-moon', action: '#theme' },
-            { key: 'top', label: 'Top', icon: 'fa-solid fa-arrow-up', action: '#top' }
+            { key: 'help', label: 'Help & guide', i18n: 'nav.help', icon: 'fa-solid fa-circle-question', action: '#welcome' },
+            { key: 'theme', label: 'Theme', i18n: 'nav.theme', icon: 'fa-solid fa-moon', action: '#theme' },
+            { key: 'top', label: 'Top', i18n: 'nav.top', icon: 'fa-solid fa-arrow-up', action: '#top' }
         ]
     };
 
@@ -157,24 +163,40 @@
         sidebar.id = 'istories-sidebar';
         sidebar.setAttribute('aria-hidden', 'true');
         sidebar.setAttribute('aria-label', 'Main navigation');
+        sidebar.setAttribute('data-i18n-aria-label', 'nav.mainNavigation');
 
         var sectionsHtml = '';
         config.sections.forEach(function (section) {
             if (section.title) {
-                sectionsHtml += '<div class="ist-sidebar__section">' + escapeHtml(section.title) + '</div>';
+                sectionsHtml += '<div class="ist-sidebar__section"' +
+                    (section.i18n ? ' data-i18n="' + escapeHtml(section.i18n) + '"' : '') + '>' +
+                    escapeHtml(section.title) + '</div>';
             }
             section.items.forEach(function (item) {
                 sectionsHtml += renderLink(item, config);
             });
         });
 
+        // Interface language switcher — always visible, works offline.
+        var langHtml =
+            '<div class="ist-sidebar__section" data-i18n="nav.language">Language</div>' +
+            '<div class="ist-sidebar__lang">' +
+            '  <span class="ist-lang-switch" role="group" aria-label="Language">' +
+            '    <button type="button" class="ist-lang-switch__btn" data-set-lang="en" aria-pressed="false" data-i18n-aria-label="settings.english">EN</button>' +
+            '    <button type="button" class="ist-lang-switch__btn" data-set-lang="ar" aria-pressed="false" data-i18n-aria-label="settings.arabic">ع</button>' +
+            '  </span>' +
+            '</div>';
+
         var footerHtml = '';
         if (config.footer && config.footer.length) {
             footerHtml = '<div class="ist-sidebar__foot">' + config.footer.map(function (item) {
-                return '<button type="button" class="ist-sidebar__action" title="' + escapeHtml(item.label) +
+                return '<button type="button" class="ist-sidebar__action"' +
+                    (item.i18n ? ' data-i18n-title="' + escapeHtml(item.i18n) + '"' : '') +
+                    ' title="' + escapeHtml(item.label) +
                     '" data-ist-action="' +
                     escapeHtml(item.action || '') + '">' + icon(item.icon) +
-                    '<span>' + escapeHtml(item.label) + '</span></button>';
+                    '<span' + (item.i18n ? ' data-i18n="' + escapeHtml(item.i18n) + '"' : '') + '>' +
+                    escapeHtml(item.label) + '</span></button>';
             }).join('') + '</div>';
         }
 
@@ -185,14 +207,14 @@
             '    <span>' + escapeHtml(config.brand.label) + '</span>' +
             '  </a>' +
             '  <button type="button" class="ist-sidebar__collapse" data-ist-collapse ' +
-            '    aria-label="Collapse navigation" aria-expanded="true" aria-controls="istories-sidebar" title="Collapse navigation">' +
+            '    data-i18n-aria-label="nav.collapse" data-i18n-title="nav.collapse" aria-label="Collapse navigation" aria-expanded="true" aria-controls="istories-sidebar" title="Collapse navigation">' +
             '    <i class="fa-solid fa-ellipsis-vertical"></i>' +
             '  </button>' +
-            '  <button type="button" class="ist-sidebar__close" data-ist-close aria-label="Close navigation">' +
+            '  <button type="button" class="ist-sidebar__close" data-ist-close data-i18n-aria-label="nav.close" aria-label="Close navigation">' +
             '    <i class="fa-solid fa-xmark"></i>' +
             '  </button>' +
             '</div>' +
-            '<nav class="ist-sidebar__nav">' + sectionsHtml + '</nav>' +
+            '<nav class="ist-sidebar__nav"' + '>' + sectionsHtml + langHtml + '</nav>' +
             footerHtml;
 
         document.body.appendChild(overlay);
@@ -206,9 +228,11 @@
             (active ? ' is-active' : '');
         return '<a class="' + classes + '" href="' + href + '"' +
             (item.action ? ' data-ist-action="' + escapeHtml(item.action) + '"' : '') +
+            (item.i18n ? ' data-i18n-title="' + escapeHtml(item.i18n) + '"' : '') +
             ' title="' + escapeHtml(item.label) + '"' +
             (active ? ' aria-current="page"' : '') + '>' +
-            icon(item.icon) + '<span>' + escapeHtml(item.label) + '</span></a>';
+            icon(item.icon) + '<span' + (item.i18n ? ' data-i18n="' + escapeHtml(item.i18n) + '"' : '') + '>' +
+            escapeHtml(item.label) + '</span></a>';
     }
 
     function escapeHtml(value) {
@@ -242,6 +266,7 @@
         burger.type = 'button';
         burger.className = 'ist-burger';
         burger.setAttribute('aria-label', 'Open navigation');
+        burger.setAttribute('data-i18n-aria-label', 'nav.open');
         burger.setAttribute('aria-controls', 'istories-sidebar');
         burger.innerHTML = '<i class="fa-solid fa-bars"></i>';
 
@@ -376,6 +401,14 @@
             }
             return true;
         }
+        if (action === '#welcome') {
+            if (window.IStoriesWelcome && typeof window.IStoriesWelcome.open === 'function') {
+                window.IStoriesWelcome.open();
+            } else {
+                document.dispatchEvent(new CustomEvent('ist-welcome-open'));
+            }
+            return true;
+        }
         if (action === '#top') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return true;
@@ -470,6 +503,11 @@
         buildSidebar(config);
         wire(config);
         applyMode();
+
+        // Translate the freshly-built navigation and mark the active language.
+        if (window.IStoriesI18n && typeof window.IStoriesI18n.refresh === 'function') {
+            window.IStoriesI18n.refresh();
+        }
 
         if (mql) {
             if (mql.addEventListener) mql.addEventListener('change', applyMode);

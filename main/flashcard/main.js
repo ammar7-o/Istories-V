@@ -537,14 +537,15 @@ function loadCard(index) {
     // Format dates
     const formatDate = (dateString, short = false) => {
         if (!dateString) return 'Not set';
+        const locale = window.IStoriesI18n && window.IStoriesI18n.language === 'ar' ? 'ar' : 'en-US';
         const date = new Date(dateString);
         if (short) {
-            return date.toLocaleDateString('en-US', {
+            return date.toLocaleDateString(locale, {
                 month: 'short',
                 day: 'numeric'
             });
         }
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(locale, {
             month: 'short',
             day: 'numeric',
             year: 'numeric'
@@ -1179,6 +1180,16 @@ function init() {
     console.log('Current localStorage primary color:', localStorage.getItem('selectedColor'));
     console.log('Current localStorage secondary color:', localStorage.getItem('selectedSecondaryColor'));
 }
+
+// Refresh the visible card so dates and dynamic labels follow the language.
+document.addEventListener('ist-language-change', function () {
+    if (sessionCards.length > 0) {
+        loadCard(currentCardIndex);
+    } else if (typeof showNoCardsMessage === 'function') {
+        showNoCardsMessage();
+    }
+    updateFlashcardStats();
+});
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);

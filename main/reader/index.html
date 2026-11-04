@@ -194,6 +194,12 @@
     <script src="../nav/common.js"></script>
     <link rel="stylesheet" href="../nav/theme.css">
     <link rel="stylesheet" href="../nav/header.css">
+    <!-- Interface localization (English / Arabic) -->
+    <link rel="stylesheet" href="../nav/i18n.css">
+    <script src="../nav/i18n.js"></script>
+    <!-- Welcome guide (auto-opens on the homepage only) -->
+    <link rel="stylesheet" href="../nav/welcome.css">
+    <script src="../nav/welcome.js" defer></script>
 </head>
 
 <body>
@@ -237,8 +243,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Theme</span>
-                        <span class="setting-desc">Light or Dark mode</span>
+                        <span class="setting-label" data-i18n="reader.theme">Theme</span>
+                        <span class="setting-desc" data-i18n="reader.lightDark">Light or Dark mode</span>
                     </div>
                     <!--theme btn-->
                     <button class="theme-toggle" id="themeToggle">
@@ -253,8 +259,8 @@
                 <h3><i class="fas fa-book-reader"></i> Reading</h3>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Font Size</span>
-                        <span class="setting-desc">Adjust text size</span>
+                        <span class="setting-label" data-i18n="reader.fontSize">Font Size</span>
+                        <span class="setting-desc" data-i18n="reader.adjustTextSize">Adjust text size</span>
                     </div>
                     <div class="font-size-controls">
                         <button class="control-btn" id="fontSmaller" title="Decrease font size">
@@ -270,8 +276,8 @@
                 </div>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">font family</span>
-                        <span class="setting-desc">change the font</span>
+                        <span class="setting-label" data-i18n="reader.fontFamily">font family</span>
+                        <span class="setting-desc" data-i18n="reader.changeFont">change the font</span>
                     </div>
                     <!-- Update your select element with more font options -->
                     <select name="" id="fontFamily">
@@ -294,11 +300,11 @@
                 </div>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Line Spacing</span>
-                        <span class="setting-desc">Adjust space between lines</span>
+                        <span class="setting-label" data-i18n="reader.lineSpacing">Line Spacing</span>
+                        <span class="setting-desc" data-i18n="reader.adjustLineSpacing">Adjust space between lines</span>
                     </div>
-                    <button class="control-btn" id="lineSpacing" title="Toggle line spacing">
-                        <i class="fas fa-arrows-alt-v"></i> <span>Spacing</span>
+                    <button class="control-btn" id="lineSpacing" data-i18n-title="reader.toggleLineSpacing" title="Toggle line spacing">
+                        <i class="fas fa-arrows-alt-v"></i> <span data-i18n="reader.spacing">Spacing</span>
                     </button>
                 </div>
 
@@ -498,7 +504,7 @@
                 <div class="dictionary-word" style="margin-right: 10px;" id="popupWord">Dictionary</div>
 
                 <!-- TTS Button Added Here -->
-                <button id="googleTTSBtn" class="tts-button" title="Speak this word" style="
+                <button id="googleTTSBtn" class="tts-button" data-i18n-title="reader.speakWord" title="Speak this word" style="
                 background: var(--primary);
                 color: white;
                 border: none;

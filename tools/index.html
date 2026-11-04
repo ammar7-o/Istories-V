@@ -24,6 +24,12 @@
     <script src="../main/nav/common.js"></script>
     <link rel="stylesheet" href="../main/nav/theme.css">
     <link rel="stylesheet" href="../main/nav/header.css">
+    <!-- Interface localization (English / Arabic) -->
+    <link rel="stylesheet" href="../main/nav/i18n.css">
+    <script src="../main/nav/i18n.js"></script>
+    <!-- Welcome guide (auto-opens on the homepage only) -->
+    <link rel="stylesheet" href="../main/nav/welcome.css">
+    <script src="../main/nav/welcome.js" defer></script>
 </head>
 
 <body>
@@ -55,10 +61,10 @@
             <div id="home" class="page active">
 
                 <section class="tools-hero">
-                    <span class="tools-hero__eyebrow"><i class="fa-solid fa-screwdriver-wrench"
+                    <span class="tools-hero__eyebrow" data-i18n="tools.eyebrow"><i class="fa-solid fa-screwdriver-wrench"
                             aria-hidden="true"></i> Toolkit</span>
-                    <h1 class="tools-hero__title">IStories Tools</h1>
-                    <p class="tools-hero__text">Small utilities that help you build and study your own material —
+                    <h1 class="tools-hero__title" data-i18n="tools.title">IStories Tools</h1>
+                    <p class="tools-hero__text" data-i18n="tools.text">Small utilities that help you build and study your own material —
                         convert word lists, analyse any text, and jump straight into the rest of the app.</p>
                 </section>
 
@@ -83,7 +89,7 @@
                     </a>
                 </div>
 
-                <h2 class="tools-section-title">Jump back in</h2>
+                <h2 class="tools-section-title" data-i18n="tools.jumpBackIn">Jump back in</h2>
                 <div class="tool-links">
                     <a class="tool-link" href="../main/vocabulary/index.html"><i class="fa-solid fa-language"
                             aria-hidden="true"></i> Vocabulary</a>

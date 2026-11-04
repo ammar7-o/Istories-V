@@ -170,18 +170,31 @@ function showNotification(message, type = 'info', options = {}) {
         ? Number(options.duration)
         : IST_TOAST_MS;
 
+    // Route UI messages through the shared localization engine. Story text and
+    // user content never reach this helper, so translating here is safe.
+    const i18n = window.IStoriesI18n;
+    const displayMessage = i18n && typeof i18n.translateMessage === 'function'
+        ? i18n.translateMessage(message)
+        : message;
+    const dismissLabel = i18n && typeof i18n.translateMessage === 'function'
+        ? i18n.translateMessage('Dismiss notification')
+        : 'Dismiss notification';
+    const tapLabel = i18n && typeof i18n.translateMessage === 'function'
+        ? i18n.translateMessage('Tap to dismiss')
+        : 'Tap to dismiss';
+
     const toast = document.createElement('div');
     toast.className = 'ist-toast ist-toast--' + key;
     toast.setAttribute('role', key === 'error' ? 'alert' : 'status');
     toast.setAttribute('aria-live', key === 'error' ? 'assertive' : 'polite');
-    toast.title = 'Tap to dismiss';
+    toast.title = tapLabel;
     toast.innerHTML =
         '<span class="ist-toast__icon"><i class="' + meta.icon + '"></i></span>' +
         '<p class="ist-toast__msg"></p>' +
-        '<button type="button" class="ist-toast__close" aria-label="Dismiss notification">' +
+        '<button type="button" class="ist-toast__close" aria-label="' + dismissLabel + '">' +
         '<i class="fas fa-xmark"></i></button>' +
         '<span class="ist-toast__bar" style="animation-duration:' + duration + 'ms"></span>';
-    toast.querySelector('.ist-toast__msg').textContent = message;
+    toast.querySelector('.ist-toast__msg').textContent = displayMessage;
 
     const container = istToastContainer();
     container.appendChild(toast);
@@ -261,6 +274,11 @@ function langFlag(lang) {
 function langDisplayName(lang) {
     if (!lang) return 'English';
     const code = String(lang).toLowerCase().split('-')[0];
+    if (window.IStoriesI18n && typeof window.IStoriesI18n.t === 'function') {
+        const key = 'lang.' + code;
+        const translated = window.IStoriesI18n.t(key);
+        if (translated && translated !== key) return translated;
+    }
     return IST_LANG_NAMES[code] || String(lang).toUpperCase();
 }
 
@@ -539,3 +557,30 @@ function setupNavToggle() {
         });
     });
 }
+
+/* --------------------------------------------------------------------------
+   Offline / PWA support on every page
+   --------------------------------------------------------------------------
+   The homepage used to be the only page that registered the service worker,
+   so opening a library/reader URL directly (or offline) skipped the cache
+   entirely. common.js lives at <site>/main/nav/common.js, so the worker URL
+   can be resolved reliably from any page.
+   -------------------------------------------------------------------------- */
+(function registerIStoriesServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    var script = document.currentScript;
+    if (!script || !script.src) return;
+
+    try {
+        var swUrl = new URL('../../sw.js', new URL(script.src, document.baseURI));
+        if (swUrl.origin !== location.origin) return;
+
+        navigator.serviceWorker.register(swUrl.href, { updateViaCache: 'none' })
+            .catch(function (error) {
+                // Registration failures must never break the page.
+                if (window.console && console.warn) {
+                    console.warn('[IStories] Service worker registration failed', error);
+                }
+            });
+    } catch (error) { /* ignore malformed script URLs */ }
+})();

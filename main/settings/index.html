@@ -16,6 +16,12 @@
     <script src="../nav/common.js"></script>
     <link rel="stylesheet" href="../nav/theme.css">
     <link rel="stylesheet" href="../nav/header.css">
+    <!-- Interface localization (English / Arabic) -->
+    <link rel="stylesheet" href="../nav/i18n.css">
+    <script src="../nav/i18n.js"></script>
+    <!-- Welcome guide (auto-opens on the homepage only) -->
+    <link rel="stylesheet" href="../nav/welcome.css">
+    <script src="../nav/welcome.js" defer></script>
 
     <style>
         /* ==================================================================
@@ -451,6 +457,41 @@
 
             <div class="settings-grid">
 
+                <!-- ============ Interface language ============ -->
+                <section class="settings-card">
+                    <div class="settings-card__head">
+                        <i class="fas fa-globe"></i>
+                        <h2 data-i18n="settings.language">Interface language</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label" data-i18n="settings.language">Interface language</span>
+                                <span class="setting-desc" data-i18n="settings.languageDesc">Choose the language used for
+                                    menus, buttons and pages</span>
+                            </div>
+                            <div class="setting-control">
+                                <div class="ist-seg" id="interfaceLanguageGroup" role="group"
+                                    aria-label="Interface language">
+                                    <button type="button" data-set-lang="en" data-i18n="settings.english">English</button>
+                                    <button type="button" data-set-lang="ar" data-i18n="settings.arabic">Arabic</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label" data-i18n="welcome.reopen">Help &amp; guide</span>
+                                <span class="setting-desc" data-i18n="settings.helpDesc">Open the welcome tour again to
+                                    revisit the main pages</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-btn" type="button" data-welcome-open data-i18n="settings.openGuide">
+                                    Open guide</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- ============ Appearance ============ -->
                 <section class="settings-card">
                     <div class="settings-card__head">
@@ -835,8 +876,8 @@
 
                         <div class="setting-row">
                             <div class="setting-info">
-                                <span class="setting-label">Version</span>
-                                <span class="setting-desc">IStories 2.1.0 · by Ammar chacal</span>
+                                <span class="setting-label" data-i18n="settings.version">Version</span>
+                                <span class="setting-desc" data-i18n="settings.versionText">IStories 2.1.0 · by Ammar chacal</span>
                             </div>
                             <div class="setting-control">
                                 <button class="ist-btn ist-btn--ghost" id="refreshApp"><i class="fas fa-sync-alt"></i>

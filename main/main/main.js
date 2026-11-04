@@ -33,6 +33,10 @@ const storiesGrid = document.getElementById('storiesGrid');
 // "shuffle"/re-render keep the user's selection.
 let currentLevel = 'all';
 let currentLang = 'all';
+
+// Stories are rendered 20 at a time. Search results share the same page size.
+const STORIES_PAGE_SIZE = 20;
+let libraryRenderState = { items: [], shown: 0, options: {} };
 const storyText = document.getElementById('storyText');
 const dictionaryPopup = document.getElementById('dictionaryPopup');
 const backToStories = document.getElementById('backToStories');
@@ -184,7 +188,7 @@ function verifyColorSetup() {
 // Also update your initColorSelector function to prevent multiple calls:
 let colorSelectorInitialized = false;
 
-
+function setupEventListeners() {
     levelBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             levelBtns.forEach(b => b.classList.remove('active'));
@@ -200,18 +204,22 @@ let colorSelectorInitialized = false;
         themeToggle.addEventListener('click', toggleTheme);
     }
 
-    document.getElementById("randomStory").addEventListener('click', () => {
-        if (stories.length > 0) {
-            // Generate a random index from 0 to stories.length - 1
-            var randomIndex = Math.floor(Math.random() * stories.length);
+    var randomStoryBtn = document.getElementById("randomStory");
+    if (randomStoryBtn) {
+        randomStoryBtn.addEventListener('click', () => {
+            if (stories.length > 0) {
+                // Generate a random index from 0 to stories.length - 1
+                var randomIndex = Math.floor(Math.random() * stories.length);
 
-            // Get the random story using the random index
-            var randomStory = stories[randomIndex];
+                // Get the random story using the random index
+                var randomStory = stories[randomIndex];
 
-            // Open the random story
-            openStoryInNewPage(randomStory.id);
-        }
-    });
+                // Open the random story
+                openStoryInNewPage(randomStory.id);
+            }
+        });
+    }
+}
 
 
 // Touch handling for mobile
@@ -368,7 +376,138 @@ function populateLanguageFilter() {
     select.value = (previous && (previous === 'all' || codes.indexOf(previous) !== -1)) ? previous : 'all';
 }
 
-// Render stories grid with clickable cards
+// Translate a UI string, falling back to English when i18n is unavailable.
+function istText(key, vars, fallback) {
+    if (window.IStoriesI18n && typeof window.IStoriesI18n.t === 'function') {
+        const value = window.IStoriesI18n.t(key, vars);
+        if (value && value !== key) return value;
+    }
+    return fallback;
+}
+
+// Build one story card. `options.query` highlights search matches.
+function createStoryCard(story, options = {}) {
+    const storyCard = document.createElement('div');
+    storyCard.className = 'story-card';
+    storyCard.dataset.storyId = story.id;
+
+    // Add user story indicator (only show if user stories are enabled)
+    const userStoryBadge = (story.isUserStory && showUserStories)
+        ? '<span class="user-story-badge" title="' + istText('library.addedByUser', null, 'User-added story') +
+          '"><i class="fas fa-user-plus"></i></span>'
+        : '';
+
+    // Create author HTML conditionally
+    const authorHTML = story.author && story.author.trim() !== ""
+        ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
+        : '';
+
+    // Get CEFR level with fallback
+    const cefrLevel = story.levelcefr || '';
+    const levelValue = String(story.level || 'beginner').toLowerCase();
+
+    // Language badge (depends on the story lang)
+    const langBadge = story.lang
+        ? `<span class="story-lang-badge" title="` + istText('library.storyLanguage', null, 'Story language') +
+          `"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
+        : '';
+
+    const titleHtml = options.query && typeof highlightSearchMatch === 'function'
+        ? highlightSearchMatch(story.title, options.query)
+        : story.title;
+
+    const firstParagraph = (story.content && story.content[0]) ? story.content[0] : '';
+    const wordsText = story.wordCount
+        ? istText('library.wordsCount', { count: story.wordCount }, `${story.wordCount} words`)
+        : 'N/A words';
+    const minutesText = istText('library.minRead', { count: Math.ceil((story.wordCount || 100) / 200) },
+        `${Math.ceil((story.wordCount || 100) / 200)} min read`);
+    const levelText = istText('library.' + levelValue, null,
+        levelValue.charAt(0).toUpperCase() + levelValue.slice(1));
+
+    storyCard.innerHTML = `
+        <div class="story-image">
+            ${authorHTML}
+            ${renderStoryCover(story)}
+        </div>
+        <div class="story-content">
+            <div class="story-header">
+                <div>
+                    <span class="story-level ${levelValue}">${levelText}</span>
+                    <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
+                    ${langBadge}
+                </div>
+                ${userStoryBadge}
+            </div>
+            <h3 class="story-title">${titleHtml}</h3>
+            <p>${firstParagraph.substring(0, 100)}...</p>
+            <div class="story-meta">
+                <span><i class="fas fa-font"></i> ${wordsText}</span>
+                <span><i class="fas fa-clock"></i> ${minutesText}</span>
+            </div>
+        </div>
+    `;
+
+    storyCard.addEventListener('click', () => {
+        openStoryInNewPage(story.id);
+    });
+
+    return storyCard;
+}
+
+// Append a slice of stories without re-rendering the whole grid.
+function appendStoryBatch(container, items, start, end, options = {}) {
+    for (let index = start; index < end; index++) {
+        container.appendChild(createStoryCard(items[index], options));
+    }
+}
+
+// "Load 20 more stories" control shared by the library and search results.
+function createLoadMoreControl(total, shown, onMore) {
+    const wrap = document.createElement('div');
+    wrap.className = 'ist-load-more-wrap';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ist-load-more';
+    button.innerHTML = '<i class="fas fa-plus" aria-hidden="true"></i><span>' +
+        istText('action.loadMore', null, 'Load 20 more stories') + '</span>';
+    button.addEventListener('click', onMore);
+
+    const hint = document.createElement('span');
+    hint.className = 'ist-load-more__hint';
+    hint.textContent = istText('library.showing', { shown: shown, total: total },
+        `Showing ${shown} of ${total} stories`);
+
+    wrap.appendChild(button);
+    wrap.appendChild(hint);
+    return wrap;
+}
+
+// Render the next page of a filtered list (20 by default).
+function renderStoryBatch(state, container) {
+    if (!state || !container) return;
+
+    const start = state.shown || 0;
+    const end = Math.min(start + STORIES_PAGE_SIZE, state.items.length);
+    appendStoryBatch(container, state.items, start, end, state.options || {});
+    state.shown = end;
+
+    const oldControl = container.querySelector('.ist-load-more-wrap');
+    if (oldControl) oldControl.remove();
+
+    if (state.shown < state.items.length) {
+        container.appendChild(createLoadMoreControl(state.items.length, state.shown, function () {
+            renderStoryBatch(state, container);
+        }));
+    }
+
+    if (window.IStoriesI18n && typeof window.IStoriesI18n.refresh === 'function') {
+        window.IStoriesI18n.refresh();
+    }
+}
+
+// Render stories grid with clickable cards (20 at a time).
 function renderStories(level = currentLevel, lang = currentLang) {
     if (!storiesGrid) return;
 
@@ -441,74 +580,40 @@ function renderStories(level = currentLevel, lang = currentLang) {
     }
 
     if (filteredStories.length === 0) {
+        let message;
+        if (currentLang !== 'all') {
+            message = istText('library.noStoriesLevelLang', { language: langDisplayName(currentLang) },
+                `No stories found for this level in ${langDisplayName(currentLang)}`);
+        } else {
+            message = istText('library.noStoriesLevel', null, 'No stories found for this level');
+        }
+
+        let detail = '';
+        if (level === 'user' && !showUserStories) {
+            detail = '<p><em>' + istText('library.userDisabled', null, 'User stories are currently disabled in settings') + '</em></p>';
+        } else if (level === 'user') {
+            detail = '<p>' + istText('library.createFirst', null, 'Go to Add stories page to create your first story!') + '</p>';
+        } else if (currentLang !== 'all') {
+            detail = '<p>' + istText('library.tryLanguage', null, 'Try another language or level.') + '</p>';
+        } else {
+            detail = '<p>' + istText('library.tryLevel', null, 'Try a different level!') + '</p>';
+        }
+
         storiesGrid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p>No stories found for this ${level === 'user' ? 'category' : 'level'}${currentLang !== 'all' ? ' in ' + langDisplayName(currentLang) : ''}</p>
-                ${level === 'user' && !showUserStories ?
-                '<p><em>User stories are currently disabled in settings</em></p>' :
-                level === 'user' ?
-                    '<p>Go to Add stories page to create your first story!</p>' :
-                    currentLang !== 'all' ?
-                        '<p>Try another language or level.</p>' :
-                        'Try a different level!'
-            }
+                <p>${message}</p>
+                ${detail}
             </div>
         `;
         return;
     }
 
-    filteredStories.forEach(story => {
-        const storyCard = document.createElement('div');
-        storyCard.className = 'story-card';
-        storyCard.dataset.storyId = story.id;
-
-        // Add user story indicator (only show if user stories are enabled)
-        const userStoryBadge = (story.isUserStory && showUserStories)
-            ? '<span class="user-story-badge" title="User-added story"><i class="fas fa-user-plus"></i></span>'
-            : '';
-
-        // Create author HTML conditionally
-        const authorHTML = story.author && story.author.trim() !== ""
-            ? `<div class="author"><i class="fas fa-user"></i> ${story.author}</div>`
-            : '';
-
-        // Get CEFR level with fallback
-        const cefrLevel = story.levelcefr || '';
-
-        // Language badge (depends on the story lang)
-        const langBadge = story.lang
-            ? `<span class="story-lang-badge" title="Story language"><i class="fas fa-globe"></i> ${langDisplayName(story.lang)}</span>`
-            : '';
-
-        storyCard.innerHTML = `
-            <div class="story-image">
-                ${authorHTML}
-                ${renderStoryCover(story)}
-            </div>
-            <div class="story-content">
-                <div class="story-header">
-                    <div>
-                        <span class="story-level ${story.level}">${story.level.charAt(0).toUpperCase() + story.level.slice(1)}</span>
-                        <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
-                        ${langBadge}
-                    </div>
-                    ${userStoryBadge}
-                </div>
-                <h3 class="story-title">${story.title}</h3>
-                <p>${story.content[0].substring(0, 100)}...</p>
-                <div class="story-meta">
-                    <span><i class="fas fa-font"></i> ${story.wordCount || 'N/A'} words</span>
-                    <span><i class="fas fa-clock"></i> ${Math.ceil((story.wordCount || 100) / 200)} min read</span>
-                </div>
-            </div>
-        `;
-
-        storyCard.addEventListener('click', () => {
-            openStoryInNewPage(story.id);
-        });
-
-        storiesGrid.appendChild(storyCard);
-    });
+    libraryRenderState = {
+        items: filteredStories,
+        shown: 0,
+        options: {}
+    };
+    renderStoryBatch(libraryRenderState, storiesGrid);
 }
 // settings
 // The in-page settings drawer was removed: settings now live on the central
@@ -661,6 +766,36 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Card metadata (level, word count, language, read time) is generated in JS,
+// so rebuild the visible cards when the interface language changes. The
+// number of already-loaded stories is preserved.
+document.addEventListener('ist-language-change', function () {
+    if (!storiesGrid) return;
+
+    var query = (typeof searchInput !== 'undefined' && searchInput)
+        ? searchInput.value.trim()
+        : '';
+
+    if (query && typeof filterStoriesBySearch === 'function' && typeof displayFilteredStories === 'function') {
+        var shownSearch = (typeof searchRenderState !== 'undefined' && searchRenderState.shown) || 0;
+        displayFilteredStories(filterStoriesBySearch(query), query);
+        while (typeof searchRenderState !== 'undefined' &&
+            searchRenderState.shown < shownSearch &&
+            searchRenderState.shown < searchRenderState.items.length) {
+            renderStoryBatch(searchRenderState, storiesGrid);
+        }
+        return;
+    }
+
+    if (!libraryRenderState.items.length) return;
+    var shownLibrary = libraryRenderState.shown || 0;
+    renderStories(currentLevel, currentLang);
+    while (libraryRenderState.shown < shownLibrary &&
+        libraryRenderState.shown < libraryRenderState.items.length) {
+        renderStoryBatch(libraryRenderState, storiesGrid);
+    }
+});
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);

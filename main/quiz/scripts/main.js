@@ -1,3 +1,8 @@
+// Dates follow the interface language (English / Arabic).
+function quizLocale() {
+    return window.IStoriesI18n && window.IStoriesI18n.language === 'ar' ? 'ar' : 'en-US';
+}
+
 // ========= App State Variables ==========
 let currentPage = 'home';
 let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
@@ -619,7 +624,7 @@ function renderQuizzes(level = 'all') {
         let lastAttemptDate = '';
         if (hasHistory && history.lastDate) {
             const date = new Date(history.lastDate);
-            lastAttemptDate = date.toLocaleDateString('en-US', {
+            lastAttemptDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
@@ -630,13 +635,13 @@ function renderQuizzes(level = 'all') {
         let createdDate = '';
         if (quiz.createdAt) {
             const date = new Date(quiz.createdAt);
-            createdDate = date.toLocaleDateString('en-US', {
+            createdDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric'
             });
         } else if (quiz.uploadDate) {
             const date = new Date(quiz.uploadDate);
-            createdDate = date.toLocaleDateString('en-US', {
+            createdDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric'
             });
@@ -817,7 +822,7 @@ function filterQuizzesByLevel(level) {
         let lastAttemptDate = '';
         if (hasHistory && history.lastDate) {
             const date = new Date(history.lastDate);
-            lastAttemptDate = date.toLocaleDateString('en-US', {
+            lastAttemptDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
@@ -828,13 +833,13 @@ function filterQuizzesByLevel(level) {
         let createdDate = '';
         if (quiz.createdAt) {
             const date = new Date(quiz.createdAt);
-            createdDate = date.toLocaleDateString('en-US', {
+            createdDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric'
             });
         } else if (quiz.uploadDate) {
             const date = new Date(quiz.uploadDate);
-            createdDate = date.toLocaleDateString('en-US', {
+            createdDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric'
             });
@@ -2076,7 +2081,7 @@ function updateQuizCardsWithScores() {
                     let lastAttemptDate = '';
                     if (history.lastDate) {
                         const date = new Date(history.lastDate);
-                        lastAttemptDate = date.toLocaleDateString('en-US', {
+                        lastAttemptDate = date.toLocaleDateString(quizLocale(), {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
@@ -2689,7 +2694,7 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
         let lastAttemptDate = '';
         if (hasHistory && history.lastDate) {
             const date = new Date(history.lastDate);
-            lastAttemptDate = date.toLocaleDateString('en-US', {
+            lastAttemptDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
@@ -2700,13 +2705,13 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
         let createdDate = '';
         if (quiz.createdAt) {
             const date = new Date(quiz.createdAt);
-            createdDate = date.toLocaleDateString('en-US', {
+            createdDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric'
             });
         } else if (quiz.uploadDate) {
             const date = new Date(quiz.uploadDate);
-            createdDate = date.toLocaleDateString('en-US', {
+            createdDate = date.toLocaleDateString(quizLocale(), {
                 month: 'short',
                 day: 'numeric'
             });
@@ -3010,6 +3015,19 @@ function initUserQuizzesSetting() {
         saveShowUserQuizzesSetting(this.checked);
     });
 }
+
+// Keep quiz cards (including localized dates) in sync with the UI language.
+document.addEventListener('ist-language-change', function () {
+    if (currentPage !== 'home') return;
+    const query = searchInput ? searchInput.value.trim() : '';
+    if (query && typeof filterQuizzesBySearch === 'function') {
+        filterQuizzesBySearch(query);
+        return;
+    }
+    const activeLevelBtn = document.querySelector('.level-btn.active');
+    const level = activeLevelBtn ? activeLevelBtn.dataset.level : 'all';
+    if (typeof renderQuizzes === 'function') renderQuizzes(level);
+});
 
 // ========= Refresh Function ==========
 function Refresh() {

@@ -233,7 +233,12 @@ function getLanguageName(code) {
         'ur': 'Urdu',
         'en': 'English'
     };
-    return languages[code] || code.toUpperCase();
+    const base = String(code || '').toLowerCase().split('-')[0];
+    if (window.IStoriesI18n) {
+        const translated = window.IStoriesI18n.t('lang.' + base);
+        if (translated && translated !== 'lang.' + base) return translated;
+    }
+    return languages[code] || languages[base] || String(code).toUpperCase();
 }
 
 
@@ -345,7 +350,12 @@ function showTranslationInPopup(originalWord, translation, targetLanguage) {
             ${translation}
         </div>
         <div class="translation-popup-footer">
-            Using ${languageName} (${targetLanguage.toUpperCase()})
+            ${window.IStoriesI18n
+                ? window.IStoriesI18n.t('reader.usingLanguage', {
+                    language: languageName,
+                    code: targetLanguage.toUpperCase()
+                })
+                : `Using ${languageName} (${targetLanguage.toUpperCase()})`}
         </div>
     `;
 
@@ -466,8 +476,8 @@ function addAutoTranslateToggle() {
     const toggleHTML = `
         <div class="setting-item">
             <div class="setting-info">
-                <span class="setting-label">Auto-translate Words</span>
-                <span class="setting-desc">Automatically translate words when dictionary opens. Need Internet</span>
+                <span class="setting-label" data-i18n="reader.autoTranslate">Auto-translate Words</span>
+                <span class="setting-desc" data-i18n="reader.autoTranslateDesc">Automatically translate words when dictionary opens. Need Internet</span>
             </div>
             <label class="switch">
                 <input type="checkbox" id="autoTranslateToggle">
