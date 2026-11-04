@@ -163,7 +163,7 @@
         'home.featureStudioTitle': ['Stories Studio', 'استوديو القصص'],
         'home.featureStudioText': ['Create your own interactive stories in any language and level, then share them with everyone.', 'أنشئ قصصك التفاعلية بأي لغة ومستوى، ثم شاركها مع الجميع.'],
         'home.about': ['About', 'عن الموقع'],
-        'home.by': ['By : Ammar chacal', 'بواسطة: عمار شاكال'],
+        'home.by': ['By : Ammar chacal', 'بواسطة: عمار شقل'],
         'home.videoFallback': ['Your browser does not support the video tag.', 'متصفحك لا يدعم وسم الفيديو.'],
 
         /* Library */
@@ -337,7 +337,7 @@
         'settings.profileDesc': ['Change the name and photo shown next to your stories', 'غيّر الاسم والصورة الظاهرين بجانب قصصك'],
         'settings.openProfile': ['Open profile', 'فتح الملف الشخصي'],
         'settings.version': ['Version', 'الإصدار'],
-        'settings.versionText': ['IStories 2.1.0 · by Ammar chacal', 'IStories 2.1.0 · بواسطة عمار شاكال'],
+        'settings.versionText': ['IStories 2.1.0 · by Ammar chacal', 'IStories 2.1.0 · بواسطة عمار شقل'],
         'settings.refresh': ['Refresh', 'تحديث'],
         'settings.resetPreferences': ['Reset preferences', 'إعادة ضبط التفضيلات'],
         'settings.resetPreferencesDesc': ['Restore theme, colours, reading and feature settings to their defaults. Your stories, words and quizzes are kept.', 'أعد المظهر والألوان والقراءة وإعدادات الميزات إلى افتراضياتها. تبقى قصصك وكلماتك واختباراتك محفوظة.'],
@@ -426,7 +426,7 @@
         'Save new words as you read, then review them with flashcards until they really stick.': 'احفظ الكلمات الجديدة أثناء القراءة، ثم راجعها بالبطاقات التعليمية حتى ترسخ.',
         'Create your own interactive stories in any language and level, then share them with everyone.': 'أنشئ قصصك التفاعلية بأي لغة ومستوى، ثم شاركها مع الجميع.',
         'About': 'عن الموقع',
-        'By : Ammar chacal': 'بواسطة: عمار شاكال',
+        'By : Ammar chacal': 'بواسطة: عمار شقل',
         'Your browser does not support the video tag.': 'متصفحك لا يدعم وسم الفيديو.',
 
         /* Library */
@@ -649,7 +649,7 @@
         'Change the name and photo shown next to your stories': 'غيّر الاسم والصورة الظاهرين بجانب قصصك',
         'Open profile': 'فتح الملف الشخصي',
         'Version': 'الإصدار',
-        'IStories 2.1.0 · by Ammar chacal': 'IStories 2.1.0 · بواسطة عمار شاكال',
+        'IStories 2.1.0 · by Ammar chacal': 'IStories 2.1.0 · بواسطة عمار شقل',
         'Refresh': 'تحديث',
         'Reset preferences': 'إعادة ضبط التفضيلات',
         'Restore theme, colours, reading and feature settings to their defaults. Your stories, words and quizzes are kept.': 'أعد المظهر والألوان والقراءة وإعدادات الميزات إلى افتراضياتها. تبقى قصصك وكلماتك واختباراتك محفوظة.',
@@ -687,7 +687,6 @@
         'Restore default settings': 'استعادة الإعدادات الافتراضية',
         'Story Reader 3.1.0': 'قارئ القصص 3.1.0',
         'Author': 'المؤلف',
-        'Ammar chacal': 'عمار شاكال',
         'Refresh App': 'تحديث التطبيق',
         'Reload all data': 'إعادة تحميل كل البيانات',
         'Text-to-Speech': 'النطق الصوتي',
@@ -874,7 +873,7 @@
 
         /* Settings */
         'Each page has its own stylesheet. Pick a page, add CSS, and it is applied there with the same rules the in-page editor uses. Clearing only removes that page\'s CSS.': 'لكل صفحة ملف أنماط خاص بها. اختر صفحة، وأضف CSS، ليُطبّق عليها بنفس قواعد المحرر داخل الصفحة. المسح يزيل CSS تلك الصفحة فقط.',
-        'by Ammar chacal': 'بواسطة عمار شاكال',
+        'by Ammar chacal': 'بواسطة عمار شقل',
 
         /* Vocabulary / flashcards */
         'No words saved yet. Click on words in stories to add them to your vocabulary.': 'لم تُحفظ كلمات بعد. انقر على الكلمات في القصص لإضافتها إلى مفرداتك.',

@@ -912,6 +912,8 @@
     }
   }
 </style>
+    <link rel="stylesheet" href="main/nav/header.css">
+
     <link rel="stylesheet" href="main/nav/theme.css">
     <!-- Interface localization (English / Arabic) -->
     <link rel="stylesheet" href="main/nav/i18n.css">
@@ -922,35 +924,25 @@
     <script src="main/nav/welcome.js" defer></script>
 
 <body>
-  <header id="top">
-    <div class="container">
-      <div class="header-content">
-        <div class="logo">
-          <img src="icon.svg" alt="">
-          <span>IStories</span>
+  <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../index.html">
+                <img class="ist-header__logo" src="../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <img class="ist-header__logo" src="../icon.svg" alt="">
+                <h2>IStories</h2>
+            </span>
+            <div class="ist-header__spacer"></div>
+          
+            
         </div>
-        <nav></nav>
-        <div class="header-actions">
-          <div class="ist-lang-switch" role="group" aria-label="Language">
-            <button type="button" class="ist-lang-switch__btn" data-set-lang="en">EN</button>
-            <button type="button" class="ist-lang-switch__btn" data-set-lang="ar"
-              aria-label="العربية">ع</button>
-          </div>
-          <button class="theme-toggle" id="welcomeHelpBtn" type="button" data-welcome-open
-            aria-label="Help &amp; guide" title="Help &amp; guide">
-            <i class="fas fa-circle-question"></i>
-          </button>
-          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"
-            title="Toggle dark mode">
-            <i class="fas fa-moon"></i>
-          </button>
-          <div class="user-actions">
-            <!-- <button id="loginBtn">Login</button> -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+    </header>
 
   <main class="main-content">
     <div class="container">

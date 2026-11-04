@@ -673,6 +673,7 @@ header {
     transition: transform 0.3s;
     min-height: 350px;
     /* ارتفاع أدنى */
+    direction: ltr;
 }
 
 .story-content img {

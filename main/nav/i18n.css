@@ -4,10 +4,17 @@
    Loaded on every page after the page stylesheet. It only adds direction-aware
    rules; the existing light/dark theme tokens are untouched.
    ========================================================================== */
-
+@font-face {
+    font-family: 'Alexandria';
+    /* The name you will use in CSS */
+    src: url('../../../fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
+    /* Path to your font */
+    font-weight: normal;
+    font-style: normal;
+}
 /* --- Arabic typography ---------------------------------------------------- */
 html[lang="ar"] body {
-    font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", "Amiri", "Scheherazade New", sans-serif;
+    font-family: "Alexandria", Tahoma, "Noto Naskh Arabic", "Amiri", "Scheherazade New", sans-serif;
     line-height: 1.8;
 }
 
@@ -167,10 +174,7 @@ html[dir="rtl"] .translation-badge {
     left: 20px;
 }
 
-html[dir="rtl"] .dictionary-popup {
-    direction: rtl;
-    text-align: right;
-}
+
 
 html[dir="rtl"] .dictionary-popup :is(.dictionary-actions, .dictionary-actions-buttom) {
     direction: rtl;

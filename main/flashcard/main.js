@@ -1053,12 +1053,12 @@ function playGoogleVoice(word, language = 'en') {
             .catch(error => {
                 console.error('TTS play failed:', error);
 
-                // Fallback: Try browser's native speech synthesis
-                if (useNativeSpeechSynthesis(text, language)) {
-                    showNotification(`Using offline voice`, 'info');
-                } else {
-                    showNotification('This function needs Internet.', 'error');
-                }
+                // // Fallback: Try browser's native speech synthesis
+                // if (useNativeSpeechSynthesis(text, language)) {
+                //     showNotification(`Using offline voice`, 'info');
+                // } else {
+                //     showNotification('This function needs Internet.', 'error');
+                // }
             });
 
         // Reset button when audio ends

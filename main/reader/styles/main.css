@@ -40,6 +40,7 @@ body {
     color: var(--text);
     line-height: 1.6;
     min-height: 100vh;
+
 }
 
 /* Translation Styles */
@@ -327,6 +328,7 @@ header {
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--primary);
+    direction: ltr;
 }
 
 .back-button {
@@ -430,6 +432,7 @@ html.ist-rtl-lang .story-title {
     /* background: var(--bg-secondary); */
     border-left: 4px solid transparent;
     transition: background-color 0.3s ease;
+    direction: ltr;
 }
 
 .paragraph:hover {
@@ -520,6 +523,7 @@ html[data-story-lang="he"] .paragraph {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    direction: ltr;
 }
 
 .dictionary-word {
@@ -917,7 +921,7 @@ html[data-story-lang="he"] .paragraph {
 }
 
 #sound {
-    width: 50%;
+    width: 80%;
 }
 
 /* تصميم متجاوب */
@@ -928,7 +932,7 @@ html[data-story-lang="he"] .paragraph {
     }
 
     #sound {
-        width: 100%;
+        width: 80%;
     }
 }
 
@@ -1043,6 +1047,17 @@ html[data-story-lang="he"] .paragraph {
     /* Reserve room for the permanently docked dictionary panel. */
     .main-content {
         padding-right: 360px;
+    }
+
+    html[dir="rtl"] .main-content {
+        padding-left: 360px;
+        padding-right: 0px;
+
+    }
+
+    html[dir="rtl"] .dictionary-popup {
+        right: auto !important;
+        left: 20px !important;
     }
 
     .dictionary-popup {
