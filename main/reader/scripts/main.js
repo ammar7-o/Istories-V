@@ -175,7 +175,15 @@ function extractDictionaryEntries(payload, lang, storyId) {
 }
 
 /**
- * Load dictionaries from JSON file(s).
+ * True when a dictionary value is already an in-memory dictionary object,
+ * rather than a path to a JSON file.
+ */
+function isInlineDictionary(value) {
+    return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Load dictionaries from JSON file(s) or from inline dictionary objects.
  * Accepts both legacy flat dictionaries ({ word: { translation } }) and the
  * structured shared dictionary ({ languages, phrases, stories }).
  * يتضمن تنظيف مفاتيح القاموس من الفراغات الزائدة أثناء التحميل.
@@ -197,18 +205,29 @@ async function loadDictionary(dictionaryPaths) {
         const lang = storyLanguage(currentStory);
         const storyId = currentStory ? currentStory.id : null;
 
-        const loadPromises = dictionaryPaths.map(async (path) => {
-            if (!path) return null;
+        const loadPromises = dictionaryPaths.map(async (source) => {
+            if (!source) return null;
 
             try {
-                const response = await fetch(path);
-                if (!response.ok) {
-                    throw new Error(`Failed to load dictionary: ${response.status} from ${path}`);
+                let dictContent;
+                let label;
+
+                if (isInlineDictionary(source)) {
+                    dictContent = source;
+                    label = 'inline story dictionary';
+                } else {
+                    const path = String(source);
+                    const response = await fetch(path);
+                    if (!response.ok) {
+                        throw new Error(`Failed to load dictionary: ${response.status} from ${path}`);
+                    }
+                    dictContent = await response.json();
+                    label = path;
                 }
-                const dictContent = await response.json();
+
                 const extracted = extractDictionaryEntries(dictContent, lang, storyId);
 
-                console.log(`Loaded ${Object.keys(extracted.words).length} words from: ${path}`);
+                console.log(`Loaded ${Object.keys(extracted.words).length} words from: ${label}`);
 
                 // Multi-word legacy keys are phrase translations too.
                 for (const key in extracted.words) {
@@ -221,7 +240,7 @@ async function loadDictionary(dictionaryPaths) {
                 return extracted.words;
 
             } catch (error) {
-                console.error(`Error loading dictionary from ${path}:`, error);
+                console.error(`Error loading dictionary from ${isInlineDictionary(source) ? 'inline object' : source}:`, error);
                 return {};
             }
         });
@@ -447,30 +466,54 @@ async function debugDatabaseFiles() {
     }
     console.log("=== END DEBUG ===");
 }
-// Pick the dictionary files for a story, falling back to the shared main
-// dictionary when a story (PDF import, plain JSON upload, …) does not declare
-// any. An empty array is treated as "no dictionaries", not as a valid list.
+// Pick the dictionaries for a story. A story can carry an inline dictionary
+// object (all-in-one database files), point to legacy JSON files, or use the
+// shared dictionary. When an inline dictionary exists, it replaces the shared
+// file so a self-contained story database never needs another file.
 function storyDictionaryPaths(story) {
     const candidates = [
         story && story.dictionaries,
         story && story.dictionary
     ];
 
-    const paths = [SHARED_DICTIONARY_PATH];
+    const inlineDictionaries = [];
+    const filePaths = [];
 
     for (const candidate of candidates) {
         const list = Array.isArray(candidate) ? candidate :
-            (typeof candidate === 'string' && candidate.trim() ? [candidate] : []);
-        for (const path of list) {
-            if (typeof path !== 'string' || !path.trim()) continue;
+            (candidate === undefined || candidate === null || candidate === '' ? [] : [candidate]);
+
+        for (const entry of list) {
+            if (isInlineDictionary(entry)) {
+                inlineDictionaries.push(entry);
+                continue;
+            }
+            if (typeof entry !== 'string' || !entry.trim()) continue;
             // Repair the historical "main.json." typo found in old story data.
-            const cleaned = path.trim().replace(/main\.json\.$/, 'main.json');
-            if (paths.indexOf(cleaned) === -1) paths.push(cleaned);
+            const cleaned = entry.trim().replace(/main\.json\.$/, 'main.json');
+            if (filePaths.indexOf(cleaned) === -1) filePaths.push(cleaned);
         }
-        if (list.length > 0) break;
     }
 
-    return paths;
+    if (inlineDictionaries.length > 0) {
+        return inlineDictionaries.concat(filePaths);
+    }
+    return [SHARED_DICTIONARY_PATH].concat(filePaths);
+}
+
+// A database file may keep one dictionary at the top and reuse it for every
+// story. Attach that inline dictionary to the story being opened.
+function withFileDictionary(story, data) {
+    if (!story || !data || typeof data !== 'object' || Array.isArray(data)) {
+        return story;
+    }
+
+    const inline = isInlineDictionary(data.dictionary) ? data.dictionary :
+        (isInlineDictionary(data.sharedDictionary) ? data.sharedDictionary : null);
+    if (!inline) return story;
+    if (isInlineDictionary(story.dictionary)) return story;
+
+    return Object.assign({}, story, { dictionary: inline });
 }
 
 // Load story from database files by ID or user stories
@@ -540,8 +583,9 @@ async function loadStory() {
         // If not a user story or user story not found, try regular stories
         // First check if stories are already loaded in window.storiesData
         if (typeof window.storiesData !== 'undefined') {
-            const allStories = window.storiesData.stories || window.storiesData;
-            currentStory = allStories.find(s => s.id == storyId);
+            const storiesPayload = window.storiesData;
+            const allStories = storiesPayload.stories || storiesPayload;
+            currentStory = withFileDictionary(allStories.find(s => s.id == storyId), storiesPayload);
             if (currentStory) {
                 await loadDictionary(storyDictionaryPaths(currentStory));
                 displayStory(currentStory);
@@ -578,13 +622,14 @@ async function loadStory() {
 
                     // Check if window.storiesData was set
                     if (typeof window.storiesData !== 'undefined') {
-                        const allStories = window.storiesData.stories || window.storiesData;
+                        const storiesPayload = window.storiesData;
+                        const allStories = storiesPayload.stories || storiesPayload;
 
                         if (Array.isArray(allStories)) {
                             console.log(`Found ${allStories.length} stories in ${dbFile}`);
 
                             // Try to find the story by ID
-                            currentStory = allStories.find(s => s.id == storyId);
+                            currentStory = withFileDictionary(allStories.find(s => s.id == storyId), storiesPayload);
 
                             if (currentStory) {
                                 console.log(`🎉 Story found in ${dbFile}!`);
@@ -752,6 +797,23 @@ function getFallbackStory(storyId) {
     // Handle both string and number IDs
     return fallbackStories[storyId] || fallbackStories[parseInt(storyId)] || fallbackStories[1];
 }
+// Direction of the whole story, based on its explicit metadata, its text, or
+// the language metadata as a fallback.
+function resolveStoryDirection(story) {
+    const explicit = String((story && story.dir) || '').toLowerCase();
+    if (explicit === 'rtl' || explicit === 'ltr') return explicit;
+
+    const content = story && Array.isArray(story.content)
+        ? story.content
+        : [story && story.content ? story.content : ''];
+    const sample = [story && story.title ? story.title : ''].concat(content).join(' ');
+
+    if (typeof detectTextDirection === 'function') {
+        return detectTextDirection(sample, story && story.lang);
+    }
+    return (typeof isRtlLang === 'function' && isRtlLang(story && story.lang)) ? 'rtl' : 'ltr';
+}
+
 function displayStory(story) {
     storyTitle.textContent = story.title;
     currentStory = story; // Make sure currentStory is set
@@ -759,7 +821,14 @@ function displayStory(story) {
     // Expose the story (and its language) to the rest of the app.
     window.IStoriesCurrentStory = story;
     const storyLang = (story.lang || 'en').toLowerCase();
+    const storyDir = resolveStoryDirection(story);
     document.documentElement.setAttribute('data-story-lang', storyLang);
+    document.documentElement.setAttribute('data-story-dir', storyDir);
+
+    // Story title follows the story language, not the UI language.
+    storyTitle.setAttribute('dir', storyDir);
+    storyTitle.setAttribute('lang', storyLang);
+    storyTitle.setAttribute('data-dir-auto', '');
 
     if (story.author && story.author.trim() !== "") {
         const badge = document.createElement('span');
@@ -767,7 +836,7 @@ function displayStory(story) {
         badge.innerHTML = `<i class="fas fa-user"></i> ${story.author}`;
         badge.style.cssText = `
                 display: inline-block;
-                margin-left: 10px;
+                margin-inline-start: 10px;
                 background: var(--primary);
                 color: white;
                 padding: 4px 10px;
@@ -775,6 +844,9 @@ function displayStory(story) {
                 font-size: 0.8rem;
                 font-weight: 600;
             `;
+        if (typeof applyTextDirection === 'function') {
+            applyTextDirection(badge, story.author, storyLang);
+        }
         storyTitle.appendChild(badge);
     }
 
@@ -822,11 +894,22 @@ function displayStory(story) {
     }
 
     storyText.innerHTML = '';
+    storyText.setAttribute('dir', storyDir);
+    storyText.setAttribute('lang', storyLang);
 
     const paragraphs = Array.isArray(story.content) ? story.content : [String(story.content || '')];
     paragraphs.forEach(paragraph => {
         const p = document.createElement('div');
         p.className = 'paragraph';
+
+        // Per-paragraph detection keeps mixed-language stories readable while
+        // inheriting the story direction for normal paragraphs.
+        const paragraphDir = typeof detectTextDirection === 'function'
+            ? detectTextDirection(paragraph, storyLang, storyDir)
+            : storyDir;
+        p.setAttribute('dir', paragraphDir);
+        p.setAttribute('lang', storyLang);
+
         p.innerHTML = makeWordsClickable(paragraph, { debug: false, lang: storyLang });
         storyText.appendChild(p);
     });
@@ -1177,6 +1260,9 @@ function showDictionary(word, element, isTextSelection = false) {
     }
 
     popupWord.textContent = originalWordText;
+    if (typeof applyTextDirection === 'function') {
+        applyTextDirection(popupWord, originalWordText, currentStory && currentStory.lang);
+    }
 
     if (listenWordBtn) {
         listenWordBtn.style.display = 'speechSynthesis' in window ? 'inline-block' : 'none';
@@ -1184,6 +1270,10 @@ function showDictionary(word, element, isTextSelection = false) {
 
     if (wordData) {
         popupTranslation.textContent = wordData.translation;
+        if (typeof applyTextDirection === 'function') {
+            // Translations are often in a different language than the story.
+            applyTextDirection(popupTranslation, wordData.translation);
+        }
 
         // Add source indicator if it's a custom translation
         if (wordData.source === 'user_story') {
@@ -1204,6 +1294,9 @@ function showDictionary(word, element, isTextSelection = false) {
         popupTranslation.textContent = window.IStoriesI18n
             ? window.IStoriesI18n.t('reader.noTranslation')
             : "لا توجد ترجمة متاحة";
+        if (typeof applyTextDirection === 'function') {
+            applyTextDirection(popupTranslation, popupTranslation.textContent);
+        }
 
         saveWordBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save Word (No Translation)';
         saveWordBtn.disabled = false;
@@ -1739,48 +1832,52 @@ function extractStoryWords(contentArray) {
 // Download current story as JSON
 function downloadCurrentStory() {
     if (!currentStory) {
-        showNotification('No story loaded to download', 'warning');
+        showNotification(
+            window.IStoriesI18n
+                ? window.IStoriesI18n.t('reader.noStoryDownload')
+                : 'No story loaded to download',
+            'warning'
+        );
         return;
     }
 
     try {
-        // Create a clean copy of the story for export
-        const storyForExport = {
+        const storyDir = resolveStoryDirection(currentStory);
+
+        // Keep the full story payload (content-tr, tags, translations, source
+        // metadata, …) so a reader export can be re-imported without losing
+        // anything. Runtime-only flags are stripped below.
+        const storyForExport = Object.assign({}, currentStory, {
             id: currentStory.id || 'story_' + Date.now(),
             title: currentStory.title || 'Untitled Story',
             lang: currentStory.lang || 'en',
+            dir: storyDir,
             level: currentStory.level || 'intermediate',
             levelcefr: currentStory.levelcefr || 'B1',
             cover: currentStory.cover || '',
             coverType: currentStory.coverType || 'image',
-            content: currentStory.content || [],
+            content: Array.isArray(currentStory.content)
+                ? currentStory.content.slice()
+                : [String(currentStory.content || '')],
             author: currentStory.author || 'Unknown',
             wordCount: currentStory.wordCount || countWords(currentStory.content),
             exportedDate: new Date().toISOString(),
             exportedFrom: 'IStories',
             version: '1.0',
             source: currentStory.source || 'uploaded'
-        };
+        });
 
-        // Add sound if exists
-        if (currentStory.sound) {
-            storyForExport.sound = currentStory.sound;
-        }
+        delete storyForExport.isUserStory;
 
-        // Add dictionaries if exists
-        if (currentStory.dictionaries && currentStory.dictionaries.length > 0) {
-            storyForExport.dictionaries = currentStory.dictionaries;
-        }
-
-        // Add translations if they exist in dictionary for this story
+        // Add dictionary translations without overwriting translations that
+        // were already embedded in the story file.
         if (Object.keys(dictionary).length > 0) {
-            // Get translations for words in this story
             const storyWords = extractStoryWords(currentStory.content);
-            const translations = {};
+            const translations = Object.assign({}, storyForExport.translations || {});
 
             storyWords.forEach(word => {
                 const standardKey = getStandardKey(word);
-                if (dictionary[standardKey]) {
+                if (dictionary[standardKey] && !translations[word]) {
                     translations[word] = {
                         translation: dictionary[standardKey].translation || '',
                         pos: dictionary[standardKey].pos || 'unknown',
@@ -1798,8 +1895,14 @@ function downloadCurrentStory() {
         // Convert to JSON string with pretty formatting
         const jsonString = JSON.stringify(storyForExport, null, 2);
 
-        // Create filename from story title
-        const filename = `${storyForExport.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.json`;
+        // Unicode-safe filename: keep Arabic/other letters, drop only characters
+        // that are invalid in file names.
+        const safeTitle = String(storyForExport.title || 'story')
+            .replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_')
+            .replace(/\s+/g, '_')
+            .replace(/^[._]+|[._]+$/g, '')
+            .slice(0, 80) || 'story';
+        const filename = `${safeTitle}_${Date.now()}.json`;
 
         // Create download link
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -1816,11 +1919,21 @@ function downloadCurrentStory() {
         // Clean up
         URL.revokeObjectURL(url);
 
-        showNotification(`Story downloaded as ${filename}`, 'success');
+        showNotification(
+            window.IStoriesI18n
+                ? window.IStoriesI18n.t('reader.downloadedAs', { filename: filename })
+                : `Story downloaded as ${filename}`,
+            'success'
+        );
 
     } catch (error) {
         console.error('Error downloading story:', error);
-        showNotification('Error downloading story: ' + error.message, 'error');
+        showNotification(
+            (window.IStoriesI18n
+                ? window.IStoriesI18n.t('reader.downloadError')
+                : 'Error downloading story: ') + error.message,
+            'error'
+        );
     }
 }
 function toggleAudio() {
@@ -2159,6 +2272,9 @@ function localizeDictionaryPlaceholders() {
         if (!popupOpen || !currentWord ||
             currentWord === 'Dictionary' || currentWord === 'قاموس') {
             popupWord.textContent = i18n.t('reader.dictionary');
+            if (typeof applyTextDirection === 'function') {
+                applyTextDirection(popupWord, popupWord.textContent);
+            }
         }
     }
 
@@ -2168,11 +2284,17 @@ function localizeDictionaryPlaceholders() {
     if (popupOpen && currentWordData) {
         if (!currentWordData.hasTranslation) {
             popupTranslation.textContent = i18n.t('reader.noTranslation');
+            if (typeof applyTextDirection === 'function') {
+                applyTextDirection(popupTranslation, popupTranslation.textContent);
+            }
         }
         return;
     }
 
     popupTranslation.textContent = i18n.t('reader.selectWord');
+    if (typeof applyTextDirection === 'function') {
+        applyTextDirection(popupTranslation, popupTranslation.textContent);
+    }
 }
 
 // 🚀 دالة التهيئة (Initialization)

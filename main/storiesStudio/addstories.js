@@ -1121,9 +1121,15 @@ function showStoryPreview() {
     // Display author
     document.getElementById('previewAuthor').textContent = author || 'Anonymous';
 
-    // Display content
+    // Display content (title/content direction follows the story language).
     const previewText = document.getElementById('previewText');
     previewText.innerHTML = content.map(para => `<p>${para}</p>`).join('');
+
+    if (typeof applyTextDirection === 'function') {
+        applyTextDirection(document.getElementById('previewTitle'), title, lang);
+        applyTextDirection(previewText, content.join(' '), lang);
+        applyTextDirection(document.getElementById('previewAuthor'), author || 'Anonymous', lang);
+    }
 
     // Display translations if any
     const translationsSection = document.getElementById('previewTranslationsSection');

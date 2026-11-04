@@ -328,7 +328,9 @@ header {
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--primary);
-    direction: ltr;
+    /* The reader shell follows the interface language; the story title/text
+       get their own dir from the story language (see displayStory()). */
+    direction: inherit;
 }
 
 .back-button {
@@ -412,10 +414,14 @@ header {
     transition: font-size 0.3s ease, line-height 0.3s ease;
 }
 
-/* RTL languages (Arabic / Persian / Urdu): use an Arabic-friendly font. */
-html.ist-rtl-lang body,
-html.ist-rtl-lang .story-text,
-html.ist-rtl-lang .story-title {
+/* RTL interface: use an Arabic-friendly font for the shell. */
+html.ist-rtl-lang body {
+    font-family: 'Amiri', 'Noto Naskh Arabic', 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+/* RTL story content: only the story text/title switch fonts, based on the
+   story's own language (not the interface language). */
+html[data-story-dir="rtl"] :is(.story-text, #storyTitle, .story-title) {
     font-family: 'Amiri', 'Noto Naskh Arabic', 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
 }
 
@@ -432,21 +438,13 @@ html.ist-rtl-lang .story-title {
     /* background: var(--bg-secondary); */
     border-left: 4px solid transparent;
     transition: background-color 0.3s ease;
-    direction: ltr;
+    /* Direction is inherited from #storyText; displayStory() also sets a
+       detected dir on each paragraph for mixed-language stories. */
 }
 
 .paragraph:hover {
     background: var(--bg);
     border-left-color: var(--primary);
-}
-
-/* RTL story languages (Arabic / Persian / Urdu / Hebrew): the story
-   paragraphs read right-to-left. */
-html[data-story-lang="ar"] .paragraph,
-html[data-story-lang="fa"] .paragraph,
-html[data-story-lang="ur"] .paragraph,
-html[data-story-lang="he"] .paragraph {
-    direction: rtl;
 }
 
 .paragraph .mark {
@@ -523,7 +521,7 @@ html[data-story-lang="he"] .paragraph {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    direction: ltr;
+    direction: inherit;
 }
 
 .dictionary-word {
@@ -531,6 +529,7 @@ html[data-story-lang="he"] .paragraph {
     font-weight: 600;
     color: var(--primary);
     margin-right: 10px;
+    text-align: center;
 }
 
 .dictionary-pos {
@@ -972,7 +971,7 @@ html[data-story-lang="he"] .paragraph {
     .story-text {
         font-size: 1.1rem;
         line-height: 1.7;
-        text-align: left;
+        text-align: start;
     }
 
     .reading-controls {

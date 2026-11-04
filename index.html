@@ -931,7 +931,7 @@
                 <i class="fa-solid fa-bars" aria-hidden="true"></i>
             </button>
             <a class="ist-header__brand" href="../index.html">
-                <img class="ist-header__logo" src="../icon.svg" alt="">
+                <img class="ist-header__logo" src="icon.svg" alt="">
                 <span class="ist-header__name">IStories</span>
             </a>
             <span class="ist-header__page">
@@ -1220,8 +1220,11 @@
       // Apply theme first
       applyTheme();
 
-      // Add theme toggle event listener
-      themeToggle.addEventListener('click', toggleTheme);
+      // Add theme toggle event listener (the legacy landing page has no
+      // standalone toggle; the shared sidebar provides its own).
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
 
 
       // Log the current colors to console

@@ -673,7 +673,9 @@ header {
     transition: transform 0.3s;
     min-height: 350px;
     /* ارتفاع أدنى */
-    direction: ltr;
+    /* Follow the interface direction for the card layout; the title/excerpt
+       set their own dir from the story language. */
+    direction: inherit;
 }
 
 .story-content img {

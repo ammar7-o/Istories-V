@@ -23,10 +23,9 @@ html[lang="ar"] :is(h1, h2, h3, h4, h5, h6) {
     line-height: 1.35;
 }
 
-/* Keep story content in its own language/font; only the interface is Arabic. */
-html[lang="ar"] :is(.story-text, #storyText, .word, .story-title, .preview-story-content) {
-    font-family: inherit;
-}
+/* Keep story content in its own language/font; only the interface is Arabic.
+   Direction and font for story content are applied by the shared
+   detectTextDirection()/applyTextDirection() helpers (see below). */
 
 /* --- Generic direction-aware fixes --------------------------------------- */
 html[dir="rtl"] body {
@@ -50,6 +49,17 @@ html[dir="rtl"] :is(
     .dialog
 ) {
     text-align: start;
+}
+
+/* Content direction comes from the content language, not the UI language.
+   applyTextDirection() marks those elements with data-dir-auto. */
+[data-dir-auto] {
+    text-align: start;
+    unicode-bidi: isolate;
+}
+
+[data-dir-auto][dir="rtl"] {
+    font-family: "Amiri", "Noto Naskh Arabic", "Alexandria", Tahoma, sans-serif;
 }
 
 /* Icons that carry direction should mirror in RTL. */

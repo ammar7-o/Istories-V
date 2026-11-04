@@ -448,6 +448,15 @@ function createStoryCard(story, options = {}) {
         </div>
     `;
 
+    // Titles, excerpts and author names keep the direction of the story's
+    // own language, even when the interface is in another language.
+    if (typeof applyTextDirection === 'function') {
+        applyTextDirection(storyCard.querySelector('.story-title'), story.title, story.lang);
+        applyTextDirection(storyCard.querySelector('.story-content > p'), firstParagraph, story.lang);
+        const authorEl = storyCard.querySelector('.author');
+        if (authorEl) applyTextDirection(authorEl, story.author, story.lang);
+    }
+
     storyCard.addEventListener('click', () => {
         openStoryInNewPage(story.id);
     });

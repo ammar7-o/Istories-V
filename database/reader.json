@@ -1,7 +1,7 @@
 {
   "files": [
     "/database/database/main.js",
-    "/database/database/more/more.js"
-   
+    "/database/database/more/more.js",
+    "/database/database/example-translations.js"
   ]
 }

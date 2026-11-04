@@ -246,7 +246,7 @@
         'reader.alreadySaved': ['Already Saved', 'محفوظة بالفعل'],
         'reader.saveNoTranslation': ['Save Word (No Translation)', 'حفظ الكلمة (دون ترجمة)'],
         'reader.noTranslation': ['No translation available', 'لا توجد ترجمة متاحة'],
-        'reader.exit': ['Exit', 'خروج'],
+        // 'reader.exit': ['Exit', 'خروج'],
         'reader.copyStory': ['Copy Story', 'نسخ القصة'],
         'reader.printStory': ['Print Story', 'طباعة القصة'],
         'reader.downloadStory': ['Download Story', 'تنزيل القصة'],
@@ -271,6 +271,9 @@
         'reader.speakWord': ['Speak this word', 'انطق هذه الكلمة'],
         'reader.usingLanguage': ['Using {language} ({code})', 'باستخدام {language} ({code})'],
         'reader.custom': ['Custom', 'مخصص'],
+        'reader.downloadedAs': ['Story downloaded as {filename}', 'تم تنزيل القصة باسم {filename}'],
+        'reader.noStoryDownload': ['No story loaded to download', 'لا توجد قصة محمّلة لتنزيلها'],
+        'reader.downloadError': ['Error downloading story: ', 'حدث خطأ أثناء تنزيل القصة: '],
 
         /* Settings */
         'settings.title': ['Settings', 'الإعدادات'],
@@ -1005,7 +1008,13 @@
 
     /** Counts and other templated UI strings that are built in page scripts. */
     function translateDynamic(text) {
-        var m = text.match(/^(\d+)\s+words?$/i);
+        var m = text.match(/^🌍\s*All languages(?:\s*\((\d+)\))?$/i);
+        if (m) return '🌍 كل اللغات' + (m[1] ? ' (' + m[1] + ')' : '');
+
+        m = text.match(/^All languages(?:\s*\((\d+)\))?$/i);
+        if (m) return 'كل اللغات' + (m[1] ? ' (' + m[1] + ')' : '');
+
+        m = text.match(/^(\d+)\s+words?$/i);
         if (m) return m[1] + ' كلمة';
         m = text.match(/^(\d+)\s+min(?:ute)?s?\s+read$/i);
         if (m) return m[1] + ' دقيقة قراءة';
@@ -1054,6 +1063,7 @@
     var originalAttributes = new WeakMap();
     var EXCLUDED_SELECTOR = [
         '[data-no-i18n]',
+        '[data-dir-auto]',
         '#storyText',
         '.story-text',
         '.story-content .story-title',

@@ -300,6 +300,124 @@ function isRtlLang(lang) {
     return IST_RTL_LANGS.indexOf(String(lang).toLowerCase().split('-')[0]) !== -1;
 }
 
+/* --------------------------------------------------------------------------
+   Text direction (RTL / LTR) for story and user content
+   --------------------------------------------------------------------------
+   The interface language decides the page layout (`<html dir>`), but a story
+   can be written in a different language. These helpers detect the direction
+   of the text itself using:
+     1. the story's language metadata, when it matches the script in the text;
+     2. the balance of RTL letters (Arabic/Hebrew/…) versus other letters;
+     3. the first strong letter as a tie-breaker;
+     4. the interface direction as a last resort.
+   -------------------------------------------------------------------------- */
+
+// RTL letters + presentation forms (Arabic, Hebrew, Syriac, Thaana, NKo, …).
+const IST_RTL_TEXT_GLOBAL = /[\u0591-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/g;
+const IST_RTL_TEXT_CHAR = /[\u0591-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+const IST_ANY_LETTER_GLOBAL = /\p{L}/gu;
+
+/** Remove markup/URLs before counting letters so tags do not skew direction. */
+function istDirectionPlainText(text) {
+    return String(text == null ? '' : text)
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&(?:[a-z]+|#\d+|#x[0-9a-f]+);/gi, ' ')
+        .replace(/https?:\/\/\S+/gi, ' ');
+}
+
+/**
+ * Detect "rtl" or "ltr" for a piece of text.
+ * @param {string} text
+ * @param {string} [lang] - optional story/word language code (e.g. "ar")
+ * @param {'rtl'|'ltr'} [fallback] - used when the text has no strong letters
+ * @returns {'rtl'|'ltr'}
+ */
+function detectTextDirection(text, lang, fallback) {
+    const value = istDirectionPlainText(text);
+    const rtlMatches = value.match(IST_RTL_TEXT_GLOBAL) || [];
+    const letterMatches = value.match(IST_ANY_LETTER_GLOBAL) || [];
+    const rtlCount = rtlMatches.length;
+    const ltrCount = Math.max(0, letterMatches.length - rtlCount);
+
+    const base = String(lang || '').toLowerCase().split('-')[0];
+    const langKnown = !!(base && IST_LANG_NAMES[base]);
+    const langRtl = !!(base && isRtlLang(base));
+
+    // Language metadata wins when the matching script is actually present.
+    if (langRtl && rtlCount > 0) return 'rtl';
+    if (langKnown && !langRtl && ltrCount > 0) return 'ltr';
+
+    if (rtlCount > ltrCount) return 'rtl';
+    if (ltrCount > rtlCount) return 'ltr';
+
+    // A tie: use the first strong letter.
+    if (rtlCount > 0 && ltrCount > 0 && letterMatches.length) {
+        return IST_RTL_TEXT_CHAR.test(letterMatches[0]) ? 'rtl' : 'ltr';
+    }
+
+    if (rtlCount > 0) return 'rtl';
+    if (ltrCount > 0) return 'ltr';
+
+    if (langRtl) return 'rtl';
+    if (langKnown) return 'ltr';
+
+    if (fallback === 'rtl' || fallback === 'ltr') return fallback;
+    return document.documentElement.getAttribute('dir') === 'rtl' ? 'rtl' : 'ltr';
+}
+
+/**
+ * Set `dir` (and `lang` when known) on an element from its own text.
+ * `data-dir-auto` keeps the shared localization engine and CSS away from the
+ * content, so story titles/paragraphs are never treated as UI phrases.
+ * @param {Element} element
+ * @param {string} text
+ * @param {string} [lang]
+ * @param {{fallback?: 'rtl'|'ltr', mark?: boolean}} [options]
+ * @returns {'rtl'|'ltr'|''}
+ */
+function applyTextDirection(element, text, lang, options) {
+    if (!element || element.nodeType !== 1) return '';
+
+    const dir = detectTextDirection(text, lang, options && options.fallback);
+    element.setAttribute('dir', dir);
+
+    const base = String(lang || '').toLowerCase().split('-')[0];
+    if (base && IST_LANG_NAMES[base]) element.setAttribute('lang', base);
+
+    if (!options || options.mark !== false) {
+        element.setAttribute('data-dir-auto', '');
+    }
+
+    return dir;
+}
+
+/**
+ * HTML attribute string for a content element rendered with innerHTML.
+ * @param {string} text
+ * @param {string} [lang]
+ * @param {'rtl'|'ltr'} [fallback]
+ * @returns {string} e.g. ` dir="rtl" lang="ar"`
+ */
+function textDirectionAttributes(text, lang, fallback) {
+    const dir = detectTextDirection(text, lang, fallback);
+    const base = String(lang || '').toLowerCase().split('-')[0];
+    let attrs = ' dir="' + dir + '" data-dir-auto';
+
+    if (base && IST_LANG_NAMES[base]) {
+        attrs += ' lang="' + base.replace(/[^a-z-]/g, '') + '"';
+    }
+
+    return attrs;
+}
+
+// Public API (also available as globals, matching the rest of common.js).
+window.IStoriesTextDirection = {
+    detect: detectTextDirection,
+    apply: applyTextDirection,
+    attributes: textDirectionAttributes,
+    isRtlLang: isRtlLang
+};
+
 /**
  * Best-effort language code for a saved word / card.
  * Prefers the language recorded when the word was saved, then falls back to

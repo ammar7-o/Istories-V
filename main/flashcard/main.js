@@ -559,6 +559,14 @@ function loadCard(index) {
     flashcardWord.textContent = card.word;
     flashcardTranslation.textContent = card.translation || "No translation available";
 
+    // The word and its translation may use different scripts/languages.
+    if (typeof applyTextDirection === 'function') {
+        applyTextDirection(flashcardWord, card.word, cardLang(card));
+        if (card.translation) {
+            applyTextDirection(flashcardTranslation, card.translation);
+        }
+    }
+
     // Language indicator for this card
     if (flashcardLangBadge) {
         const code = cardLang(card);

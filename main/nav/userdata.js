@@ -433,6 +433,15 @@
             pdfMeta: story.pdfMeta || null,
             translations: options.translations || story.translations || {}
         };
+
+        // Keep embedded paragraph translations and an all-in-one dictionary
+        // when a Studio source story is opened without saving it first.
+        if (Array.isArray(story['content-tr'])) {
+            pending['content-tr'] = story['content-tr'];
+        }
+        if (story.dictionary && typeof story.dictionary === 'object' && !Array.isArray(story.dictionary)) {
+            pending.dictionary = story.dictionary;
+        }
         writeRaw(READING_KEY, JSON.stringify(pending));
         return flush().then(function () { return pending; });
     }

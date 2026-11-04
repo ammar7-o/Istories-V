@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v4.3 ';
+const CACHE_VERSION = 'v4.9';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;
@@ -106,6 +106,7 @@ const SHELL_ASSETS = [
   './tools/style.css',
   './database/database/main.js',
   './database/database/more/more.js',
+  './database/database/example-translations.js',
   './database/data.json',
   './database/reader.json',
   './database/Dictionarys/english.json',
@@ -127,6 +128,7 @@ const SHELL_ASSETS = [
   './imges/user.jpg',
 
   // Custom reader fonts
+  './fonts/Alexandria-VariableFont_wght.ttf',
   './fonts/BradleyHandITCTT-Bold.ttf',
   './fonts/Caveat-Bold.ttf',
   './fonts/PatrickHandSC-Regular.ttf',

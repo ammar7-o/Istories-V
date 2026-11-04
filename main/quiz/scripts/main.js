@@ -3,6 +3,19 @@ function quizLocale() {
     return window.IStoriesI18n && window.IStoriesI18n.language === 'ar' ? 'ar' : 'en-US';
 }
 
+// Quiz titles/descriptions/author names are content: keep their own direction.
+function applyQuizCardTextDirections(quizCard, quiz) {
+    if (typeof applyTextDirection !== 'function') return;
+    const lang = quiz.lang || quiz.language || '';
+    applyTextDirection(quizCard.querySelector('.quiz-title'), quiz.title || '', lang);
+    if (quiz.description) {
+        applyTextDirection(quizCard.querySelector('.quiz-description'), quiz.description, lang);
+    }
+    if (quiz.author) {
+        applyTextDirection(quizCard.querySelector('.quiz-author'), quiz.author, lang);
+    }
+}
+
 // ========= App State Variables ==========
 let currentPage = 'home';
 let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
@@ -727,6 +740,8 @@ function renderQuizzes(level = 'all') {
             </div>
         `;
 
+        applyQuizCardTextDirections(quizCard, quiz);
+
         // Add event listeners
         const startBtn = quizCard.querySelector('.quiz-start-btn');
         const previewBtn = quizCard.querySelector('.quiz-preview-btn');
@@ -924,6 +939,8 @@ function filterQuizzesByLevel(level) {
                 </button>
             </div>
         `;
+
+        applyQuizCardTextDirections(quizCard, quiz);
 
         const startBtn = quizCard.querySelector('.quiz-start-btn');
         const previewBtn = quizCard.querySelector('.quiz-preview-btn');
@@ -2802,6 +2819,8 @@ function displayFilteredQuizzes(filteredQuizzes, query) {
                 </button>
             </div>
         `;
+
+        applyQuizCardTextDirections(quizCard, quiz);
 
         // Add event listeners
         const startBtn = quizCard.querySelector('.quiz-start-btn');

@@ -383,6 +383,13 @@
                 ? '<span class="ms-badge ms-badge--audio" title="Has audio"><i class="fas fa-volume-up"></i> Audio</span>'
                 : '';
 
+            var titleAttrs = typeof textDirectionAttributes === 'function'
+                ? textDirectionAttributes(story.title || 'Untitled story', storyLang(story))
+                : '';
+            var authorAttrs = typeof textDirectionAttributes === 'function'
+                ? textDirectionAttributes(story.author || '', storyLang(story))
+                : '';
+
             return '' +
                 '<article class="ms-card">' +
                     '<div class="ms-card__cover ms-card__cover--' + escapeHtml(type) + '">' +
@@ -401,15 +408,18 @@
                             translationBadge +
                             audioBadge +
                         '</div>' +
-                        '<h2 class="ms-card__title">' + escapeHtml(story.title || 'Untitled story') + '</h2>' +
-                        (story.author ? '<p class="ms-card__author"><i class="fas fa-user"></i> ' + escapeHtml(story.author) + '</p>' : '') +
+                        '<h2 class="ms-card__title"' + titleAttrs + '>' + escapeHtml(story.title || 'Untitled story') + '</h2>' +
+                        (story.author ? '<p class="ms-card__author"' + authorAttrs + '><i class="fas fa-user"></i> ' + escapeHtml(story.author) + '</p>' : '') +
                         '<p class="ms-card__meta">' +
                             '<span><i class="fas fa-font"></i> ' + formatNumber(words) + ' words</span>' +
                             '<span><i class="fas fa-calendar"></i> ' + escapeHtml(formatDate(story.uploadDate || story.importedAt)) + '</span>' +
                         '</p>' +
                         (tags.length
                             ? '<div class="ms-card__tags">' + tags.slice(0, 4).map(function (tag) {
-                                return '<span>#' + escapeHtml(tag) + '</span>';
+                                var tagAttrs = typeof textDirectionAttributes === 'function'
+                                    ? textDirectionAttributes(tag, storyLang(story))
+                                    : '';
+                                return '<span' + tagAttrs + '>#' + escapeHtml(tag) + '</span>';
                             }).join('') + (tags.length > 4 ? '<span>+' + (tags.length - 4) + '</span>' : '') + '</div>'
                             : '') +
                         '<div class="ms-card__actions">' +

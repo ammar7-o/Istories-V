@@ -486,6 +486,14 @@ function populateLanguageFilter() {
     select.value = (previous && (previous === 'all' || codes.indexOf(previous) !== -1)) ? previous : 'all';
 }
 
+// Keep card content in the direction of the story language, not the UI.
+function applyStoreCardTextDirections(storyCard, story) {
+    if (typeof applyTextDirection !== 'function') return;
+    applyTextDirection(storyCard.querySelector('.story-title'), story.title, story.lang);
+    const authorEl = storyCard.querySelector('.author');
+    if (authorEl) applyTextDirection(authorEl, story.author, story.lang);
+}
+
 function renderStories(level = currentLevel, lang = currentLang) {
     if (!storiesGrid) return;
 
@@ -592,6 +600,8 @@ function renderStories(level = currentLevel, lang = currentLang) {
                 </div>
             </div>
         `;
+
+        applyStoreCardTextDirections(storyCard, story);
 
         // Add event listeners for buttons
         const saveBtn = storyCard.querySelector('.save-story-btn');
@@ -960,6 +970,8 @@ function displayFilteredStories(filteredStories, query) {
                 </div>
             </div>
         `;
+
+        applyStoreCardTextDirections(storyCard, story);
 
         // Add event listeners for buttons in search results
         const saveBtn = storyCard.querySelector('.save-story-btn');

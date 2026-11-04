@@ -359,6 +359,14 @@ function showTranslationInPopup(originalWord, translation, targetLanguage) {
         </div>
     `;
 
+    // The translated sentence/word keeps the direction of its own language.
+    if (typeof applyTextDirection === 'function') {
+        applyTextDirection(
+            translationDiv.querySelector('.translation-popup-content'),
+            translation
+        );
+    }
+
     // Remove existing translation
     const existingTranslation = popupTranslation.querySelector('.word-translation-persistent');
     if (existingTranslation) {
@@ -1211,6 +1219,12 @@ function togglePredefinedTranslation(index, paragraphElement) {
     const targetLang = (storyNow && storyNow.lang) || localStorage.getItem('defaultTranslateLanguage') || 'ar';
     const rtlLanguages = ['ar', 'ar-SA', 'ar-EG', 'fa', 'ur', 'he', 'yi', 'dv'];
     const shouldBeRTL = rtlLanguages.includes(targetLang);
+    // Bundled translations may be written in a different language from the
+    // story (e.g. an English translation under an Arabic story), so follow the
+    // script of the translation itself rather than the story language.
+    const translationDir = typeof detectTextDirection === 'function'
+        ? detectTextDirection(translation)
+        : (shouldBeRTL ? 'rtl' : 'ltr');
 
     resultDiv.style.cssText = boxStyle;
     resultDiv.innerHTML = `
@@ -1223,19 +1237,14 @@ function togglePredefinedTranslation(index, paragraphElement) {
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="translation-prg" style="line-height: 1.5; color: var(--text); font-size: 0.8em;
-                   ${shouldBeRTL ? 'direction: rtl; text-align: right;' : ''}">
+        <div class="translation-prg" dir="${translationDir}" data-dir-auto style="line-height: 1.5; color: var(--text); font-size: 0.8em;
+                   direction: ${translationDir}; text-align: ${translationDir === 'rtl' ? 'right' : 'left'};">
             ${translation}
         </div>
     `;
     resultDiv.style.display = 'block';
-    if (shouldBeRTL) {
-        resultDiv.style.direction = 'rtl';
-        resultDiv.style.textAlign = 'right';
-    } else {
-        resultDiv.style.direction = 'ltr';
-        resultDiv.style.textAlign = 'left';
-    }
+    resultDiv.style.direction = translationDir;
+    resultDiv.style.textAlign = translationDir === 'rtl' ? 'right' : 'left';
 
     setupAutoCloseListeners(resultDiv, index);
 }

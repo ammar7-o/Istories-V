@@ -219,6 +219,13 @@
         return [];
     }
 
+    function inlineDictionaryFromData(data) {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+        var value = data.dictionary;
+        if (!value) value = data.sharedDictionary;
+        return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+    }
+
     function parseJavaScriptInWorker(source) {
         return new Promise(function (resolve, reject) {
             var workerCode = [
@@ -313,11 +320,19 @@
 
     function normalizeSourceStories(data, fileName, sourceType) {
         var list = extractStoryArray(data);
+        var fileDictionary = inlineDictionaryFromData(data);
         return list.map(function (story, index) {
             if (!story || typeof story !== 'object') return null;
 
             var content = ui ? ui.normalizeContent(story.content) : (story.content || []);
             var candidate = Object.assign({}, story, { content: content });
+            // A database can keep one dictionary at the top of the file and
+            // share it with every story. Carry it into each imported story so
+            // the saved copy stays self-contained.
+            if (fileDictionary &&
+                !(candidate.dictionary && typeof candidate.dictionary === 'object' && !Array.isArray(candidate.dictionary))) {
+                candidate.dictionary = fileDictionary;
+            }
             if (!ui || !ui.isValidStory(candidate)) return null;
 
             return {
@@ -453,6 +468,13 @@
                     lang
                 ].filter(Boolean).join(' • ');
 
+                var titleAttrs = typeof textDirectionAttributes === 'function'
+                    ? textDirectionAttributes(story.title || 'Untitled story', story.lang)
+                    : '';
+                var authorAttrs = typeof textDirectionAttributes === 'function'
+                    ? textDirectionAttributes(story.author || '', story.lang)
+                    : '';
+
                 return '' +
                     '<div class="source-story-row' + (saved ? ' is-saved' : '') + '" data-index="' + entry.index + '">' +
                         '<label class="source-story-check">' +
@@ -460,11 +482,14 @@
                             coverMarkup(story) +
                         '</label>' +
                         '<div class="source-story-info">' +
-                            '<div class="source-story-title">' + escapeHtml(story.title || 'Untitled story') + '</div>' +
+                            '<div class="source-story-title"' + titleAttrs + '>' + escapeHtml(story.title || 'Untitled story') + '</div>' +
                             '<div class="source-story-meta">' + escapeHtml(meta) + '</div>' +
-                            (story.author ? '<div class="source-story-author"><i class="fas fa-user"></i> ' + escapeHtml(story.author) + '</div>' : '') +
+                            (story.author ? '<div class="source-story-author"' + authorAttrs + '><i class="fas fa-user"></i> ' + escapeHtml(story.author) + '</div>' : '') +
                             (tags.length ? '<div class="source-story-tags">' + tags.slice(0, 5).map(function (tag) {
-                                return '<span class="source-tag">' + escapeHtml(tag) + '</span>';
+                                var tagAttrs = typeof textDirectionAttributes === 'function'
+                                    ? textDirectionAttributes(tag, story.lang)
+                                    : '';
+                                return '<span class="source-tag"' + tagAttrs + '>' + escapeHtml(tag) + '</span>';
                             }).join('') + '</div>' : '') +
                         '</div>' +
                         '<div class="source-story-actions">' +

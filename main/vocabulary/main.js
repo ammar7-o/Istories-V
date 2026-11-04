@@ -290,6 +290,26 @@ function performVocabularySearch(query) {
 }
 
 // Optimized render function
+// Saved words/translations can be in different languages; keep each side in
+// its own direction instead of forcing the interface direction on both.
+function applyVocabularyTextDirections(item, word) {
+    if (!item || typeof applyTextDirection !== 'function') return;
+
+    const wordEl = item.querySelector('.word-text');
+    if (wordEl) {
+        applyTextDirection(
+            wordEl,
+            word.originalWord || word.word || '',
+            vocabWordLang(word)
+        );
+    }
+
+    const translationEl = item.querySelector('.word-translation');
+    if (translationEl && word.translation) {
+        applyTextDirection(translationEl, word.translation);
+    }
+}
+
 function renderFilteredVocabulary(filteredWords, query) {
     if (!vocabularyList) return;
 
@@ -388,6 +408,8 @@ function renderFilteredVocabulary(filteredWords, query) {
                 </button>
             </div>
         `;
+
+        applyVocabularyTextDirections(item, word);
 
         fragment.appendChild(item);
     });
@@ -1222,6 +1244,8 @@ function renderVocabulary() {
                 </button>
             </div>
         `;
+
+        applyVocabularyTextDirections(item, word);
 
         vocabularyList.appendChild(item);
 
