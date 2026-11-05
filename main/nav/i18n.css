@@ -9,8 +9,9 @@
     /* The name you will use in CSS */
     src: url('../../../fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
     /* Path to your font */
-    font-weight: normal;
+    font-weight: 100 900;
     font-style: normal;
+    font-display: swap;
 }
 /* --- Arabic typography ---------------------------------------------------- */
 html[lang="ar"] body {
@@ -59,7 +60,7 @@ html[dir="rtl"] :is(
 }
 
 [data-dir-auto][dir="rtl"] {
-    font-family: "Amiri", "Noto Naskh Arabic", "Alexandria", Tahoma, sans-serif;
+    font-family: "Alexandria", "Noto Naskh Arabic", "Amiri", Tahoma, sans-serif;
 }
 
 /* Icons that carry direction should mirror in RTL. */

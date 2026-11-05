@@ -531,23 +531,86 @@
     <div class="dictionary-definition" style="display: none;" id="popupDefinition">Definition will appear here</div>
     <div class="dictionary-example" style="display: none;" id="popupExample">Example sentence will appear here</div> -->
 
-        <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">
-            Select a word in the story to see its translation.
+        <!-- Two horizontal pages: dictionary first, photo preview second.
+             Swipe left/right on touch, or use the tabs and page dots. -->
+        <div class="dictionary-tabs" id="dictionaryTabs" role="tablist"
+             data-i18n-aria-label="reader.dictionaryPages" aria-label="Dictionary pages">
+            <button type="button" class="dictionary-tab is-active" id="dictionaryTabMain"
+                    role="tab" aria-selected="true" aria-controls="dictionaryPageMain"
+                    data-dictionary-page="0">
+                <i class="fas fa-book-open" aria-hidden="true"></i>
+                <span data-i18n="reader.dictionary">Dictionary</span>
+            </button>
+            <button type="button" class="dictionary-tab" id="dictionaryTabPhotos"
+                    role="tab" aria-selected="false" aria-controls="dictionaryPagePhotos"
+                    data-dictionary-page="1">
+                <i class="fas fa-images" aria-hidden="true"></i>
+                <span data-i18n="reader.photos">Photos</span>
+            </button>
         </div>
 
-        <div class="dictionary-actions">
-            <button class="save-word" id="saveWordBtn">
-                <i class="fas fa-bookmark"></i> Save Word
-            </button>
+        <div class="dictionary-pager" id="dictionaryPager">
+            <div class="dictionary-pager-track" id="dictionaryPagerTrack">
+                <section class="dictionary-page" id="dictionaryPageMain" role="tabpanel"
+                         aria-labelledby="dictionaryTabMain" tabindex="0">
+                    <div class="dictionary-translation" style="font-size: 20px;" id="popupTranslation">
+                        Select a word in the story to see its translation.
+                    </div>
 
-            <div class="dictionary-actions-buttom">
-                <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
-                    <i class="fab fa-google"></i>
-                </button>
-                <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
-                    <i class="fas fa-language"></i>
-                </button>
+                    <div class="dictionary-actions">
+                        <button class="save-word" id="saveWordBtn">
+                            <i class="fas fa-bookmark"></i> Save Word
+                        </button>
+
+                        <div class="dictionary-actions-buttom">
+                            <button id="googleSearchBtn" title="Search" class="btns" title="Search on Google">
+                                <i class="fab fa-google"></i>
+                            </button>
+                            <button id="googleTranslateBtn" title="Translate" class="btns" title="Translate on Google">
+                                <i class="fas fa-language"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="dictionary-page dictionary-page-photos" id="dictionaryPagePhotos"
+                         role="tabpanel" aria-labelledby="dictionaryTabPhotos" tabindex="0">
+                    <section class="dictionary-photo" id="dictionaryPhoto" aria-labelledby="dictionaryPhotoTitle">
+                        <div class="dictionary-photo-header">
+                            <span class="dictionary-photo-title" id="dictionaryPhotoTitle" data-i18n="reader.photoPreview">Photo preview</span>
+                            <span class="dictionary-photo-source">Pixbay</span>
+                        </div>
+                        <div class="dictionary-photo-frame">
+                            <div class="dictionary-photo-track" id="dictionaryPhotoTrack" role="region"
+                                 aria-roledescription="carousel" data-i18n-aria-label="reader.photoPreview"
+                                 aria-label="Photo preview"></div>
+                            <div class="dictionary-photo-status is-idle" id="dictionaryPhotoStatus" aria-live="polite">
+                                <i class="fas fa-image" id="dictionaryPhotoStatusIcon" aria-hidden="true"></i>
+                                <span id="dictionaryPhotoStatusText">Select a word to see photos.</span>
+                            </div>
+                            <button type="button" class="dictionary-photo-nav is-prev" id="dictionaryPhotoPrev"
+                                    data-i18n-aria-label="reader.photoPrevious" aria-label="Previous photo">
+                                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="dictionary-photo-nav is-next" id="dictionaryPhotoNext"
+                                    data-i18n-aria-label="reader.photoNext" aria-label="Next photo">
+                                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="dictionary-photo-dots" id="dictionaryPhotoDots" role="group"
+                             data-i18n-aria-label="reader.photoPreview" aria-label="Photo preview"></div>
+                        <div class="dictionary-photo-hint" data-i18n="reader.photoSwipeHint">Swipe left to browse photos</div>
+                    </section>
+                </section>
             </div>
+        </div>
+
+        <div class="dictionary-pager-dots" id="dictionaryPagerDots" role="group"
+             data-i18n-aria-label="reader.dictionaryPages" aria-label="Dictionary pages">
+            <button type="button" class="dictionary-pager-dot is-active" data-dictionary-page="0"
+                    data-i18n-aria-label="reader.dictionary" aria-label="Dictionary" aria-current="true"></button>
+            <button type="button" class="dictionary-pager-dot" data-dictionary-page="1"
+                    data-i18n-aria-label="reader.photos" aria-label="Photos"></button>
         </div>
     </div>
 
@@ -603,6 +666,7 @@
     <script src="scripts/thems.js"></script>
     <script src="../nav/settings-panel.js"></script>
     <script src="scripts/settings.js"></script>
+    <script src="scripts/dictionary-photo.js"></script>
 
 </body>
 

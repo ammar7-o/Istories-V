@@ -7,14 +7,6 @@
     font-style: normal;
 }
 @font-face {
-    font-family: 'Alexandria';
-    /* The name you will use in CSS */
-    src: url('../../../fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
-    /* Path to your font */
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
     font-family: 'Caveat';
     /* The name you will use in CSS */
     src: url('../../../fonts/Caveat-Bold.ttf') format('truetype');

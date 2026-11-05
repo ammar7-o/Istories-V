@@ -1315,6 +1315,14 @@ function showDictionary(word, element, isTextSelection = false) {
         isCustomTranslation: wordData?.source === 'user_story'
     };
 
+    // Refresh the horizontal photo page for the selected word.
+    if (window.IStoriesDictionaryPhoto) {
+        window.IStoriesDictionaryPhoto.show(
+            originalWordText,
+            wordData && wordData.translation
+        );
+    }
+
     // Position the popup based on selection or click
     let rect;
     if (isTextSelection) {
@@ -1335,6 +1343,9 @@ function showDictionary(word, element, isTextSelection = false) {
     // كل نقرة (على الشاشات الكبيرة تكون اللوحة مثبتة والقيمة لا تتغير أبداً).
     dictionaryPopup.style.display = 'none';
     dictionaryPopup.style.display = 'block';
+    if (window.IStoriesDictionaryPhoto) {
+        window.IStoriesDictionaryPhoto.refresh();
+    }
     const popupWidth = dictionaryPopup.offsetWidth || 350;
 
     // إبقاء النافذة داخل حدود الشاشة حتى لا تخرج عنها.
@@ -1365,12 +1376,35 @@ function isDockedDictionary() {
     return window.matchMedia('(min-width: 1024px)').matches;
 }
 
+// After a rotation or a window resize, an open mobile popup can keep an
+// inline left value from the old viewport. Pull it back into view.
+window.addEventListener('resize', function () {
+    if (!dictionaryPopup || dictionaryPopup.style.display !== 'block') return;
+    if (isDockedDictionary()) return;
+
+    const popupWidth = dictionaryPopup.offsetWidth || 350;
+    const viewportWidth = document.documentElement.clientWidth;
+    const minLeft = window.scrollX + 10;
+    const maxLeft = window.scrollX + viewportWidth - popupWidth - 10;
+    const currentLeft = parseFloat(dictionaryPopup.style.left);
+
+    if (!Number.isFinite(currentLeft)) return;
+    if (currentLeft > maxLeft) {
+        dictionaryPopup.style.left = `${Math.max(minLeft, maxLeft)}px`;
+    } else if (currentLeft < minLeft) {
+        dictionaryPopup.style.left = `${minLeft}px`;
+    }
+});
+
 // Hide dictionary popup
 function hideDictionary() {
     // Desktop: the panel is always visible, so leave it exactly as it is.
     if (isDockedDictionary()) return;
     dictionaryPopup.style.display = 'none';
     currentWordData = null;
+    if (window.IStoriesDictionaryPhoto) {
+        window.IStoriesDictionaryPhoto.hide();
+    }
 }
 
 

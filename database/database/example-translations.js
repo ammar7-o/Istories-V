@@ -73,8 +73,12 @@ window.storiesData = {
                 "Layla bought fresh bread and a bunch of mint, then stopped at a small stall selling second-hand books.",
                 "She returned home carrying a heavy bag and an old book. She said the market is not only a place to buy things, but also a place for stories."
             ],
-            "wordCount": 58
-        }
+            "translations": {
+                "adolescents": "اليافعون / المراهقون",
+
+            },
+                "wordCount": 58
+            }
     ],
     "dictionary": {
         "$schema": "istories-shared-dictionary",

@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v4.9';
+const CACHE_VERSION = 'v5.2';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;
@@ -80,6 +80,7 @@ const SHELL_ASSETS = [
   './main/reader/scripts/main.js',
   './main/reader/scripts/settings.js',
   './main/reader/scripts/thems.js',
+  './main/reader/scripts/dictionary-photo.js',
   './main/vocabulary/main.js',
   './main/vocabulary/style.css',
   './main/flashcard/main.js',
