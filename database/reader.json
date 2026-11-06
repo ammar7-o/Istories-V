@@ -2,6 +2,7 @@
   "files": [
     "/database/database/main.js",
     "/database/database/more/more.js",
-    "/database/database/example-translations.js"
+    "/database/database/example-translations.js",
+      "/database/database/american-english-level1-stories.js"
   ]
 }
