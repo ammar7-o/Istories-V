@@ -130,6 +130,16 @@ function init() {
     // loaded above, otherwise the language list would be empty.
     setupLibraryFilters();
 
+    // Allow links like main/index.html?search=village to open the library
+    // with that search already applied.
+    if (typeof getUrlParameter === 'function' &&
+        typeof searchInput !== 'undefined' && searchInput) {
+        const searchFromUrl = getUrlParameter('search');
+        if (searchFromUrl) {
+            searchInput.value = searchFromUrl;
+            performSearch();
+        }
+    }
 
     // STEP 7: Set up event listeners
     console.log('Step 6: Setting up event listeners...');
@@ -264,30 +274,42 @@ function openStoryInNewPage(storyId) {
             addToReadingHistory(story);
         }
 
-        // Prepare story data for reader page
-        const storyData = {
+        // Keep the complete story — including inline dictionaries,
+        // translations and source metadata — so the reader can open it from
+        // storage alone. Every new click replaces the previous payload.
+        const storyData = Object.assign({}, story, {
             id: story.id,
-            title: story.title,
             lang: story.lang || 'en',
-            level: story.level,
-            levelcefr: story.levelcefr || '',
-            author: story.author || '',
-            content: story.content,
-            isUserStory: story.isUserStory || false,
-            cover: story.cover,
-            coverType: story.coverType,
-            sound: story.sound || null,
-            dictionaries: story.dictionaries || [],
-            translations: story.isUserStory ? (story.translations || {}) : null
-        };
+            isUserStory: story.isUserStory || false
+        });
+
+        if (storyData.translations == null) {
+            if (story.isUserStory) {
+                try {
+                    const userDictionaries = JSON.parse(localStorage.getItem('userDictionaries')) || {};
+                    storyData.translations = userDictionaries[story.id] || {};
+                } catch (error) {
+                    storyData.translations = {};
+                }
+            } else {
+                storyData.translations = null;
+            }
+        }
 
         // Store in localStorage for reader page
         localStorage.setItem('currentReadingStory', JSON.stringify(storyData));
 
-        // Redirect to reader page
-        const storyPage = 'reader/index.html?id=' + storyId +
-            (story.isUserStory ? '&userStory=true' : '');
-        window.location.href = storyPage;
+        // The reader loads this payload; no story id is needed in the URL.
+        // Wait for the write-through storage queue before navigating so the
+        // saved story is committed before the reader page reads it.
+        const openReader = function () {
+            window.location.href = 'reader/index.html';
+        };
+        if (window.IStoriesStorage && typeof window.IStoriesStorage.flush === 'function') {
+            window.IStoriesStorage.flush().then(openReader, openReader);
+        } else {
+            openReader();
+        }
     } else {
         showNotification('Story not found!');
     }

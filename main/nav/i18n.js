@@ -193,6 +193,12 @@
         'library.wordsCount': ['{count} words', '{count} كلمة'],
         'library.minRead': ['{count} min read', '{count} دقيقة قراءة'],
         'library.userStory': ['Your Story', 'قصتك'],
+        'library.sourcesTitle': ['Story sources', 'مصادر القصص'],
+        'library.sourcesHelp': ['Choose a base to load, or add a file URL.', 'اختر قاعدة لتحميلها أو أضف رابط ملف.'],
+        'library.addSourceUrl': ['Add a file URL', 'أضف رابط ملف'],
+        'library.sourceUrlPlaceholder': ['https://example.com/stories.js', 'https://example.com/stories.js'],
+        'library.loadSource': ['Load', 'تحميل'],
+        'library.sourceInvalid': ['Enter a valid http(s) file URL.', 'أدخل رابط ملف صالحًا (http/https).'],
 
         /* My Stories */
         'myStories.title': ['My Stories', 'قصصي'],

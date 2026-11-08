@@ -1102,6 +1102,215 @@ details a:hover {
 
 }
 
+.source-picker-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+}
+
+.source-picker-btn i {
+    font-size: 0.85em;
+}
+
+.source-picker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.source-picker-overlay[hidden] {
+    display: none;
+}
+
+.source-picker-dialog {
+    width: min(520px, 100%);
+    max-height: min(82vh, 640px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+}
+
+.source-picker-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.source-picker-head h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 1.15rem;
+}
+
+.source-picker-close {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1.05rem;
+}
+
+.source-picker-close:hover {
+    background: var(--hover);
+    color: var(--text);
+}
+
+.source-picker-body {
+    padding: 16px 18px 18px;
+    overflow-y: auto;
+}
+
+.source-picker-help {
+    margin: 0 0 12px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.source-picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.source-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    text-align: start;
+}
+
+.source-picker-item:hover {
+    border-color: var(--primary);
+    background: var(--hover);
+}
+
+.source-picker-item.is-active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.14);
+}
+
+.source-picker-item__icon {
+    color: var(--primary);
+    flex: 0 0 auto;
+}
+
+.source-picker-item__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-picker-item__check {
+    opacity: 0;
+    color: var(--primary);
+    flex: 0 0 auto;
+}
+
+.source-picker-item.is-active .source-picker-item__check {
+    opacity: 1;
+}
+
+.source-picker-form {
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+
+.source-picker-form label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.source-picker-row {
+    display: flex;
+    gap: 8px;
+}
+
+.source-picker-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--input-bg);
+    color: var(--text);
+    font: inherit;
+}
+
+.source-picker-row input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.source-picker-submit {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.source-picker-submit:hover {
+    background: var(--primary-dark);
+}
+
+.source-picker-error {
+    margin: 8px 0 0;
+    color: var(--danger);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 480px) {
+    .source-picker-row {
+        flex-direction: column;
+    }
+
+    .source-picker-submit {
+        width: 100%;
+    }
+}
+
 .stories-select {
     background-color: white;
     color: black;

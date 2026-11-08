@@ -132,6 +132,20 @@ function highlightSearchMatch(text, query) {
 
 function performSearch() {
     const query = searchInput.value.trim();
+
+    // Keep the current search in the URL so it can be shared/reloaded.
+    try {
+        const url = new URL(window.location.href);
+        if (query) {
+            url.searchParams.set('search', query);
+        } else {
+            url.searchParams.delete('search');
+        }
+        window.history.replaceState({}, '', url);
+    } catch (error) {
+        console.warn('Could not update search URL:', error);
+    }
+
     const filteredStories = filterStoriesBySearch(query);
     displayFilteredStories(filteredStories, query);
 

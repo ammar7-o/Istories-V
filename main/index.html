@@ -109,7 +109,13 @@
                         <button class="cta-button" onclick="showRecentStories()">
                             <i class="fas fa-history"></i> Recent Stories
                         </button>
-                        <select class="hero-select" name="" id="Select">
+                        <button type="button" class="hero-select source-picker-btn" id="sourcePickerButton"
+                            aria-haspopup="dialog" aria-expanded="false" aria-controls="sourcePickerModal">
+                            <i class="fas fa-database" aria-hidden="true"></i>
+                            <span id="sourcePickerLabel">English-1</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <select class="hero-select" name="" id="Select" hidden tabindex="-1" aria-hidden="true">
                             <option value="../database/database/main.js">English-1</option>
                             <option value="../database/database/more.js">English-2</option>
 
@@ -137,6 +143,38 @@
 
 </div>
     </main>
+
+    <!-- Story source picker -->
+    <div class="source-picker-overlay" id="sourcePickerModal" hidden>
+        <div class="source-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="sourcePickerTitle">
+            <div class="source-picker-head">
+                <h3 id="sourcePickerTitle">
+                    <i class="fas fa-database" aria-hidden="true"></i>
+                    <span data-i18n="library.sourcesTitle">Story sources</span>
+                </h3>
+                <button type="button" class="source-picker-close" id="sourcePickerClose"
+                    data-i18n-aria-label="action.close" aria-label="Close">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="source-picker-body">
+                <p class="source-picker-help" data-i18n="library.sourcesHelp">
+                    Choose a base to load, or add a file URL.
+                </p>
+                <div class="source-picker-list" id="sourcePickerList"></div>
+                <form class="source-picker-form" id="sourcePickerForm">
+                    <label for="sourcePickerUrl" data-i18n="library.addSourceUrl">Add a file URL</label>
+                    <div class="source-picker-row">
+                        <input id="sourcePickerUrl" type="text" inputmode="url" autocomplete="off"
+                            spellcheck="false" dir="ltr" placeholder="https://example.com/stories.js"
+                            data-i18n-placeholder="library.sourceUrlPlaceholder">
+                        <button type="submit" class="source-picker-submit" data-i18n="library.loadSource">Load</button>
+                    </div>
+                    <p class="source-picker-error" id="sourcePickerError" role="alert" hidden></p>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom CSS Modal (add at bottom of settings page) -->
     
@@ -176,6 +214,251 @@
         // Function to load saved stories file
         function loadSavedStoriesFile() {
             return localStorage.getItem('selectedStoriesFile') || 'stories/stories.json'; // Default file
+        }
+
+        // ------------------------------------------------------------------
+        // Story source picker
+        // The original <select> stays in the DOM as the source of truth, but
+        // the hero button opens a popup with the same source list, a field for
+        // adding a file URL, and a clearer mobile layout.
+        // ------------------------------------------------------------------
+        var CUSTOM_STORY_SOURCES_KEY = 'customStorySources';
+
+        function sourcePickerText(key, fallback) {
+            if (window.IStoriesI18n && typeof window.IStoriesI18n.t === 'function') {
+                var value = window.IStoriesI18n.t(key);
+                if (value && value !== key) return value;
+            }
+            return fallback;
+        }
+
+        function getSourceDisplayName(value, label) {
+            if (label && String(label).trim()) return String(label).trim();
+            var raw = String(value || '').trim();
+            if (!raw) return sourcePickerText('library.sourcesTitle', 'Story source');
+            try {
+                var parsed = new URL(raw, window.location.href);
+                var name = decodeURIComponent((parsed.pathname.split('/').pop() || '').trim());
+                if (name) return name;
+                return parsed.hostname || raw;
+            } catch (error) {
+                return raw;
+            }
+        }
+
+        function getCustomStorySources() {
+            try {
+                var stored = JSON.parse(localStorage.getItem(CUSTOM_STORY_SOURCES_KEY)) || [];
+                if (!Array.isArray(stored)) return [];
+                return stored.filter(function (entry) {
+                    return entry && typeof entry.url === 'string' && entry.url.trim();
+                });
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveCustomStorySource(url) {
+            var sources = getCustomStorySources();
+            var exists = sources.some(function (entry) { return entry.url === url; });
+            if (exists) return;
+            sources.push({ url: url, label: getSourceDisplayName(url, '') });
+            try {
+                localStorage.setItem(CUSTOM_STORY_SOURCES_KEY, JSON.stringify(sources));
+            } catch (error) {
+                console.warn('Could not save custom story source:', error);
+            }
+        }
+
+        function appendCustomStorySources(selectElement) {
+            if (!selectElement) return;
+            getCustomStorySources().forEach(function (entry) {
+                var exists = Array.prototype.some.call(selectElement.options, function (option) {
+                    return option.value === entry.url;
+                });
+                if (exists) return;
+                var option = document.createElement('option');
+                option.value = entry.url;
+                option.textContent = getSourceDisplayName(entry.url, entry.label);
+                option.dataset.customSource = 'true';
+                selectElement.appendChild(option);
+            });
+        }
+
+        function sourcePickerError(message) {
+            var errorElement = document.getElementById('sourcePickerError');
+            if (!errorElement) return;
+            errorElement.textContent = message || '';
+            errorElement.hidden = !message;
+        }
+
+        function refreshSourcePicker() {
+            var selectElement = document.getElementById('Select');
+            var listElement = document.getElementById('sourcePickerList');
+            var labelElement = document.getElementById('sourcePickerLabel');
+            if (!selectElement) return;
+
+            var selectedValue = selectElement.value;
+            var selectedOption = null;
+            var options = Array.prototype.slice.call(selectElement.options);
+
+            options.forEach(function (option) {
+                if (option.value === selectedValue) selectedOption = option;
+            });
+
+            if (labelElement) {
+                labelElement.textContent = selectedOption
+                    ? getSourceDisplayName(selectedOption.value, selectedOption.textContent)
+                    : getSourceDisplayName(selectedValue, '');
+            }
+
+            if (!listElement) return;
+            listElement.innerHTML = '';
+
+            options.forEach(function (option) {
+                var item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'source-picker-item' +
+                    (option.value === selectedValue ? ' is-active' : '');
+                item.dataset.sourceValue = option.value;
+                item.innerHTML =
+                    '<span class="source-picker-item__icon"><i class="fas fa-database" aria-hidden="true"></i></span>' +
+                    '<span class="source-picker-item__label"></span>' +
+                    '<i class="fas fa-check source-picker-item__check" aria-hidden="true"></i>';
+                item.querySelector('.source-picker-item__label').textContent =
+                    getSourceDisplayName(option.value, option.textContent);
+                item.addEventListener('click', function () {
+                    chooseStorySource(option.value);
+                });
+                listElement.appendChild(item);
+            });
+        }
+
+        function chooseStorySource(value) {
+            var selectElement = document.getElementById('Select');
+            if (!selectElement) return;
+
+            selectElement.value = value;
+            refreshSourcePicker();
+            closeSourcePicker();
+            selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        var sourcePickerLastFocus = null;
+
+        function openSourcePicker() {
+            var modal = document.getElementById('sourcePickerModal');
+            var button = document.getElementById('sourcePickerButton');
+            if (!modal) return;
+
+            sourcePickerLastFocus = document.activeElement;
+            sourcePickerError('');
+            refreshSourcePicker();
+            modal.hidden = false;
+            if (button) button.setAttribute('aria-expanded', 'true');
+
+            var firstItem = modal.querySelector('.source-picker-item');
+            if (firstItem) {
+                firstItem.focus();
+            } else {
+                var urlInput = document.getElementById('sourcePickerUrl');
+                if (urlInput) urlInput.focus();
+            }
+        }
+
+        function closeSourcePicker() {
+            var modal = document.getElementById('sourcePickerModal');
+            var button = document.getElementById('sourcePickerButton');
+            if (!modal || modal.hidden) return;
+
+            modal.hidden = true;
+            if (button) button.setAttribute('aria-expanded', 'false');
+            if (sourcePickerLastFocus && typeof sourcePickerLastFocus.focus === 'function') {
+                sourcePickerLastFocus.focus();
+            }
+        }
+
+        function addStorySourceFromUrl() {
+            var input = document.getElementById('sourcePickerUrl');
+            var selectElement = document.getElementById('Select');
+            if (!input || !selectElement) return;
+
+            var raw = input.value.trim();
+            if (!raw) {
+                sourcePickerError(sourcePickerText('library.sourceInvalid',
+                    'Enter a valid http(s) file URL.'));
+                input.focus();
+                return;
+            }
+
+            var resolved;
+            try {
+                resolved = new URL(raw, window.location.href);
+            } catch (error) {
+                sourcePickerError(sourcePickerText('library.sourceInvalid',
+                    'Enter a valid http(s) file URL.'));
+                input.focus();
+                return;
+            }
+
+            if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') {
+                sourcePickerError(sourcePickerText('library.sourceInvalid',
+                    'Enter a valid http(s) file URL.'));
+                input.focus();
+                return;
+            }
+
+            sourcePickerError('');
+
+            var existingOption = null;
+            Array.prototype.forEach.call(selectElement.options, function (option) {
+                if (option.value === raw || option.value === resolved.href) {
+                    existingOption = option;
+                }
+            });
+
+            if (existingOption) {
+                input.value = '';
+                chooseStorySource(existingOption.value);
+                return;
+            }
+
+            var option = document.createElement('option');
+            option.value = raw;
+            option.textContent = getSourceDisplayName(raw, '');
+            option.dataset.customSource = 'true';
+            selectElement.appendChild(option);
+            saveCustomStorySource(raw);
+            input.value = '';
+            chooseStorySource(raw);
+        }
+
+        function setupSourcePicker() {
+            var button = document.getElementById('sourcePickerButton');
+            var modal = document.getElementById('sourcePickerModal');
+            var closeButton = document.getElementById('sourcePickerClose');
+            var form = document.getElementById('sourcePickerForm');
+            if (!button || !modal) return;
+
+            button.addEventListener('click', openSourcePicker);
+            if (closeButton) closeButton.addEventListener('click', closeSourcePicker);
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) closeSourcePicker();
+            });
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    addStorySourceFromUrl();
+                });
+            }
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.hidden) closeSourcePicker();
+            });
+        }
+
+        function finalizeSourceOptions() {
+            appendCustomStorySources(document.getElementById('Select'));
+            refreshSourcePicker();
         }
 
         // Function to initialize app after stories are loaded
@@ -291,6 +574,7 @@
 
             // Update URL with the selected file
             updateURLWithStory(selectedFile);
+            refreshSourcePicker();
 
             // Load the stories file
             loadStoriesFile(selectedFile);
@@ -336,12 +620,15 @@
 
                     // Update URL to reflect the actual file being loaded
                     updateURLWithStory(initialFile);
+                    refreshSourcePicker();
 
                     // Load the initial file
                     loadStoriesFile(initialFile);
                     return; // Exit early as we're loading here
                 }
             }
+
+            refreshSourcePicker();
 
             // Load the stories file
             loadStoriesFile(fileToLoad);
@@ -373,6 +660,7 @@
 
             // Update URL and load the file
             updateURLWithStory(filename);
+            refreshSourcePicker();
             loadStoriesFile(filename);
         }
 
@@ -388,6 +676,7 @@
                 })
                 .then(function (entries) {
                     if (!selectElement || !Array.isArray(entries) || entries.length === 0) {
+                        finalizeSourceOptions();
                         done();
                         return;
                     }
@@ -409,15 +698,18 @@
                         opt.textContent = entry.label || raw.split('/').pop();
                         selectElement.appendChild(opt);
                     });
+                    finalizeSourceOptions();
                     done();
                 })
                 .catch(function () {
+                    finalizeSourceOptions();
                     done(); // keep the hardcoded fallback options
                 });
         }
 
         // Load initial stories when page loads (after the select is populated)
         document.addEventListener('DOMContentLoaded', function () {
+            setupSourcePicker();
             populateSelectFromData(loadInitialStories);
         });
 

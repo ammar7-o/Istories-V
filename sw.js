@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v5.3';
+const CACHE_VERSION = 'v5.4';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;

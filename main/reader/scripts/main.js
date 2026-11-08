@@ -67,9 +67,13 @@ function getStoryIdFromUrl() {
     const id = urlParams.get('id');
     const isUserStory = urlParams.get('userStory') === 'true';
     const external = urlParams.get('external') === 'true';
+    const activeId = (currentStory && currentStory.id !== undefined &&
+        currentStory.id !== null && currentStory.id !== '')
+        ? String(currentStory.id)
+        : '1';
 
     return {
-        id: id || '1',
+        id: id || activeId,
         isUserStory: isUserStory,
         external: external
     };
@@ -518,17 +522,48 @@ function withFileDictionary(story, data) {
 
 // Load story from database files by ID or user stories
 async function loadStory() {
+    let storyId = '1';
     try {
         storyTitle.textContent = 'Loading...';
         storyText.innerHTML = '<div class="loading" style="text-align: center; padding: 40px; color: var(--text-light);">Loading story...</div>';
 
         const storyInfo = getStoryIdFromUrl();
-        const storyId = storyInfo.id;
+        storyId = storyInfo.id;
         const isUserStory = storyInfo.isUserStory;
         const fallbackId = 1;
 
         // Clear dictionary before loading new story
         dictionary = {};
+
+        // Story cards open the reader without an id: the clicked story is
+        // stored in currentReadingStory and replaces any previous one.
+        if (!new URLSearchParams(window.location.search).has('id')) {
+            let pendingStory = null;
+            try {
+                pendingStory = JSON.parse(localStorage.getItem('currentReadingStory')) || null;
+            } catch (error) {
+                console.warn('Could not read currentReadingStory:', error);
+            }
+
+            if (pendingStory && Array.isArray(pendingStory.content) &&
+                pendingStory.content.length > 0) {
+                currentStory = pendingStory;
+                await loadDictionary(storyDictionaryPaths(currentStory));
+
+                const pendingStoryId = pendingStory.id != null ? String(pendingStory.id) : '';
+                const hasSavedTranslations = pendingStoryId
+                    ? loadUserTranslations(pendingStoryId)
+                    : false;
+                const hasEmbeddedTranslations = loadEmbeddedTranslations(currentStory);
+
+                if (hasSavedTranslations || hasEmbeddedTranslations) {
+                    setTimeout(addTranslationBadge, 1000);
+                }
+
+                displayStory(currentStory);
+                return;
+            }
+        }
 
         // A source story opened from the Studio without being saved first. The
         // studio stores the full payload in currentReadingStory so the reader
@@ -740,10 +775,16 @@ function saveReadingPosition() {
 function restoreReadingPosition() {
     const savedPosition = JSON.parse(localStorage.getItem('readingPosition'));
     const storyInfo = getStoryIdFromUrl();
+    const activeStoryId = currentStory && currentStory.id != null
+        ? currentStory.id
+        : storyInfo.id;
+    const activeIsUserStory = currentStory
+        ? !!currentStory.isUserStory
+        : storyInfo.isUserStory;
 
     if (savedPosition &&
-        savedPosition.id == storyInfo.id &&
-        savedPosition.isUserStory === storyInfo.isUserStory) {
+        savedPosition.id == activeStoryId &&
+        savedPosition.isUserStory === activeIsUserStory) {
 
         const checkContentLoaded = () => {
             if (document.readyState === 'complete' && storyText.innerHTML && !storyText.innerHTML.includes('loading')) {
