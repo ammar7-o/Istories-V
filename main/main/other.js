@@ -636,9 +636,15 @@ function showRecentStories() {
                     <div class="recent-stories-list">
                         ${history.slice(0, 7).map((story, index) => {
         // Create a click handler that works for all stories
+        // Quote the id: generated ids for source stories without an id are
+        // strings, while built-in story ids are numbers. Single quotes keep
+        // the value safe inside the double-quoted onclick attribute.
+        const historyId = "'" + String(story.id)
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'") + "'";
         const clickHandler = story.isUserStory
-            ? `openUserStoryFromHistory('${story.id}')`
-            : `openStoryInNewPage(${story.id})`;
+            ? `openUserStoryFromHistory(${historyId})`
+            : `openStoryInNewPage(${historyId})`;
 
         return `
                             <div class="recent-story-item" onclick="${clickHandler}; closeRecentStoriesModal();">

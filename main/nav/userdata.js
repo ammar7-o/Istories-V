@@ -424,6 +424,7 @@
             external: options.external === true,
             cover: story.cover || '',
             coverType: story.coverType || 'emoji',
+            description: story.description || '',
             sound: story.sound || null,
             dictionaries: story.dictionaries || [],
             tags: story.tags || [],

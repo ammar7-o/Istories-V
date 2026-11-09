@@ -294,6 +294,7 @@ function shareStoryAsJson(index) {
         author: story.author || '',
         uploadDate: story.uploadDate,
         wordCount: story.wordCount,
+        ...(story.description && { description: story.description }),
         // Include translations if they exist
         ...(Object.keys(translations).length > 0 && { translations: translations }),
         // Include optional fields
@@ -382,6 +383,17 @@ function openEditStoryModal(index) {
         editStoryContent.value = Array.isArray(story.content) ? story.content.join('\n') : story.content || '';
     }
 
+    // Split the single description into editable text and its video.
+    const descriptionParts = splitStoryDescription(story.description || '');
+    const editStoryDescription = document.getElementById('editStoryDescription');
+    if (editStoryDescription) {
+        editStoryDescription.value = descriptionParts.text;
+    }
+    const editStoryVideo = document.getElementById('editStoryVideo');
+    if (editStoryVideo) {
+        editStoryVideo.value = descriptionParts.video;
+    }
+
     // Fill translations
     const editStoryTranslations = document.getElementById('editStoryTranslations');
     if (editStoryTranslations) {
@@ -434,6 +446,8 @@ function handleEditStorySubmit(e) {
     const story = userStories[currentEditIndex];
     const storyId = story.id;
 
+    syncCoverType(document.getElementById('editStoryCover'), document.getElementById('editStoryCoverType'), updateEditCoverLabel);
+
     // Get form values
     const title = document.getElementById('editStoryTitle').value.trim();
     const level = document.getElementById('editStoryLevel').value;
@@ -445,6 +459,8 @@ function handleEditStorySubmit(e) {
     const sound = document.getElementById('editStorySound').value.trim();
     const dictionariesText = document.getElementById('editStoryDictionaries').value.trim();
     const contentText = document.getElementById('editStoryContent').value.trim();
+    const descriptionText = document.getElementById('editStoryDescription').value.trim();
+    const videoUrl = document.getElementById('editStoryVideo').value.trim();
     const translationsText = document.getElementById('editStoryTranslations').value.trim();
 
     // Validation
@@ -466,7 +482,9 @@ function handleEditStorySubmit(e) {
     }
 
     // Update story in userStories array
-    userStories[currentEditIndex] = {
+    const description = buildStoryDescription(descriptionText, videoUrl, title);
+
+    const updatedStory = {
         ...story,
         title,
         lang,
@@ -484,6 +502,14 @@ function handleEditStorySubmit(e) {
         uploadDate: story.uploadDate || new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
+
+    if (description) {
+        updatedStory.description = description;
+    } else {
+        delete updatedStory.description;
+    }
+
+    userStories[currentEditIndex] = updatedStory;
 
     // Update in main stories array
     const storyIndex = stories.findIndex(s => s.id === storyId);
@@ -764,6 +790,7 @@ function openUserStoryInReader(storyId) {
         cover: story.cover,
         coverType: story.coverType,
         author: story.author || '',
+        description: story.description || '',
         translations: translations,
         ...(story.levelcefr && { levelcefr: story.levelcefr }),
         ...(story.sound && { sound: story.sound }),
@@ -959,8 +986,123 @@ function calculateWordCount(content) {
     return content.join(' ').split(/\s+/).length;
 }
 
+/* --------------------------------------------------------------------------
+   Description helpers
+   The Studio keeps one `description` value per story. It can hold normal
+   text plus a YouTube iframe, exactly like the story databases the reader
+   already understands.
+   -------------------------------------------------------------------------- */
+
+const YOUTUBE_IFRAME_ALLOW = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+
+function escapeAttribute(value) {
+    return String(value === null || value === undefined ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// Accept a bare YouTube id or any common watch / short / embed URL.
+function getYouTubeVideoId(value) {
+    const raw = String(value === null || value === undefined ? '' : value).trim();
+    if (!raw) return '';
+    if (/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
+
+    const match = raw.match(
+        /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/)|[?&]v=)([A-Za-z0-9_-]{11})/
+    );
+    return match ? match[1] : '';
+}
+
+function buildYouTubeIframe(video, title) {
+    const videoId = getYouTubeVideoId(video);
+    if (!videoId) return '';
+
+    return '<iframe width="560" height="315" ' +
+        'src="https://www.youtube.com/embed/' + videoId + '?rel=0" ' +
+        'title="' + escapeAttribute(title || 'Lesson video') + '" ' +
+        'frameborder="0" allow="' + YOUTUBE_IFRAME_ALLOW + '" ' +
+        'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+}
+
+// Build the single description parameter from its text and optional video.
+function buildStoryDescription(text, video, title) {
+    const description = String(text === null || text === undefined ? '' : text).trim();
+    const raw = String(video === null || video === undefined ? '' : video).trim();
+    if (!raw) return description;
+
+    // A full iframe pasted into the video field is kept as-is.
+    if (/^<iframe\b/i.test(raw)) {
+        if (description.indexOf(raw) !== -1) return description;
+        return description ? description + ' ' + raw : raw;
+    }
+
+    const iframe = buildYouTubeIframe(raw, title);
+    if (!iframe) return description;
+
+    const videoId = getYouTubeVideoId(raw);
+    if (videoId && description.indexOf('/embed/' + videoId) !== -1) {
+        return description;
+    }
+    return description ? description + ' ' + iframe : iframe;
+}
+
+// Split an existing description into editable text and the first video/iframe.
+function splitStoryDescription(value) {
+    const raw = String(value === null || value === undefined ? '' : value);
+    const match = raw.match(/<iframe\b[^>]*\/?>(?:[\s\S]*?<\/iframe>)?/i);
+    if (!match) return { text: raw.trim(), video: '' };
+
+    const srcMatch = match[0].match(/\bsrc\s*=\s*["']([^"']+)["']/i);
+    const videoId = srcMatch ? getYouTubeVideoId(srcMatch[1]) : '';
+    const video = videoId ? 'https://www.youtube.com/watch?v=' + videoId : match[0];
+    const text = (raw.slice(0, match.index) + ' ' + raw.slice(match.index + match[0].length))
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+    return { text: text, video: video };
+}
+
+/* Cover helpers: keep the cover type in sync with what the user types. */
+
+function getYouTubeThumbnail(value) {
+    const videoId = getYouTubeVideoId(value);
+    return videoId ? 'https://i.ytimg.com/vi/' + videoId + '/hqdefault.jpg' : '';
+}
+
+function detectCoverType(value) {
+    const raw = String(value === null || value === undefined ? '' : value).trim();
+    if (!raw) return '';
+    if (/^(https?:\/\/|\/\/|data:image\/|blob:|\/|\.{1,2}\/)/i.test(raw) ||
+        /\.(png|jpe?g|gif|webp|avif|svg|bmp)([?#].*)?$/i.test(raw)) return 'image';
+    if (/(?:^|\s)fa(?:s|r|b|-(?:solid|regular|brands))?\s+fa-[a-z0-9-]+/i.test(raw) ||
+        /^fa-[a-z0-9-]+$/i.test(raw)) return 'icon';
+    return 'emoji';
+}
+
+function syncCoverType(coverInput, coverTypeSelect, afterChange) {
+    if (!coverInput || !coverTypeSelect) return;
+
+    let raw = coverInput.value.trim();
+    if (/^https?:\/\/.*(?:youtube\.com|youtu\.be)\//i.test(raw)) {
+        const thumbnail = getYouTubeThumbnail(raw);
+        if (thumbnail) {
+            coverInput.value = thumbnail;
+            raw = thumbnail;
+        }
+    }
+
+    const detected = detectCoverType(raw);
+    if (detected) coverTypeSelect.value = detected;
+    if (typeof afterChange === 'function') afterChange();
+}
+
 function handleFormSubmit(e) {
     e.preventDefault();
+
+    syncCoverType(document.getElementById('storyCover'), document.getElementById('storyCoverType'));
 
     const title = document.getElementById('storyTitle').value.trim();
     const level = document.getElementById('storyLevel').value;
@@ -971,6 +1113,8 @@ function handleFormSubmit(e) {
     const sound = document.getElementById('storySound').value.trim();
     const dictionariesText = document.getElementById('storyDictionaries').value.trim();
     const contentText = document.getElementById('storyContent').value.trim();
+    const descriptionText = document.getElementById('storyDescription').value.trim();
+    const videoUrl = document.getElementById('storyVideo').value.trim();
     const author = document.getElementById('storyAuthor').value.trim();
     const translationsText = document.getElementById('storyTranslations').value.trim();
 
@@ -1006,6 +1150,9 @@ function handleFormSubmit(e) {
     if (levelcefr) storyData.levelcefr = levelcefr;
     if (sound) storyData.sound = sound;
     if (dictionaries && dictionaries.length > 0) storyData.dictionaries = dictionaries;
+
+    const description = buildStoryDescription(descriptionText, videoUrl, title);
+    if (description) storyData.description = description;
 
     // Add translations if provided
     if (translationsText) {
@@ -1044,6 +1191,8 @@ function showStoryPreview() {
     const sound = document.getElementById('storySound').value.trim();
     const dictionariesText = document.getElementById('storyDictionaries').value.trim();
     const contentText = document.getElementById('storyContent').value.trim();
+    const descriptionText = document.getElementById('storyDescription').value.trim();
+    const videoUrl = document.getElementById('storyVideo').value.trim();
     const author = document.getElementById('storyAuthor').value.trim();
     const translationsText = document.getElementById('storyTranslations').value.trim();
 
@@ -1062,6 +1211,18 @@ function showStoryPreview() {
     if (previewLang) {
         previewLang.innerHTML = `<i class="fas fa-globe"></i> ${langDisplayName(lang)}`;
         previewLang.className = 'preview-lang story-lang-badge' + (isRtlLang(lang) ? ' rtl' : '');
+    }
+
+    // Description text (the iframe itself lives in the saved description value).
+    const previewDescription = document.getElementById('previewDescription');
+    if (previewDescription) {
+        const description = buildStoryDescription(descriptionText, videoUrl, title);
+        const descriptionParts = splitStoryDescription(description);
+        previewDescription.textContent = descriptionParts.text ||
+            (description ? 'Description includes a lesson video.' : 'No description for this story yet.');
+        if (typeof applyTextDirection === 'function') {
+            applyTextDirection(previewDescription, descriptionParts.text, lang);
+        }
     }
 
     // Update CEFR level if provided
@@ -1198,6 +1359,7 @@ function downloadStoryTemplate() {
                     "The young hero set out on a journey filled with challenges and discoveries.",
                     "Each step brought new lessons and unforgettable experiences."
                 ],
+                "description": "An optional description shown in the reader's Description tab. You can also include a YouTube iframe here.",
                 "author": "Your Name",
                 "translations": {
                     "village": { "translation": "قرية" },
@@ -1415,6 +1577,7 @@ function exportUserStories() {
 
             // Add optional fields ONLY if they exist in the original story
             if (story.levelcefr) formattedStory.levelcefr = story.levelcefr;
+            if (story.description) formattedStory.description = story.description;
             if (story.sound) formattedStory.sound = story.sound;
             if (story.dictionaries) formattedStory.dictionaries = story.dictionaries;
             if (story.audio !== undefined) formattedStory.audio = story.audio;
@@ -1652,6 +1815,22 @@ function setupAddStoriesListeners() {
 
     if (editStoryCoverType) {
         editStoryCoverType.addEventListener('change', updateEditCoverLabel);
+    }
+
+    // Keep cover type in sync when a URL (including a YouTube link) is typed.
+    const storyCoverInput = document.getElementById('storyCover');
+    const storyCoverTypeSelect = document.getElementById('storyCoverType');
+    if (storyCoverInput && storyCoverTypeSelect) {
+        const syncCover = () => syncCoverType(storyCoverInput, storyCoverTypeSelect);
+        storyCoverInput.addEventListener('change', syncCover);
+        storyCoverInput.addEventListener('blur', syncCover);
+    }
+
+    const editStoryCoverInput = document.getElementById('editStoryCover');
+    if (editStoryCoverInput && editStoryCoverType) {
+        const syncEditCover = () => syncCoverType(editStoryCoverInput, editStoryCoverType, updateEditCoverLabel);
+        editStoryCoverInput.addEventListener('change', syncEditCover);
+        editStoryCoverInput.addEventListener('blur', syncEditCover);
     }
 
     // Export button functionality

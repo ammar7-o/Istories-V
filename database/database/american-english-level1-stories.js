@@ -1,6 +1,7 @@
 // The American English — "Learn from Zero", Level 1: 24 lessons converted into stories.
 // Each story: "content" (English sentences, key words marked), "content-tr" (Arabic translation per paragraph),
-// "translations" (lesson vocabulary) — plus an embedded dictionary of all lesson words.
+// "translations" (lesson vocabulary), "description" (reader Description tab text + the lesson
+// YouTube iframe) and a YouTube thumbnail cover — plus an embedded dictionary of all lesson words.
 
 window.storiesData = {
   "stories": [
@@ -8,10 +9,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 1: Adjectives",
+      "description": "Learn common adjectives for describing people, animals and things, including opposites such as angry and calm, beautiful and ugly, brave and cowardly, careful and careless. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/77IK9T45kiU?rel=0\" title=\"Lesson 1: Adjectives\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🙂",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/77IK9T45kiU/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -87,10 +89,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 2: Jobs, Part 1",
+      "description": "Learn the English names of common jobs and occupations, and use them in simple sentences about work. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/AZZCsweJaiw?rel=0\" title=\"Lesson 2: Jobs, Part 1\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "👷",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/AZZCsweJaiw/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -151,10 +154,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 3: Family and Fruits",
+      "description": "Build vocabulary for family members and everyday fruits while practising simple sentences about home and food. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/S_deJPyvtfo?rel=0\" title=\"Lesson 3: Family and Fruits\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🍓",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/S_deJPyvtfo/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -215,10 +219,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 4: The House and the Classroom",
+      "description": "Learn words for rooms, furniture and classroom objects, and describe where everyday things are. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/m8VUaW1b_z8?rel=0\" title=\"Lesson 4: The House and the Classroom\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🏠",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/m8VUaW1b_z8/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -280,10 +285,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 5: Jobs, Part 2",
+      "description": "Continue learning job and occupation vocabulary with more examples and practical work sentences. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/gBhK2m_CdQc?rel=0\" title=\"Lesson 5: Jobs, Part 2\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🧑‍🍳",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/gBhK2m_CdQc/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -336,10 +342,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 6: Animals",
+      "description": "Learn the names of common animals and simple adjectives you can use to describe them. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/Th9S81mblxo?rel=0\" title=\"Lesson 6: Animals\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🐘",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/Th9S81mblxo/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -415,10 +422,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 7: Opposite Adjectives",
+      "description": "Practise pairs of opposite adjectives and learn how to compare people, places and things. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/gZBAXCRrl_U?rel=0\" title=\"Lesson 7: Opposite Adjectives\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "↔️",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/gZBAXCRrl_U/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -499,10 +507,11 @@ window.storiesData = {
     {
       "lang": "en",
       "title": "Lesson 8: Vegetables",
+      "description": "Learn vegetable vocabulary and use the new words in sentences about shopping, cooking and eating. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/63Riw1SEDPk?rel=0\" title=\"Lesson 8: Vegetables\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🥕",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/63Riw1SEDPk/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -571,10 +580,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 9: Numbers",
+      "description": "Learn English numbers, counting and simple questions and answers with numbers. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/pI3CrFMsduY?rel=0\" title=\"Lesson 9: Numbers\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "🔢",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/pI3CrFMsduY/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -640,10 +650,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 10: Time",
+      "description": "Learn how to tell the time, ask what time it is and talk about daily routines. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/q_bAo_n0pDU?rel=0\" title=\"Lesson 10: Time\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A1",
-      "cover": "⏰",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/q_bAo_n0pDU/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -703,10 +714,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 11: Dates",
+      "description": "Learn the days of the week, months, years and how to say and ask about dates. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/HIz-rb0lMAY?rel=0\" title=\"Lesson 11: Dates\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "📅",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/HIz-rb0lMAY/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -748,10 +760,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 12: Sports",
+      "description": "Learn sports and activity vocabulary and talk about what you play, watch and enjoy. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/QQ66VKPsAag?rel=0\" title=\"Lesson 12: Sports\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "⚽",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/QQ66VKPsAag/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -810,10 +823,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 13: Parts of the Body",
+      "description": "Learn the names of body parts and useful phrases for describing health and everyday actions. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/LBdAxKWOz1c?rel=0\" title=\"Lesson 13: Parts of the Body\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "🦵",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/LBdAxKWOz1c/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -877,10 +891,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 14: The Kitchen",
+      "description": "Learn kitchen objects, cooking verbs and words for preparing and serving food. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/pqGg9MiP2ic?rel=0\" title=\"Lesson 14: The Kitchen\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "🍳",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/pqGg9MiP2ic/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -939,10 +954,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 15: Transportation",
+      "description": "Learn vehicle names and ways of travelling, with sentences about getting around town. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/vLUn6_FMw3w?rel=0\" title=\"Lesson 15: Transportation\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "🚌",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/vLUn6_FMw3w/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1025,10 +1041,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 16: Weather",
+      "description": "Learn weather words and how to talk about the seasons, temperature and daily conditions. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/NDuK8lpN-mI?rel=0\" title=\"Lesson 16: Weather\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "⛅",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/NDuK8lpN-mI/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1075,10 +1092,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 17: The Restaurant",
+      "description": "Learn restaurant vocabulary, ordering food and polite requests for eating out. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/qQAgJxSSnbw?rel=0\" title=\"Lesson 17: The Restaurant\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "🍽️",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/qQAgJxSSnbw/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1157,10 +1175,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 18: The People Around You",
+      "description": "Learn words for people, relationships and describing the people in your daily life. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/l51hYjeR-K8?rel=0\" title=\"Lesson 18: The People Around You\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "beginner",
       "levelcefr": "A2",
-      "cover": "🧑‍🤝‍🧑",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/l51hYjeR-K8/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1216,10 +1235,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 19: Geography",
+      "description": "Learn countries, cities, directions and basic geography vocabulary for talking about places. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/80tPPnffuMM?rel=0\" title=\"Lesson 19: Geography\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "intermediate",
       "levelcefr": "B1",
-      "cover": "🌍",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/80tPPnffuMM/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1288,10 +1308,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 20: Feelings",
+      "description": "Learn emotion and feeling words and use them in sentences about how people feel. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/86GViC7Hi44?rel=0\" title=\"Lesson 20: Feelings\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "intermediate",
       "levelcefr": "B1",
-      "cover": "😟",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/86GViC7Hi44/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1381,10 +1402,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 21: Trade",
+      "description": "Learn basic trade, buying and selling vocabulary for everyday business situations. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/v4QDGr_18v4?rel=0\" title=\"Lesson 21: Trade\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "intermediate",
       "levelcefr": "B1",
-      "cover": "🛒",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/v4QDGr_18v4/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1447,10 +1469,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 22: Money",
+      "description": "Learn money, price and payment vocabulary and talk about buying things and paying. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/HwKM7TBWHe0?rel=0\" title=\"Lesson 22: Money\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "intermediate",
       "levelcefr": "B1",
-      "cover": "💰",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/HwKM7TBWHe0/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1533,10 +1556,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 23: Health and Illness",
+      "description": "Learn health and illness vocabulary, describe symptoms and talk about seeing a doctor. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/HF1XhS5Tsok?rel=0\" title=\"Lesson 23: Health and Illness\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "intermediate",
       "levelcefr": "B1",
-      "cover": "🩺",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/HF1XhS5Tsok/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",
@@ -1600,10 +1624,11 @@ window.storiesData = {
 
       "lang": "en",
       "title": "Lesson 24: Negative Words",
+      "description": "Learn common negative words and how to use them correctly in everyday English sentences. <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/nRA4y5Xe-eY?rel=0\" title=\"Lesson 24: Negative Words\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
       "level": "intermediate",
       "levelcefr": "B1",
-      "cover": "⚠️",
-      "coverType": "emoji",
+      "cover": "https://i.ytimg.com/vi/nRA4y5Xe-eY/hqdefault.jpg",
+      "coverType": "image",
       "author": "The American English",
       "tags": [
         "course",

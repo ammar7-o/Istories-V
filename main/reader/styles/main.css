@@ -1293,6 +1293,86 @@ html[dir="ltr"] .dictionary-page {
     border-bottom-color: var(--primary);
 }
 
+/* Description tab */
+.description-panel {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 26px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.description-head {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.description-title {
+    margin: 0 0 8px;
+    color: var(--primary);
+    font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+    line-height: 1.4;
+}
+
+.description-meta {
+    color: var(--text-light);
+    font-size: 0.92rem;
+}
+
+.description-body {
+    color: var(--text);
+    font-size: 1.05rem;
+    line-height: 1.9;
+}
+
+.description-body p + p {
+    margin-top: 0.9em;
+}
+
+.description-empty {
+    color: var(--text-light);
+}
+
+.description-body iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    margin-top: 18px;
+    border: 0;
+    border-radius: var(--radius);
+    background: #000;
+    box-shadow: var(--shadow);
+}
+
+.description-playlist-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.description-playlist-link:hover {
+    text-decoration: underline;
+}
+
+.description-playlist-link i {
+    color: #ff0000;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 600px) {
+    .description-panel {
+        padding: 18px;
+    }
+}
+
 /* صور القصة الأساسية */
 .paragraph img {
     max-width: 100%;

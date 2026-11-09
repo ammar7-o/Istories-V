@@ -30,6 +30,9 @@ let translationSettings = {
 // DOM elements
 const storyTitle = document.getElementById('storyTitle');
 const storyText = document.getElementById('storyText');
+const descriptionTitle = document.getElementById('descriptionTitle');
+const descriptionMeta = document.getElementById('descriptionMeta');
+const descriptionText = document.getElementById('descriptionText');
 const dictionaryPopup = document.getElementById('dictionaryPopup');
 const themeToggle = document.getElementById('themeToggle');
 const fontSmaller = document.getElementById('fontSmaller');
@@ -855,6 +858,116 @@ function resolveStoryDirection(story) {
     return (typeof isRtlLang === 'function' && isRtlLang(story && story.lang)) ? 'rtl' : 'ltr';
 }
 
+// Translate a reader string, falling back to English when i18n is unavailable.
+function readerText(key, vars, fallback) {
+    if (window.IStoriesI18n && typeof window.IStoriesI18n.t === 'function') {
+        const value = window.IStoriesI18n.t(key, vars);
+        if (value && value !== key) return value;
+    }
+    return fallback;
+}
+
+// Read the single description field. It contains the description text and,
+// for lessons that have one, the YouTube iframe markup.
+function getStoryDescription(story) {
+    const text = story && (story.description || story['description-en']);
+    return { text: text || '', lang: (story && story.lang) || 'en' };
+}
+
+// Render description text as paragraphs; raw HTML is never injected as-is.
+function appendDescriptionText(container, text) {
+    String(text || '').split(/\n{2,}/).forEach(part => {
+        const value = part.trim();
+        if (!value) return;
+        const paragraph = document.createElement('p');
+        paragraph.textContent = value;
+        container.appendChild(paragraph);
+    });
+}
+
+// Turn an <iframe> found inside the description into a responsive embed.
+function appendDescriptionIframe(container, tag, fallbackTitle) {
+    const srcMatch = tag.match(/\bsrc\s*=\s*["']([^"']+)["']/i);
+    const titleMatch = tag.match(/\btitle\s*=\s*["']([^"']*)["']/i);
+    const videoMatch = srcMatch && srcMatch[1].match(
+        /(?:youtube(?:-nocookie)?\.com\/embed\/|youtu\.be\/|[?&]v=)([A-Za-z0-9_-]{11})/
+    );
+    if (!videoMatch) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + videoMatch[1] + '?rel=0';
+    iframe.title = (titleMatch && titleMatch[1]) || fallbackTitle ||
+        readerText('reader.lessonVideo', null, 'Lesson video');
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.setAttribute('allowfullscreen', '');
+    container.appendChild(iframe);
+}
+
+// Split the description around any iframe markup it contains.
+function renderDescriptionContent(container, raw, fallbackTitle) {
+    const iframePattern = /<iframe\b[^>]*\/?>(?:[\s\S]*?<\/iframe>)?/gi;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = iframePattern.exec(raw))) {
+        appendDescriptionText(container, raw.slice(lastIndex, match.index));
+        appendDescriptionIframe(container, match[0], fallbackTitle);
+        lastIndex = match.index + match[0].length;
+    }
+
+    appendDescriptionText(container, raw.slice(lastIndex));
+}
+
+function renderDescription(story) {
+    if (!descriptionTitle || !descriptionText) return;
+
+    story = story || currentStory;
+    if (!story) {
+        descriptionTitle.textContent = readerText('common.description', null, 'Description');
+        descriptionMeta.textContent = '';
+        descriptionText.innerHTML = '';
+        return;
+    }
+
+    const storyLang = (story.lang || 'en').toLowerCase();
+    const storyDir = resolveStoryDirection(story);
+
+    descriptionTitle.textContent = story.title || readerText('common.description', null, 'Description');
+    descriptionTitle.setAttribute('dir', storyDir);
+    descriptionTitle.setAttribute('lang', storyLang);
+
+    const meta = [];
+    if (story.author) meta.push(story.author);
+    if (story.level) {
+        const level = String(story.level);
+        meta.push(level.charAt(0).toUpperCase() + level.slice(1));
+    }
+    if (story.levelcefr) meta.push(String(story.levelcefr).toUpperCase());
+    descriptionMeta.textContent = meta.join(' · ');
+    descriptionMeta.setAttribute('dir', storyDir);
+
+    const description = getStoryDescription(story);
+    const plainText = description.text.replace(/<[^>]*>/g, ' ');
+    const descriptionDir = typeof detectTextDirection === 'function'
+        ? detectTextDirection(plainText, description.lang, 'ltr')
+        : (description.lang === 'ar' ? 'rtl' : 'ltr');
+
+    descriptionText.innerHTML = '';
+    descriptionText.setAttribute('dir', descriptionDir);
+    descriptionText.setAttribute('lang', description.lang);
+
+    if (description.text && description.text.trim()) {
+        renderDescriptionContent(descriptionText, description.text, story.title);
+    } else {
+        const paragraph = document.createElement('p');
+        paragraph.className = 'description-empty';
+        paragraph.textContent = readerText('reader.noDescription', null,
+            'No description available for this story.');
+        descriptionText.appendChild(paragraph);
+    }
+}
+
 function displayStory(story) {
     storyTitle.textContent = story.title;
     currentStory = story; // Make sure currentStory is set
@@ -957,6 +1070,10 @@ function displayStory(story) {
 
     setupWordInteractions();
     updateReadingProgress();
+
+    // Populate the Description tab from the story payload (description,
+    // video id and metadata), so it works for every loading path.
+    renderDescription(story);
 
     // ADD THIS LINE - Add translation buttons if enabled
     if (localStorage.getItem('paragraphTranslationEnabled') === 'true') {
@@ -2111,6 +2228,10 @@ function switchPage(page) {
         renderVocabulary();
         updateVocabularyStats();
     }
+
+    if (page === 'description') {
+        renderDescription(currentStory);
+    }
 }
 
 // User stats variables
@@ -2452,5 +2573,8 @@ async function init() {
         showNotification('Failed to initialize application', 'error');
     }
 }
-document.addEventListener('ist-language-change', localizeDictionaryPlaceholders);
+document.addEventListener('ist-language-change', function () {
+    localizeDictionaryPlaceholders();
+    if (currentStory) renderDescription(currentStory);
+});
 document.addEventListener('DOMContentLoaded', init);

@@ -17,6 +17,7 @@
     'use strict';
 
     var MAX_PDF_PAGES = 10;
+    var CUSTOM_SOURCES_KEY = 'customStorySources';
     var ui = window.IStoriesUserData;
 
     var sourceState = {
@@ -108,6 +109,56 @@
         });
     }
 
+    /* Custom database URLs are shared with the library source picker, which
+       stores them under the same `customStorySources` key. */
+
+    function sourceName(url) {
+        try {
+            var parsed = new URL(url, document.baseURI);
+            var name = decodeURIComponent((parsed.pathname.split('/').pop() || '').trim());
+            return name || parsed.hostname || String(url);
+        } catch (error) {
+            return String(url || '').split('/').pop();
+        }
+    }
+
+    function customSourceEntries() {
+        try {
+            var stored = JSON.parse(localStorage.getItem(CUSTOM_SOURCES_KEY)) || [];
+            if (!Array.isArray(stored)) return [];
+            return stored.filter(function (entry) {
+                return entry && typeof entry.url === 'string' && entry.url.trim();
+            });
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveCustomSource(url, label) {
+        var sources = customSourceEntries();
+        var exists = sources.some(function (entry) { return entry.url === url; });
+        if (exists) return;
+        sources.push({ url: url, label: label || sourceName(url) });
+        try {
+            localStorage.setItem(CUSTOM_SOURCES_KEY, JSON.stringify(sources));
+        } catch (error) {
+            console.warn('[Studio] could not save custom source:', error);
+        }
+    }
+
+    function addSourceOption(select, url, label) {
+        if (!select) return;
+        var exists = Array.prototype.some.call(select.options, function (option) {
+            return option.value === url;
+        });
+        if (exists) return;
+        var option = document.createElement('option');
+        option.value = url;
+        option.textContent = label || sourceName(url);
+        option.dataset.customSource = 'true';
+        select.appendChild(option);
+    }
+
     function setStatus(id, message, tone) {
         var el = $(id);
         if (!el) return;
@@ -192,6 +243,19 @@
         // are missing or malformed.
         add({ url: new URL('../../database/database/main.js', document.baseURI).href, label: 'Base stories' });
         add({ url: new URL('../../database/database/more/more.js', document.baseURI).href, label: 'A1 / More stories' });
+
+        // Database URLs saved by this page or by the library source picker.
+        // Relative paths saved by the library are resolved against the library
+        // page (main/index.html), which is one level above this folder.
+        customSourceEntries().forEach(function (entry) {
+            var resolved = entry.url;
+            try {
+                resolved = new URL(entry.url, new URL('../index.html', document.baseURI)).href;
+            } catch (error) {
+                /* keep the raw value */
+            }
+            add({ url: resolved, label: entry.label || sourceName(entry.url) });
+        });
 
         select.innerHTML = '';
         Array.from(entries.entries()).forEach(function (pair) {
@@ -1116,6 +1180,53 @@
                 }
                 var label = select.options[select.selectedIndex] && select.options[select.selectedIndex].textContent;
                 openSourceUrl(url, label);
+            });
+        }
+
+        var urlBtn = $('loadSourceUrlBtn');
+        var urlInput = $('sourceUrlInput');
+
+        function openDatabaseFromUrl() {
+            var raw = urlInput && urlInput.value.trim();
+            if (!raw) {
+                setStatus('sourceStatus', 'Enter a database URL first.', 'error');
+                if (urlInput) urlInput.focus();
+                return;
+            }
+
+            var resolved;
+            try {
+                resolved = new URL(raw, document.baseURI);
+            } catch (error) {
+                setStatus('sourceStatus', 'Enter a valid database URL.', 'error');
+                if (urlInput) urlInput.focus();
+                return;
+            }
+
+            if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') {
+                setStatus('sourceStatus', 'Enter a valid http(s) database URL.', 'error');
+                if (urlInput) urlInput.focus();
+                return;
+            }
+
+            var label = sourceName(resolved.href);
+            saveCustomSource(resolved.href, label);
+            addSourceOption(select, resolved.href, label);
+            if (select) select.value = resolved.href;
+            if (urlInput) urlInput.value = '';
+            openSourceUrl(resolved.href, label);
+        }
+
+        if (urlBtn) {
+            urlBtn.addEventListener('click', openDatabaseFromUrl);
+        }
+
+        if (urlInput) {
+            urlInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    openDatabaseFromUrl();
+                }
             });
         }
 

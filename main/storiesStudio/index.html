@@ -116,15 +116,24 @@
                                 </p>
 
                                 <div class="import-field">
-                                    <label for="sourceDbSelect">Built-in source</label>
+                                    <label for="sourceDbSelect">Built-in or saved source</label>
                                     <select id="sourceDbSelect">
                                         <option value="">Loading sources…</option>
                                     </select>
                                 </div>
 
+                                <div class="import-field">
+                                    <label for="sourceUrlInput">Or open a database URL</label>
+                                    <input type="text" id="sourceUrlInput" inputmode="url" autocomplete="off"
+                                        placeholder="https://example.com/stories.js">
+                                </div>
+
                                 <div class="import-actions">
                                     <button type="button" class="btn-primary" id="loadSourceDbBtn">
                                         <i class="fas fa-folder-open"></i> Browse stories
+                                    </button>
+                                    <button type="button" class="btn-secondary" id="loadSourceUrlBtn">
+                                        <i class="fas fa-link"></i> Open URL
                                     </button>
                                     <button type="button" class="btn-secondary" id="sourceLocalBtn">
                                         <i class="fas fa-file-code"></i> Open local file
@@ -403,6 +412,33 @@ Enter one dictionary path per line"></textarea>
                                     </div>
 
                                     <div class="form-group">
+                                        <label for="storyDescription">
+                                            <i class="fas fa-file-lines"></i> Description (Optional)
+                                            <span class="help-icon"
+                                                title="Shown in the reader's Description tab. You can paste an iframe here too.">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <textarea id="storyDescription" rows="4"
+                                            placeholder="Write a short description for the reader's Description tab…"></textarea>
+                                        <small>The reader shows this text in the Description tab. An
+                                            &lt;iframe&gt; pasted here is displayed as a video.</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="storyVideo">
+                                            <i class="fab fa-youtube"></i> YouTube Video URL (Optional)
+                                            <span class="help-icon"
+                                                title="The video is saved inside the same description parameter as a YouTube iframe.">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </label>
+                                        <input type="text" id="storyVideo"
+                                            placeholder="e.g., https://www.youtube.com/watch?v=…">
+                                        <small>Stored inside the description as a YouTube iframe.</small>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label for="storyAuthor">
                                             <i class="fas fa-user"></i> Author Name (Optional)
                                         </label>
@@ -546,6 +582,7 @@ Enter one dictionary path per line"></textarea>
     "levelcefr": "A2",                               // #A1 #A2 #B1 #B2 #C1 #C2
     "cover": "🏝️",                                   // #emoji-char | #image-path-or-URL | #fa-class-like-fas-fa-book
     "coverType": "emoji",                            // #emoji #image #icon
+    "description": "Shown in the reader's Description tab. You can include a YouTube iframe here too.", // #optional #plain-text #youtube-iframe
     "content": [
         "Once upon a time, in a small village nestled between mountains...",   // #one-string-per-paragraph
         "The young hero set out on a journey filled with challenges.",         // you can use <span class="mark"></span> as marked word
@@ -814,6 +851,25 @@ Enter one dictionary path per line"></textarea>
                                             placeholder="Type your story here. Each paragraph should be on a new line."
                                             required></textarea>
                                         <small>Each line will be treated as a separate paragraph</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryDescription">
+                                            <i class="fas fa-file-lines"></i> Description (Optional)
+                                        </label>
+                                        <textarea id="editStoryDescription" rows="4"
+                                            placeholder="Write a short description for the reader's Description tab…"></textarea>
+                                        <small>The reader shows this text in the Description tab. An
+                                            &lt;iframe&gt; pasted here is displayed as a video.</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editStoryVideo">
+                                            <i class="fab fa-youtube"></i> YouTube Video URL (Optional)
+                                        </label>
+                                        <input type="text" id="editStoryVideo"
+                                            placeholder="e.g., https://www.youtube.com/watch?v=…">
+                                        <small>Stored inside the description as a YouTube iframe.</small>
                                     </div>
 
                                     <div class="form-group">

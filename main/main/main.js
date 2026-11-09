@@ -91,6 +91,15 @@ function init() {
         userStories = [];
     }
 
+    // Some story databases (e.g. the American English lessons) do not give
+    // their stories an id. Without one, every click would resolve to the first
+    // story, so give each story a stable local id.
+    stories.forEach(function (story) {
+        if (story && (story.id === undefined || story.id === null || story.id === '')) {
+            story.id = makeStoryStorageId(story);
+        }
+    });
+
     // STEP 1: Apply saved theme FIRST
     console.log('Step 1: Applying theme...');
     applyTheme();
@@ -225,7 +234,7 @@ function setupEventListeners() {
                 var randomStory = stories[randomIndex];
 
                 // Open the random story
-                openStoryInNewPage(randomStory.id);
+                openStoryInNewPage(randomStory);
             }
         });
     }
@@ -253,22 +262,43 @@ function handleTouchEnd() {
 function Refresh() {
     window.location.reload()
 }
-// Open story in a new page WITH story title
-function openStoryInNewPage(storyId) {
-    // Find the story in all available sources
-    let story = stories.find(s => s.id == storyId);
+
+// Build a stable id for source stories that do not provide one.
+function makeStoryStorageId(story) {
+    const raw = [
+        (story && story.lang) || 'en',
+        (story && story.title) || '',
+        Array.isArray(story && story.content) ? story.content.join('\n') : ''
+    ].join('|');
+
+    let hash = 5381;
+    for (let index = 0; index < raw.length; index++) {
+        hash = ((hash << 5) + hash) ^ raw.charCodeAt(index);
+    }
+    return 'local_' + (hash >>> 0).toString(36);
+}
+
+// Open story in a new page WITH story title. Accepts the story object (preferred,
+// so stories without an id still open correctly) or an id for older callers.
+function openStoryInNewPage(storyOrId) {
+    const isStoryObject = storyOrId && typeof storyOrId === 'object';
+    let story = isStoryObject ? storyOrId : stories.find(s => s.id == storyOrId);
 
     // If not found in main stories, check user stories
-    if (!story) {
+    if (!story && !isStoryObject) {
         const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-        story = userStories.find(s => s.id == storyId);
+        story = userStories.find(s => s.id == storyOrId);
 
-        if (story && !stories.some(s => s.id == storyId)) {
+        if (story && !stories.some(s => s.id == storyOrId)) {
             stories.push(story); // Add to stories array for this session
         }
     }
 
     if (story) {
+        if (story.id === undefined || story.id === null || story.id === '') {
+            story.id = makeStoryStorageId(story);
+        }
+
         // Add to reading history
         if (typeof addToReadingHistory === 'function') {
             addToReadingHistory(story);
@@ -480,7 +510,9 @@ function createStoryCard(story, options = {}) {
     }
 
     storyCard.addEventListener('click', () => {
-        openStoryInNewPage(story.id);
+        // Pass the story itself: databases without ids must still open the
+        // exact card the user clicked.
+        openStoryInNewPage(story);
     });
 
     return storyCard;
