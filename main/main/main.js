@@ -12,7 +12,6 @@ if (window.IStoriesStorage) IStoriesStorage.whenReady(function () {
 let fontSize = 1.2; // rem
 let lineHeight = 1.8;
 let stories = []; // Will be loaded from external file
-let showUserStories = localStorage.getItem('showUserStories') !== 'false'; // Default: true
 // Store current word for saving
 let currentWordData = null;
 
@@ -74,22 +73,8 @@ function init() {
         console.log('Using fallback stories');
     }
 
-    // Load user stories from localStorage
-    try {
-        const storedUserStories = JSON.parse(localStorage.getItem('userStories')) || [];
-        userStories = storedUserStories;
-
-        // Add user stories to main stories array
-        userStories.forEach(userStory => {
-            if (!stories.some(s => s.id === userStory.id)) {
-                stories.push(userStory);
-            }
-        });
-        console.log('Loaded user stories:', userStories.length);
-    } catch (error) {
-        console.error('Error loading user stories:', error);
-        userStories = [];
-    }
+    // User-created stories have their own page (My Stories) and are not merged
+    // into the library feed.
 
     // Some story databases (e.g. the American English lessons) do not give
     // their stories an id. Without one, every click would resolve to the first
@@ -118,9 +103,6 @@ function init() {
 
     // Initialize user stats
     initUserStats();
-    // ADD THIS: Initialize user stories setting toggle
-    console.log('Step 7.5: Initializing user stories setting...');
-    initUserStoriesSetting();
     // Check for daily bonus
     checkDailyBonus();
     // STEP 4: Initialize color selectors
@@ -284,13 +266,14 @@ function openStoryInNewPage(storyOrId) {
     const isStoryObject = storyOrId && typeof storyOrId === 'object';
     let story = isStoryObject ? storyOrId : stories.find(s => s.id == storyOrId);
 
-    // If not found in main stories, check user stories
+    // If not found in the library, check the user's own stories. This keeps
+    // Recent Stories working for user stories without adding them to the
+    // library feed.
     if (!story && !isStoryObject) {
         const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-        story = userStories.find(s => s.id == storyOrId);
-
-        if (story && !stories.some(s => s.id == storyOrId)) {
-            stories.push(story); // Add to stories array for this session
+        const userStory = userStories.find(s => s.id == storyOrId);
+        if (userStory) {
+            story = Object.assign({}, userStory, { isUserStory: true });
         }
     }
 
@@ -412,9 +395,6 @@ function populateLanguageFilter() {
         if (s && s.lang) present.add(String(s.lang).toLowerCase().split('-')[0]);
     });
     collect(stories);
-    if (showUserStories) {
-        try { collect(JSON.parse(localStorage.getItem('userStories')) || []); } catch (e) { /* ignore */ }
-    }
     if (currentLang && currentLang !== 'all') present.add(String(currentLang).toLowerCase());
 
     const codes = IST_LANGUAGE_ORDER.filter(c => present.has(c));
@@ -442,12 +422,6 @@ function createStoryCard(story, options = {}) {
     const storyCard = document.createElement('div');
     storyCard.className = 'story-card';
     storyCard.dataset.storyId = story.id;
-
-    // Add user story indicator (only show if user stories are enabled)
-    const userStoryBadge = (story.isUserStory && showUserStories)
-        ? '<span class="user-story-badge" title="' + istText('library.addedByUser', null, 'User-added story') +
-          '"><i class="fas fa-user-plus"></i></span>'
-        : '';
 
     // Create author HTML conditionally
     const authorHTML = story.author && story.author.trim() !== ""
@@ -489,7 +463,6 @@ function createStoryCard(story, options = {}) {
                     <span class="story-level ${cefrLevel.toUpperCase()}">${cefrLevel.toUpperCase()}</span>
                     ${langBadge}
                 </div>
-                ${userStoryBadge}
             </div>
             <h3 class="story-title">${titleHtml}</h3>
             <p>${firstParagraph.substring(0, 100)}...</p>
@@ -579,59 +552,12 @@ function renderStories(level = currentLevel, lang = currentLang) {
 
     storiesGrid.innerHTML = '';
 
-    let filteredStories;
-
-    if (level === 'all') {
-        // Start with regular stories (non-user stories)
-        filteredStories = [...stories.filter(story => !story.isUserStory)];
-
-        // Add user stories only if setting is enabled
-        if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-            userStories.forEach(userStory => {
-                const exists = filteredStories.some(s => s.id === userStory.id);
-                if (!exists) {
-                    filteredStories.push({
-                        ...userStory,
-                        isUserStory: true
-                    });
-                }
-            });
-        }
-    } else if (level === 'user') {
-        // Show only user stories (if enabled)
-        if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-            filteredStories = userStories.map(story => ({
-                ...story,
-                isUserStory: true
-            }));
-        } else {
-            filteredStories = [];
-        }
-    } else {
-        // Filter by level (beginner, intermediate, advanced)
-        // Start with regular stories (non-user stories) of this level
-        filteredStories = stories.filter(story =>
-            story.level === level && !story.isUserStory
-        );
-
-        // Add user stories of the same level if setting is enabled
-        if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-            userStories.forEach(userStory => {
-                if (userStory.level === level) {
-                    const exists = filteredStories.some(s => s.id === userStory.id);
-                    if (!exists) {
-                        filteredStories.push({
-                            ...userStory,
-                            isUserStory: true
-                        });
-                    }
-                }
-            });
-        }
-    }
+    // The library only shows database stories. User-created stories live on
+    // the separate My Stories page and are never merged into this feed.
+    const libraryStories = stories.filter(story => !story.isUserStory);
+    let filteredStories = level === 'all'
+        ? [...libraryStories]
+        : libraryStories.filter(story => story.level === level);
 
     // Apply the language filter on top of the level filter.
     if (currentLang && currentLang !== 'all') {
@@ -652,11 +578,7 @@ function renderStories(level = currentLevel, lang = currentLang) {
         }
 
         let detail = '';
-        if (level === 'user' && !showUserStories) {
-            detail = '<p><em>' + istText('library.userDisabled', null, 'User stories are currently disabled in settings') + '</em></p>';
-        } else if (level === 'user') {
-            detail = '<p>' + istText('library.createFirst', null, 'Go to Add stories page to create your first story!') + '</p>';
-        } else if (currentLang !== 'all') {
+        if (currentLang !== 'all') {
             detail = '<p>' + istText('library.tryLanguage', null, 'Try another language or level.') + '</p>';
         } else {
             detail = '<p>' + istText('library.tryLevel', null, 'Try a different level!') + '</p>';
@@ -747,54 +669,6 @@ function openStory(story) {
         scrollToTop();
     }, 100);
 }
-// Function to initialize user stories setting toggle
-function initUserStoriesSetting() {
-    const toggleSwitch = document.getElementById('showUserStoriesToggle');
-
-    if (!toggleSwitch) {
-        console.log('User stories toggle switch not found');
-        return;
-    }
-
-    // Set initial state
-    toggleSwitch.checked = showUserStories;
-
-    // Add event listener
-    toggleSwitch.addEventListener('change', function () {
-        saveShowUserStoriesSetting(this.checked);
-    });
-}
-// Function to save showUserStories setting
-function saveShowUserStoriesSetting(value) {
-    showUserStories = value;
-    localStorage.setItem('showUserStories', value);
-
-    // Refresh the current view
-    refreshCurrentView();
-
-    showNotification(`User stories ${value ? 'enabled' : 'disabled'}`, 'success');
-}
-// Function to refresh the current view based on settings
-function refreshCurrentView() {
-    const levelSelect = document.getElementById('levelFilter');
-    const activeLevelBtn = document.querySelector('.level-btn.active');
-    const level = levelSelect ? levelSelect.value
-        : (activeLevelBtn ? activeLevelBtn.dataset.level : currentLevel);
-
-    // Get current search query
-    const currentSearch = searchInput ? searchInput.value.trim() : '';
-
-    if (currentSearch) {
-        // If there's a search query, perform search
-        performSearch();
-    } else {
-        // Otherwise filter by level + language
-        renderStories(level, currentLang);
-    }
-
-    showNotification(`User stories ${showUserStories ? 'enabled' : 'disabled'}`, 'success');
-}
-
 // Switch the active in-page section (kept here now that addstories.js moved
 // to its own page). Story library and reader open as separate pages.
 function switchPage(page) {

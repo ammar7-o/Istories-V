@@ -19,48 +19,18 @@ function filterStoriesBySearch(query) {
         return code === String(langFilter).toLowerCase();
     };
 
+    // The library feed is database-only. User-created stories live on the
+    // separate My Stories page and are never merged into search results.
+    const libraryStories = stories.filter(story => !story.isUserStory);
+
     if (!query || query.trim() === '') {
-        // If no query, return all stories (respecting the user stories setting)
-        let filteredStories = [...stories.filter(story => !story.isUserStory)];
-
-        // Add user stories only if setting is enabled
-        if (showUserStories) {
-            const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-            userStories.forEach(userStory => {
-                const exists = filteredStories.some(s => s.id === userStory.id);
-                if (!exists) {
-                    filteredStories.push({
-                        ...userStory,
-                        isUserStory: true
-                    });
-                }
-            });
-        }
-
-        return filteredStories.filter(matchesLang);
+        return libraryStories.filter(matchesLang);
     }
 
     query = query.toLowerCase().trim();
 
-    // Start with regular stories (non-user stories)
-    let filteredStories = [...stories.filter(story => !story.isUserStory)];
-
-    // Add user stories only if setting is enabled
-    if (showUserStories) {
-        const userStories = JSON.parse(localStorage.getItem('userStories')) || [];
-        userStories.forEach(userStory => {
-            const exists = filteredStories.some(s => s.id === userStory.id);
-            if (!exists) {
-                filteredStories.push({
-                    ...userStory,
-                    isUserStory: true
-                });
-            }
-        });
-    }
-
     // Now filter by search query
-    return filteredStories.filter(story => {
+    return libraryStories.filter(story => {
         if (!matchesLang(story)) return false;
 
         const titleMatch = story.title.toLowerCase().includes(query);
@@ -96,11 +66,6 @@ function displayFilteredStories(filteredStories, query) {
                 <i class="fas fa-search fa-2x"></i>
                 <h3>${noResults}</h3>
                 <p>${tryKeywords}</p>
-                ${!showUserStories ? '<p><em>' +
-                    (typeof istText === 'function'
-                        ? istText('library.userDisabled', null, 'User stories are currently disabled in settings')
-                        : 'User stories are currently disabled in settings') +
-                    '</em></p>' : ''}
             </div>
         `;
         return;
@@ -766,13 +731,9 @@ function openUserStoryFromHistory(storyId) {
         const userStory = userStories.find(s => s.id == storyId);
 
         if (userStory) {
-            // Add to stories array temporarily
-            if (!stories.some(s => s.id == storyId)) {
-                stories.push(userStory);
-            }
-
-            // Open the story
-            openStoryInNewPage(storyId);
+            // Open the object directly instead of adding it to the library
+            // `stories` array; user stories stay on the My Stories page.
+            openStoryInNewPage(Object.assign({}, userStory, { isUserStory: true }));
         } else {
             // Story not found
             showNotification('Story not found. It may have been deleted.');

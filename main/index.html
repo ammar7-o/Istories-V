@@ -129,7 +129,6 @@
                         <option class="level-btn" data-level="beginner" value="beginner">Beginner</option>
                         <option class="level-btn" data-level="intermediate" value="intermediate">Intermediate</option>
                         <option class="level-btn" data-level="advanced" value="advanced">Advanced</option>
-                        <option class="level-btn" data-level="user" value="user">User</option>
                     </select>
                     <select class="stories-select" id="langFilter" aria-label="Filter stories by language">
                         <option value="all">🌍 All languages</option>
@@ -159,8 +158,20 @@
             </div>
             <div class="source-picker-body">
                 <p class="source-picker-help" data-i18n="library.sourcesHelp">
-                    Choose a base to load, or add a file URL.
+                    Choose an offline base or a saved online base, or add a file URL.
                 </p>
+                <a class="source-picker-database-link"
+                    href="https://ammar7-o.github.io/Istories-Database/" target="_blank"
+                    rel="noopener noreferrer">
+                    <span class="source-picker-database-link__icon">
+                        <i class="fas fa-globe" aria-hidden="true"></i>
+                    </span>
+                    <span class="source-picker-database-link__text">
+                        <strong data-i18n="library.browseDatabase">Browse the story database</strong>
+                        <small data-i18n="library.browseDatabaseDesc">Find ready-made bases and load them here.</small>
+                    </span>
+                    <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                </a>
                 <div class="source-picker-list" id="sourcePickerList"></div>
                 <form class="source-picker-form" id="sourcePickerForm">
                     <label for="sourcePickerUrl" data-i18n="library.addSourceUrl">Add a file URL</label>
@@ -202,7 +213,16 @@
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
             const results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            if (results === null) return '';
+            const raw = results[1].replace(/\+/g, ' ');
+            try {
+                // A single decode is intentional: the value is a URL, and any
+                // escaped characters inside its path (for example %201 for a
+                // space) must survive so the browser can request the file.
+                return decodeURIComponent(raw);
+            } catch (error) {
+                return raw;
+            }
         }
 
         // Function to save selected stories file to localStorage
@@ -258,9 +278,58 @@
             }
         }
 
+        function resolveSourceUrl(value) {
+            try {
+                return new URL(String(value || '').trim(), window.location.href);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function isHttpSource(value) {
+            var parsed = resolveSourceUrl(value);
+            return !!parsed && (parsed.protocol === 'http:' || parsed.protocol === 'https:');
+        }
+
+        function isRemoteSource(value) {
+            var parsed = resolveSourceUrl(value);
+            return !!parsed && (parsed.protocol === 'http:' || parsed.protocol === 'https:') &&
+                parsed.origin !== window.location.origin;
+        }
+
+        function sameSource(first, second) {
+            if (String(first) === String(second)) return true;
+            var a = resolveSourceUrl(first);
+            var b = resolveSourceUrl(second);
+            return !!a && !!b && a.href === b.href;
+        }
+
+        function findSourceOption(selectElement, value) {
+            if (!selectElement || !value) return null;
+            var options = Array.prototype.slice.call(selectElement.options);
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) return options[i];
+            }
+            for (var j = 0; j < options.length; j++) {
+                if (sameSource(options[j].value, value)) return options[j];
+            }
+            return null;
+        }
+
+        function createSourceOption(selectElement, value, label, isCustom) {
+            if (!selectElement) return null;
+            var option = document.createElement('option');
+            option.value = value;
+            option.textContent = getSourceDisplayName(value, label);
+            if (isCustom) option.dataset.customSource = 'true';
+            selectElement.appendChild(option);
+            return option;
+        }
+
         function saveCustomStorySource(url) {
+            if (!isHttpSource(url)) return;
             var sources = getCustomStorySources();
-            var exists = sources.some(function (entry) { return entry.url === url; });
+            var exists = sources.some(function (entry) { return sameSource(entry.url, url); });
             if (exists) return;
             sources.push({ url: url, label: getSourceDisplayName(url, '') });
             try {
@@ -273,15 +342,8 @@
         function appendCustomStorySources(selectElement) {
             if (!selectElement) return;
             getCustomStorySources().forEach(function (entry) {
-                var exists = Array.prototype.some.call(selectElement.options, function (option) {
-                    return option.value === entry.url;
-                });
-                if (exists) return;
-                var option = document.createElement('option');
-                option.value = entry.url;
-                option.textContent = getSourceDisplayName(entry.url, entry.label);
-                option.dataset.customSource = 'true';
-                selectElement.appendChild(option);
+                if (findSourceOption(selectElement, entry.url)) return;
+                createSourceOption(selectElement, entry.url, entry.label, true);
             });
         }
 
@@ -292,6 +354,129 @@
             errorElement.hidden = !message;
         }
 
+        function buildSourceGroup(config) {
+            var group = document.createElement('section');
+            group.className = 'source-picker-group';
+
+            var head = document.createElement('div');
+            head.className = 'source-picker-group__head';
+
+            var title = document.createElement('h4');
+            title.className = 'source-picker-group__title';
+
+            var titleIcon = document.createElement('i');
+            titleIcon.className = 'fas ' + config.icon;
+            titleIcon.setAttribute('aria-hidden', 'true');
+
+            var titleText = document.createElement('span');
+            titleText.textContent = config.title;
+
+            title.appendChild(titleIcon);
+            title.appendChild(titleText);
+            head.appendChild(title);
+
+            if (config.entries.length) {
+                var count = document.createElement('span');
+                count.className = 'source-picker-group__count';
+                count.textContent = String(config.entries.length);
+                head.appendChild(count);
+            }
+
+            group.appendChild(head);
+
+            if (!config.entries.length) {
+                var empty = document.createElement('p');
+                empty.className = 'source-picker-empty';
+                empty.textContent = config.emptyText;
+                group.appendChild(empty);
+                return group;
+            }
+
+            var entries = document.createElement('div');
+            entries.className = 'source-picker-entries';
+
+            config.entries.forEach(function (entry) {
+                var option = entry.option;
+                var isActive = sameSource(option.value, config.selectedValue);
+                var row = document.createElement('div');
+                row.className = 'source-picker-entry' + (isActive ? ' is-active' : '');
+
+                var item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'source-picker-item' + (isActive ? ' is-active' : '');
+                item.dataset.sourceValue = option.value;
+
+                var icon = document.createElement('span');
+                icon.className = 'source-picker-item__icon';
+                var iconElement = document.createElement('i');
+                iconElement.className = 'fas ' +
+                    (entry.custom || isRemoteSource(option.value) ? 'fa-globe' : 'fa-database');
+                iconElement.setAttribute('aria-hidden', 'true');
+                icon.appendChild(iconElement);
+                item.appendChild(icon);
+
+                var body = document.createElement('span');
+                body.className = 'source-picker-item__body';
+
+                var label = document.createElement('span');
+                label.className = 'source-picker-item__label';
+                label.dir = 'auto';
+                label.textContent = getSourceDisplayName(option.value, option.textContent);
+                body.appendChild(label);
+
+                var metaText = '';
+                if (entry.custom) {
+                    var parsed = resolveSourceUrl(option.value);
+                    metaText = parsed ? parsed.hostname : '';
+                    if (!metaText) metaText = sourcePickerText('library.importedBadge', 'Imported');
+                } else if (isRemoteSource(option.value)) {
+                    metaText = sourcePickerText('library.builtInBadge', 'Built-in');
+                }
+                if (metaText) {
+                    var meta = document.createElement('span');
+                    meta.className = 'source-picker-item__meta';
+                    meta.dir = 'ltr';
+                    meta.textContent = metaText;
+                    body.appendChild(meta);
+                }
+
+                item.appendChild(body);
+
+                var check = document.createElement('i');
+                check.className = 'fas fa-check source-picker-item__check';
+                check.setAttribute('aria-hidden', 'true');
+                item.appendChild(check);
+
+                item.addEventListener('click', function () {
+                    chooseStorySource(option.value);
+                });
+                row.appendChild(item);
+
+                if (entry.custom) {
+                    var removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'source-picker-remove';
+                    var removeTitle = sourcePickerText('library.removeSource', 'Remove saved base');
+                    removeButton.title = removeTitle;
+                    removeButton.setAttribute('aria-label', removeTitle + ': ' + label.textContent);
+                    var removeIcon = document.createElement('i');
+                    removeIcon.className = 'fas fa-trash';
+                    removeIcon.setAttribute('aria-hidden', 'true');
+                    removeButton.appendChild(removeIcon);
+                    removeButton.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                        removeCustomStorySource(option.value);
+                    });
+                    row.appendChild(removeButton);
+                }
+
+                entries.appendChild(row);
+            });
+
+            group.appendChild(entries);
+            return group;
+        }
+
         function refreshSourcePicker() {
             var selectElement = document.getElementById('Select');
             var listElement = document.getElementById('sourcePickerList');
@@ -299,12 +484,8 @@
             if (!selectElement) return;
 
             var selectedValue = selectElement.value;
-            var selectedOption = null;
+            var selectedOption = findSourceOption(selectElement, selectedValue);
             var options = Array.prototype.slice.call(selectElement.options);
-
-            options.forEach(function (option) {
-                if (option.value === selectedValue) selectedOption = option;
-            });
 
             if (labelElement) {
                 labelElement.textContent = selectedOption
@@ -315,30 +496,77 @@
             if (!listElement) return;
             listElement.innerHTML = '';
 
+            var offlineEntries = [];
+            var onlineEntries = [];
+
             options.forEach(function (option) {
-                var item = document.createElement('button');
-                item.type = 'button';
-                item.className = 'source-picker-item' +
-                    (option.value === selectedValue ? ' is-active' : '');
-                item.dataset.sourceValue = option.value;
-                item.innerHTML =
-                    '<span class="source-picker-item__icon"><i class="fas fa-database" aria-hidden="true"></i></span>' +
-                    '<span class="source-picker-item__label"></span>' +
-                    '<i class="fas fa-check source-picker-item__check" aria-hidden="true"></i>';
-                item.querySelector('.source-picker-item__label').textContent =
-                    getSourceDisplayName(option.value, option.textContent);
-                item.addEventListener('click', function () {
-                    chooseStorySource(option.value);
-                });
-                listElement.appendChild(item);
+                var entry = {
+                    option: option,
+                    custom: option.dataset.customSource === 'true'
+                };
+                if (entry.custom || isRemoteSource(option.value)) onlineEntries.push(entry);
+                else offlineEntries.push(entry);
             });
+
+            if (offlineEntries.length) {
+                listElement.appendChild(buildSourceGroup({
+                    title: sourcePickerText('library.offlineBases', 'Offline bases'),
+                    icon: 'fa-hard-drive',
+                    entries: offlineEntries,
+                    selectedValue: selectedValue,
+                    emptyText: ''
+                }));
+            }
+
+            listElement.appendChild(buildSourceGroup({
+                title: sourcePickerText('library.onlineBases', 'Your online bases'),
+                icon: 'fa-cloud',
+                entries: onlineEntries,
+                selectedValue: selectedValue,
+                emptyText: sourcePickerText('library.onlineBasesEmpty',
+                    'No online bases saved yet. Add one below or browse the database.')
+            }));
+        }
+
+        function removeCustomStorySource(url) {
+            var selectElement = document.getElementById('Select');
+            if (!selectElement) return;
+
+            var sources = getCustomStorySources().filter(function (entry) {
+                return !sameSource(entry.url, url);
+            });
+            try {
+                localStorage.setItem(CUSTOM_STORY_SOURCES_KEY, JSON.stringify(sources));
+            } catch (error) {
+                console.warn('Could not update custom story sources:', error);
+            }
+
+            var wasSelected = false;
+            Array.prototype.slice.call(selectElement.options).forEach(function (option) {
+                if (option.dataset.customSource !== 'true') return;
+                if (!sameSource(option.value, url)) return;
+                if (sameSource(option.value, selectElement.value)) wasSelected = true;
+                option.remove();
+            });
+
+            // If the removed base was the one on screen, switch to the first
+            // remaining base instead of leaving the hidden <select> empty.
+            if (wasSelected && selectElement.options.length) {
+                selectElement.selectedIndex = 0;
+                selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+                return;
+            }
+
+            refreshSourcePicker();
         }
 
         function chooseStorySource(value) {
             var selectElement = document.getElementById('Select');
             if (!selectElement) return;
+            var option = findSourceOption(selectElement, value);
+            if (!option) return;
 
-            selectElement.value = value;
+            selectElement.value = option.value;
             refreshSourcePicker();
             closeSourcePicker();
             selectElement.dispatchEvent(new Event('change', { bubbles: true }));
@@ -357,9 +585,10 @@
             modal.hidden = false;
             if (button) button.setAttribute('aria-expanded', 'true');
 
-            var firstItem = modal.querySelector('.source-picker-item');
-            if (firstItem) {
-                firstItem.focus();
+            var focusTarget = modal.querySelector('.source-picker-item.is-active') ||
+                modal.querySelector('.source-picker-item');
+            if (focusTarget) {
+                focusTarget.focus();
             } else {
                 var urlInput = document.getElementById('sourcePickerUrl');
                 if (urlInput) urlInput.focus();
@@ -410,12 +639,8 @@
 
             sourcePickerError('');
 
-            var existingOption = null;
-            Array.prototype.forEach.call(selectElement.options, function (option) {
-                if (option.value === raw || option.value === resolved.href) {
-                    existingOption = option;
-                }
-            });
+            var existingOption = findSourceOption(selectElement, raw) ||
+                findSourceOption(selectElement, resolved.href);
 
             if (existingOption) {
                 input.value = '';
@@ -423,14 +648,10 @@
                 return;
             }
 
-            var option = document.createElement('option');
-            option.value = raw;
-            option.textContent = getSourceDisplayName(raw, '');
-            option.dataset.customSource = 'true';
-            selectElement.appendChild(option);
-            saveCustomStorySource(raw);
+            createSourceOption(selectElement, resolved.href, '', true);
+            saveCustomStorySource(resolved.href);
             input.value = '';
-            chooseStorySource(raw);
+            chooseStorySource(resolved.href);
         }
 
         function setupSourcePicker() {
@@ -596,41 +817,40 @@
             // Setup the select listener
             setupSelectListener();
 
-            // Get the file to load (from URL or localStorage)
-            const fileToLoad = getStoriesFileToLoad();
-
-            // Set the select element value if the file exists in options
             const selectElement = document.getElementById('Select');
-            if (selectElement) {
-                let optionExists = false;
-                for (let option of selectElement.options) {
-                    if (option.value === fileToLoad) {
-                        optionExists = true;
-                        break;
-                    }
+            const urlStoryFile = getUrlParameter('story') || getUrlParameter('file');
+            let fileToLoad = urlStoryFile || loadSavedStoriesFile();
+
+            if (selectElement && fileToLoad) {
+                let sourceOption = findSourceOption(selectElement, fileToLoad);
+
+                // A ?story= link can point at a database that is not in the
+                // built-in list yet. Add it (and remember it when it is an
+                // online URL) instead of silently falling back to Base-1.
+                if (!sourceOption && urlStoryFile) {
+                    const isOnlineSource = /^(https?:)?\/\//i.test(urlStoryFile) && isHttpSource(urlStoryFile);
+                    sourceOption = createSourceOption(selectElement, urlStoryFile, '', isOnlineSource);
+                    if (isOnlineSource) saveCustomStorySource(urlStoryFile);
+                    console.log('Added story file from URL to sources:', urlStoryFile);
                 }
 
-                if (optionExists) {
-                    selectElement.value = fileToLoad;
+                if (sourceOption) {
+                    selectElement.value = sourceOption.value;
+                    fileToLoad = sourceOption.value;
                     console.log('Using stories file:', fileToLoad);
                 } else {
-                    // If file doesn't exist in options, use the default selected option
-                    const initialFile = selectElement.value;
-                    console.log('Requested file not found in options, using:', initialFile);
-
-                    // Update URL to reflect the actual file being loaded
-                    updateURLWithStory(initialFile);
-                    refreshSourcePicker();
-
-                    // Load the initial file
-                    loadStoriesFile(initialFile);
-                    return; // Exit early as we're loading here
+                    // The stored selection is stale (for example a base that
+                    // was removed). Fall back to the first available base.
+                    selectElement.selectedIndex = 0;
+                    fileToLoad = selectElement.value;
+                    console.log('Requested file not found in options, using:', fileToLoad);
                 }
             }
 
-            refreshSourcePicker();
+            if (!fileToLoad) fileToLoad = 'stories/stories.json';
 
-            // Load the stories file
+            refreshSourcePicker();
+            updateURLWithStory(fileToLoad);
             loadStoriesFile(fileToLoad);
         }
 

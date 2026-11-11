@@ -1130,7 +1130,7 @@ details a:hover {
 
 .source-picker-dialog {
     width: min(520px, 100%);
-    max-height: min(82vh, 640px);
+    max-height: min(88vh, 700px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1193,8 +1193,71 @@ details a:hover {
 .source-picker-list {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.source-picker-group {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    margin-bottom: 18px;
+}
+
+.source-picker-group__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px;
+}
+
+.source-picker-group__title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-light);
+}
+
+.source-picker-group__title i {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.source-picker-group__count {
+    margin-inline-start: auto;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    color: var(--text-light);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.source-picker-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.source-picker-entry {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.source-picker-entry .source-picker-item {
+    flex: 1;
+    min-width: 0;
 }
 
 .source-picker-item {
@@ -1227,9 +1290,24 @@ details a:hover {
     flex: 0 0 auto;
 }
 
-.source-picker-item__label {
+.source-picker-item__body {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.source-picker-item__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-picker-item__meta {
+    color: var(--text-light);
+    font-size: 0.74rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1243,6 +1321,94 @@ details a:hover {
 
 .source-picker-item.is-active .source-picker-item__check {
     opacity: 1;
+}
+
+.source-picker-remove {
+    flex: 0 0 42px;
+    width: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.source-picker-remove:hover,
+.source-picker-remove:focus-visible {
+    border-color: #dc2626;
+    background: #dc2626;
+    color: #fff;
+}
+
+.source-picker-empty {
+    margin: 0;
+    padding: 12px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-light);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.source-picker-database-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text);
+    text-decoration: none;
+}
+
+.source-picker-database-link:hover,
+.source-picker-database-link:focus-visible {
+    border-color: var(--primary);
+    background: var(--hover);
+}
+
+.source-picker-database-link__icon {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(79, 70, 229, 0.12);
+    color: var(--primary);
+}
+
+.source-picker-database-link__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.source-picker-database-link__text strong {
+    font-size: 0.92rem;
+}
+
+.source-picker-database-link__text small {
+    color: var(--text-light);
+    font-size: 0.74rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-picker-database-link > .fa-arrow-up-right-from-square {
+    flex: 0 0 auto;
+    color: var(--text-light);
+    font-size: 0.8rem;
 }
 
 .source-picker-form {

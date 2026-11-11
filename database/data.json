@@ -1,6 +1,6 @@
 [
   { "file": "main.js", "label": "Base-1" },
-    { "file": "american-english-level1-stories.js", "label": "zae w1" },
+    { "file": "Vocabulary-level1.js", "label": "Vocabulary-level1" },
   { "file": "/more/more.js", "label": "A1" },
   { "file": "example-translations.js", "label": "Translation examples" }
 

@@ -123,7 +123,7 @@ All state is client-side. Frequently used keys:
 | `profileName`, `profilePhoto` | Profile |
 | `userStats`, `lastBonusDate` | Gamification |
 | `userQuizzes`, `quizzes`, `quizHistory` | Quiz data |
-| `showUserStories`, `showUserQuizzes`, `showVoiceButtons` | Toggles |
+| `showUserQuizzes`, `showVoiceButtons` | Toggles |
 
 ---
 
@@ -557,7 +557,7 @@ localStorage data is migrated into IndexedDB on first run.
 **Deliberately still in localStorage:** `userStats`, `downloadStats`, the
 `customCSS*` variants, and every preference (`theme`, `selectedColor`,
 `selectedSecondaryColor`, `fontSize`, `lineHeight`, `profileName`,
-`showVoiceButtons`, `showUserStories`, `showUserQuizzes`, `speechEnabled`,
+`showVoiceButtons`, `showUserQuizzes`, `speechEnabled`,
 `fontFamily`, `selectedStoriesFile`, …).
 
 **How it stays backwards compatible.** `nav/storage.js` patches
@@ -640,7 +640,7 @@ drawer) lives here too. The accent / secondary colour pickers are likewise
   - Reading — `fontFamily`, `fontSize` (1.0–2.0 rem), `lineHeight` (1.8 / 2.2).
   - Translation — `defaultTranslateLanguage`, `autoTranslateEnabled`,
     `paragraphTranslationEnabled`, `noTranslatedWords`.
-  - Library & Quizzes — `showUserStories`, `showUserQuizzes`.
+  - Library & Quizzes — `showUserQuizzes`.
   - Vocabulary & Speech — `showVoiceButtons`, `speechEnabled`.
   - Data Management — export my stories / delete them, backup all data, restore
     a backup, delete everything (number-code confirm). Uses `IStoriesStorage`
