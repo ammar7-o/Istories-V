@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v6.1';
+const CACHE_VERSION = 'v6.4';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;
@@ -43,13 +43,12 @@ const SHELL_ASSETS = [
   './main/nav/sidebar.js',
   './main/nav/common.js',
   './main/nav/storage.js',
+  './main/nav/bases.js',
   './main/nav/userdata.js',
   './main/nav/theme.css',
   './main/nav/header.css',
   './main/nav/i18n.css',
   './main/nav/i18n.js',
-  './main/nav/welcome.css',
-  './main/nav/welcome.js',
   './main/nav/settings-panel.js',
   './main/nav/vendor/localforage.min.js',
   './main/nav/vendor/pdfjs/pdf.min.js',
@@ -63,6 +62,27 @@ const SHELL_ASSETS = [
   './main/quiz/index.html',
   './main/profile/index.html',
   './main/settings/index.html',
+  './main/bases/index.html',
+  './main/help/index.html',
+  './main/help/help.css',
+  './main/help/help.js',
+  './main/help/assets/screenshots/home.webp',
+  './main/help/assets/screenshots/mobile-nav.webp',
+  './main/help/assets/screenshots/library.webp',
+  './main/help/assets/screenshots/reader.webp',
+  './main/help/assets/screenshots/bases.webp',
+  './main/help/assets/screenshots/my-stories.webp',
+  './main/help/assets/screenshots/studio.webp',
+  './main/help/assets/screenshots/vocabulary.webp',
+  './main/help/assets/screenshots/flashcards.webp',
+  './main/help/assets/screenshots/quiz.webp',
+  './main/help/assets/screenshots/profile.webp',
+  './main/help/assets/screenshots/store.webp',
+  './main/help/assets/screenshots/tools.webp',
+  './main/help/assets/screenshots/settings.webp',
+  './main/help/assets/videos/quick-tour-poster.webp',
+  './main/help/assets/videos/quick-tour.en.vtt',
+  './main/help/assets/videos/quick-tour.ar.vtt',
   './main/storiesStudio/index.html',
   './main/myStories/index.html',
   './store/index.html',
@@ -99,6 +119,7 @@ const SHELL_ASSETS = [
   './main/storiesStudio/import-studio.js',
   './main/myStories/main.js',
   './main/myStories/style.css',
+  './main/bases/bases.js',
   './store/main.js',
   './store/stories.js',
   './store/stories2.js',

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="help.titleTag">Help &amp; Guide — IStories</title>
+    <meta name="description" content="A complete guide to every page and feature in IStories.">
+    <link rel="icon" type="image/png" href="../../icon.png">
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <script src="../nav/sidebar.js" defer></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+    <link rel="stylesheet" href="../nav/i18n.css">
+    <script src="../nav/i18n.js"></script>
+    <link rel="stylesheet" href="help.css">
+    <script src="help.js" defer></script>
+</head>
+
+<body>
+    <script>
+        // The guide is the first stop for new users, so remember that they have
+        // seen it. sessionStorage is a safety net for private modes where
+        // localStorage writes can fail.
+        (function () {
+            try { localStorage.setItem('istories_guide_seen_v1', 'true'); } catch (error) { /* ignore */ }
+            try { sessionStorage.setItem('istories_guide_seen_v1', 'true'); } catch (error) { /* ignore */ }
+        })();
+    </script>
+    <script>
+        // Apply the saved theme and accent colours before the page paints.
+        (function () {
+            try {
+                if ((localStorage.getItem('theme') || 'light') === 'dark') {
+                    document.body.classList.add('dark-mode');
+                }
+                var root = document.documentElement;
+                var primary = localStorage.getItem('selectedColor');
+                var secondary = localStorage.getItem('selectedSecondaryColor');
+                if (primary) root.style.setProperty('--primary', primary);
+                if (secondary) root.style.setProperty('--secondary', secondary);
+            } catch (error) { /* storage may be unavailable */ }
+        })();
+    </script>
+
+    <div class="guide-progress" aria-hidden="true"><span id="guideProgress"></span></div>
+
+    <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+                <span data-i18n="nav.help">Help &amp; guide</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+            <a class="ist-header__action" href="../index.html?guide=0" aria-label="Story Library"
+                title="Story Library" data-i18n-title="nav.stories" data-i18n-aria-label="nav.stories">
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+            </a>
+            <a class="ist-header__action" href="../settings/index.html" aria-label="Settings" title="Settings"
+                data-i18n-title="nav.settings" data-i18n-aria-label="nav.settings">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="guide-container">
+
+            <section class="guide-hero" aria-labelledby="guideTitle">
+                <div class="guide-hero__glow" aria-hidden="true"></div>
+                <div class="guide-hero__body">
+                    <p class="guide-eyebrow"><i class="fa-solid fa-compass" aria-hidden="true"></i>
+                        <span data-i18n="help.eyebrow">Help &amp; Guide</span></p>
+                    <h1 id="guideTitle" data-i18n="help.title">Everything IStories can do</h1>
+                    <p class="guide-hero__text" data-i18n="help.subtitle">
+                        A complete walkthrough of every page, button and study tool — with screenshots taken
+                        from the real app. Browse the sections below, or start with the video tour.
+                    </p>
+                    <div class="guide-hero__actions">
+                        <a class="guide-btn guide-btn--light" href="../index.html?guide=0">
+                            <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                            <span data-i18n="help.ctaLibrary">Continue to Story Library</span>
+                        </a>
+                        <a class="guide-btn guide-btn--ghost" href="#video-tour">
+                            <i class="fa-solid fa-circle-play" aria-hidden="true"></i>
+                            <span data-i18n="help.ctaTour">Watch the video tour</span>
+                        </a>
+                        <button class="guide-btn guide-btn--ghost" type="button" data-guide-print>
+                            <i class="fa-solid fa-print" aria-hidden="true"></i>
+                            <span data-i18n="help.ctaPrint">Print / save as PDF</span>
+                        </button>
+                    </div>
+                    <ul class="guide-meta" aria-label="Guide details">
+                        <li><i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                            <span data-i18n="help.badgeSections">14 guided sections</span></li>
+                        <li><i class="fa-solid fa-images" aria-hidden="true"></i>
+                            <span data-i18n="help.badgeScreens">Screenshots from the app</span></li>
+                        <li><i class="fa-solid fa-wifi" aria-hidden="true"></i>
+                            <span data-i18n="help.badgeOffline">Works offline</span></li>
+                    </ul>
+                </div>
+                <div class="guide-hero__card" aria-hidden="true">
+                    <div class="guide-hero__card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <p class="guide-hero__card-kicker" data-i18n="help.heroCardKicker">Read · listen · remember</p>
+                    <p class="guide-hero__card-title" data-i18n="help.heroCardTitle">One story at a time</p>
+                    <div class="guide-hero__card-lines">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="guide-hero__card-stat">
+                        <strong>14</strong>
+                        <span data-i18n="help.heroCardStat">features covered</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="guide-new" id="guideNew" hidden>
+                <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
+                <div>
+                    <strong data-i18n="help.newTitle">Welcome — let's get you started</strong>
+                    <p data-i18n="help.newText">You were sent here because this browser has no IStories activity yet.
+                        Pick a section below, or continue straight to the Story Library.</p>
+                </div>
+                <div class="guide-new__actions">
+                    <a class="guide-btn guide-btn--primary guide-btn--small" href="../index.html?guide=0"
+                        data-i18n="help.newCta">Start reading</a>
+                    <button class="guide-btn guide-btn--ghost guide-btn--small" type="button" data-guide-dismiss
+                        data-i18n="help.newDismiss">Got it</button>
+                </div>
+            </div>
+
+            <nav class="guide-toc" aria-labelledby="guideTocTitle">
+                <div class="guide-toc__head">
+                    <div>
+                        <h2 id="guideTocTitle" data-i18n="help.tocTitle">Find what you need</h2>
+                        <p data-i18n="help.tocHint">Jump straight to any page or feature.</p>
+                    </div>
+                    <span class="guide-toc__count">01 — 14</span>
+                </div>
+                <div class="guide-toc__grid">
+                    <a href="#start"><span>01</span><i class="fa-solid fa-compass" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.start">Start here</em></a>
+                    <a href="#library"><span>02</span><i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.library">Story Library</em></a>
+                    <a href="#reader"><span>03</span><i class="fa-solid fa-book-reader" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.reader">Reading</em></a>
+                    <a href="#bases"><span>04</span><i class="fa-solid fa-database" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.bases">Story Bases</em></a>
+                    <a href="#my-stories"><span>05</span><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.myStories">My Stories</em></a>
+                    <a href="#studio"><span>06</span><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.studio">Stories Studio</em></a>
+                    <a href="#vocabulary"><span>07</span><i class="fa-solid fa-language" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.vocabulary">Vocabulary</em></a>
+                    <a href="#flashcards"><span>08</span><i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.flashcards">Flashcards</em></a>
+                    <a href="#quiz"><span>09</span><i class="fa-solid fa-brain" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.quiz">Quiz</em></a>
+                    <a href="#profile"><span>10</span><i class="fa-solid fa-user" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.profile">Profile</em></a>
+                    <a href="#store"><span>11</span><i class="fa-solid fa-store" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.store">Story Store</em></a>
+                    <a href="#tools"><span>12</span><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.tools">Tools</em></a>
+                    <a href="#settings"><span>13</span><i class="fa-solid fa-gear" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.settings">Settings</em></a>
+                    <a href="#offline"><span>14</span><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.offline">Offline &amp; help</em></a>
+                </div>
+            </nav>
+
+            <section class="guide-video" id="video-tour" aria-labelledby="guideVideoTitle">
+                <div class="guide-video__media">
+                    <video controls preload="metadata" playsinline poster="assets/videos/quick-tour-poster.webp"
+                        aria-label="IStories video tour">
+                        <source src="assets/videos/quick-tour.mp4" type="video/mp4">
+                        <track kind="captions" src="assets/videos/quick-tour.en.vtt" srclang="en" label="English" default>
+                        <track kind="captions" src="assets/videos/quick-tour.ar.vtt" srclang="ar" label="العربية">
+                        <p data-i18n="help.videoUnsupported">Your browser cannot play this video. You can still explore
+                            every feature using the sections below.</p>
+                    </video>
+                    <p class="guide-video__note"><i class="fa-solid fa-closed-captioning" aria-hidden="true"></i>
+                        <span data-i18n="help.videoNote">Silent tour with captions. The video is cached after the first
+                            view.</span></p>
+                </div>
+                <div class="guide-video__copy">
+                    <p class="guide-eyebrow guide-eyebrow--dark"><i class="fa-solid fa-circle-play" aria-hidden="true"></i>
+                        <span data-i18n="help.videoEyebrow">Video tour</span></p>
+                    <h2 id="guideVideoTitle" data-i18n="help.videoTitle">A quick tour of IStories</h2>
+                    <p data-i18n="help.videoText">See how the library, reader, translator and study tools fit together
+                        in under a minute.</p>
+                    <details class="guide-transcript">
+                        <summary data-i18n="help.transcriptSummary">Read the transcript</summary>
+                        <ol>
+                            <li data-i18n="help.videoCue1">Browse the Story Library and open a story.</li>
+                            <li data-i18n="help.videoCue2">Tap any word to see its translation and save it.</li>
+                            <li data-i18n="help.videoCue3">Review saved words in Vocabulary.</li>
+                            <li data-i18n="help.videoCue4">Practise with Flashcards and quizzes.</li>
+                            <li data-i18n="help.videoCue5">Create your own story in Stories Studio.</li>
+                            <li data-i18n="help.videoCue6">Tune everything in Settings.</li>
+                        </ol>
+                    </details>
+                </div>
+            </section>
+
+            <!-- 01 — Start here -->
+            <section class="guide-section" id="start" aria-labelledby="startTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>01</span><i class="fa-solid fa-compass" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.start">Start here</em></p>
+                    <h2 id="startTitle" data-i18n="help.start.title">Start here: navigation, language &amp; theme</h2>
+                    <p data-i18n="help.start.summary">The sidebar is your map to the whole app. Open it with the ☰
+                        button on any page, switch language whenever you like, and make the interface comfortable
+                        for your eyes.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/home.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.start.caption">The IStories landing page. Choose “Start learning” to
+                            open the Story Library.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.start.step1">Open the menu with the ☰ button. On a computer the sidebar
+                                stays open; on a phone it slides in from the side.</li>
+                            <li data-i18n="help.start.step2">Use the language buttons at the bottom of the menu to switch
+                                between English and Arabic. The whole layout flips to right-to-left.</li>
+                            <li data-i18n="help.start.step3">Tap Theme to switch between light and dark mode. Your choice
+                                is remembered the next time you visit.</li>
+                            <li data-i18n="help.start.step4">For an app-like experience, open your browser menu and choose
+                                “Install app” or “Add to home screen”. IStories then opens in its own window and works
+                                offline.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.start.tip">The accent colour and reading font can be changed in
+                                    Settings. They apply to every page automatically.</span></p>
+                        </div>
+                        <div class="guide-figure guide-figure--inline">
+                            <div class="guide-figure__frame guide-figure__frame--phone">
+                                <img src="assets/screenshots/mobile-nav.webp" alt="" loading="lazy" width="500" height="814">
+                            </div>
+                            <figcaption data-i18n="help.start.mobileCaption">On a phone the menu opens as a drawer.</figcaption>
+                        </div>
+                        <a class="guide-link" href="../../index.html"><span data-i18n="help.openHome">Open the home page</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 02 — Story Library -->
+            <section class="guide-section" id="library" aria-labelledby="libraryTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>02</span><i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.library">Story Library</em></p>
+                    <h2 id="libraryTitle" data-i18n="help.library.title">Browse and open stories</h2>
+                    <p data-i18n="help.library.summary">The Story Library is the front door to the built-in story
+                        databases. Filter by level and language, search for a title, or let IStories pick a random
+                        story for you.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/library.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.library.caption">Your progress, quick actions and story cards in one
+                            place.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.library.step1">Use the level and language menus above the cards to narrow
+                                the list. “All” shows every available story.</li>
+                            <li data-i18n="help.library.step2">Type in the search box to find a title, author or phrase.
+                                Press Enter or the arrow button to search.</li>
+                            <li data-i18n="help.library.step3">Tap a story card to open it in the reader. Your last story
+                                is remembered, so you can continue where you left off.</li>
+                            <li data-i18n="help.library.step4">Use Random Story for a surprise, Recent Stories to resume
+                                something you already opened, or the base menu to switch story collections.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.library.tip">The number above each story is an estimate of reading
+                                    time. Choose a short story when you only have a few minutes.</span></p>
+                        </div>
+                        <a class="guide-link" href="../index.html?guide=0"><span data-i18n="help.openLibrary">Open the Story Library</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 03 — Reading -->
+            <section class="guide-section guide-section--reverse" id="reader" aria-labelledby="readerTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>03</span><i class="fa-solid fa-book-reader" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.reader">Reading</em></p>
+                    <h2 id="readerTitle" data-i18n="help.reader.title">Read, listen and translate as you go</h2>
+                    <p data-i18n="help.reader.summary">The reader is the heart of IStories. Tap any word for an instant
+                        translation, listen to the narration, and save new vocabulary without leaving the story.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/reader.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.reader.caption">Tap a word to open the dictionary panel and hear its
+                            pronunciation.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.reader.step1">Tap or click any highlighted word. Its translation and
+                                definition appear in the dictionary panel on the right (or below the story on a phone).</li>
+                            <li data-i18n="help.reader.step2">Press the speaker button to hear the word, or use the
+                                narration player under the title to listen to the whole story.</li>
+                            <li data-i18n="help.reader.step3">Press Save Word to add it to Vocabulary. You can review it
+                                later in Flashcards and quizzes.</li>
+                            <li data-i18n="help.reader.step4">Open the reader settings gear to change font size, font
+                                family, line spacing, translation language, paragraph translation and text-to-speech.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.reader.tip">Use the Description tab for the author’s notes and any
+                                    video. The toolbar also lets you copy, print or download the story.</span></p>
+                        </div>
+                        <a class="guide-link" href="../reader/index.html?id=1"><span data-i18n="help.openReader">Open the reader</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 04 — Story Bases -->
+            <section class="guide-section" id="bases" aria-labelledby="basesTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>04</span><i class="fa-solid fa-database" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.bases">Story Bases</em></p>
+                    <h2 id="basesTitle" data-i18n="help.bases.title">Manage your story collections</h2>
+                    <p data-i18n="help.bases.summary">Story Bases controls what feeds the Story Library: the built-in
+                        collections, JavaScript files you import from your device, and online database links you want
+                        to keep.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/bases.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.bases.caption">Built-in, local and online bases live side by side.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.bases.step1">To import a base, choose a .js story database from your
+                                device, give it an optional name and press Add local base. The file is stored in this
+                                browser, so it keeps working offline.</li>
+                            <li data-i18n="help.bases.step2">To add an online base, paste its URL and press Add online
+                                base. It appears in the library’s base menu after it loads.</li>
+                            <li data-i18n="help.bases.step3">Press Open in library on any base to read its stories, or
+                                Export to save a copy as a .js file.</li>
+                            <li data-i18n="help.bases.step4">Use the delete button on a custom base to remove it. Built-in
+                                bases cannot be deleted.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.bases.tip">A local base exists only on this device. Export it if you
+                                    want to move it to another browser or share it with a friend.</span></p>
+                        </div>
+                        <a class="guide-link" href="../bases/index.html"><span data-i18n="help.openBases">Open Story Bases</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 05 — My Stories -->
+            <section class="guide-section guide-section--reverse" id="my-stories" aria-labelledby="myStoriesTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>05</span><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.myStories">My Stories</em></p>
+                    <h2 id="myStoriesTitle" data-i18n="help.myStories.title">Your own library</h2>
+                    <p data-i18n="help.myStories.summary">Every story you create or import is kept in My Stories,
+                        separate from the built-in library. Search it, filter it, read it, export it, or send it back
+                        to Stories Studio for editing.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/my-stories.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.myStories.caption">Your saved stories, with their source, level and
+                            language labels.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.myStories.step1">Use the search box for titles, authors, tags or story
+                                text. The Filters button opens advanced filters for source, language, level, CEFR, tags,
+                                translations, audio, word count and date.</li>
+                            <li data-i18n="help.myStories.step2">Press Read to open a story in the reader, Edit to change
+                                it in Stories Studio, or the export button to download it as JSON.</li>
+                            <li data-i18n="help.myStories.step3">The delete button removes a story from this browser only.
+                                Export first if you want to keep a copy.</li>
+                            <li data-i18n="help.myStories.step4">The counters at the top show how many stories you have,
+                                how many came from PDFs, total words and stories with custom translations.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.myStories.tip">Your stories never appear in the built-in Story
+                                    Library. This keeps your personal library tidy and separate.</span></p>
+                        </div>
+                        <a class="guide-link" href="../myStories/index.html"><span data-i18n="help.openMyStories">Open My Stories</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06 — Stories Studio -->
+            <section class="guide-section" id="studio" aria-labelledby="studioTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>06</span><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.studio">Stories Studio</em></p>
+                    <h2 id="studioTitle" data-i18n="help.studio.title">Create and import your own stories</h2>
+                    <p data-i18n="help.studio.summary">Stories Studio turns a PDF, a JSON file or a plain idea into an
+                        interactive story with translations, audio and a cover. No coding is required for the quick-add
+                        form.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/studio.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.studio.caption">Upload a story file, import from a database or PDF, or
+                            use the quick-add form.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.studio.step1">Drop a .json story file on the upload area, or press Browse
+                                Files. The expected format is shown in the JSON example lower on the page.</li>
+                            <li data-i18n="help.studio.step2">Open the import panel to read a built-in database, open a
+                                database URL or file, or import a PDF. For PDFs, choose up to 10 pages, edit the
+                                extracted text, then save it as a story.</li>
+                            <li data-i18n="help.studio.step3">Use the Quick Add Form to type a story by hand. Add a title,
+                                level, language, cover, content, optional audio and custom translations.</li>
+                            <li data-i18n="help.studio.step4">Your stories appear under Your Uploaded Stories. Read, share,
+                                edit or delete them there, or export everything as a backup.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.studio.tip">Each line in the Story Content box becomes a separate
+                                    paragraph. Keep paragraphs short so they are easy to read on a phone.</span></p>
+                        </div>
+                        <a class="guide-link" href="../storiesStudio/index.html"><span data-i18n="help.openStudio">Open Stories Studio</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 07 — Vocabulary -->
+            <section class="guide-section guide-section--reverse" id="vocabulary" aria-labelledby="vocabularyTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>07</span><i class="fa-solid fa-language" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.vocabulary">Vocabulary</em></p>
+                    <h2 id="vocabularyTitle" data-i18n="help.vocabulary.title">Build your personal word list</h2>
+                    <p data-i18n="help.vocabulary.summary">Every word you save while reading lands here. Search it,
+                        filter it by language, listen to pronunciation, and export it when you want to study elsewhere.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/vocabulary.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.vocabulary.caption">Saved words with their story, translation and
+                            practice status.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.vocabulary.step1">Search for a word or translation, or open the language
+                                menu to study one language at a time.</li>
+                            <li data-i18n="help.vocabulary.step2">Press the speaker button to hear a word. The cards show
+                                where you found it and when it was added.</li>
+                            <li data-i18n="help.vocabulary.step3">Use Export CSV to download your list, or Import to merge a
+                                CSV/JSON vocabulary file. Remove all clears the list after confirmation.</li>
+                            <li data-i18n="help.vocabulary.step4">Mastered and Due for Practice update automatically as you
+                                review words in Flashcards.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.vocabulary.tip">Save only the words that matter to you. A short list
+                                    you actually review beats a long list you never open.</span></p>
+                        </div>
+                        <a class="guide-link" href="../vocabulary/index.html"><span data-i18n="help.openVocabulary">Open Vocabulary</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 08 — Flashcards -->
+            <section class="guide-section" id="flashcards" aria-labelledby="flashcardsTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>08</span><i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.flashcards">Flashcards</em></p>
+                    <h2 id="flashcardsTitle" data-i18n="help.flashcards.title">Review words until they stick</h2>
+                    <p data-i18n="help.flashcards.summary">Flashcards turn your saved words into a short daily review.
+                        Cards that are due come back automatically, so you spend time on the words you are about to
+                        forget.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/flashcards.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.flashcards.caption">Flip the card, then rate how well you remembered
+                            it.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.flashcards.step1">Open Flashcards from the sidebar. The session starts with
+                                the cards that are due today; use the language menu to focus on one language.</li>
+                            <li data-i18n="help.flashcards.step2">Read the word, try to remember the meaning, then tap the
+                                card to flip it.</li>
+                            <li data-i18n="help.flashcards.step3">Rate your answer with Again, Hard, Good or Easy. The next
+                                review date is scheduled from your rating.</li>
+                            <li data-i18n="help.flashcards.step4">Use Shuffle for a mixed session or Reset Progress to
+                                start the schedule again. The top cards show due, total, mastered and learning counts.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.flashcards.tip">A two-minute session every day is more effective than
+                                    a long session once a week. The streak counter rewards consistency.</span></p>
+                        </div>
+                        <a class="guide-link" href="../flashcard/index.html"><span data-i18n="help.openFlashcards">Open Flashcards</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 09 — Quiz -->
+            <section class="guide-section guide-section--reverse" id="quiz" aria-labelledby="quizTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>09</span><i class="fa-solid fa-brain" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.quiz">Quiz</em></p>
+                    <h2 id="quizTitle" data-i18n="help.quiz.title">Check what you have learned</h2>
+                    <p data-i18n="help.quiz.summary">Take a built-in quiz or upload your own. Filter by level, preview the
+                        questions, and see your last attempt so you know what to review next.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/quiz.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.quiz.caption">Choose a quiz collection, then start, preview or review
+                            your last attempt.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.quiz.step1">Use the collection menu to show all levels, one level, or only
+                                the quizzes you created with User.</li>
+                            <li data-i18n="help.quiz.step2">Press Start Quiz to begin or Preview to read the questions
+                                first. Your last score and attempt date appear on each card.</li>
+                            <li data-i18n="help.quiz.step3">To add a quiz, drop a JSON file in Upload Your Own Quiz, or
+                                download the template and edit it. Created quizzes can be exported and edited.</li>
+                            <li data-i18n="help.quiz.step4">The quiz feedback explains each answer, so read the explanation
+                                even when you get it right.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.quiz.tip">The User filter shows only quizzes stored in this browser.
+                                    Turn “Show my quizzes” off in Settings if you share the device.</span></p>
+                        </div>
+                        <a class="guide-link" href="../quiz/index.html"><span data-i18n="help.openQuiz">Open Quiz</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10 — Profile -->
+            <section class="guide-section" id="profile" aria-labelledby="profileTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>10</span><i class="fa-solid fa-user" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.profile">Profile</em></p>
+                    <h2 id="profileTitle" data-i18n="help.profile.title">Make IStories yours</h2>
+                    <p data-i18n="help.profile.summary">Your profile photo and name appear on the Story Library home
+                        page. Update them whenever you like — they stay on this device.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/profile.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.profile.caption">Change your photo, type a name, then press Save
+                            Changes.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.profile.step1">Press Change or the camera badge to choose a JPG or PNG
+                                photo (up to 5 MB). Use “Use default photo” to go back to the original avatar.</li>
+                            <li data-i18n="help.profile.step2">Type your name in the Your Name box. The character counter
+                                shows how much space you have left.</li>
+                            <li data-i18n="help.profile.step3">Press Save Changes. Reset restores the last saved name and
+                                photo without saving new edits.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.profile.tip">XP, level, words learned and your reading streak are
+                                    shown on the Story Library home page. They update automatically as you read.</span></p>
+                        </div>
+                        <a class="guide-link" href="../profile/index.html"><span data-i18n="help.openProfile">Open Profile</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11 — Story Store -->
+            <section class="guide-section guide-section--reverse" id="store" aria-labelledby="storeTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>11</span><i class="fa-solid fa-store" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.store">Story Store</em></p>
+                    <h2 id="storeTitle" data-i18n="help.store.title">Find more stories</h2>
+                    <p data-i18n="help.store.summary">The Story Store is a catalogue of extra stories. Browse by level,
+                        read the details, save a story to My Stories, or download it as a file.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/store.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.store.caption">Filter the catalogue by level and save the stories you
+                            want to keep.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.store.step1">Choose a level at the top of the page to narrow the
+                                catalogue. Every card shows the language, word count and estimated reading time.</li>
+                            <li data-i18n="help.store.step2">Press Save Story to add it to My Stories, where you can read it
+                                offline later.</li>
+                            <li data-i18n="help.store.step3">Press Download to keep the story as a JSON file, or open it in
+                                the reader from My Stories.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.store.tip">Saved stories count toward your personal library, not the
+                                    built-in Story Library. This makes them easy to find and back up.</span></p>
+                        </div>
+                        <a class="guide-link" href="../../store/index.html"><span data-i18n="help.openStore">Open Story Store</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 12 — Tools -->
+            <section class="guide-section" id="tools" aria-labelledby="toolsTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>12</span><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.tools">Tools</em></p>
+                    <h2 id="toolsTitle" data-i18n="help.tools.title">Prepare your own material</h2>
+                    <p data-i18n="help.tools.summary">Two small utilities help you build content for the app: turn a CSV
+                        word list into a dictionary file, or analyse a text before turning it into a story.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/tools.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.tools.caption">CSV → Dictionary and Text Analyzer, plus shortcuts to
+                            the rest of the app.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.tools.step1">Open CSV → Dictionary, paste or upload a CSV of words and
+                                translations, then download the dictionary file the reader understands.</li>
+                            <li data-i18n="help.tools.step2">Open Text Analyzer and paste any text to see word counts,
+                                unique words and difficulty insights before you import it.</li>
+                            <li data-i18n="help.tools.step3">Use the Jump back in cards at the bottom to return to
+                                Vocabulary, Flashcards, Quiz, Stories Studio, Story Store or Settings.</li>
+                        </ol>
+                        <div class="guide-tip">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.tip">Tip</strong>
+                                <span data-i18n="help.tools.tip">A dictionary file can be attached to a story in Stories
+                                    Studio, so difficult words are translated exactly the way you want.</span></p>
+                        </div>
+                        <a class="guide-link" href="../../tools/index.html"><span data-i18n="help.openTools">Open Tools</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 13 — Settings -->
+            <section class="guide-section guide-section--reverse" id="settings" aria-labelledby="settingsTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>13</span><i class="fa-solid fa-gear" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.settings">Settings</em></p>
+                    <h2 id="settingsTitle" data-i18n="help.settings.title">One place for every preference</h2>
+                    <p data-i18n="help.settings.summary">Settings controls the theme, accent colours, reading font,
+                        translation behaviour, feature toggles, custom CSS and data management for the whole app.</p>
+                </div>
+                <div class="guide-section__grid">
+                    <figure class="guide-figure">
+                        <div class="guide-figure__frame">
+                            <img src="assets/screenshots/settings.webp" alt="" loading="lazy" width="1280" height="724">
+                        </div>
+                        <figcaption data-i18n="help.settings.caption">Changes made here are saved once and used across every
+                            page.</figcaption>
+                    </figure>
+                    <div class="guide-copy">
+                        <h3 data-i18n="help.steps">How to use it</h3>
+                        <ol class="guide-steps">
+                            <li data-i18n="help.settings.step1">Use Appearance for light/dark mode and the primary and
+                                secondary accent colours. Use Reading for the font, size and line spacing in the reader.</li>
+                            <li data-i18n="help.settings.step2">Translation controls the default translation language,
+                                auto-translate, paragraph translation and whether translated words are hidden.</li>
+                            <li data-i18n="help.settings.step3">Library &amp; Quizzes, Vocabulary &amp; Speech toggle the
+                                features you want to see. Custom CSS lets you restyle each page separately.</li>
+                            <li data-i18n="help.settings.step4">Data Management exports your stories, backs up everything,
+                                restores a backup, deletes your stories, or deletes all app data. Reset preferences
+                                restores defaults without touching your stories or words.</li>
+                        </ol>
+                        <div class="guide-tip guide-tip--warning">
+                            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                            <p><strong data-i18n="help.settings.warningTitle">Important</strong>
+                                <span data-i18n="help.settings.tip">Back up before clearing your browser data or switching
+                                    devices. Everything is stored locally in this browser.</span></p>
+                        </div>
+                        <a class="guide-link" href="../settings/index.html"><span data-i18n="help.openSettings">Open Settings</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 14 — Offline & help -->
+            <section class="guide-section" id="offline" aria-labelledby="offlineTitle">
+                <div class="guide-section__head">
+                    <p class="guide-kicker"><span>14</span><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+                        <em data-i18n="help.toc.offline">Offline &amp; help</em></p>
+                    <h2 id="offlineTitle" data-i18n="help.offline.title">Offline, updates and quick answers</h2>
+                    <p data-i18n="help.offline.summary">IStories is designed to keep working when the connection drops.
+                        Here is what is available offline, how updates behave, and where your data lives.</p>
+                </div>
+                <div class="guide-offline-grid">
+                    <article class="guide-offline-card">
+                        <i class="fa-solid fa-wifi" aria-hidden="true"></i>
+                        <h3 data-i18n="help.offline.offlineTitle">Read offline</h3>
+                        <p data-i18n="help.offline.offlineText">After the first visit, the app shell and built-in stories
+                            are cached. Local bases and your own stories work offline too. Online bases need a
+                            connection the first time they are loaded.</p>
+                    </article>
+                    <article class="guide-offline-card">
+                        <i class="fa-solid fa-hard-drive" aria-hidden="true"></i>
+                        <h3 data-i18n="help.offline.storageTitle">Where is my data?</h3>
+                        <p data-i18n="help.offline.storageText">Your stories, saved words, quizzes and profile live in this
+                            browser only. Nothing is uploaded to an account or synced between devices.</p>
+                    </article>
+                    <article class="guide-offline-card">
+                        <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+                        <h3 data-i18n="help.offline.updateTitle">Updates</h3>
+                        <p data-i18n="help.offline.updateText">When a new version is available, the app asks you to
+                            reload. Reloading updates the cached files but keeps your stories and settings.</p>
+                    </article>
+                    <article class="guide-offline-card">
+                        <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+                        <h3 data-i18n="help.offline.audioTitle">No sound?</h3>
+                        <p data-i18n="help.offline.audioText">Check the device volume, the narration player, and the
+                            speech toggles in Settings. Some browsers need one tap on the page before audio is
+                            allowed.</p>
+                    </article>
+                </div>
+                <div class="guide-faq">
+                    <details>
+                        <summary data-i18n="help.offline.faq1q">Why did I land on this guide?</summary>
+                        <p data-i18n="help.offline.faq1a">This browser had no IStories activity yet, so the app opened the
+                            guide first. Press “Continue to Story Library” or “Start reading” to begin. You can return
+                            here any time from the Help &amp; guide link in the sidebar.</p>
+                    </details>
+                    <details>
+                        <summary data-i18n="help.offline.faq2q">How do I move my data to another device?</summary>
+                        <p data-i18n="help.offline.faq2a">Open Settings → Data Management → Backup all data on the old
+                            device. On the new device, open the same section and restore that backup file.</p>
+                    </details>
+                    <details>
+                        <summary data-i18n="help.offline.faq3q">How do I start over?</summary>
+                        <p data-i18n="help.offline.faq3a">Settings → Data Management → Delete all data removes your stories,
+                            words, quizzes and preferences from this browser. Export a backup first if you might want
+                            them back.</p>
+                    </details>
+                    <details>
+                        <summary data-i18n="help.offline.faq4q">Can I use IStories on a phone?</summary>
+                        <p data-i18n="help.offline.faq4a">Yes. The layout adapts to small screens, the sidebar becomes a
+                            drawer, and you can install the app to your home screen for a full-screen experience.</p>
+                    </details>
+                </div>
+                <div class="guide-tip guide-tip--wide">
+                    <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+                    <p><strong data-i18n="help.offline.helpTitle">Still stuck?</strong>
+                        <span data-i18n="help.offline.helpText">Revisit the section for the page you are using, or open
+                            Settings to check the language, theme and data options. Every control in the app is
+                            described above.</span></p>
+                </div>
+            </section>
+
+            <footer class="guide-footer">
+                <div>
+                    <p class="guide-eyebrow guide-eyebrow--dark"><i class="fa-solid fa-book-open-reader" aria-hidden="true"></i>
+                        <span data-i18n="help.footerEyebrow">Ready to read?</span></p>
+                    <h2 data-i18n="help.footerTitle">Your next story is waiting</h2>
+                    <p data-i18n="help.footerText">Go back to the library, pick a story, and try tapping a word. That is
+                        all it takes to start learning.</p>
+                </div>
+                <div class="guide-footer__actions">
+                    <a class="guide-btn guide-btn--primary" href="../index.html?guide=0">
+                        <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                        <span data-i18n="help.ctaLibrary">Continue to Story Library</span>
+                    </a>
+                    <a class="guide-btn guide-btn--ghost" href="#top">
+                        <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                        <span data-i18n="help.backTop">Back to top</span>
+                    </a>
+                </div>
+            </footer>
+
+        </div>
+    </main>
+</body>
+
+</html>

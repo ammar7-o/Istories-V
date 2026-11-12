@@ -550,9 +550,9 @@ Small, synchronous settings (theme, colours, font size, feature flags, …) stay
 in localStorage so they can still be read before first paint. Pre-existing
 localStorage data is migrated into IndexedDB on first run.
 
-**IndexedDB keys (9):** `userStories`, `savedWords`, `userQuizzes`, `quizzes`,
+**IndexedDB keys (10):** `userStories`, `savedWords`, `userQuizzes`, `quizzes`,
 `quizHistory`, `userDictionaries`, `readingHistory`, `currentReadingStory`,
-`profilePhoto`.
+`localStorySources`, `profilePhoto`.
 
 **Deliberately still in localStorage:** `userStats`, `downloadStats`, the
 `customCSS*` variants, and every preference (`theme`, `selectedColor`,
@@ -561,7 +561,7 @@ localStorage data is migrated into IndexedDB on first run.
 `fontFamily`, `selectedStoriesFile`, …).
 
 **How it stays backwards compatible.** `nav/storage.js` patches
-`Storage.prototype.getItem/setItem/removeItem/clear`: the 9 data keys are served
+`Storage.prototype.getItem/setItem/removeItem/clear`: the 10 data keys are served
 from an in-memory mirror hydrated from IndexedDB (localForage instance
 `IStoriesDB`, store `istories`) and written straight through to it; every other
 key falls through to the real localStorage. Writes issued before hydration are
@@ -672,3 +672,51 @@ pre-existing, unrelated `verifyColorSetup is not defined` on the store page
 remain. **The reader is untouched** — it keeps its own drawer + Custom-CSS
 modal.
 
+
+---
+
+## Story-base management (local imports, recent-story restore, manager page)
+
+**Selected source.** `selectedStoriesFile` remains the source of truth for the
+library and reader. Three kinds of values are possible:
+
+- built-in path relative to `/main/` (e.g. `../database/database/main.js`);
+- absolute online URL (`https://…/stories.js`);
+- local import reference `localbase:<id>`.
+
+**Local bases.** The bases popup (**Import from local base JS file**) reads a
+`.js` file from the user's device and stores its text in the IndexedDB key
+`localStorySources` as
+`{ id, label, fileName, content, storyCount, importedAt, size }`. A browser
+cannot re-open a file path after a reload, so the content is kept. Local bases
+are evaluated inside a Web Worker (`nav/bases.js`) and only `window.storiesData`
+is returned; the main library never executes the file directly. The popup adds
+a distinct **Local bases** group alongside **Offline bases** and **Your online
+bases**, and local entries can be removed from there.
+
+**Recent Stories.** Each database history entry now stores `source` (the active
+`#Select` value at read time). Clicking a recent story calls
+`openStoryFromHistory(id, source)`, which first selects/appends that base,
+waits for `window.storiesLoadVersion` to advance, and only then opens the
+story. Missing local bases and removed online bases show a notification instead
+of silently opening a story from the wrong base. User stories keep their
+separate `openUserStoryFromHistory` path and still never enter `stories`.
+
+**Manager page.** `main/bases/index.html` + `bases.js` is linked from the
+sidebar (**Story Bases**) and from the popup. It lists built-in bases
+(from `database/data.json`), local imports and online sources; supports
+adding local `.js` bases (with an optional name), adding/removing online URLs,
+opening a base in the library, exporting any base as `.js` (local content is
+exported directly; built-in/online bases are fetched), and deleting custom
+entries. Deleted active bases reset `selectedStoriesFile` to Base-1. Because the
+page has no settings modal of its own, a small script right after `<body>`
+applies the saved `theme` plus `selectedColor` / `selectedSecondaryColor`
+before paint; the shared sidebar's Theme action handles later toggles.
+
+**Sharing/caveat.** A `?story=localbase:<id>` link only works on the device
+where the base was imported; other devices fall back to Base-1 with a warning.
+`localStorySources` is treated as large user data, so it is included in the
+storage façade's data keys and in the settings backup/reset flows.
+
+**Service worker.** `CACHE_VERSION` v6.1 → v6.3; precache adds
+`main/nav/bases.js`, `main/bases/index.html` and `main/bases/bases.js`.

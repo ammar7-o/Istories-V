@@ -527,6 +527,11 @@ function getReadingHistory() {
 }
 
 // Add story to reading history
+function getActiveStorySource() {
+    const selectElement = document.getElementById('Select');
+    return selectElement && selectElement.value ? selectElement.value : '';
+}
+
 function addToReadingHistory(story) {
     try {
         let history = getReadingHistory();
@@ -534,7 +539,8 @@ function addToReadingHistory(story) {
         // Remove if already exists (to avoid duplicates)
         history = history.filter(item => item.id !== story.id);
 
-        // Add to beginning of array
+        // Add to beginning of array. `source` remembers which base the story
+        // came from so Recent Stories can switch back to it before opening.
         history.unshift({
             id: story.id,
             title: story.title,
@@ -542,7 +548,8 @@ function addToReadingHistory(story) {
             cover: story.cover,
             coverType: story.coverType,
             timestamp: new Date().toISOString(),
-            isUserStory: story.isUserStory || false
+            isUserStory: story.isUserStory || false,
+            source: story.isUserStory ? '' : getActiveStorySource()
         });
 
         // Keep only last 10 entries
@@ -609,7 +616,7 @@ function showRecentStories() {
             .replace(/'/g, "\\'") + "'";
         const clickHandler = story.isUserStory
             ? `openUserStoryFromHistory(${historyId})`
-            : `openStoryInNewPage(${historyId})`;
+            : `openRecentDatabaseStory(${index})`;
 
         return `
                             <div class="recent-story-item" onclick="${clickHandler}; closeRecentStoriesModal();">
@@ -712,6 +719,139 @@ function clearReadingHistory() {
         showNotification('Reading history cleared!');
         closeRecentStoriesModal();
     }
+}
+
+function recentHistoryText(key, fallback) {
+    if (window.IStoriesI18n && typeof window.IStoriesI18n.t === 'function') {
+        const value = window.IStoriesI18n.t(key);
+        if (value && value !== key) return value;
+    }
+    return fallback;
+}
+
+function waitForStoriesReady(minVersion, callback) {
+    const startedAt = Date.now();
+    const check = function () {
+        const loadVersion = window.storiesLoadVersion || 0;
+        const initVersion = window.storiesInitVersion || 0;
+        // init() rebuilds `stories` from window.storiesData after each load.
+        // Equality makes sure a name-less history click cannot read the
+        // previous base during that short gap.
+        const versionReady = loadVersion === initVersion &&
+            (!minVersion || loadVersion >= minVersion);
+        if (window.storiesLoaded && versionReady && typeof stories !== 'undefined') {
+            callback(true);
+            return;
+        }
+        if (Date.now() - startedAt > 12000) {
+            callback(false);
+            return;
+        }
+        setTimeout(check, 120);
+    };
+    check();
+}
+
+// Recent Stories is index-based so a base value containing quotes or special
+// characters never has to be embedded in an inline onclick attribute.
+function openRecentDatabaseStory(index) {
+    const entry = getReadingHistory()[index];
+    if (!entry) return;
+    openStoryFromHistory(entry.id, entry.source || '');
+}
+
+// Open a database story after restoring the base it came from.
+function openStoryFromHistory(storyId, source) {
+    const selectElement = document.getElementById('Select');
+    const sourceValue = source ? String(source).trim() : '';
+
+    if (!selectElement || !sourceValue) {
+        waitForStoriesReady(0, function (ready) {
+            if (!ready) {
+                showNotification(recentHistoryText('library.storyLoadFailed',
+                    'The story could not be opened. Please reload the page and try again.'), 'error');
+                return;
+            }
+            openStoryInNewPage(storyId);
+        });
+        return;
+    }
+
+    const matchesCurrent = typeof sameSource === 'function'
+        ? sameSource(selectElement.value, sourceValue)
+        : selectElement.value === sourceValue;
+
+    if (matchesCurrent) {
+        waitForStoriesReady(0, function (ready) {
+            if (!ready) {
+                showNotification(recentHistoryText('library.storyLoadFailed',
+                    'The story could not be opened. Please reload the page and try again.'), 'error');
+                return;
+            }
+            openStoryInNewPage(storyId);
+        });
+        return;
+    }
+
+    const localRef = !!window.IStoriesBases &&
+        window.IStoriesBases.isLocalRef(sourceValue);
+
+    if (localRef && !window.IStoriesBases.getLocalBase(
+        window.IStoriesBases.localRefId(sourceValue))) {
+        showNotification(recentHistoryText('library.localBaseMissing',
+            'The local base for this story is not available on this device.'), 'error');
+        return;
+    }
+
+    // A base added or imported in another tab may not be in this page's
+    // hidden <select> yet.
+    if (typeof appendLocalStorySources === 'function') {
+        appendLocalStorySources(selectElement);
+    }
+    if (typeof appendCustomStorySources === 'function') {
+        appendCustomStorySources(selectElement);
+    }
+
+    let option = typeof findSourceOption === 'function'
+        ? findSourceOption(selectElement, sourceValue)
+        : null;
+
+    if (!option && !localRef) {
+        const isOnline = typeof isHttpSource === 'function' && isHttpSource(sourceValue);
+        option = createSourceOption(selectElement, sourceValue, '', isOnline);
+        if (isOnline && typeof saveCustomStorySource === 'function') {
+            saveCustomStorySource(sourceValue);
+        }
+    }
+
+    if (!option) {
+        showNotification(recentHistoryText('library.baseUnavailable',
+            'The base for this story is no longer available.'), 'error');
+        return;
+    }
+
+    const previousVersion = window.storiesLoadVersion || 0;
+    selectElement.value = option.value;
+    if (typeof refreshSourcePicker === 'function') refreshSourcePicker();
+    selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+
+    waitForStoriesReady(previousVersion + 1, function (ready) {
+        if (!ready) {
+            showNotification(recentHistoryText('library.storyLoadFailed',
+                'The story could not be opened. Please reload the page and try again.'), 'error');
+            return;
+        }
+
+        const found = typeof stories !== 'undefined' && Array.isArray(stories) &&
+            stories.some(story => story.id == storyId);
+
+        if (found) {
+            openStoryInNewPage(storyId);
+        } else {
+            showNotification(recentHistoryText('library.baseStoryMissing',
+                'That story is no longer in its base.'), 'warning');
+        }
+    });
 }
 
 // Function to open user stories from history

@@ -73,6 +73,10 @@ function init() {
         console.log('Using fallback stories');
     }
 
+    // Record which load this array belongs to. Recent Stories uses this to
+    // avoid reading the previous base while a new one is being swapped in.
+    window.storiesInitVersion = window.storiesLoadVersion || 0;
+
     // User-created stories have their own page (My Stories) and are not merged
     // into the library feed.
 

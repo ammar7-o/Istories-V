@@ -19,9 +19,6 @@
     <!-- Interface localization (English / Arabic) -->
     <link rel="stylesheet" href="../nav/i18n.css">
     <script src="../nav/i18n.js"></script>
-    <!-- Welcome guide (auto-opens on the homepage only) -->
-    <link rel="stylesheet" href="../nav/welcome.css">
-    <script src="../nav/welcome.js" defer></script>
 
     <style>
         /* ==================================================================
@@ -480,13 +477,13 @@
                         </div>
                         <div class="setting-row">
                             <div class="setting-info">
-                                <span class="setting-label" data-i18n="welcome.reopen">Help &amp; guide</span>
-                                <span class="setting-desc" data-i18n="settings.helpDesc">Open the welcome tour again to
-                                    revisit the main pages</span>
+                                <span class="setting-label" data-i18n="nav.help">Help &amp; guide</span>
+                                <span class="setting-desc" data-i18n="settings.helpDesc">Open the full guide to learn
+                                    every page and feature</span>
                             </div>
                             <div class="setting-control">
-                                <button class="ist-btn" type="button" data-welcome-open data-i18n="settings.openGuide">
-                                    Open guide</button>
+                                <a class="ist-btn" href="../help/index.html" data-i18n="settings.openGuide">
+                                    Open guide</a>
                             </div>
                         </div>
                     </div>

@@ -58,6 +58,7 @@
         'userDictionaries',
         'readingHistory',
         'currentReadingStory',
+        'localStorySources',
         'profilePhoto'
     ];
 

@@ -1467,6 +1467,69 @@ details a:hover {
     font-size: 0.85rem;
 }
 
+.source-picker-form + .source-picker-form {
+    margin-top: 14px;
+}
+
+.source-picker-form--local .source-picker-row {
+    align-items: center;
+}
+
+.source-picker-choose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.source-picker-choose:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.source-picker-file-name {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-picker-hint {
+    margin: 7px 0 0;
+    color: var(--text-light);
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.source-picker-manage {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.source-picker-manage:hover,
+.source-picker-manage:focus-visible {
+    background: var(--hover);
+}
+
+.source-picker-manage .fa-arrow-right {
+    margin-inline-start: auto;
+    font-size: 0.78rem;
+}
+
+[dir="rtl"] .source-picker-manage .fa-arrow-right {
+    transform: scaleX(-1);
+}
+
 @media (max-width: 480px) {
     .source-picker-row {
         flex-direction: column;

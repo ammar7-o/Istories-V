@@ -52,6 +52,7 @@
                 items: [
                     { key: 'stories', label: 'Story Library', i18n: 'nav.stories', icon: 'fa-solid fa-book-open', path: 'main/index.html' },
                     { key: 'myStories', label: 'My Stories', i18n: 'nav.myStories', icon: 'fa-solid fa-book-bookmark', path: 'main/myStories/index.html' },
+                    { key: 'bases', label: 'Story Bases', i18n: 'nav.bases', icon: 'fa-solid fa-database', path: 'main/bases/index.html' },
                     { key: 'vocabulary', label: 'Vocabulary', i18n: 'nav.vocabulary', icon: 'fa-solid fa-language', path: 'main/vocabulary/index.html' },
                     { key: 'flashcard', label: 'Flashcards', i18n: 'nav.flashcards', icon: 'fa-solid fa-layer-group', path: 'main/flashcard/index.html' },
                     { key: 'quiz', label: 'Quiz', i18n: 'nav.quiz', icon: 'fa-solid fa-brain', path: 'main/quiz/index.html' }
@@ -90,7 +91,7 @@
             }
         ],
         footer: [
-            { key: 'help', label: 'Help & guide', i18n: 'nav.help', icon: 'fa-solid fa-circle-question', action: '#welcome' },
+            { key: 'help', label: 'Help & guide', i18n: 'nav.help', icon: 'fa-solid fa-circle-question', path: 'main/help/index.html' },
             { key: 'theme', label: 'Theme', i18n: 'nav.theme', icon: 'fa-solid fa-moon', action: '#theme' },
             { key: 'top', label: 'Top', i18n: 'nav.top', icon: 'fa-solid fa-arrow-up', action: '#top' }
         ]
@@ -190,13 +191,7 @@
         var footerHtml = '';
         if (config.footer && config.footer.length) {
             footerHtml = '<div class="ist-sidebar__foot">' + config.footer.map(function (item) {
-                return '<button type="button" class="ist-sidebar__action"' +
-                    (item.i18n ? ' data-i18n-title="' + escapeHtml(item.i18n) + '"' : '') +
-                    ' title="' + escapeHtml(item.label) +
-                    '" data-ist-action="' +
-                    escapeHtml(item.action || '') + '">' + icon(item.icon) +
-                    '<span' + (item.i18n ? ' data-i18n="' + escapeHtml(item.i18n) + '"' : '') + '>' +
-                    escapeHtml(item.label) + '</span></button>';
+                return renderFooterItem(item, config);
             }).join('') + '</div>';
         }
 
@@ -233,6 +228,25 @@
             (active ? ' aria-current="page"' : '') + '>' +
             icon(item.icon) + '<span' + (item.i18n ? ' data-i18n="' + escapeHtml(item.i18n) + '"' : '') + '>' +
             escapeHtml(item.label) + '</span></a>';
+    }
+
+    function renderFooterItem(item, config) {
+        var common = (item.i18n ? ' data-i18n-title="' + escapeHtml(item.i18n) + '"' : '') +
+            ' title="' + escapeHtml(item.label) + '"';
+        var label = icon(item.icon) +
+            '<span' + (item.i18n ? ' data-i18n="' + escapeHtml(item.i18n) + '"' : '') + '>' +
+            escapeHtml(item.label) + '</span>';
+
+        // Footer entries can be real pages (Help & guide) as well as actions.
+        if (item.path || item.href) {
+            var active = isActive(item, config);
+            return '<a class="ist-sidebar__action' + (active ? ' is-active' : '') + '" href="' +
+                resolveHref(item, config) + '"' + common +
+                (active ? ' aria-current="page"' : '') + '>' + label + '</a>';
+        }
+
+        return '<button type="button" class="ist-sidebar__action"' + common +
+            ' data-ist-action="' + escapeHtml(item.action || '') + '">' + label + '</button>';
     }
 
     function escapeHtml(value) {
@@ -398,14 +412,6 @@
             } else {
                 var dark = document.body.classList.toggle('dark-mode');
                 localStorage.setItem('theme', dark ? 'dark' : 'light');
-            }
-            return true;
-        }
-        if (action === '#welcome') {
-            if (window.IStoriesWelcome && typeof window.IStoriesWelcome.open === 'function') {
-                window.IStoriesWelcome.open();
-            } else {
-                document.dispatchEvent(new CustomEvent('ist-welcome-open'));
             }
             return true;
         }

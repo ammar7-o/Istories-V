@@ -282,6 +282,13 @@ body.ist-sidebar-open {
     background: color-mix(in srgb, var(--ist-sidebar-accent) 12%, transparent);
 }
 
+.ist-sidebar__action.is-active {
+    border-color: color-mix(in srgb, var(--ist-sidebar-accent) 34%, transparent);
+    background: color-mix(in srgb, var(--ist-sidebar-accent) 16%, transparent);
+    color: var(--ist-sidebar-accent);
+    font-weight: 700;
+}
+
 /* --- Dark mode --- */
 body.dark-mode,
 .dark-mode .ist-sidebar {

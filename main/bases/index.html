@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Bases — IStories</title>
+    <link rel="icon" type="image/png" href="../../icon.png">
+    <link rel="stylesheet" href="../../font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="../nav/sidebar.css">
+    <!-- Large user data (including imported local bases) lives in IndexedDB. -->
+    <script src="../nav/vendor/localforage.min.js"></script>
+    <script src="../nav/storage.js"></script>
+    <script src="../nav/bases.js"></script>
+    <script src="../nav/sidebar.js" defer></script>
+    <script src="../nav/common.js"></script>
+    <link rel="stylesheet" href="../nav/theme.css">
+    <link rel="stylesheet" href="../nav/header.css">
+    <link rel="stylesheet" href="../nav/i18n.css">
+    <script src="../nav/i18n.js"></script>
+    <script src="bases.js" defer></script>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body.dark-mode {
+            --bg: #111827;
+            --bg-secondary: #1f2937;
+            --card-bg: #1f2937;
+            --input-bg: #111827;
+            --hover: #374151;
+            --text: #f9fafb;
+            --text-light: #d1d5db;
+            --border: #374151;
+            --border-light: #2b3444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, .3), 0 2px 4px -1px rgba(0, 0, 0, .2);
+            background: #111827;
+            color: #f9fafb;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg, #edeae3);
+            color: var(--text, #0d3b36);
+        }
+
+        .container {
+            width: min(1080px, 100% - 32px);
+            margin-inline: auto;
+        }
+
+        .main-content { padding: 26px 0 72px; }
+
+        .bases-hero {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 30px 28px;
+            margin-bottom: 20px;
+            border-radius: 22px;
+            color: #f9f7f0;
+            background: linear-gradient(135deg, var(--primary, #00d4b0) 0%, var(--secondary, #007ec7) 130%);
+            box-shadow: var(--shadow, 0 10px 26px -14px rgba(0, 0, 0, .3));
+        }
+
+        .bases-hero__icon {
+            flex: 0 0 auto;
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            font-size: 1.6rem;
+            color: #fff;
+            background: rgba(255, 255, 255, .16);
+            backdrop-filter: blur(6px);
+        }
+
+        .bases-hero__eyebrow {
+            margin: 0 0 4px;
+            font-size: .74rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            opacity: .85;
+        }
+
+        .bases-hero__title {
+            margin: 0 0 6px;
+            font-size: clamp(1.5rem, 3.4vw, 2rem);
+            letter-spacing: -.02em;
+        }
+
+        .bases-hero__text {
+            margin: 0;
+            max-width: 70ch;
+            line-height: 1.55;
+            opacity: .92;
+        }
+
+        .bases-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .base-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+        }
+
+        .base-stat__value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: var(--text);
+        }
+
+        .base-stat__label {
+            font-size: .78rem;
+            color: var(--text-light);
+        }
+
+        .bases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+
+        .bases-card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+        }
+
+        .bases-card--full { grid-column: 1 / -1; }
+
+        .bases-card__head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 16px;
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .bases-card__head > div { flex: 1 1 220px; min-width: 0; }
+
+        .bases-card__head h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 1rem;
+            letter-spacing: -.01em;
+        }
+
+        .bases-card__head h2 i { color: var(--primary); }
+
+        .bases-card__head p {
+            margin: 4px 0 0;
+            font-size: .82rem;
+            line-height: 1.45;
+            color: var(--text-light);
+        }
+
+        .bases-card__body { padding: 16px 18px 18px; }
+
+        .bases-loading,
+        .bases-empty {
+            margin: 0;
+            padding: 18px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-light);
+            text-align: center;
+            font-size: .9rem;
+        }
+
+        .bases-empty strong { color: var(--text); }
+
+        .bases-empty p { margin: 5px 0 0; }
+
+        .bases-list + .bases-empty { margin-top: 12px; }
+
+        .bases-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .base-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+        }
+
+        .base-row.is-active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent);
+        }
+
+        .base-row__icon {
+            flex: 0 0 auto;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            color: var(--primary);
+            background: color-mix(in srgb, var(--primary) 13%, transparent);
+        }
+
+        .base-row__body { flex: 1 1 auto; min-width: 0; }
+
+        .base-row__title-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .base-row__title {
+            margin: 0;
+            font-size: .95rem;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .base-kind {
+            flex: 0 0 auto;
+            padding: 2px 8px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--card-bg);
+            color: var(--text-light);
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+
+        .base-kind--local { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); color: var(--primary); }
+        .base-kind--online { border-color: color-mix(in srgb, var(--secondary) 45%, var(--border)); color: var(--secondary); }
+
+        .base-row__meta {
+            margin: 4px 0 0;
+            overflow: hidden;
+            color: var(--text-light);
+            font-size: .78rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .base-row__actions {
+            flex: 0 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .base-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 9px 13px;
+            background: var(--primary);
+            color: #fff;
+            font: inherit;
+            font-size: .85rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity .15s ease, transform .15s ease;
+        }
+
+        .base-btn:hover { opacity: .92; transform: translateY(-1px); }
+
+        .base-btn:disabled { opacity: .6; cursor: wait; transform: none; }
+
+        .base-btn--ghost {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .base-btn--danger {
+            background: transparent;
+            border-color: color-mix(in srgb, #ef4444 55%, var(--border));
+            color: #ef4444;
+        }
+
+        .base-btn--danger:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #fff;
+        }
+
+        .base-btn--small {
+            padding: 7px 10px;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        .base-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .base-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: .84rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .base-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--input-bg);
+            color: var(--text);
+            font: inherit;
+            font-size: .9rem;
+            font-weight: 400;
+        }
+
+        .base-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+        }
+
+        .base-file-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .base-file-name {
+            min-width: 0;
+            overflow: hidden;
+            color: var(--text-light);
+            font-size: .8rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .base-hint {
+            margin: 0;
+            color: var(--text-light);
+            font-size: .78rem;
+            line-height: 1.45;
+        }
+
+        .base-error {
+            margin: 0;
+            color: #ef4444;
+            font-size: .82rem;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 700px) {
+            .base-row { flex-wrap: wrap; }
+            .base-row__actions { width: 100%; justify-content: flex-start; }
+        }
+
+        @media (max-width: 560px) {
+            .bases-hero { padding: 24px 20px; }
+            .bases-card__body { padding: 14px 15px 16px; }
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        // Apply the saved theme and accent colours before the page paints, so
+        // the Story Bases screen matches the rest of the app on first load.
+        (function () {
+            try {
+                if ((localStorage.getItem('theme') || 'light') === 'dark') {
+                    document.body.classList.add('dark-mode');
+                }
+                var root = document.documentElement;
+                var primary = localStorage.getItem('selectedColor');
+                var secondary = localStorage.getItem('selectedSecondaryColor');
+                if (primary) root.style.setProperty('--primary', primary);
+                if (secondary) root.style.setProperty('--secondary', secondary);
+            } catch (error) {
+                // Storage can be unavailable in private modes; keep defaults.
+            }
+        })();
+    </script>
+    <header class="ist-header" id="top">
+        <div class="ist-header__inner">
+            <button class="ist-burger" id="toggle-nav" type="button" aria-label="Open navigation"
+                aria-controls="istories-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <a class="ist-header__brand" href="../../index.html">
+                <img class="ist-header__logo" src="../../icon.svg" alt="">
+                <span class="ist-header__name">IStories</span>
+            </a>
+            <span class="ist-header__page">
+                <i class="fa-solid fa-database" aria-hidden="true"></i>
+                <span data-i18n="bases.title">Story Bases</span>
+            </span>
+            <div class="ist-header__spacer"></div>
+            <a class="ist-header__action" href="../index.html" aria-label="Story Library" title="Story Library"
+                data-i18n-title="nav.stories">
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="bases-hero">
+                <span class="bases-hero__icon"><i class="fas fa-database" aria-hidden="true"></i></span>
+                <div>
+                    <p class="bases-hero__eyebrow" data-i18n="bases.eyebrow">Manage your library sources</p>
+                    <h1 class="bases-hero__title" data-i18n="bases.heroTitle">Story bases</h1>
+                    <p class="bases-hero__text" data-i18n="bases.heroText">
+                        Import local .js bases, save online bases, and control what feeds the Story Library.
+                        Everything is kept in this browser.
+                    </p>
+                </div>
+            </section>
+
+            <section class="bases-stats" aria-label="Base statistics">
+                <div class="base-stat">
+                    <span class="base-stat__value" id="statBases">0</span>
+                    <span class="base-stat__label" data-i18n="bases.statBases">Bases</span>
+                </div>
+                <div class="base-stat">
+                    <span class="base-stat__value" id="statLocal">0</span>
+                    <span class="base-stat__label" data-i18n="bases.statLocal">Local</span>
+                </div>
+                <div class="base-stat">
+                    <span class="base-stat__value" id="statOnline">0</span>
+                    <span class="base-stat__label" data-i18n="bases.statOnline">Online</span>
+                </div>
+                <div class="base-stat">
+                    <span class="base-stat__value" id="statStories">0</span>
+                    <span class="base-stat__label" data-i18n="bases.statStories">Local stories</span>
+                </div>
+            </section>
+
+            <div class="bases-grid">
+                <section class="bases-card bases-card--full">
+                    <div class="bases-card__head">
+                        <div>
+                            <h2>
+                                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                                <span data-i18n="bases.yourBases">Your bases</span>
+                            </h2>
+                            <p data-i18n="bases.yourBasesDesc">
+                                Built-in bases ship with the app. Local and online bases are yours to add or remove.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bases-card__body">
+                        <p class="bases-loading" id="basesLoading" data-i18n="bases.loading">Loading bases…</p>
+                        <div class="bases-list" id="basesList" hidden></div>
+                        <div class="bases-empty" id="basesEmpty" hidden>
+                            <strong data-i18n="bases.empty">No custom bases yet</strong>
+                            <p data-i18n="bases.emptyText">Add a local .js file or an online base above.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bases-card">
+                    <div class="bases-card__head">
+                        <div>
+                            <h2>
+                                <i class="fas fa-file-code" aria-hidden="true"></i>
+                                <span data-i18n="bases.addLocal">Add a local base</span>
+                            </h2>
+                            <p data-i18n="bases.addLocalDesc">
+                                Choose a .js database from your device. It is stored in this browser and works offline.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bases-card__body">
+                        <form class="base-form" id="localBaseForm">
+                            <label class="base-field" for="localBaseName">
+                                <span data-i18n="bases.optionalName">Name (optional)</span>
+                                <input type="text" id="localBaseName" autocomplete="off"
+                                    placeholder="e.g. My English base"
+                                    data-i18n-placeholder="bases.namePlaceholder">
+                            </label>
+                            <input type="file" id="localBaseFile" accept=".js,application/javascript,text/javascript"
+                                hidden>
+                            <div class="base-file-row">
+                                <button type="button" class="base-btn base-btn--ghost" id="localBaseChoose">
+                                    <i class="fas fa-file-arrow-up" aria-hidden="true"></i>
+                                    <span data-i18n="bases.chooseFile">Choose a .js file</span>
+                                </button>
+                                <span class="base-file-name" id="localBaseFileName"
+                                    data-i18n="bases.noFile">No file chosen yet</span>
+                            </div>
+                            <button type="submit" class="base-btn" id="localBaseSubmit">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                <span data-i18n="bases.addLocalButton">Add local base</span>
+                            </button>
+                            <p class="base-hint" data-i18n="bases.localOnly">Local bases are stored on this device.</p>
+                            <p class="base-error" id="localBaseError" role="alert" hidden></p>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="bases-card">
+                    <div class="bases-card__head">
+                        <div>
+                            <h2>
+                                <i class="fas fa-cloud" aria-hidden="true"></i>
+                                <span data-i18n="bases.addOnline">Add an online base</span>
+                            </h2>
+                            <p data-i18n="bases.addOnlineDesc">
+                                Paste a link to a story database (.js). The app loads it when selected and remembers
+                                it here.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bases-card__body">
+                        <form class="base-form" id="onlineBaseForm">
+                            <label class="base-field" for="onlineBaseUrl">
+                                <span data-i18n="bases.urlLabel">Base URL</span>
+                                <input type="url" id="onlineBaseUrl" inputmode="url" autocomplete="off"
+                                    spellcheck="false" dir="ltr" placeholder="https://example.com/stories.js"
+                                    data-i18n-placeholder="library.sourceUrlPlaceholder" required>
+                            </label>
+                            <label class="base-field" for="onlineBaseLabel">
+                                <span data-i18n="bases.labelLabel">Name (optional)</span>
+                                <input type="text" id="onlineBaseLabel" autocomplete="off"
+                                    placeholder="e.g. Community stories"
+                                    data-i18n-placeholder="bases.labelPlaceholder">
+                            </label>
+                            <button type="submit" class="base-btn" id="onlineBaseSubmit">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                <span data-i18n="bases.addOnlineButton">Add online base</span>
+                            </button>
+                            <p class="base-error" id="onlineBaseError" role="alert" hidden></p>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

@@ -5,6 +5,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story Library — IStories</title>
+    <!--
+      First-visit routing: a brand-new browser goes to the Help & Guide page
+      before the library. Returning users (welcome flag, any saved preference,
+      or any data in IndexedDB) are never redirected. `?guide=0` is the
+      deliberate escape hatch used by the guide page itself.
+    -->
+    <script>
+        (function () {
+            var GUIDE_KEY = 'istories_guide_seen_v1';
+            var LEGACY_KEY = 'istories_welcome_completed_v1';
+            var root = document.documentElement;
+
+            try {
+                var params = new URLSearchParams(location.search);
+                if (params.get('guide') === '0') return;
+                if (localStorage.getItem(GUIDE_KEY) === 'true' ||
+                    sessionStorage.getItem(GUIDE_KEY) === 'true' ||
+                    localStorage.getItem(LEGACY_KEY) === 'true') return;
+
+                var prefs = ['theme', 'selectedColor', 'selectedSecondaryColor',
+                    'istories_lang', 'profileName', 'sidebarCollapsed',
+                    'fontFamily', 'fontSize', 'showUserQuizzes', 'speechEnabled'];
+                for (var i = 0; i < prefs.length; i++) {
+                    if (localStorage.getItem(prefs[i]) !== null) return;
+                }
+            } catch (error) {
+                // Storage is unavailable (private mode or a broken profile):
+                // show the library instead of risking a redirect loop.
+                return;
+            }
+
+            var finished = false;
+            var timer = setTimeout(showLibrary, 1200);
+            root.style.visibility = 'hidden';
+
+            function showLibrary() {
+                if (finished) return;
+                finished = true;
+                clearTimeout(timer);
+                root.style.visibility = '';
+            }
+
+            function openGuide() {
+                if (finished) return;
+                finished = true;
+                clearTimeout(timer);
+                try { sessionStorage.setItem(GUIDE_KEY, 'true'); } catch (error) { /* ignore */ }
+                try {
+                    location.replace(new URL('help/index.html?from=library', location.href).href);
+                } catch (error) {
+                    showLibrary();
+                }
+            }
+
+            try {
+                var request = indexedDB.open('IStoriesDB');
+                request.onerror = showLibrary;
+                request.onblocked = showLibrary;
+                request.onupgradeneeded = openGuide;
+                request.onsuccess = function () {
+                    var db = request.result;
+                    try {
+                        if (!db.objectStoreNames.contains('istories')) {
+                            db.close();
+                            openGuide();
+                            return;
+                        }
+                        var store = db.transaction('istories', 'readonly').objectStore('istories');
+                        var count = store.count();
+                        count.onsuccess = function () {
+                            db.close();
+                            if (count.result > 0) showLibrary();
+                            else openGuide();
+                        };
+                        count.onerror = function () {
+                            db.close();
+                            showLibrary();
+                        };
+                    } catch (error) {
+                        try { db.close(); } catch (closeError) { /* ignore */ }
+                        showLibrary();
+                    }
+                };
+            } catch (error) {
+                showLibrary();
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="../font-awesome/css/all.min.css">
     <link rel="stylesheet" href="main/style.css">
     <link rel="stylesheet" href="storiesStudio/addStories.css">
@@ -20,6 +108,7 @@
     <!-- Large user data (userStories, savedWords, userDictionaries, …) is stored in IndexedDB via localForage; must load before page scripts. -->
     <script src="nav/vendor/localforage.min.js"></script>
     <script src="nav/storage.js"></script>
+    <script src="nav/bases.js"></script>
     <script src="nav/sidebar.js" defer></script>
     <script src="nav/common.js"></script>
     <link rel="stylesheet" href="nav/theme.css">
@@ -27,9 +116,6 @@
     <!-- Interface localization (English / Arabic) -->
     <link rel="stylesheet" href="nav/i18n.css">
     <script src="nav/i18n.js"></script>
-    <!-- Welcome guide (auto-opens on the homepage only) -->
-    <link rel="stylesheet" href="nav/welcome.css">
-    <script src="nav/welcome.js" defer></script>
 </head>
 
 <body data-css-key="customCSSHome" data-css-important="simple">
@@ -173,6 +259,23 @@
                     <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
                 </a>
                 <div class="source-picker-list" id="sourcePickerList"></div>
+                <div class="source-picker-form source-picker-form--local" id="sourcePickerLocalForm">
+                    <label for="sourcePickerLocalFile" data-i18n="library.importLocalBase">Import from local base JS file</label>
+                    <div class="source-picker-row">
+                        <input id="sourcePickerLocalFile" type="file"
+                            accept=".js,application/javascript,text/javascript" hidden>
+                        <button type="button" class="source-picker-submit source-picker-choose"
+                            id="sourcePickerLocalButton">
+                            <i class="fas fa-file-arrow-up" aria-hidden="true"></i>
+                            <span data-i18n="library.chooseLocalBase">Choose a .js file</span>
+                        </button>
+                        <span class="source-picker-file-name" id="sourcePickerLocalName" hidden></span>
+                    </div>
+                    <p class="source-picker-hint" data-i18n="library.localBaseHint">
+                        The file is saved in this browser and is never uploaded.
+                    </p>
+                    <p class="source-picker-error" id="sourcePickerLocalError" role="alert" hidden></p>
+                </div>
                 <form class="source-picker-form" id="sourcePickerForm">
                     <label for="sourcePickerUrl" data-i18n="library.addSourceUrl">Add a file URL</label>
                     <div class="source-picker-row">
@@ -183,6 +286,11 @@
                     </div>
                     <p class="source-picker-error" id="sourcePickerError" role="alert" hidden></p>
                 </form>
+                <a class="source-picker-manage" href="bases/index.html">
+                    <i class="fas fa-database" aria-hidden="true"></i>
+                    <span data-i18n="library.manageBases">Manage bases</span>
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -206,6 +314,7 @@
     <script>
         // Global variable to track if stories are loaded
         window.storiesLoaded = false;
+        window.storiesLoadVersion = 0;
         window.storiesData = [];
 
         // Function to get URL parameters
@@ -347,11 +456,41 @@
             });
         }
 
+        function appendLocalStorySources(selectElement) {
+            if (!selectElement || !window.IStoriesBases) return;
+            window.IStoriesBases.getLocalBases().forEach(function (entry) {
+                var ref = window.IStoriesBases.localRef(entry.id);
+                if (findSourceOption(selectElement, ref)) return;
+                var option = createSourceOption(selectElement, ref, entry.label, false);
+                if (!option) return;
+                option.dataset.localBase = 'true';
+                option.dataset.localFileName = entry.fileName || '';
+                option.dataset.localStoryCount = String(entry.storyCount || 0);
+            });
+        }
+
         function sourcePickerError(message) {
             var errorElement = document.getElementById('sourcePickerError');
             if (!errorElement) return;
             errorElement.textContent = message || '';
             errorElement.hidden = !message;
+        }
+
+        function sourcePickerLocalError(message) {
+            var errorElement = document.getElementById('sourcePickerLocalError');
+            if (!errorElement) return;
+            errorElement.textContent = message || '';
+            errorElement.hidden = !message;
+        }
+
+        function readLocalBaseFile(file) {
+            if (file && typeof file.text === 'function') return file.text();
+            return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function () { resolve(String(reader.result || '')); };
+                reader.onerror = function () { reject(reader.error || new Error('Could not read the file.')); };
+                reader.readAsText(file);
+            });
         }
 
         function buildSourceGroup(config) {
@@ -410,7 +549,8 @@
                 icon.className = 'source-picker-item__icon';
                 var iconElement = document.createElement('i');
                 iconElement.className = 'fas ' +
-                    (entry.custom || isRemoteSource(option.value) ? 'fa-globe' : 'fa-database');
+                    (entry.local ? 'fa-file-code' :
+                        (entry.custom || isRemoteSource(option.value) ? 'fa-globe' : 'fa-database'));
                 iconElement.setAttribute('aria-hidden', 'true');
                 icon.appendChild(iconElement);
                 item.appendChild(icon);
@@ -425,7 +565,16 @@
                 body.appendChild(label);
 
                 var metaText = '';
-                if (entry.custom) {
+                if (entry.local) {
+                    var localParts = [];
+                    if (option.dataset.localFileName) localParts.push(option.dataset.localFileName);
+                    var localCount = Number(option.dataset.localStoryCount) || 0;
+                    if (localCount) {
+                        localParts.push(sourcePickerText('library.baseStoryCount', '{count} stories')
+                            .replace('{count}', String(localCount)));
+                    }
+                    metaText = localParts.join(' · ');
+                } else if (entry.custom) {
                     var parsed = resolveSourceUrl(option.value);
                     metaText = parsed ? parsed.hostname : '';
                     if (!metaText) metaText = sourcePickerText('library.importedBadge', 'Imported');
@@ -452,7 +601,7 @@
                 });
                 row.appendChild(item);
 
-                if (entry.custom) {
+                if (entry.custom || entry.local) {
                     var removeButton = document.createElement('button');
                     removeButton.type = 'button';
                     removeButton.className = 'source-picker-remove';
@@ -465,7 +614,8 @@
                     removeButton.appendChild(removeIcon);
                     removeButton.addEventListener('click', function (event) {
                         event.stopPropagation();
-                        removeCustomStorySource(option.value);
+                        if (entry.local) removeLocalStorySource(option.value);
+                        else removeCustomStorySource(option.value);
                     });
                     row.appendChild(removeButton);
                 }
@@ -497,14 +647,17 @@
             listElement.innerHTML = '';
 
             var offlineEntries = [];
+            var localEntries = [];
             var onlineEntries = [];
 
             options.forEach(function (option) {
                 var entry = {
                     option: option,
-                    custom: option.dataset.customSource === 'true'
+                    custom: option.dataset.customSource === 'true',
+                    local: option.dataset.localBase === 'true'
                 };
-                if (entry.custom || isRemoteSource(option.value)) onlineEntries.push(entry);
+                if (entry.local) localEntries.push(entry);
+                else if (entry.custom || isRemoteSource(option.value)) onlineEntries.push(entry);
                 else offlineEntries.push(entry);
             });
 
@@ -517,6 +670,15 @@
                     emptyText: ''
                 }));
             }
+
+            listElement.appendChild(buildSourceGroup({
+                title: sourcePickerText('library.localBases', 'Local bases'),
+                icon: 'fa-file-code',
+                entries: localEntries,
+                selectedValue: selectedValue,
+                emptyText: sourcePickerText('library.localBasesEmpty',
+                    'No local bases imported yet. Use the import field below.')
+            }));
 
             listElement.appendChild(buildSourceGroup({
                 title: sourcePickerText('library.onlineBases', 'Your online bases'),
@@ -560,6 +722,29 @@
             refreshSourcePicker();
         }
 
+        function removeLocalStorySource(ref) {
+            var selectElement = document.getElementById('Select');
+            if (!selectElement || !window.IStoriesBases) return;
+
+            window.IStoriesBases.removeLocalBase(window.IStoriesBases.localRefId(ref));
+
+            var wasSelected = false;
+            Array.prototype.slice.call(selectElement.options).forEach(function (option) {
+                if (option.dataset.localBase !== 'true') return;
+                if (!sameSource(option.value, ref)) return;
+                if (sameSource(option.value, selectElement.value)) wasSelected = true;
+                option.remove();
+            });
+
+            if (wasSelected && selectElement.options.length) {
+                selectElement.selectedIndex = 0;
+                selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+                return;
+            }
+
+            refreshSourcePicker();
+        }
+
         function chooseStorySource(value) {
             var selectElement = document.getElementById('Select');
             if (!selectElement) return;
@@ -581,6 +766,7 @@
 
             sourcePickerLastFocus = document.activeElement;
             sourcePickerError('');
+            sourcePickerLocalError('');
             refreshSourcePicker();
             modal.hidden = false;
             if (button) button.setAttribute('aria-expanded', 'true');
@@ -654,11 +840,64 @@
             chooseStorySource(resolved.href);
         }
 
+        async function importLocalStorySource(file) {
+            var input = document.getElementById('sourcePickerLocalFile');
+            var button = document.getElementById('sourcePickerLocalButton');
+            var selectElement = document.getElementById('Select');
+            if (!file || !selectElement) return;
+
+            sourcePickerLocalError('');
+            if (!window.IStoriesBases) {
+                sourcePickerLocalError(sourcePickerText('library.localBaseInvalid',
+                    'That file is not a valid story base.'));
+                return;
+            }
+
+            var labelSpan = button ? button.querySelector('span') : null;
+            var originalLabel = labelSpan ? labelSpan.textContent : '';
+            if (button) button.disabled = true;
+            if (labelSpan) {
+                labelSpan.textContent = sourcePickerText('library.localBaseImporting', 'Importing…');
+            }
+
+            try {
+                var text = await readLocalBaseFile(file);
+                var parsed = await window.IStoriesBases.parseBaseText(text);
+                var entry = window.IStoriesBases.addLocalBase({
+                    label: file.name.replace(/\.(?:m?js|json)$/i, ''),
+                    fileName: file.name,
+                    content: text,
+                    storyCount: parsed.stories.length
+                });
+
+                var nameElement = document.getElementById('sourcePickerLocalName');
+                var countText = sourcePickerText('library.baseStoryCount', '{count} stories')
+                    .replace('{count}', String(entry.storyCount || 0));
+                if (nameElement) {
+                    nameElement.textContent = entry.label + ' · ' + countText;
+                    nameElement.hidden = false;
+                }
+
+                appendLocalStorySources(selectElement);
+                chooseStorySource(window.IStoriesBases.localRef(entry.id));
+            } catch (error) {
+                var reason = error && error.message ? ' ' + error.message : '';
+                sourcePickerLocalError(sourcePickerText('library.localBaseInvalid',
+                    'That file is not a valid story base.') + reason);
+            } finally {
+                if (button) button.disabled = false;
+                if (labelSpan) labelSpan.textContent = originalLabel;
+                if (input) input.value = '';
+            }
+        }
+
         function setupSourcePicker() {
             var button = document.getElementById('sourcePickerButton');
             var modal = document.getElementById('sourcePickerModal');
             var closeButton = document.getElementById('sourcePickerClose');
             var form = document.getElementById('sourcePickerForm');
+            var localInput = document.getElementById('sourcePickerLocalFile');
+            var localButton = document.getElementById('sourcePickerLocalButton');
             if (!button || !modal) return;
 
             button.addEventListener('click', openSourcePicker);
@@ -672,13 +911,25 @@
                     addStorySourceFromUrl();
                 });
             }
+            if (localButton && localInput) {
+                localButton.addEventListener('click', function () {
+                    sourcePickerLocalError('');
+                    localInput.click();
+                });
+                localInput.addEventListener('change', function () {
+                    var file = localInput.files && localInput.files[0];
+                    if (file) importLocalStorySource(file);
+                });
+            }
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Escape' && !modal.hidden) closeSourcePicker();
             });
         }
 
         function finalizeSourceOptions() {
-            appendCustomStorySources(document.getElementById('Select'));
+            var selectElement = document.getElementById('Select');
+            appendLocalStorySources(selectElement);
+            appendCustomStorySources(selectElement);
             refreshSourcePicker();
         }
 
@@ -695,10 +946,48 @@
             }
         }
 
+        function completeStoriesLoad(filename) {
+            console.log('Stories loaded successfully');
+            console.log('Stories data:', window.storiesData);
+            window.storiesLoaded = true;
+
+            // Save the selected file
+            saveSelectedStoriesFile(filename);
+
+            // Initialize app
+            initAppAfterStoriesLoad();
+        }
+
+        function applyFallbackStories(filename) {
+            window.storiesData = {
+                stories: [
+                    {
+                        id: 1,
+                        title: "The Mysterious Island",
+                        level: "beginner",
+                        cover: "🏝️",
+                        coverType: "emoji",
+                        wordCount: 350,
+                        content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
+                    }
+                ]
+            };
+            window.storiesLoaded = true;
+
+            // Save the selected file (even if error, user chose it)
+            saveSelectedStoriesFile(filename);
+
+            // Initialize app with fallback
+            initAppAfterStoriesLoad();
+        }
+
         // Function to load stories based on selected file
         function loadStoriesFile(filename) {
-            // Reset loaded state
+            // Reset loaded state. The version lets Recent Stories wait for a
+            // *new* base instead of reading the previous one during the swap.
             window.storiesLoaded = false;
+            window.storiesLoadVersion = (window.storiesLoadVersion || 0) + 1;
+            window.storiesData = undefined;
 
             // Remove old script if exists
             const oldScript = document.querySelector('script[data-stories="true"]');
@@ -708,46 +997,43 @@
 
             console.log(`Loading stories from: ${filename}`);
 
+            // Imported local bases live in storage rather than at a URL. They
+            // are evaluated in the sandboxed base parser so only their
+            // window.storiesData payload reaches the library.
+            if (window.IStoriesBases && window.IStoriesBases.isLocalRef(filename)) {
+                const localBase = window.IStoriesBases.getLocalBase(
+                    window.IStoriesBases.localRefId(filename));
+
+                if (!localBase) {
+                    console.error(`Local base not found: ${filename}`);
+                    applyFallbackStories(filename);
+                    return;
+                }
+
+                window.IStoriesBases.parseBaseText(localBase.content)
+                    .then(function (result) {
+                        window.storiesData = result.data;
+                        completeStoriesLoad(filename);
+                    })
+                    .catch(function (error) {
+                        console.error(`Failed to load local base ${filename}:`, error);
+                        applyFallbackStories(filename);
+                    });
+                return;
+            }
+
             // Create and load new script
             const s = document.createElement("script");
             s.src = filename;
             s.setAttribute('data-stories', 'true');
 
             s.onload = function () {
-                console.log('Stories loaded successfully');
-                console.log('Stories data:', window.storiesData);
-                window.storiesLoaded = true;
-
-                // Save the selected file
-                saveSelectedStoriesFile(filename);
-
-                // Initialize app
-                initAppAfterStoriesLoad();
+                completeStoriesLoad(filename);
             };
 
             s.onerror = function () {
                 console.error(`Failed to load ${filename}`);
-                // Use fallback stories
-                window.storiesData = {
-                    stories: [
-                        {
-                            id: 1,
-                            title: "The Mysterious Island",
-                            level: "beginner",
-                            cover: "🏝️",
-                            coverType: "emoji",
-                            wordCount: 350,
-                            content: ["This is a sample story. Click on words like village or journey to see the dictionary."]
-                        }
-                    ]
-                };
-                window.storiesLoaded = true;
-
-                // Save the selected file (even if error, user chose it)
-                saveSelectedStoriesFile(filename);
-
-                // Initialize app with fallback
-                initAppAfterStoriesLoad();
+                applyFallbackStories(filename);
             };
 
             document.head.appendChild(s);
@@ -823,11 +1109,15 @@
 
             if (selectElement && fileToLoad) {
                 let sourceOption = findSourceOption(selectElement, fileToLoad);
+                const isLocalSource = !!window.IStoriesBases &&
+                    window.IStoriesBases.isLocalRef(fileToLoad);
 
                 // A ?story= link can point at a database that is not in the
                 // built-in list yet. Add it (and remember it when it is an
                 // online URL) instead of silently falling back to Base-1.
-                if (!sourceOption && urlStoryFile) {
+                // Local-base links cannot be recreated from a URL: the file
+                // content only exists on the device where it was imported.
+                if (!sourceOption && urlStoryFile && !isLocalSource) {
                     const isOnlineSource = /^(https?:)?\/\//i.test(urlStoryFile) && isHttpSource(urlStoryFile);
                     sourceOption = createSourceOption(selectElement, urlStoryFile, '', isOnlineSource);
                     if (isOnlineSource) saveCustomStorySource(urlStoryFile);
@@ -844,6 +1134,11 @@
                     selectElement.selectedIndex = 0;
                     fileToLoad = selectElement.value;
                     console.log('Requested file not found in options, using:', fileToLoad);
+
+                    if (isLocalSource) {
+                        showNotification(sourcePickerText('library.localBaseMissing',
+                            'The local base in this link is not available on this device.'), 'warning');
+                    }
                 }
             }
 
