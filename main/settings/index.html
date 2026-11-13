@@ -19,6 +19,9 @@
     <!-- Interface localization (English / Arabic) -->
     <link rel="stylesheet" href="../nav/i18n.css">
     <script src="../nav/i18n.js"></script>
+    <!-- Keyboard shortcut catalogue + storage. Must load before the inline
+         Settings script below (classic script, no defer). -->
+    <script src="../nav/shortcuts.js"></script>
 
     <style>
         /* ==================================================================
@@ -352,6 +355,158 @@
         .ist-btn--danger { background: #ef4444; }
 
         .ist-btn--icon { padding: 9px 12px; }
+
+        /* --- Keyboard shortcuts ------------------------------------------ */
+        .shortcut-list {
+            display: grid;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .shortcut-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px 16px;
+            flex-wrap: wrap;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--input-bg, #fff);
+        }
+
+        .shortcut-row__label {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            font-size: .88rem;
+            font-weight: 600;
+            color: var(--text);
+            min-width: 0;
+        }
+
+        .shortcut-row__label i {
+            width: 18px;
+            text-align: center;
+            color: var(--primary);
+            flex: 0 0 auto;
+        }
+
+        .shortcut-row__actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            flex: 0 0 auto;
+        }
+
+        .shortcut-key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-height: 36px;
+            min-width: 118px;
+            padding: 6px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--bg-secondary, #f4f1ea);
+            color: var(--text);
+            font: inherit;
+            font-size: .8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color .15s ease, background-color .15s ease;
+        }
+
+        .shortcut-key:hover {
+            border-color: var(--primary);
+        }
+
+        .shortcut-key:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--primary) 50%, transparent);
+            outline-offset: 2px;
+        }
+
+        .shortcut-key.is-capturing {
+            border-color: var(--primary);
+            background: color-mix(in srgb, var(--primary) 14%, var(--bg-secondary, #f4f1ea));
+            color: var(--primary-dark, var(--primary));
+            animation: shortcutPulse 1.2s ease-in-out infinite;
+        }
+
+        .shortcut-key kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            border: 1px solid var(--border);
+            border-bottom-width: 2px;
+            border-radius: 5px;
+            background: var(--input-bg, #fff);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: .72rem;
+            line-height: 1.3;
+            color: var(--text);
+        }
+
+        .shortcut-key .shortcut-plus {
+            font-size: .68rem;
+            color: var(--text-light);
+        }
+
+        .shortcut-key__empty {
+            color: var(--text-light);
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .shortcut-reset {
+            display: grid;
+            place-items: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .shortcut-reset:hover {
+            border-color: var(--border);
+            color: var(--text);
+            background: var(--hover, rgba(0, 0, 0, .05));
+        }
+
+        .shortcut-reset[hidden] { display: none; }
+
+        .shortcut-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .shortcut-status {
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            min-height: 1.2em;
+        }
+
+        .shortcut-status.is-error { color: #dc2626; }
+        .shortcut-status.is-success { color: #059669; }
+
+        @keyframes shortcutPulse {
+            0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 0%, transparent); }
+            50% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .shortcut-key.is-capturing { animation: none; }
+        }
 
         /* --- Custom CSS editor ------------------------------------------- */
         .ist-tabs {
@@ -752,6 +907,46 @@
                     </div>
                 </section>
 
+                <!-- ============ Keyboard shortcuts ============ -->
+                <section class="settings-card settings-card--full" id="keyboardShortcuts">
+                    <div class="settings-card__head">
+                        <i class="fas fa-keyboard"></i>
+                        <h2 data-i18n="settings.shortcuts">Keyboard shortcuts</h2>
+                    </div>
+                    <div class="settings-card__body">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label" data-i18n="settings.shortcutsEnable">Enable keyboard
+                                    shortcuts</span>
+                                <span class="setting-desc" data-i18n="settings.shortcutsEnableDesc">Use your own key
+                                    combinations to move around the app. While you are typing in a field, only
+                                    combinations with Ctrl, Alt or Meta are triggered.</span>
+                            </div>
+                            <div class="setting-control">
+                                <button class="ist-switch" id="shortcutsEnabled" role="switch" aria-checked="true"
+                                    aria-label="Enable keyboard shortcuts">
+                                    <span class="ist-switch__dot"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="settings-note" data-i18n="settings.shortcutsHint">
+                            Click a combination, then press the keys you want to use. Use Ctrl, Alt or Meta with a
+                            key, or a function key (F1–F12). Press Escape to cancel.
+                        </p>
+
+                        <div class="shortcut-list" id="shortcutList" aria-live="polite"></div>
+
+                        <div class="shortcut-footer">
+                            <button type="button" class="ist-btn ist-btn--ghost" id="shortcutsResetAll">
+                                <i class="fas fa-rotate-left"></i>
+                                <span data-i18n="shortcuts.resetAll">Reset all shortcuts</span>
+                            </button>
+                            <span class="shortcut-status" id="shortcutStatus" role="status" aria-live="polite"></span>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- ============ Custom CSS ============ -->
                 <section class="settings-card settings-card--full">
                     <div class="settings-card__head">
@@ -861,7 +1056,7 @@
                         <div class="setting-row">
                             <div class="setting-info">
                                 <span class="setting-label" data-i18n="settings.version">Version</span>
-                                <span class="setting-desc" data-i18n="settings.versionText">IStories 2.1.0 · by Ammar chacal</span>
+                                <span class="setting-desc" data-i18n="settings.versionText">IStories 6.6.0 · by Ammar chacal</span>
                             </div>
                             <div class="setting-control">
                                 <button class="ist-btn ist-btn--ghost" id="refreshApp"><i class="fas fa-sync-alt"></i>
@@ -1369,6 +1564,238 @@
                 });
             }
 
+            // --- Keyboard shortcuts --------------------------------------
+            var shortcutCapture = null;
+
+            function shortcutT(key, fallback, vars) {
+                if (window.IStoriesI18n && typeof IStoriesI18n.t === 'function') {
+                    var translated = IStoriesI18n.t(key, vars);
+                    if (translated && translated !== key) return translated;
+                }
+                var text = fallback;
+                if (vars) {
+                    Object.keys(vars).forEach(function (name) {
+                        text = text.replace(new RegExp('\\{' + name + '\\}', 'g'), vars[name]);
+                    });
+                }
+                return text;
+            }
+
+            function shortcutActionLabel(action) {
+                return shortcutT(action.i18n, action.label);
+            }
+
+            function setShortcutStatus(text, type) {
+                var status = document.getElementById('shortcutStatus');
+                if (!status) return;
+                status.textContent = text || '';
+                status.classList.toggle('is-error', type === 'error');
+                status.classList.toggle('is-success', type === 'success');
+            }
+
+            function endShortcutCapture() {
+                if (!shortcutCapture) return;
+                if (shortcutCapture.button) {
+                    shortcutCapture.button.classList.remove('is-capturing');
+                }
+                shortcutCapture = null;
+                document.documentElement.removeAttribute('data-shortcut-capture');
+            }
+
+            function renderShortcuts() {
+                var api = window.IStoriesShortcuts;
+                var list = document.getElementById('shortcutList');
+                if (!api || !list) return;
+
+                endShortcutCapture();
+                list.innerHTML = '';
+
+                api.actions.forEach(function (action) {
+                    var current = api.get(action.id);
+                    var row = document.createElement('div');
+                    row.className = 'shortcut-row';
+                    row.dataset.action = action.id;
+
+                    var label = document.createElement('span');
+                    label.className = 'shortcut-row__label';
+                    label.innerHTML = '<i class="fa-solid ' + action.icon + '" aria-hidden="true"></i>' +
+                        '<span></span>';
+                    label.querySelector('span').textContent = shortcutActionLabel(action);
+
+                    var actions = document.createElement('span');
+                    actions.className = 'shortcut-row__actions';
+
+                    var keyButton = document.createElement('button');
+                    keyButton.type = 'button';
+                    keyButton.className = 'shortcut-key';
+                    keyButton.dataset.action = action.id;
+                    keyButton.setAttribute('aria-label',
+                        shortcutT('shortcuts.changeFor', 'Change shortcut for {action}', {
+                            action: shortcutActionLabel(action)
+                        }));
+                    if (current) {
+                        keyButton.innerHTML = api.formatHtml(current);
+                    } else {
+                        keyButton.innerHTML = '<span class="shortcut-key__empty">' +
+                            shortcutT('shortcuts.notSet', 'Not set') + '</span>';
+                    }
+                    keyButton.addEventListener('click', function () {
+                        beginShortcutCapture(action.id, keyButton);
+                    });
+
+                    var resetButton = document.createElement('button');
+                    resetButton.type = 'button';
+                    resetButton.className = 'shortcut-reset';
+                    resetButton.title = shortcutT('shortcuts.resetOne', 'Reset this shortcut');
+                    resetButton.setAttribute('aria-label', resetButton.title);
+                    resetButton.innerHTML = '<i class="fas fa-rotate-left" aria-hidden="true"></i>';
+                    resetButton.hidden = current === api.defaults[action.id];
+                    resetButton.addEventListener('click', function () {
+                        api.reset(action.id);
+                        renderShortcuts();
+                        setShortcutStatus(shortcutT('shortcuts.resetDone', 'Shortcut reset.'), 'success');
+                    });
+
+                    actions.appendChild(keyButton);
+                    actions.appendChild(resetButton);
+                    row.appendChild(label);
+                    row.appendChild(actions);
+                    list.appendChild(row);
+                });
+            }
+
+            function beginShortcutCapture(actionId, button) {
+                var api = window.IStoriesShortcuts;
+                if (!api) return;
+                if (shortcutCapture) {
+                    endShortcutCapture();
+                    renderShortcuts();
+                    button = document.querySelector('.shortcut-key[data-action="' + actionId + '"]');
+                }
+                var action = null;
+                api.actions.forEach(function (item) {
+                    if (item.id === actionId) action = item;
+                });
+                if (!button || !action) return;
+
+                shortcutCapture = { id: actionId, button: button };
+                button.classList.add('is-capturing');
+                button.innerHTML = '<span class="shortcut-key__empty">' +
+                    shortcutT('shortcuts.pressKeys', 'Press keys…') + '</span>';
+                document.documentElement.setAttribute('data-shortcut-capture', '');
+                setShortcutStatus(shortcutT('shortcuts.captureHint',
+                    'Press the new combination for “{action}”. Escape cancels, Delete clears.',
+                    { action: shortcutActionLabel(action) }), '');
+                button.focus();
+            }
+
+            function onShortcutCaptureKeydown(event) {
+                if (!shortcutCapture) return;
+                var api = window.IStoriesShortcuts;
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (event.key === 'Escape') {
+                    endShortcutCapture();
+                    renderShortcuts();
+                    setShortcutStatus(shortcutT('shortcuts.cancelled', 'Capture cancelled.'), '');
+                    return;
+                }
+
+                var clearRequested = (event.key === 'Backspace' || event.key === 'Delete') &&
+                    !event.ctrlKey && !event.altKey && !event.metaKey;
+                if (clearRequested) {
+                    api.set(shortcutCapture.id, '');
+                    endShortcutCapture();
+                    renderShortcuts();
+                    setShortcutStatus(shortcutT('shortcuts.cleared', 'Shortcut cleared. It will do nothing until you set it again.'), 'success');
+                    return;
+                }
+
+                var combo = api.comboFromEvent(event);
+                if (!combo) {
+                    setShortcutStatus(shortcutT('shortcuts.keepHolding',
+                        'Keep holding Ctrl, Alt or Meta and press another key.'), '');
+                    return;
+                }
+
+                if (!api.isAllowed(combo)) {
+                    setShortcutStatus(shortcutT('shortcuts.invalid',
+                        'Use Ctrl, Alt or Meta plus a key, or a function key (F1–F12).'), 'error');
+                    return;
+                }
+
+                var result = api.set(shortcutCapture.id, combo);
+                if (!result.ok) {
+                    if (result.error === 'conflict') {
+                        var conflictAction = null;
+                        api.actions.forEach(function (item) {
+                            if (item.id === result.conflict) conflictAction = item;
+                        });
+                        setShortcutStatus(shortcutT('shortcuts.conflict',
+                            'That combination is already used by “{action}”. Choose another one.', {
+                                action: conflictAction ? shortcutActionLabel(conflictAction) : result.conflict
+                            }), 'error');
+                    } else {
+                        setShortcutStatus(shortcutT('shortcuts.invalid',
+                            'Use Ctrl, Alt or Meta plus a key, or a function key (F1–F12).'), 'error');
+                    }
+                    return;
+                }
+
+                var savedAction = null;
+                api.actions.forEach(function (item) {
+                    if (item.id === shortcutCapture.id) savedAction = item;
+                });
+                endShortcutCapture();
+                renderShortcuts();
+                setShortcutStatus(shortcutT('shortcuts.saved',
+                    '“{action}” is now {combo}.', {
+                        action: savedAction ? shortcutActionLabel(savedAction) : '',
+                        combo: api.format(combo)
+                    }), 'success');
+            }
+
+            function initShortcuts() {
+                var api = window.IStoriesShortcuts;
+                if (!api) {
+                    setShortcutStatus(shortcutT('shortcuts.unavailable',
+                        'Shortcuts could not be loaded on this page.'), 'error');
+                    return;
+                }
+
+                renderShortcuts();
+
+                var enabled = document.getElementById('shortcutsEnabled');
+                if (enabled) {
+                    enabled.setAttribute('aria-checked', String(api.isEnabled()));
+                    enabled.addEventListener('click', function () {
+                        var next = enabled.getAttribute('aria-checked') !== 'true';
+                        api.setEnabled(next);
+                        enabled.setAttribute('aria-checked', String(next));
+                        setShortcutStatus(next
+                            ? shortcutT('shortcuts.enabled', 'Keyboard shortcuts enabled.')
+                            : shortcutT('shortcuts.disabled', 'Keyboard shortcuts disabled.'), 'success');
+                    });
+                }
+
+                var resetAll = document.getElementById('shortcutsResetAll');
+                if (resetAll) {
+                    resetAll.addEventListener('click', function () {
+                        if (!confirm(shortcutT('shortcuts.resetConfirm',
+                            'Reset every shortcut to its default combination?'))) return;
+                        api.resetAll();
+                        renderShortcuts();
+                        setShortcutStatus(shortcutT('shortcuts.resetAllDone',
+                            'All shortcuts were reset to their defaults.'), 'success');
+                    });
+                }
+
+                document.addEventListener('keydown', onShortcutCaptureKeydown, true);
+                document.addEventListener('ist-language-change', renderShortcuts);
+            }
+
             // --- Reset & refresh -----------------------------------------
             var RESET_KEYS = [
                 'theme', 'selectedColor', 'selectedSecondaryColor',
@@ -1394,6 +1821,7 @@
             }
 
             // --- Boot -----------------------------------------------------
+            initShortcuts();
             applyTheme();
             applyPrimaryColor(colorState.selectedColor);
             applySecondaryColor(colorState.selectedSecondaryColor);

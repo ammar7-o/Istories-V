@@ -52,6 +52,11 @@ let sessionCards = [];
 // Language filter state (which language deck to practise)
 let currentCardLang = 'all';
 let flashcardLangSignature = null;
+
+// Advanced filters + deck selection. "due" keeps the original behaviour.
+let flashcardFilters = { story: 'all', deck: 'due', date: 'all' };
+let flashcardStorySignature = null;
+let flashcardScopeTotal = 0;
 // Navigation menu elements
 const toggleNav = document.getElementById("toggle-nav");
 const more = document.getElementById("more");
@@ -419,6 +424,7 @@ function initFlashcards() {
     updateFlashcardStats();
     setupFlashcardListeners();
     setupFlashcardLangFilter();
+    setupFlashcardFilters();
     loadFlashcards();
 }
 
@@ -478,9 +484,14 @@ function updateFlashcardLangIndicator(counts, codes) {
     const due = sessionCards.length;
 
     if (currentCardLang === 'all') {
-        el.innerHTML = `<i class="fas fa-layer-group"></i> ${due} card${due === 1 ? '' : 's'} · ${codes.length} language${codes.length === 1 ? '' : 's'}`;
+        el.innerHTML = `<i class="fas fa-layer-group"></i> ` +
+            flashcardT('flashcards.indicatorAll', '{cards} cards · {languages} languages',
+                { cards: due, languages: codes.length });
     } else {
-        el.innerHTML = `${langFlag(currentCardLang)} ${langDisplayName(currentCardLang)} · ${due} card${due === 1 ? '' : 's'}`;
+        el.innerHTML = flashcardT('flashcards.indicatorLang', '{language} · {cards} cards', {
+            language: `${langFlag(currentCardLang)} ${langDisplayName(currentCardLang)}`,
+            cards: due
+        });
     }
 }
 
@@ -494,25 +505,213 @@ function setupFlashcardLangFilter() {
     });
 }
 
+// =============== FLASHCARD ADVANCED FILTERS ===============
+function flashcardT(key, fallback, vars) {
+    if (window.IStoriesI18n && typeof IStoriesI18n.t === 'function') {
+        const translated = IStoriesI18n.t(key, vars);
+        if (translated && translated !== key) return translated;
+    }
+    let text = fallback;
+    if (vars) {
+        Object.keys(vars).forEach(name => {
+            text = text.replace(new RegExp('\\{' + name + '\\}', 'g'), vars[name]);
+        });
+    }
+    return text;
+}
+
+function escapeFlashcardHtml(value) {
+    return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function flashcardDate(word) {
+    const raw = word.addedDate || word.dateAdded || word.added || word.date;
+    if (!raw) return null;
+    const date = new Date(raw);
+    return isNaN(date.getTime()) ? null : date;
+}
+
+function flashcardIsMastered(word) {
+    return word.status === 'known' || word.status === 'mastered';
+}
+
+function flashcardIsNew(word) {
+    return !flashcardIsMastered(word) && !word.lastViewed &&
+        !word.nextReview && !word.reviewCount;
+}
+
+function flashcardMatchesDeck(word, deck) {
+    if (deck === 'all') return true;
+    if (deck === 'mastered') return flashcardIsMastered(word);
+    if (deck === 'new') return flashcardIsNew(word);
+    if (deck === 'learning') return !flashcardIsMastered(word) && !flashcardIsNew(word);
+
+    // "Due today" preserves the original scheduling behaviour: no nextReview
+    // date or a date that has already passed.
+    if (!word.nextReview) return true;
+    return new Date(word.nextReview) <= new Date();
+}
+
+function countActiveFlashcardFilters() {
+    let count = 0;
+    if (flashcardFilters.story !== 'all') count++;
+    if (flashcardFilters.deck !== 'due') count++;
+    if (flashcardFilters.date !== 'all') count++;
+    return count;
+}
+
+function updateFlashcardFilterChrome() {
+    const count = countActiveFlashcardFilters();
+    const badge = document.getElementById('flashcardFilterCount');
+    if (badge) {
+        badge.hidden = count === 0;
+        badge.textContent = String(count);
+    }
+    const toggle = document.getElementById('flashcardFilterToggle');
+    if (toggle) toggle.classList.toggle('has-active-filters', count > 0);
+
+    const summary = document.getElementById('flashcardResultSummary');
+    if (summary) {
+        summary.textContent = savedWords.length
+            ? flashcardT('flashcards.showing', 'Showing {shown} of {total} cards',
+                { shown: sessionCards.length, total: flashcardScopeTotal })
+            : '';
+    }
+
+    const clear = document.getElementById('flashcardClearFilters');
+    if (clear) clear.hidden = count === 0;
+}
+
+function populateFlashcardStoryFilter() {
+    const sel = document.getElementById('flashcardStoryFilter');
+    if (!sel) return;
+
+    const counts = {};
+    savedWords.forEach(word => {
+        const story = String(word.story || '').trim();
+        if (!story) return;
+        counts[story] = (counts[story] || 0) + 1;
+    });
+
+    const stories = Object.keys(counts).sort((a, b) => a.localeCompare(b));
+    const uiLang = window.IStoriesI18n ? IStoriesI18n.language : 'en';
+    const signature = stories.map(story => story + ':' + counts[story]).join('|') +
+        '|' + savedWords.length + '|' + uiLang;
+    if (signature === flashcardStorySignature) {
+        if (flashcardFilters.story !== 'all' && stories.indexOf(flashcardFilters.story) === -1) {
+            flashcardFilters.story = 'all';
+            sel.value = 'all';
+        }
+        return;
+    }
+    flashcardStorySignature = signature;
+
+    let html = `<option value="all">${escapeFlashcardHtml(flashcardT('flashcards.allStories', 'All stories'))}</option>`;
+    stories.forEach(story => {
+        html += `<option value="${escapeFlashcardHtml(story)}">${escapeFlashcardHtml(story)} (${counts[story]})</option>`;
+    });
+    sel.innerHTML = html;
+
+    if (flashcardFilters.story !== 'all' && stories.indexOf(flashcardFilters.story) !== -1) {
+        sel.value = flashcardFilters.story;
+    } else {
+        flashcardFilters.story = 'all';
+        sel.value = 'all';
+    }
+}
+
+function setupFlashcardFilters() {
+    const toggle = document.getElementById('flashcardFilterToggle');
+    const panel = document.getElementById('flashcardFilters');
+
+    if (toggle && panel && toggle.dataset.bound !== 'true') {
+        toggle.dataset.bound = 'true';
+        toggle.addEventListener('click', function () {
+            const open = panel.hidden;
+            panel.hidden = !open;
+            toggle.setAttribute('aria-expanded', String(open));
+            panel.classList.toggle('is-open', open);
+        });
+    }
+
+    const map = {
+        flashcardStoryFilter: 'story',
+        flashcardDeckFilter: 'deck',
+        flashcardDateFilter: 'date'
+    };
+    Object.keys(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.bound === 'true') return;
+        el.dataset.bound = 'true';
+        el.addEventListener('change', function () {
+            flashcardFilters[map[id]] = el.value;
+            loadFlashcards();
+        });
+    });
+
+    function resetAdvancedFilters() {
+        flashcardFilters = { story: 'all', deck: 'due', date: 'all' };
+        const story = document.getElementById('flashcardStoryFilter');
+        const deck = document.getElementById('flashcardDeckFilter');
+        const date = document.getElementById('flashcardDateFilter');
+        if (story) story.value = 'all';
+        if (deck) deck.value = 'due';
+        if (date) date.value = 'all';
+        loadFlashcards();
+    }
+
+    const reset = document.getElementById('flashcardResetFilters');
+    if (reset && reset.dataset.bound !== 'true') {
+        reset.dataset.bound = 'true';
+        reset.addEventListener('click', resetAdvancedFilters);
+    }
+
+    const clear = document.getElementById('flashcardClearFilters');
+    if (clear && clear.dataset.bound !== 'true') {
+        clear.dataset.bound = 'true';
+        clear.addEventListener('click', resetAdvancedFilters);
+    }
+}
+
 function loadFlashcards() {
-    // Only words that are due for review...
-    currentCards = savedWords.filter(word => {
-        // ...unless no nextReview date, then it's due
-        if (word.nextReview && new Date(word.nextReview) > new Date()) return false;
+    populateFlashcardLangFilter();
+    populateFlashcardStoryFilter();
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const dateWindow = flashcardFilters.date === 'today' ? startOfToday
+        : flashcardFilters.date === '7' ? now.getTime() - 7 * 24 * 60 * 60 * 1000
+            : flashcardFilters.date === '30' ? now.getTime() - 30 * 24 * 60 * 60 * 1000
+                : null;
+
+    // Words in the selected language, story and date range. The deck filter
+    // below narrows this scope further (due / all / new / learning / mastered).
+    const scopedCards = savedWords.filter(word => {
+        if (currentCardLang !== 'all' && cardLang(word) !== currentCardLang) return false;
+
+        if (flashcardFilters.story !== 'all' &&
+            String(word.story || '') !== flashcardFilters.story) return false;
+
+        if (dateWindow !== null) {
+            const date = flashcardDate(word);
+            if (!date || date.getTime() < dateWindow) return false;
+        }
+
         return true;
     });
 
-    // ...and, if a language is selected, only words in that language.
-    if (currentCardLang !== 'all') {
-        currentCards = currentCards.filter(word => cardLang(word) === currentCardLang);
-    }
+    flashcardScopeTotal = scopedCards.length;
+    currentCards = scopedCards.filter(word => flashcardMatchesDeck(word, flashcardFilters.deck));
 
     // Initialize session
     sessionCards = [...currentCards];
     currentCardIndex = 0;
     cardsReviewed = 0;
-
-    populateFlashcardLangFilter();
 
     if (sessionCards.length > 0) {
         loadCard(0);
@@ -522,8 +721,10 @@ function loadFlashcards() {
         enableCardButtons(false);
     }
 
+    populateFlashcardLangFilter();
     updateProgress();
     updateFlashcardStats();
+    updateFlashcardFilterChrome();
 }
 
 function loadCard(index) {
@@ -633,7 +834,10 @@ function loadCard(index) {
 
 function showNoCardsMessage() {
     flashcardWord.textContent = "No cards available";
-    if (currentCardLang !== 'all') {
+    if (countActiveFlashcardFilters() > 0) {
+        flashcardTranslation.textContent = flashcardT('flashcards.noFilterCards', 'No cards match these filters');
+        flashcardStory.textContent = flashcardT('flashcards.filterHint', 'Try clearing one of the advanced filters or choosing “All cards”.');
+    } else if (currentCardLang !== 'all') {
         flashcardTranslation.textContent = `No ${langDisplayName(currentCardLang)} cards`;
         flashcardStory.textContent = `You don't have any ${langDisplayName(currentCardLang)} words to practise yet`;
     } else {
@@ -1191,12 +1395,15 @@ function init() {
 
 // Refresh the visible card so dates and dynamic labels follow the language.
 document.addEventListener('ist-language-change', function () {
+    populateFlashcardLangFilter();
+    populateFlashcardStoryFilter();
     if (sessionCards.length > 0) {
         loadCard(currentCardIndex);
     } else if (typeof showNoCardsMessage === 'function') {
         showNoCardsMessage();
     }
     updateFlashcardStats();
+    updateFlashcardFilterChrome();
 });
 
 // Initialize the app when DOM is loaded

@@ -720,3 +720,50 @@ storage façade's data keys and in the settings backup/reset flows.
 
 **Service worker.** `CACHE_VERSION` v6.1 → v6.3; precache adds
 `main/nav/bases.js`, `main/bases/index.html` and `main/bases/bases.js`.
+
+---
+
+## Vocabulary / flashcards filters, 200-word paging and custom shortcuts (v6.5)
+
+**Vocabulary filters.** The language menu stays independent. A new **Filters**
+button opens a panel with story, review status (due / new / learning /
+mastered), date added (today / 7 days / 30 days) and translation presence. The
+active-filter count appears on the button, the results bar shows
+`Showing X of Y words`, and the panel/results both offer **Clear filters**.
+Filters are applied after search and language filtering in both
+`renderVocabulary()` and `renderFilteredVocabulary()`.
+
+**Vocabulary paging.** Results are rendered in batches of **200** using a
+shared `appendVocabBatch()` + `.ist-load-more` control, matching the story
+library's load-more pattern. Load more appends the next batch without
+rebuilding the whole list, so large vocabularies stay responsive.
+
+**Flashcard filters.** A matching Filters panel adds story, deck (due today /
+all / new / learning / mastered) and date added. The deck scope is applied
+inside `loadFlashcards()`, preserving the existing `nextReview` scheduling
+when cards are rated. The original due-only session remains the default.
+
+**Custom shortcuts.** `main/nav/shortcuts.js` defines 15 actions (11 pages plus
+theme, search, random story, back to top) with defaults on
+`Ctrl+Alt` combinations. Settings now has a full-width **Keyboard shortcuts**
+card that lets users click a binding and press a new combination, rejects
+conflicts, supports per-row reset / Delete-to-clear / reset-all, and has an
+enable toggle. Bindings are stored in `istories_shortcuts_v1`; the enabled flag
+is `istories_shortcuts_enabled`. While typing, only combinations that include
+Ctrl, Alt or Meta fire (plus explicit function-key bindings), and
+`?ist-intent=search|random` deep links handle actions that need the library
+page.
+
+**Verification (headless Firefox).** Seeded 450 words across four stories and
+three languages: first page renders 200, two Load more clicks reach 450, story
+and status filters intersect correctly, and search + filters render 51
+matches. Flashcards default to 360 due of 450, story/deck/date filters and
+clear work. Shortcut capture persists across reload, rejects a duplicate
+combination, per-row reset/Delete-clear/reset-all work, the enabled toggle
+blocks navigation, and the theme shortcut toggles the page. All 14 core pages
+load with `window.IStoriesShortcuts` available. RTL, dark mode and 430 px
+mobile layouts were screenshot-checked. The help-guide screenshots for
+Vocabulary, Flashcards and Settings were refreshed to the new UI.
+
+**Service worker.** `CACHE_VERSION` v6.4 → v6.5; `main/nav/shortcuts.js` added
+to `SHELL_ASSETS`.

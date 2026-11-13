@@ -25,6 +25,13 @@ let showVoiceButtons = localStorage.getItem('showVoiceButtons') !== 'false'; // 
 let currentVocabLang = 'all';
 let vocabLangSignature = null;
 
+// Advanced filters + pagination. The list is built in batches of 200 so large
+// vocabularies stay responsive (same pattern as the story library).
+const VOCAB_PAGE_SIZE = 200;
+let vocabFilters = { story: 'all', status: 'all', date: 'all', translation: 'all' };
+let vocabView = { items: [], query: '', shown: 0 };
+let vocabStorySignature = null;
+
 // Color settings
 let selectedColor = localStorage.getItem('selectedColor') || '#09d9ba';
 let selectedSecondaryColor = localStorage.getItem('selectedSecondaryColor') || '#007ce1';
@@ -314,30 +321,15 @@ function renderFilteredVocabulary(filteredWords, query) {
     if (!vocabularyList) return;
 
     populateVocabLangFilter();
+    populateVocabStoryFilter();
 
     // Apply the active language filter on top of the search results
     if (currentVocabLang !== 'all') {
         filteredWords = filteredWords.filter(w => vocabWordLang(w) === currentVocabLang);
     }
 
-    // Clear previous content
-    vocabularyList.innerHTML = '';
-
-    if (filteredWords.length === 0) {
-        vocabularyList.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-light);">
-                <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
-                <p style="margin-bottom: 5px;">No words found for "${query}"</p>
-                <p style="font-size: 0.9rem; opacity: 0.7;">
-                    Try searching in French, English, or Arabic
-                </p>
-            </div>
-        `;
-        return;
-    }
-
-    // Create document fragment
-    const fragment = document.createDocumentFragment();
+    // …then the advanced filters (story, status, date, translation).
+    filteredWords = applyVocabAdvancedFilters(filteredWords);
 
     // Sort filtered results by date (newest first)
     const sortedWords = [...filteredWords].sort((a, b) => {
@@ -346,119 +338,332 @@ function renderFilteredVocabulary(filteredWords, query) {
         return dateB - dateA; // Newest first
     });
 
-    // Limit display for large result sets
-    const displayLimit = 100;
-    const wordsToDisplay = sortedWords.length > displayLimit ?
-        sortedWords.slice(0, displayLimit) : sortedWords;
+    renderVocabularyResults(sortedWords, query || '');
+}
 
-    wordsToDisplay.forEach((word) => {
-        const item = document.createElement('div');
-        item.className = 'vocabulary-item';
+// --- Shared vocabulary rendering (search + full list) --------------------
+function vocabT(key, fallback, vars) {
+    if (window.IStoriesI18n && typeof IStoriesI18n.t === 'function') {
+        const translated = IStoriesI18n.t(key, vars);
+        if (translated && translated !== key) return translated;
+    }
+    let text = fallback;
+    if (vars) {
+        Object.keys(vars).forEach(name => {
+            text = text.replace(new RegExp('\\{' + name + '\\}', 'g'), vars[name]);
+        });
+    }
+    return text;
+}
 
-        // Get word data
-        const displayWord = word.originalWord || word.word || '';
-        const translation = word.translation || '';
-        const story = word.story || '';
-        const addedDate = getVocabularyDate(word);
-        const hasTranslation = translation && translation !== displayWord;
-        const status = word.status || 'saved';
-        const fromUserStory = word.fromUserStory || false;
+function escapeVocabHtml(value) {
+    return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
-        // Highlight search terms
-        const highlightedWord = highlightSearchMatch(displayWord, query);
-        const highlightedTranslation = highlightSearchMatch(translation, query);
-        const highlightedStory = story ? highlightSearchMatch(story, query) : '';
+function vocabFilterDate(word) {
+    const raw = word.addedDate || word.dateAdded || word.added || word.date;
+    if (!raw) return null;
+    const date = new Date(raw);
+    return isNaN(date.getTime()) ? null : date;
+}
 
-        // Create badges
-        const translationBadge = !hasTranslation ?
-            `<span class="no-translation-badge">No Translation</span>` : '';
+function vocabIsMastered(word) {
+    return word.status === 'mastered' || word.status === 'known';
+}
 
-        const masteredBadge = status === 'mastered' ?
-            `<span class="mastered-badge">Mastered</span>` : '';
+function vocabIsNew(word) {
+    return !vocabIsMastered(word) && !word.lastViewed && !word.nextReview;
+}
 
-        const userStoryBadge = fromUserStory ?
-            `<span class="user-story-badge-small">Your Story</span>` : '';
+function vocabMatchesStatus(word, status) {
+    if (status === 'all') return true;
+    if (status === 'mastered') return vocabIsMastered(word);
+    if (status === 'new') return vocabIsNew(word);
+    if (status === 'learning') {
+        return !vocabIsMastered(word) && !vocabIsNew(word);
+    }
+    if (status === 'due') {
+        if (vocabIsMastered(word)) return false;
+        if (!word.nextReview) return true;
+        return new Date(word.nextReview) <= new Date();
+    }
+    return true;
+}
 
-        // Find original index
-        const originalIndex = savedWords.indexOf(word);
-
-        const langBadge = vocabLangBadge(word);
-
-        item.innerHTML = `
-            <div class="word-info">
-                <div class="word-main">
-                    <span class="word-text">${highlightedWord}</span>
-                    ${langBadge}
-                    <span class="word-translation">${highlightedTranslation || 'No translation available'}</span>
-                    ${translationBadge}
-                    ${masteredBadge}
-                    ${userStoryBadge}
-                </div>
-                ${story ? `<div class="word-story">From: ${highlightedStory}</div>` : ''}
-                <div class="word-date">
-                    Added: ${formatDateForDisplay(addedDate)}
-                </div>
-            </div>
-            <div class="word-actions">
-                <button title="Mark as mastered" data-index="${originalIndex}">
-                    <i class="fas fa-check"></i>
-                </button>
-                <button title="Delete" data-index="${originalIndex}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-
-        applyVocabularyTextDirections(item, word);
-
-        fragment.appendChild(item);
-    });
-
-    // Add result count message if limited
-    if (sortedWords.length > displayLimit) {
-        const message = document.createElement('div');
-        message.className = 'search-limit-message';
-        message.style.cssText = `
-            text-align: center;
-            padding: 15px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
-            margin-top: 10px;
-        `;
-        message.innerHTML = `
-            Showing ${displayLimit} of ${sortedWords.length} results. 
-            <button onclick="showAllSearchResults()" style="
-                background: var(--primary);
-                color: white;
-                border: none;
-                padding: 5px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-                margin-left: 10px;
-                font-size: 0.8rem;
-            ">Show All</button>
-        `;
-        fragment.appendChild(message);
+function applyVocabAdvancedFilters(words) {
+    const active = vocabFilters;
+    if (active.story === 'all' && active.status === 'all' &&
+        active.date === 'all' && active.translation === 'all') {
+        return words;
     }
 
-    // Append all at once
-    vocabularyList.appendChild(fragment);
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const dateWindow = active.date === 'today' ? startOfToday
+        : active.date === '7' ? now.getTime() - 7 * 24 * 60 * 60 * 1000
+            : active.date === '30' ? now.getTime() - 30 * 24 * 60 * 60 * 1000
+                : null;
 
-    // Add event listeners
-    document.querySelectorAll('.word-actions button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            if (index >= 0) {
-                if (e.currentTarget.querySelector('.fa-check')) {
-                    markAsMastered(index);
-                } else if (e.currentTarget.querySelector('.fa-trash')) {
-                    deleteWord(index);
-                }
+    return words.filter(word => {
+        if (active.story !== 'all' && String(word.story || '') !== active.story) return false;
+
+        if (!vocabMatchesStatus(word, active.status)) return false;
+
+        if (dateWindow !== null) {
+            const date = vocabFilterDate(word);
+            if (!date || date.getTime() < dateWindow) return false;
+        }
+
+        if (active.translation !== 'all') {
+            const displayWord = word.originalWord || word.word || '';
+            const hasTranslation = !!(word.translation && word.translation !== displayWord);
+            if (active.translation === 'with' && !hasTranslation) return false;
+            if (active.translation === 'without' && hasTranslation) return false;
+        }
+
+        return true;
+    });
+}
+
+function countActiveVocabFilters() {
+    let count = 0;
+    if (vocabFilters.story !== 'all') count++;
+    if (vocabFilters.status !== 'all') count++;
+    if (vocabFilters.date !== 'all') count++;
+    if (vocabFilters.translation !== 'all') count++;
+    return count;
+}
+
+function updateVocabFilterChrome(shown, total) {
+    const count = countActiveVocabFilters();
+    const badge = document.getElementById('vocabFilterCount');
+    if (badge) {
+        badge.hidden = count === 0;
+        badge.textContent = String(count);
+    }
+    const toggle = document.getElementById('vocabFilterToggle');
+    if (toggle) toggle.classList.toggle('has-active-filters', count > 0);
+
+    const summary = document.getElementById('vocabResultSummary');
+    if (summary) {
+        summary.textContent = savedWords.length
+            ? vocabT('vocab.showing', 'Showing {shown} of {total} words',
+                { shown: shown, total: total })
+            : '';
+    }
+
+    const clear = document.getElementById('vocabClearFilters');
+    if (clear) clear.hidden = count === 0;
+}
+
+function populateVocabStoryFilter() {
+    const sel = document.getElementById('vocabStoryFilter');
+    if (!sel) return;
+
+    const counts = {};
+    savedWords.forEach(word => {
+        const story = String(word.story || '').trim();
+        if (!story) return;
+        counts[story] = (counts[story] || 0) + 1;
+    });
+
+    const stories = Object.keys(counts).sort((a, b) => a.localeCompare(b));
+    const uiLang = window.IStoriesI18n ? IStoriesI18n.language : 'en';
+    const signature = stories.map(story => story + ':' + counts[story]).join('|') +
+        '|' + savedWords.length + '|' + uiLang;
+    if (signature === vocabStorySignature) {
+        if (vocabFilters.story !== 'all' && stories.indexOf(vocabFilters.story) === -1) {
+            vocabFilters.story = 'all';
+            sel.value = 'all';
+        }
+        return;
+    }
+    vocabStorySignature = signature;
+
+    let html = `<option value="all">${escapeVocabHtml(vocabT('vocab.allStories', 'All stories'))}</option>`;
+    stories.forEach(story => {
+        html += `<option value="${escapeVocabHtml(story)}">${escapeVocabHtml(story)} (${counts[story]})</option>`;
+    });
+    sel.innerHTML = html;
+
+    if (vocabFilters.story !== 'all' && stories.indexOf(vocabFilters.story) !== -1) {
+        sel.value = vocabFilters.story;
+    } else {
+        vocabFilters.story = 'all';
+        sel.value = 'all';
+    }
+}
+
+function findVocabularyIndex(word) {
+    const direct = savedWords.indexOf(word);
+    if (direct !== -1) return direct;
+    return savedWords.findIndex(w =>
+        (w.word === word.word && w.translation === word.translation) ||
+        (w.originalWord === word.originalWord && w.translation === word.translation)
+    );
+}
+
+function createVocabularyItem(word, query) {
+    const item = document.createElement('div');
+    item.className = 'vocabulary-item';
+
+    const displayWord = word.originalWord || word.word || '';
+    const translation = word.translation || '';
+    const story = word.story || '';
+    const addedDate = getVocabularyDate(word);
+    const hasTranslation = translation && translation !== displayWord;
+    const fromUserStory = word.fromUserStory || false;
+
+    const highlightedWord = query ? highlightSearchMatch(displayWord, query) : escapeVocabHtml(displayWord);
+    const highlightedTranslation = query ? highlightSearchMatch(translation, query) : escapeVocabHtml(translation);
+    const highlightedStory = story ? (query ? highlightSearchMatch(story, query) : escapeVocabHtml(story)) : '';
+
+    const translationBadge = !hasTranslation
+        ? `<span class="no-translation-badge">${escapeVocabHtml(vocabT('vocab.noTranslation', 'No translation'))}</span>`
+        : '';
+
+    const masteredBadge = vocabIsMastered(word)
+        ? `<span class="mastered-badge">${escapeVocabHtml(vocabT('vocab.mastered', 'Mastered'))}</span>`
+        : '';
+
+    const userStoryBadge = fromUserStory
+        ? `<span class="user-story-badge-small">${escapeVocabHtml(vocabT('vocab.yourStory', 'Your Story'))}</span>`
+        : '';
+
+    const originalIndex = findVocabularyIndex(word);
+    const langBadge = vocabLangBadge(word);
+
+    item.innerHTML = `
+        <div class="word-info">
+            <div class="word-main">
+                <span class="word-text">${highlightedWord}</span>
+                ${langBadge}
+                <span class="word-translation">${highlightedTranslation || escapeVocabHtml(vocabT('vocab.noTranslationAvailable', 'No translation available'))}</span>
+                ${translationBadge}
+                ${masteredBadge}
+                ${userStoryBadge}
+            </div>
+            ${story ? `<div class="word-story">${escapeVocabHtml(vocabT('vocab.from', 'From'))}: ${highlightedStory}</div>` : ''}
+            <div class="word-date">
+                ${escapeVocabHtml(vocabT('vocab.added', 'Added'))}: ${formatDateForDisplay(addedDate)}
+            </div>
+        </div>
+        <div class="word-actions">
+            <button type="button" title="${escapeVocabHtml(vocabT('vocab.markMastered', 'Mark as mastered'))}" data-index="${originalIndex}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button" title="${escapeVocabHtml(vocabT('vocab.delete', 'Delete'))}" data-index="${originalIndex}">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+
+    applyVocabularyTextDirections(item, word);
+
+    item.querySelectorAll('.word-actions button').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const index = parseInt(event.currentTarget.dataset.index, 10);
+            if (index < 0) return;
+            if (event.currentTarget.querySelector('.fa-check')) {
+                markAsMastered(index);
+            } else if (event.currentTarget.querySelector('.fa-trash')) {
+                deleteWord(index);
             }
         });
     });
+
+    addVoiceButtonToVocabularyItem(item, displayWord, translation, word.language);
+    return item;
 }
+
+function createVocabLoadMore() {
+    const wrap = document.createElement('div');
+    wrap.className = 'ist-load-more-wrap';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ist-load-more';
+    const remaining = Math.max(0, vocabView.items.length - vocabView.shown);
+    button.innerHTML = '<i class="fas fa-plus" aria-hidden="true"></i><span>' +
+        escapeVocabHtml(vocabT('vocab.loadMore', 'Load 200 more words')) + '</span>';
+    button.dataset.remaining = String(remaining);
+    button.addEventListener('click', appendVocabBatch);
+
+    const hint = document.createElement('span');
+    hint.className = 'ist-load-more__hint';
+    hint.textContent = vocabT('vocab.showing', 'Showing {shown} of {total} words',
+        { shown: vocabView.shown, total: vocabView.items.length });
+
+    wrap.appendChild(button);
+    wrap.appendChild(hint);
+    return wrap;
+}
+
+function appendVocabBatch() {
+    if (!vocabularyList || !vocabView.items.length) return;
+
+    const start = vocabView.shown;
+    const end = Math.min(start + VOCAB_PAGE_SIZE, vocabView.items.length);
+    const fragment = document.createDocumentFragment();
+    for (let index = start; index < end; index++) {
+        fragment.appendChild(createVocabularyItem(vocabView.items[index], vocabView.query));
+    }
+    vocabView.shown = end;
+
+    const oldControl = vocabularyList.querySelector('.ist-load-more-wrap');
+    if (oldControl) oldControl.remove();
+
+    vocabularyList.appendChild(fragment);
+
+    if (vocabView.shown < vocabView.items.length) {
+        vocabularyList.appendChild(createVocabLoadMore());
+    }
+
+    updateVocabFilterChrome(vocabView.shown, vocabView.items.length);
+
+    if (window.IStoriesI18n && typeof IStoriesI18n.refresh === 'function') {
+        IStoriesI18n.refresh();
+    }
+}
+
+function renderVocabularyResults(items, query) {
+    if (!vocabularyList) return;
+
+    vocabView = { items: items, query: query || '', shown: 0 };
+    vocabularyList.innerHTML = '';
+
+    if (!items.length) {
+        const hasFilters = countActiveVocabFilters() > 0 || currentVocabLang !== 'all' || !!query;
+        const icon = query ? 'fa-search' : 'fa-filter';
+        const title = query
+            ? vocabT('vocab.noSearchResults', 'No words found for "{query}"', { query: query })
+            : hasFilters
+                ? vocabT('vocab.noFilterResults', 'No words match these filters')
+                : vocabT('vocab.noWords', 'No words saved yet');
+        const hint = query
+            ? vocabT('vocab.searchHint', 'Try searching in another language or clear the filters.')
+            : hasFilters
+                ? vocabT('vocab.filterHint', 'Try clearing the search or one of the advanced filters.')
+                : vocabT('vocab.emptyHint', 'Click on words in stories to add them to your vocabulary.');
+        vocabularyList.innerHTML = `
+            <div class="vocab-empty">
+                <i class="fas ${icon}" aria-hidden="true"></i>
+                <p>${escapeVocabHtml(title)}</p>
+                <span>${escapeVocabHtml(hint)}</span>
+            </div>
+        `;
+        updateVocabFilterChrome(0, 0);
+        return;
+    }
+
+    appendVocabBatch();
+}
+
 
 // Test examples to verify French support:
 // These will work with the improved search:
@@ -1104,10 +1309,15 @@ function updateVocabLangIndicator(counts, codes) {
     codes = codes || Object.keys(counts);
 
     if (currentVocabLang === 'all') {
-        el.innerHTML = `<i class="fas fa-layer-group"></i> ${savedWords.length} word${savedWords.length === 1 ? '' : 's'} · ${codes.length} language${codes.length === 1 ? '' : 's'}`;
+        el.innerHTML = `<i class="fas fa-layer-group"></i> ` +
+            vocabT('vocab.indicatorAll', '{words} words · {languages} languages',
+                { words: savedWords.length, languages: codes.length });
     } else {
         const n = counts[currentVocabLang] || 0;
-        el.innerHTML = `${langFlag(currentVocabLang)} ${langDisplayName(currentVocabLang)} · ${n} word${n === 1 ? '' : 's'}`;
+        el.innerHTML = vocabT('vocab.indicatorLang', '{language} · {count} words', {
+            language: `${langFlag(currentVocabLang)} ${langDisplayName(currentVocabLang)}`,
+            count: n
+        });
     }
 }
 
@@ -1139,21 +1349,75 @@ function setupVocabLangFilter() {
     });
 }
 
+// =============== VOCABULARY ADVANCED FILTERS ===============
+function syncVocabFilterControls() {
+    const map = {
+        vocabStoryFilter: 'story',
+        vocabStatusFilter: 'status',
+        vocabDateFilter: 'date',
+        vocabTranslationFilter: 'translation'
+    };
+    Object.keys(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = vocabFilters[map[id]];
+    });
+}
+
+function setupVocabFilters() {
+    const toggle = document.getElementById('vocabFilterToggle');
+    const panel = document.getElementById('vocabFilters');
+
+    if (toggle && panel && toggle.dataset.bound !== 'true') {
+        toggle.dataset.bound = 'true';
+        toggle.addEventListener('click', function () {
+            const open = panel.hidden;
+            panel.hidden = !open;
+            toggle.setAttribute('aria-expanded', String(open));
+            panel.classList.toggle('is-open', open);
+        });
+    }
+
+    const map = {
+        vocabStoryFilter: 'story',
+        vocabStatusFilter: 'status',
+        vocabDateFilter: 'date',
+        vocabTranslationFilter: 'translation'
+    };
+    Object.keys(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.bound === 'true') return;
+        el.dataset.bound = 'true';
+        el.addEventListener('change', function () {
+            vocabFilters[map[id]] = el.value;
+            refreshVocabularyView();
+        });
+    });
+
+    function resetAdvancedFilters() {
+        vocabFilters = { story: 'all', status: 'all', date: 'all', translation: 'all' };
+        syncVocabFilterControls();
+        refreshVocabularyView();
+    }
+
+    const reset = document.getElementById('vocabResetFilters');
+    if (reset && reset.dataset.bound !== 'true') {
+        reset.dataset.bound = 'true';
+        reset.addEventListener('click', resetAdvancedFilters);
+    }
+
+    const clear = document.getElementById('vocabClearFilters');
+    if (clear && clear.dataset.bound !== 'true') {
+        clear.dataset.bound = 'true';
+        clear.addEventListener('click', resetAdvancedFilters);
+    }
+}
+
 // Update your renderVocabulary function to include voice buttons
 function renderVocabulary() {
     if (!vocabularyList) return;
 
     populateVocabLangFilter();
-    vocabularyList.innerHTML = '';
-
-    if (savedWords.length === 0) {
-        vocabularyList.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-light);">
-                <p>No words saved yet. Click on words in stories to add them to your vocabulary.</p>
-            </div>
-        `;
-        return;
-    }
+    populateVocabStoryFilter();
 
     // Create a copy to avoid mutating original array
     let wordsToDisplay = [...savedWords];
@@ -1163,6 +1427,9 @@ function renderVocabulary() {
         wordsToDisplay = wordsToDisplay.filter(w => vocabWordLang(w) === currentVocabLang);
     }
 
+    // Apply the advanced filters
+    wordsToDisplay = applyVocabAdvancedFilters(wordsToDisplay);
+
     // Sort by date (newest first)
     wordsToDisplay.sort((a, b) => {
         const dateA = new Date(a.addedDate || a.added || a.date || 0);
@@ -1170,101 +1437,9 @@ function renderVocabulary() {
         return dateB - dateA; // Newest first
     });
 
-    if (wordsToDisplay.length === 0) {
-        vocabularyList.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-light);">
-                <p>No words in this language yet.</p>
-            </div>
-        `;
-        return;
-    }
-
-    wordsToDisplay.forEach((word, displayIndex) => {
-        const item = document.createElement('div');
-        item.className = 'vocabulary-item';
-
-        // Handle different field names from different sources
-        const displayWord = word.originalWord || word.word || '';
-        const translation = word.translation || '';
-        const story = word.story || '';
-
-        // Get the date with better fallback
-        const addedDate = getVocabularyDate(word);
-
-        // Check if translation exists
-        const hasTranslation = translation && translation !== displayWord;
-
-        // Check status
-        const status = word.status || 'saved';
-
-        // Check if from user story
-        const fromUserStory = word.fromUserStory || false;
-
-        const translationBadge = !hasTranslation
-            ? `<span class="no-translation-badge" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">No Translation</span>`
-            : '';
-
-        const masteredBadge = status === 'mastered'
-            ? `<span class="mastered-badge" style="background: rgb(13, 167, 116); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Mastered</span>`
-            : '';
-
-        const userStoryBadge = fromUserStory
-            ? `<span class="user-story-badge-small" style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">Your Story</span>`
-            : '';
-
-        // Find the original index in savedWords array
-        const originalIndex = savedWords.findIndex(w =>
-            (w.word === word.word && w.translation === word.translation) ||
-            (w.originalWord === word.originalWord && w.translation === word.translation)
-        );
-
-        const langBadge = vocabLangBadge(word);
-
-        item.innerHTML = `
-            <div class="word-info">
-                <div class="word-main">
-                    <span class="word-text">${displayWord}</span>
-                    ${langBadge}
-                    <span class="word-translation">${translation || 'No translation available'}</span>
-                    ${translationBadge}
-                    ${masteredBadge}
-                    ${userStoryBadge}
-                </div>
-                ${story ? `<div class="word-story" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">From: ${story}</div>` : ''}
-                <div class="word-date" style="font-size: 0.7rem; color: var(--text-lighter); margin-top: 3px;">
-                    Added: ${formatDateForDisplay(addedDate)}
-                </div>
-            </div>
-            <div class="word-actions">
-                <button title="Delete" data-index="${originalIndex}">
-                    <i class="fas fa-trash"></i>
-                </button>
-                <button title="Mark as mastered" data-index="${originalIndex}">
-                    <i class="fas fa-check"></i>
-                </button>
-            </div>
-        `;
-
-        applyVocabularyTextDirections(item, word);
-
-        vocabularyList.appendChild(item);
-
-        // Add voice button if setting is enabled
-        addVoiceButtonToVocabularyItem(item, displayWord, translation, word.language);
-    });
-
-    // Add event listeners for delete and mark as mastered buttons
-    document.querySelectorAll('.word-actions button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            if (e.currentTarget.querySelector('.fa-check')) {
-                markAsMastered(index);
-            } else if (e.currentTarget.querySelector('.fa-trash')) {
-                deleteWord(index);
-            }
-        });
-    });
+    renderVocabularyResults(wordsToDisplay, '');
 }
+
 // Helper function to extract date from word object
 function getVocabularyDate(word) {
     // Try all possible date field names in order of priority
@@ -1872,6 +2047,9 @@ function init() {
 
     // Initialize the language filter (populated from saved words)
     setupVocabLangFilter();
+
+    // Initialize the advanced filters + load-more pagination
+    setupVocabFilters();
 
     // Render vocabulary list
     renderVocabulary();

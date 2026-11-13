@@ -27,6 +27,8 @@
     <!-- Interface localization (English / Arabic) -->
     <link rel="stylesheet" href="../nav/i18n.css">
     <script src="../nav/i18n.js"></script>
+    <!-- User-configurable keyboard shortcuts (also used by the Settings page). -->
+    <script src="../nav/shortcuts.js"></script>
 </head>
 
 <body>
@@ -78,7 +80,56 @@
                             <option value="all">🌍 All languages</option>
                         </select>
                     </div>
+                    <button type="button" class="flashcard-filter-toggle" id="flashcardFilterToggle"
+                        aria-expanded="false" aria-controls="flashcardFilters">
+                        <i class="fas fa-sliders" aria-hidden="true"></i>
+                        <span data-i18n="flashcards.filters">Filters</span>
+                        <span class="flashcard-filter-count" id="flashcardFilterCount" hidden>0</span>
+                    </button>
                     <span class="flashcard-lang-indicator" id="flashcardLangIndicator"></span>
+                </div>
+
+                <div class="flashcard-filters" id="flashcardFilters" hidden>
+                    <div class="flashcard-filters__head">
+                        <h3><i class="fas fa-filter" aria-hidden="true"></i>
+                            <span data-i18n="flashcards.advancedFilters">Advanced filters</span>
+                        </h3>
+                        <button type="button" class="flashcard-link-btn" id="flashcardResetFilters"
+                            data-i18n="flashcards.clearFilters">Clear filters</button>
+                    </div>
+                    <div class="flashcard-filter-grid">
+                        <label class="flashcard-filter-group" for="flashcardStoryFilter">
+                            <span data-i18n="flashcards.story">Story</span>
+                            <select id="flashcardStoryFilter">
+                                <option value="all" data-i18n="flashcards.allStories">All stories</option>
+                            </select>
+                        </label>
+                        <label class="flashcard-filter-group" for="flashcardDeckFilter">
+                            <span data-i18n="flashcards.deck">Deck</span>
+                            <select id="flashcardDeckFilter">
+                                <option value="due" data-i18n="flashcards.dueToday">Due today</option>
+                                <option value="all" data-i18n="flashcards.allCards">All cards</option>
+                                <option value="new" data-i18n="flashcards.new">New</option>
+                                <option value="learning" data-i18n="flashcards.learning">Learning</option>
+                                <option value="mastered" data-i18n="flashcards.mastered">Mastered</option>
+                            </select>
+                        </label>
+                        <label class="flashcard-filter-group" for="flashcardDateFilter">
+                            <span data-i18n="flashcards.dateAdded">Date added</span>
+                            <select id="flashcardDateFilter">
+                                <option value="all" data-i18n="flashcards.anyTime">Any time</option>
+                                <option value="today" data-i18n="flashcards.today">Today</option>
+                                <option value="7" data-i18n="flashcards.last7">Last 7 days</option>
+                                <option value="30" data-i18n="flashcards.last30">Last 30 days</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flashcard-results-bar">
+                    <span class="flashcard-result-summary" id="flashcardResultSummary"></span>
+                    <button type="button" class="flashcard-link-btn" id="flashcardClearFilters" hidden
+                        data-i18n="flashcards.clearFilters">Clear filters</button>
                 </div>
 
                 <div class="flashcard-container">

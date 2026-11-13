@@ -17,7 +17,7 @@
  * versions had already cached in the browser.
  */
 
-const CACHE_VERSION = 'v6.4';
+const CACHE_VERSION = 'v6.6';
 const SHELL_CACHE = `istories-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `istories-runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `istories-images-${CACHE_VERSION}`;
@@ -49,6 +49,7 @@ const SHELL_ASSETS = [
   './main/nav/header.css',
   './main/nav/i18n.css',
   './main/nav/i18n.js',
+  './main/nav/shortcuts.js',
   './main/nav/settings-panel.js',
   './main/nav/vendor/localforage.min.js',
   './main/nav/vendor/pdfjs/pdf.min.js',

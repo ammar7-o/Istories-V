@@ -1482,6 +1482,213 @@ input:checked+.slider:before {
     color: var(--primary);
 }
 
+/* Advanced filters -------------------------------------------------------- */
+.vocab-toolbar__end {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.vocab-filter-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.vocab-filter-toggle:hover,
+.vocab-filter-toggle.has-active-filters {
+    border-color: var(--primary);
+}
+
+.vocab-filter-toggle i {
+    color: var(--primary);
+}
+
+.vocab-filter-count {
+    display: grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.vocab-filters {
+    margin: -12px 0 22px;
+    padding: 16px 18px 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg);
+    box-shadow: var(--shadow);
+}
+
+.vocab-filters[hidden] {
+    display: none;
+}
+
+.vocab-filters__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.vocab-filters__head h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.98rem;
+    color: var(--text);
+}
+
+.vocab-filters__head h3 i {
+    color: var(--primary);
+}
+
+.vocab-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.vocab-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.vocab-filter-group > span {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: var(--text-light);
+    text-transform: uppercase;
+}
+
+.vocab-filter-group select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 9px 30px 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background-color: var(--bg-secondary);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.86rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    background-size: 13px;
+}
+
+.vocab-filter-group select:focus {
+    outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+    outline-offset: 1px;
+}
+
+.vocab-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 2px;
+}
+
+.vocab-link-btn:hover {
+    text-decoration: underline;
+}
+
+.vocab-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: -8px 0 12px;
+}
+
+.vocab-result-summary {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.vocab-empty {
+    text-align: center;
+    padding: 44px 20px;
+    color: var(--text-light);
+}
+
+.vocab-empty i {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    color: var(--primary);
+    opacity: .65;
+}
+
+.vocab-empty p {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.vocab-empty span {
+    font-size: 0.9rem;
+    opacity: .8;
+}
+
+.vocab-results-bar .vocab-link-btn[hidden] {
+    display: none;
+}
+
+html[dir="rtl"] .vocab-filter-group select {
+    padding: 9px 11px 9px 30px;
+    background-position: left 9px center;
+}
+
+@media (max-width: 600px) {
+    .vocab-toolbar__end {
+        justify-content: space-between;
+    }
+
+    .vocab-filters {
+        padding: 14px;
+    }
+
+    .vocab-filter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Keep the per-word language badge compact inside the word row */
 .vocabulary-item .story-lang-badge {
     font-size: 0.7rem;

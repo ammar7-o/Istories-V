@@ -27,6 +27,8 @@
     <!-- Interface localization (English / Arabic) -->
     <link rel="stylesheet" href="../nav/i18n.css">
     <script src="../nav/i18n.js"></script>
+    <!-- User-configurable keyboard shortcuts (also used by the Settings page). -->
+    <script src="../nav/shortcuts.js"></script>
 </head>
 
 <body data-css-key="customCSSVo" data-css-important="simple">
@@ -108,7 +110,66 @@
                             <option value="all">🌍 All languages</option>
                         </select>
                     </div>
-                    <span class="vocab-lang-indicator" id="vocabLangIndicator"></span>
+                    <div class="vocab-toolbar__end">
+                        <button type="button" class="vocab-filter-toggle" id="vocabFilterToggle"
+                            aria-expanded="false" aria-controls="vocabFilters">
+                            <i class="fas fa-sliders" aria-hidden="true"></i>
+                            <span data-i18n="vocab.filters">Filters</span>
+                            <span class="vocab-filter-count" id="vocabFilterCount" hidden>0</span>
+                        </button>
+                        <span class="vocab-lang-indicator" id="vocabLangIndicator"></span>
+                    </div>
+                </div>
+
+                <div class="vocab-filters" id="vocabFilters" hidden>
+                    <div class="vocab-filters__head">
+                        <h3><i class="fas fa-filter" aria-hidden="true"></i>
+                            <span data-i18n="vocab.advancedFilters">Advanced filters</span>
+                        </h3>
+                        <button type="button" class="vocab-link-btn" id="vocabResetFilters"
+                            data-i18n="vocab.clearFilters">Clear filters</button>
+                    </div>
+                    <div class="vocab-filter-grid">
+                        <label class="vocab-filter-group" for="vocabStoryFilter">
+                            <span data-i18n="vocab.story">Story</span>
+                            <select id="vocabStoryFilter">
+                                <option value="all" data-i18n="vocab.allStories">All stories</option>
+                            </select>
+                        </label>
+                        <label class="vocab-filter-group" for="vocabStatusFilter">
+                            <span data-i18n="vocab.status">Status</span>
+                            <select id="vocabStatusFilter">
+                                <option value="all" data-i18n="vocab.allStatuses">All statuses</option>
+                                <option value="due" data-i18n="vocab.due">Due for review</option>
+                                <option value="new" data-i18n="vocab.new">New</option>
+                                <option value="learning" data-i18n="vocab.learning">Learning</option>
+                                <option value="mastered" data-i18n="vocab.mastered">Mastered</option>
+                            </select>
+                        </label>
+                        <label class="vocab-filter-group" for="vocabDateFilter">
+                            <span data-i18n="vocab.dateAdded">Date added</span>
+                            <select id="vocabDateFilter">
+                                <option value="all" data-i18n="vocab.anyTime">Any time</option>
+                                <option value="today" data-i18n="vocab.today">Today</option>
+                                <option value="7" data-i18n="vocab.last7">Last 7 days</option>
+                                <option value="30" data-i18n="vocab.last30">Last 30 days</option>
+                            </select>
+                        </label>
+                        <label class="vocab-filter-group" for="vocabTranslationFilter">
+                            <span data-i18n="vocab.translation">Translation</span>
+                            <select id="vocabTranslationFilter">
+                                <option value="all" data-i18n="vocab.anyTranslation">Any translation</option>
+                                <option value="with" data-i18n="vocab.withTranslation">Has translation</option>
+                                <option value="without" data-i18n="vocab.withoutTranslation">No translation</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="vocab-results-bar">
+                    <span class="vocab-result-summary" id="vocabResultSummary"></span>
+                    <button type="button" class="vocab-link-btn" id="vocabClearFilters" hidden
+                        data-i18n="vocab.clearFilters">Clear filters</button>
                 </div>
 
                 <div class="vocabulary-list" id="vocabularyList">

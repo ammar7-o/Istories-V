@@ -1146,6 +1146,169 @@ footer {
     color: var(--primary);
 }
 
+/* Advanced filters -------------------------------------------------------- */
+.flashcard-filter-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    transition: border-color .18s ease;
+}
+
+.flashcard-filter-toggle:hover,
+.flashcard-filter-toggle.has-active-filters {
+    border-color: var(--primary);
+}
+
+.flashcard-filter-toggle i {
+    color: var(--primary);
+}
+
+.flashcard-filter-count {
+    display: grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.flashcard-filters {
+    margin: -0.5rem auto 1.25rem;
+    padding: 16px 18px 18px;
+    max-width: 860px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.flashcard-filters[hidden] {
+    display: none;
+}
+
+.flashcard-filters__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.flashcard-filters__head h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.98rem;
+    color: var(--text);
+}
+
+.flashcard-filters__head h3 i {
+    color: var(--primary);
+}
+
+.flashcard-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.flashcard-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.flashcard-filter-group > span {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: var(--text-light);
+    text-transform: uppercase;
+}
+
+.flashcard-filter-group select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 9px 30px 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background-color: var(--bg-secondary);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.86rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    background-size: 13px;
+}
+
+.flashcard-filter-group select:focus {
+    outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+    outline-offset: 1px;
+}
+
+.flashcard-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 2px;
+}
+
+.flashcard-link-btn:hover {
+    text-decoration: underline;
+}
+
+.flashcard-link-btn[hidden] {
+    display: none;
+}
+
+.flashcard-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: -0.75rem 0 1rem;
+}
+
+.flashcard-result-summary {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+html[dir="rtl"] .flashcard-filter-group select {
+    padding: 9px 11px 9px 30px;
+    background-position: left 9px center;
+}
+
 /* Language badge shown on the front of each card */
 .flashcard-content .flashcard-lang-badge {
     display: inline-flex;
@@ -1162,5 +1325,13 @@ footer {
 
     .flashcard-lang-filter {
         justify-content: space-between;
+    }
+
+    .flashcard-filters {
+        padding: 14px;
+    }
+
+    .flashcard-filter-grid {
+        grid-template-columns: 1fr;
     }
 }
